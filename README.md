@@ -25,9 +25,11 @@ DATTES is written in MATLAB and most of functions are GNU Octave compatible
 ## Contributing
 
 ## Authors and acknowledgment
+
 Eduardo REDONDO (original idea, main developer)
+
 Marwan HASSINI (code contributor, documentation, a lot of new ideas)
 
 ## License
-DATTES is licensed under GNU GPL v3 (see COPYRIGHT)
+DATTES is licensed under GNU GPL v3 (see [COPYRIGHT](COPYRIGHT))
 
