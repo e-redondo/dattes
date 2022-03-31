@@ -1,0 +1,9 @@
+#exclude these file extensions
+*.mat
+*.fig
+*.asv
+*.xls
+*.xlsx
+*.xml
+*.mdb
+
