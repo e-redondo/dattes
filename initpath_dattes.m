@@ -21,6 +21,7 @@ if ismember('e',options)%enable = addpath
     addpath(srcdir);
     %subfolders
     addpath(fullfile(srcdir,'data_tools'));
+    addpath(fullfile(srcdir,'data_tools','bitrode'));
     addpath(fullfile(srcdir,'math_tools'));
     addpath(fullfile(srcdir,'plots'));
     
@@ -38,6 +39,7 @@ end
 if ismember('d',options)%disable = rmpath
     rmpath(srcdir);
     rmpath(fullfile(srcdir,'data_tools'));
+    rmpath(fullfile(srcdir,'data_tools','bitrode'));
     rmpath(fullfile(srcdir,'math_tools'));
     rmpath(fullfile(srcdir,'plots'));
     
