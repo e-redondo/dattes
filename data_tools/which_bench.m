@@ -27,8 +27,6 @@ line2 = fgetl(fid);
 if length(line2)<2
     line2 = fgetl(fid);
 end
-%rewind the file
-fseek(fid,0,-1);
 
 if strcmp(line1,'EC-Lab ASCII FILE')
     bench = 'bio';%Biologic File
