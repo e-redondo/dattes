@@ -7,12 +7,19 @@ function [bench, line1, line2] = which_bench(fid)
 %
 % OUTPUTS:
 % bench (string): string defining the bench type
+%   - 'bio': Biologic EC-Lab or BT-Lab file
+%   - 'pricsv': Princeton Zmeter file in csv format
+%   - 'biocsv': Biologic file in csv format
+%   - 'pribrut': Princeton Zmeter file in original format (xml?)
+%   - 'bitrode_csv': Bitrode csv file
 % line1 (string): file's first line (if file is text type)
 % line2 (string): file's second line (if file is text type)
 bench = '';
 line1 = '';
 line2 = '';
-
+% TODO: Arbin files (xls, res)
+% TODO: Bitrode csv file with header
+% TODO: Bitrode mdb file
 
 %read first line
 line1 = fgetl(fid);
@@ -33,11 +40,11 @@ if strcmp(line1,'BT-Lab ASCII FILE')
 end
 
 if strncmp(line1,'TimeStamp,Segment',17)
-    bench = 'pricea';%Princeton File
+    bench = 'pricsv';%Princeton File
     return
 end
 if strncmp(line1,'TimeStamp,mode,ox_red',21)
-    bench = 'biocea';
+    bench = 'biocsv';
     return
 end
 if strcmp(line1,'<Application>')
@@ -49,7 +56,7 @@ end
 if strncmp(line1,'Total Time,Cycle,Loop Counter #1',32)
     bench = 'bitrode_csv';
     %find last line:
-    fseek(fid,-100,1)
+    fseek(fid,-100,1);
     s=fread(fid,inf, 'uint8=>char')';
     s = regexp(s,'\n','split');
     %put last last in 'line2'

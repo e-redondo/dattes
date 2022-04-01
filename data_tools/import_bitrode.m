@@ -1,4 +1,4 @@
-function xml = import_bitrode(filename,dirname)
+function xml = import_bitrode(filename,dirname,options)
 % import_bitrode Bitrode *.csv to VEHLIB XMLstruct converter
 % function xml = import_bitrode(filename,pathname)
 %
@@ -6,19 +6,24 @@ function xml = import_bitrode(filename,dirname)
 % - filename (string): filename or full pathname
 % - dirname (string): path to the folder containing the file (empty if
 % filename is full pathname)
+% - options (string): containing the following characters
+%   - 'v': verbose, tells what it does
 %
 % OUTPUTS:
 % - xml (struct): structure with XML format 4 VEHLIB
 % 
 % See also btr2xml, which_bench
 
+if ~exist('options','var')
+    options='';
+end
+verbose = ismember('v',options);
 
 verveh = 2.0;
 %TODO: get date_time from test (>>> .mdb file) >>> tabs
-%TODO: add 'options' input and hide fprintf if not verbose ('v')
 
 %0. check if file exists
-if ~exist('pathname','var')
+if ~exist('dirname','var')
     dirname = '';
 end
 file_in = fullfile(dirname,filename);
@@ -31,9 +36,9 @@ if ~exist(file_in,'file')
 end
 
 
-
+if verbose
     fprintf('%s >>> %s\n',filename,file_out);
-    
+end
     fid_in = fopen(file_in,'r');
 %0.1 check if file is a bitrode file
 [bench, line1, line2] = which_bench(fid_in);
@@ -155,8 +160,9 @@ end
     %on elimine le fichier 'copy'
     pause(0.1),  delete(file_out);
     tecoule = toc(chrono);
-    fprintf('file %s ready in %0.2f seconds (%d lines).\n',file_out,tecoule,nb_lignes);
-    
+    if verbose
+        fprintf('file %s ready in %0.2f seconds (%d lines).\n',file_out,tecoule,nb_lignes);
+    end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -187,7 +193,7 @@ for i=1:1:size(strold,1)
 end
 fwrite(fidOut,A);
 nb_lignes=length(find(A==sprintf('\n')));
-fprintf('%d lines\n',nb_lignes);
+% fprintf('%d lines\n',nb_lignes);
 
 end
 
