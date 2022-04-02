@@ -25,6 +25,7 @@ if ismember('e',options)%enable = addpath
     addpath(fullfile(srcdir,'data_tools','biologic'));
     addpath(fullfile(srcdir,'math_tools'));
     addpath(fullfile(srcdir,'plots'));
+    addpath(fullfile(srcdir,'results'));
     
     %if no VEHLIB is found in this computer add minimal dependencies
     if isempty(which('initpath'))
@@ -44,6 +45,7 @@ if ismember('d',options)%disable = rmpath
     rmpath(fullfile(srcdir,'data_tools','biologic'));
     rmpath(fullfile(srcdir,'math_tools'));
     rmpath(fullfile(srcdir,'plots'));
+    rmpath(fullfile(srcdir,'results'));
     
     %remove vehlib_minimal only if it was added before:
     P = path;
