@@ -1,10 +1,11 @@
-function hf = plot_phases(t,U,I,phases,titre,options)
-%plot_phases visualiser les phases d'un essai.
+function hf = plot_phases(t,U,I,phases,title_str,options)
+%plot_phases visualize phases of a test
 %
-%hf = plot_phases(t,U,I,phases,titre,options)
+% hf = plot_phases(t,U,I,phases,title_str,options)
 %
-% Fait une figure avec deux plots: U vs. t et I vs. t. avec les phases
-% identifiees selon le mode de fonctionnement avec decoupeBanc.
+% Make a figure with two subplots: U vs. t et I vs. t. with identified
+% phases by decompose_bench function (CC, CV, rest, etc.). If more than 100
+% phases, only longer 100 phases will be ploted (color and number).
 %
 % TODO: option plot complet pas de duree min
 %
@@ -16,17 +17,25 @@ end
 
 hf = figure('name','plot_phases');
 
-if ismember('h',options)
-    time = t/3600;
-elseif ismember('j',options)
-    time = t/86400;
+if ismember('D',options)%plot time in dates
+    t1 = datetime(datestr(e2mdate(t),'yyyy-mm-dd HH:MM'));
+    x_lab = 'date/time';
 else
-    time = t;
+    if ismember('h',options)%plot time in hours since start_time
+        t1 = (t-t(1))/3600;
+        x_lab = 'time (hours)';
+    elseif ismember('d',options)%plot time in days since start_time
+        t1 = (t-t(1))/86400;
+        x_lab = 'time (days)';
+    else
+        t1 = t-t(1);%enlever le debut
+        x_lab = 'time (seconds)';
+    end
 end
-subplot(211),plot(time-time(1),U,'k')
-hold on,xlabel('time'),ylabel('voltage')
-subplot(212),plot(time-time(1),I,'k')
-hold on,xlabel('time'),ylabel('current')
+subplot(211),plot(t1,U,'k')
+hold on,xlabel(x_lab),ylabel('voltage')
+subplot(212),plot(t1,I,'k')
+hold on,xlabel(x_lab),ylabel('current')
         
 c = lines(length(phases));
 
@@ -39,7 +48,7 @@ end
 
 to = 0;
 for ind = 1:length(phases)
-    [tp,timep,Up,Ip] = get_phase(phases(ind),t,time-time(1),U,I);
+    [tp,timep,Up,Ip] = get_phase(phases(ind),t,t1,U,I);
 %     tp = tcell{ind};
 %     Up = Ucell{ind};
 %     Ip = Icell{ind};
@@ -65,7 +74,7 @@ for ind = 1:length(phases)
         subplot(212),text(tX,tY2,num2str(ind),'edgecolor',c(ind,:),'BackgroundColor','w');
     end
 end
-subplot(211),title(titre,'interpreter','none')
+subplot(211),title(title_str,'interpreter','none')
 %cherche tout les handles du type axe et ignore les legendes
 ha = findobj(hf,'type','axes','tag','');
 

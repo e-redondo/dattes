@@ -30,7 +30,7 @@ function [result, config, phases] = dattes(xml_file,cfg_file,options)
 %   -'A': synonym for 'CSRWPOI' (do all)
 %   -'G': visualize the resuls obtained before (stored in 'xml_file_result.mat')
 %     - 'Gx': visualize extracted profiles (t,U,I)
-%     - 'Gd': visualize phase decomposition
+%     - 'Gp': visualize phase decomposition
 %     - 'Gc': visualize configuration
 %     - 'GS': visualize SOC
 %     - 'GC': visualize capacity
@@ -39,10 +39,9 @@ function [result, config, phases] = dattes(xml_file,cfg_file,options)
 %     - 'GE': visualize efficiency
 %     - 'GR': visualize resistance
 %     - 'GW': visualize CPE impedance
-%     - 'G*j': echelle de temps en jours (* = x,d,c,S,C,R,W,P,O,I)
-%     - 'G*d': echelle de temps en days (* = x,d,c,S,C,R,W,P,O,I)
-%     - 'G*h': echelle de temps en heures (* = x,d,c,S,C,R,W,P,O,I)
-%     - 'G*D': afficher le temps en dates (* = x,d,c,S,C,R,W,P,O,I)
+%     - 'G*d': time in days (* = x,p,c,S,C,R,W,P,O,I)
+%     - 'G*h': time in hours (* = x,p,c,S,C,R,W,P,O,I)
+%     - 'G*D': time as date/time (* = x,p,c,S,C,R,W,P,O,I)
 %
 % Exemples:
 % dattes(XMLfile,CFGfile,'s'): lit le fichier (t,U,I,m) et sauvegarde dans XMLfile_results.mat.
@@ -100,7 +99,7 @@ InherOptions = options(ismember(options,'gfuvs'));
 
 %% Graphics mode 
 if ismember('G',options)
-    [result, config, phases] = RPTplot(xml_file,options);
+    [result, config, phases] = dattes_plot(xml_file,options);
     %SI ON FAIT FIGURES ('G') ON NE FAIT PLUS RIEN APRES
     %(pas de traitement ni sauvegarde)
     return;
