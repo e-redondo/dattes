@@ -23,13 +23,13 @@ end
 
 %fonction copiee de modeBanc
 h = figure;
-subplot(211),plot(t1,U,'b','displayname','essai'),hold on,xlabel(x_lab),ylabel('voltage')
+subplot(211),plot(t1,U,'b','displayname','test'),hold on,xlabel(x_lab),ylabel('voltage')
 
 title(titre,'interpreter','none')
-subplot(212),plot(t1,I,'b','displayname','essai'),hold on,xlabel(x_lab),ylabel('current')
+subplot(212),plot(t1,I,'b','displayname','test'),hold on,xlabel(x_lab),ylabel('current')
 
 c = 'rgcmk';
-tags = {'CC','CV','rest','EIS','profil'};
+tags = {'CC','CV','rest','EIS','profile'};
 for ind = 1:5
     indices = m==ind;
     

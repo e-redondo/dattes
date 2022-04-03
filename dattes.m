@@ -140,7 +140,7 @@ if ismember('c',options)
         config0 = config;
     end
     % TODO check if no 'd' was done before
-    [config] = configurator2(t,U,I,m,config0,phases,InherOptions);
+    [config] = configurator(t,U,I,m,config0,phases,InherOptions);
     % traceability: if a script for config is given
     if ischar(cfg_file)
         config.CFGfile = cfg_file;

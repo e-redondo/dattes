@@ -31,7 +31,7 @@ if ismember('p',options)
 end
 if ismember('c',options)
     %show result of 'c', i.e. configurator
-    plotConfig(t,U,config,phases,titre,InherOptions);
+    plot_config(t,U,config,phases,titre,InherOptions);
 end
 if ismember('S',options)
     %show result of 'S', i.e. SOC
