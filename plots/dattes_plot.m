@@ -35,7 +35,7 @@ if ismember('c',options)
 end
 if ismember('S',options)
     %show result of 'S', i.e. SOC
-    plotSOC(t,I, DoDAh, SOC,config,titre,InherOptions);
+    plot_soc(t,I, DoDAh, SOC,config,titre,InherOptions);
 end
 if ismember('C',options)
     %show result of 'C', i.e. Capacity

@@ -165,7 +165,7 @@ end
 
 %% 5. SOC
 if ismember('S',options)
-    [DoDAh, SOC] = calculSOC(t,I,config,InherOptions);
+    [DoDAh, SOC] = calcul_soc(t,I,config,InherOptions);
     if isempty(DoDAh)
         result.DoDAhIni = [];
         result.SOCIni = [];
