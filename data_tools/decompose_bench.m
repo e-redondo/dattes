@@ -56,9 +56,9 @@ for ind = 1:length(tcell)
     thist = tcell{ind};
     thisI = Icell{ind};
     thisU = Ucell{ind};
-    if ind==22
-        fprintf('here\n');
-    end
+%     if ind==22 %DEBUG (put ind value of concerning phase)
+%         fprintf('here\n');
+%     end
     phases(ind).t_ini = thist(1);
     phases(ind).t_fin = thist(end);
     phases(ind).duration = phases(ind).t_fin - phases(ind).t_ini;

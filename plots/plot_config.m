@@ -40,7 +40,7 @@ plot(tc(I100),U(I100),'ro','displayname','t100')
 %phases de mesure de capacite en decharge
 tD = [];UD = [];tC = [];UC = [];tDV= [];UDV = [];tCV = [];UCV = [];
 for ind = 1:length(phases)
-    Ip = t>=phases(ind).tIni & t<=phases(ind).tFin;
+    Ip = t>=phases(ind).t_ini & t<=phases(ind).t_fin;
     if config.pCapaD(ind)
         tD = [tD;tc(Ip)];
         UD = [UD;U(Ip)];
@@ -71,8 +71,8 @@ tR = [];UR = [];tW = [];UW = [];tRr = [];URr = [];tWr = [];UWr = [];
 for ind = 1:length(phases)
     
     if config.pR(ind)
-        Ip = t>=phases(ind).tIni & t<=phases(ind).tIni+config.tminR;
-        Ir = t>=phases(ind-1).tFin-config.tminRr & t<=phases(ind-1).tFin;
+        Ip = t>=phases(ind).t_ini & t<=phases(ind).t_ini+config.tminR;
+        Ir = t>=phases(ind-1).t_fin-config.tminRr & t<=phases(ind-1).t_fin;
         
         tR = [tR;tc(Ip)];
         UR = [UR;U(Ip)];
@@ -81,8 +81,8 @@ for ind = 1:length(phases)
         
     end
     if config.pW(ind)
-        Ip = t>=phases(ind).tIni & t<=phases(ind).tIni+config.tminW;
-        Ir = t>=phases(ind-1).tFin-config.tminWr & t<=phases(ind-1).tFin;
+        Ip = t>=phases(ind).t_ini & t<=phases(ind).t_ini+config.tminW;
+        Ir = t>=phases(ind-1).t_fin-config.tminWr & t<=phases(ind-1).t_fin;
         tW = [tW;tc(Ip)];
         UW = [UW;U(Ip)];
         tWr = [tWr;tc(Ir)];

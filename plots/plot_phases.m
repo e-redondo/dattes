@@ -7,7 +7,7 @@ function hf = plot_phases(t,U,I,phases,title_str,options)
 % phases by decompose_bench function (CC, CV, rest, etc.). If more than 100
 % phases, only longer 100 phases will be ploted (color and number).
 %
-% TODO: option plot complet pas de duree min
+% TODO: option plot complet pas de duration min
 %
 % See also dattes, decompose_bench, mode_bench2
 
@@ -40,8 +40,8 @@ hold on,xlabel(x_lab),ylabel('current')
 c = lines(length(phases));
 
 if length(phases)>100
-    [duree] = sort([phases.duree],'descend');
-    minDuree = duree(100);
+    [p_duration] = sort([phases.duration],'descend');
+    minDuree = p_duration(100);
 else
     minDuree = 0;
 end
@@ -64,7 +64,7 @@ for ind = 1:length(phases)
     tY1 = mean(Up);
     tY2 = mean(Ip);
     
-    if phases(ind).duree>minDuree
+    if phases(ind).duration>minDuree
         subplot(211),plot(timep,Up,'color',c(ind,:),'tag',num2str(ind))
 %         hold on,xlabel('time'),ylabel('voltage')
         subplot(212),plot(timep,Ip,'color',c(ind,:),'tag',num2str(ind))

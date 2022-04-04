@@ -29,9 +29,9 @@ if ~exist('options','var')
     options = '';
 end
 
-tInis = [phases.tIni];
-tFins = [phases.tFin];
-durees = [phases.duree];
+tInis = [phases.t_ini];
+tFins = [phases.t_fin];
+durees = [phases.duration];
 
 if ismember('v',options)
     fprintf('configurator:...');
@@ -104,26 +104,26 @@ pRepos100 = ismember(tInis,t(I100r | I100ccr));
 pRepos0 = ismember(tInis,t(I0r | I0ccr));
 
 %1) phases capa decharge (CC):
-%1.1. Imoy<0
+%1.1. Iavg<0
 %1.2.- finissent a SoC0 (I0cc)
 %1.3.- sont precedes par une phase de repos a SoC100 (I100r ou I100ccr)
-pCapaD = [phases.Imoy]<0 & ismember(tFins,t(I0cc)) & [0 pRepos100(1:end-1)];
+pCapaD = [phases.Iavg]<0 & ismember(tFins,t(I0cc)) & [0 pRepos100(1:end-1)];
 %2) phases capa charge (CC):
-%2.1.- Imoy>0
+%2.1.- Iavg>0
 %2.2.- finissent a SoC100 (I100cc)
 %2.3.- sont precedes par une phase de repos a SoC0 (I0r ou I0ccr)
-pCapaC = [phases.Imoy]>0 & ismember(tFins,t(I100cc)) & [0 pRepos0(1:end-1)];
-pCapaC = [phases.Imoy]>0 & [0 pRepos0(1:end-1)];%LYP, BRICOLE
+pCapaC = [phases.Iavg]>0 & ismember(tFins,t(I100cc)) & [0 pRepos0(1:end-1)];
+pCapaC = [phases.Iavg]>0 & [0 pRepos0(1:end-1)];%LYP, BRICOLE
 %3) phases de decharge residuelle
-%1.1.- Imoy<0
+%1.1.- Iavg<0
 %1.2.- finissent a SoC0 (I0)
 %1.3.- sont precedes par une phase pCapaD
-pCapaDV = [phases.Imoy]<0 & ismember(tFins,t(I0)) & [0 pCapaD(1:end-1)];
+pCapaDV = [phases.Iavg]<0 & ismember(tFins,t(I0)) & [0 pCapaD(1:end-1)];
 %4) phases de charge residuelle
-%1.1.- Imoy>0
+%1.1.- Iavg>0
 %1.2.- finissent a SoC100 (I100)
 %1.3.- sont precedes par une phase pCapaC
-pCapaCV = [phases.Imoy]>0 & ismember(tFins,t(I100)) & [0 pCapaC(1:end-1)];
+pCapaCV = [phases.Iavg]>0 & ismember(tFins,t(I100)) & [0 pCapaC(1:end-1)];
 
 %5) phases de mesure d'impedance
 %5.0- detection de pulses:
@@ -174,7 +174,7 @@ end
 config.pOCVr = durees>=config.tminOCVr & ismember(tInis,t(IiniRepos));
 config.pOCVr(1) = false; % repos initial jamais retenu pour OCV
 %ident_pOCV (pseudoOCV)
-Regime = [phases.Imoy]./config.Capa;
+Regime = [phases.Iavg]./config.Capa;
 config.pOCVpC = config.pCapaC & abs(Regime)<config.regimeOCVmax & abs(Regime)>config.regimeOCVmin;
 config.pOCVpD = config.pCapaD & abs(Regime)<config.regimeOCVmax & abs(Regime)>config.regimeOCVmin;
 

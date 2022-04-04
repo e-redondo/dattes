@@ -24,9 +24,9 @@ if ~isstruct(phase) || length(struct)~=1
     fprintf('get_phase: ERREUR, phase doit etre struct de taille 1\n');
     return;
 end
-%0.4.- phase doit avoir les champs 'tIni' et 'tFin'
-if ~isfield(phase,'tIni') || ~isfield(phase,'tFin')
-    fprintf('get_phase: ERREUR, phase doit avoir des champs tIni et tFin\n');
+%0.4.- phase doit avoir les champs 't_ini' et 't_fin'
+if ~isfield(phase,'t_ini') || ~isfield(phase,'t_fin')
+    fprintf('get_phase: ERREUR, phase doit avoir des champs t_ini et t_fin\n');
     return;
 end
 %0.5.- t doit etre vecteur double
@@ -42,7 +42,7 @@ for ind = 1:length(varargin)
     end
 end
 
-indices = t>=phase.tIni & t<=phase.tFin;
+indices = t>=phase.t_ini & t<=phase.t_fin;
 tp = t(indices);
 varargout = cellfun(@(x) x(indices),varargin,'uniformoutput',false);
 

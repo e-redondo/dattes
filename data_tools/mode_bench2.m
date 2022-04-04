@@ -25,7 +25,7 @@ seuilU2 = 2*seuilU;
 
 %FUSION DE STEPS COURTS (profil)
 %trouver des Steps courts et les fusionner
-Is = [phases.duree]<=1;
+Is = [phases.duration]<=1;
 Idebut = Is & ~[0 Is(1:end-1)];%step actuel est court et celui d'avant non
 Ifin = Is & ~[Is(2:end) 0];%step actuel est court et celui d'apres non
 Debuts = find(Idebut);
@@ -38,9 +38,9 @@ Fins = Fins(nbSteps>10);
 
 newStep = Step;
 for ind = 1:length(Debuts)
-    tDebut = phases(Debuts(ind)).tIni;%debut de la premiere phase courte
-    tFin = phases(Fins(ind)).tFin;%fin de la derniere phase courte
-    indices = t>=tDebut & t<=tFin;%FIX: effet de bord?
+    tDebut = phases(Debuts(ind)).t_ini;%debut de la premiere phase courte
+    t_fin = phases(Fins(ind)).t_fin;%fin de la derniere phase courte
+    indices = t>=tDebut & t<=t_fin;%FIX: effet de bord?
 %     newValue = phases(Debuts(ind)).modes;
     newStep(indices) = -1;%marquage profil
 end
