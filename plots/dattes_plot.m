@@ -40,7 +40,7 @@ end
 if ismember('C',options)
     %show result of 'C', i.e. Capacity
     %TODO: InherOptions
-    plotCapa(result.Capa, result.CapaRegime);
+    plot_capacity(result.Capa, result.CapaRegime);
     title(XMLfile,'interpreter','none')
 end
 if ismember('P',options)

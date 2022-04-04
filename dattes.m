@@ -151,16 +151,7 @@ end
 
 %% 3. Capacity measurements at different C-rates 1C, C/2, C/5....
 if ismember('C',options)
-    %3.1- CC capacity (constant current)
-    [Capa, CapaRegime] = ident_Capa2(phases,config,InherOptions);
-    result.Capa = Capa;
-    result.CapaRegime = CapaRegime;
-    
-    %3.2- CV capacity (constant voltage)
-    [UCV, dCV, CapaCV] = ident_CapaCV(t,U,config,phases,InherOptions);
-    result.UCV = UCV;
-    result.dCV = dCV;
-    result.QCV = CapaCV;
+    [Capa, CapaRegime, UCV, dCV, CapaCV] = ident_capacity(config,phases,InherOptions);
 end
 
 %% 5. SOC
@@ -258,7 +249,7 @@ end
 %% 8. Save results
 if ismember('s',options)
     if ismember('v',options)
-        fprintf('dattes:sauvegarde...');
+        fprintf('dattes: save result...');
     end
     %sauvegarde de resultat,config,phases dans XMLfile_result.mat
     save_result(result,config,phases);

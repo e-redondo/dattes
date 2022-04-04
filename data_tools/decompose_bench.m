@@ -56,14 +56,26 @@ for ind = 1:length(tcell)
     thist = tcell{ind};
     thisI = Icell{ind};
     thisU = Ucell{ind};
-    
-    phases(ind).capa = calculCapa(thist,thisI);
-    phases(ind).tIni = thist(1);
-    phases(ind).tFin = thist(end);
-    phases(ind).duree = phases(ind).tFin - phases(ind).tIni;
+    if ind==22
+        fprintf('here\n');
+    end
+    phases(ind).t_ini = thist(1);
+    phases(ind).t_fin = thist(end);
+    phases(ind).duration = phases(ind).t_fin - phases(ind).t_ini;
     phases(ind).Uini = thisU(1);
     phases(ind).Ufin = thisU(end);
-    phases(ind).Imoy = phases(ind).capa*3600/phases(ind).duree;
+    if phases(ind).duration==0
+        %TODO better error detectio, if length thist==1, try to merge into
+        %preceding or posponing phase
+        phases(ind).Iavg = thisI(1);
+        phases(ind).Uavg = thisU(1);
+        phases(ind).capacity = 0;
+    else
+        phases(ind).Iavg = trapz(thist,thisI)/phases(ind).duration;
+        phases(ind).Uavg = trapz(thist,thisU)/phases(ind).duration;
+        phases(ind).capacity = phases(ind).Iavg*phases(ind).duration/3600;
+    end
+
     phases(ind).modes = modes(ind);
 end
 if ismember('v',options)
@@ -76,26 +88,26 @@ if ismember('g',options)
 end
 end
 
-function Capa = calculCapa(t,I)
-%calculCapa calcul des amperes heure en integrant le courant versus le temps
-% Capa = calculCapa(t,I)
-% parameters d'entree: 
-% t ([nx1] double): temps en secondes
-% I ([nx1] double): courant en amperes
-% sortie:
-% Capa ([1x1] double): valeur de l'integration Ah
-if iscell(t)
-    fprintf('essaye: Q = cellfun(@calculCapa,t,I,''UniformOutput'' , false\n');
-    error('il faut mettre a jour le typage, vecteurs au lieu de cellules');
-end
-if ~isequal(size(t),size(I))
-    error('taille de vecteurs incompatible')
-end
-if isempty(t)
-    Capa = [];return;
-end
-if length(t)==1
-    Capa = 0;return;
-end
-    Capa = trapz(t,I)/3600;     %integration numerique du type trapeizoidal du courant par rapport au temps
-end
+% function Capa = calculCapa(t,I)
+% %calculCapa calcul des amperes heure en integrant le courant versus le temps
+% % Capa = calculCapa(t,I)
+% % parameters d'entree: 
+% % t ([nx1] double): temps en secondes
+% % I ([nx1] double): courant en amperes
+% % sortie:
+% % Capa ([1x1] double): valeur de l'integration Ah
+% if iscell(t)
+%     fprintf('essaye: Q = cellfun(@calculCapa,t,I,''UniformOutput'' , false\n');
+%     error('il faut mettre a jour le typage, vecteurs au lieu de cellules');
+% end
+% if ~isequal(size(t),size(I))
+%     error('taille de vecteurs incompatible')
+% end
+% if isempty(t)
+%     Capa = [];return;
+% end
+% if length(t)==1
+%     Capa = 0;return;
+% end
+%     Capa = trapz(t,I)/3600;     %integration numerique du type trapeizoidal du courant par rapport au temps
+% end

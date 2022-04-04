@@ -24,6 +24,7 @@ if ismember('e',options)%enable = addpath
     addpath(fullfile(srcdir,'data_tools'));
     addpath(fullfile(srcdir,'data_tools','bitrode'));
     addpath(fullfile(srcdir,'data_tools','biologic'));
+    addpath(fullfile(srcdir,'ident'));
     addpath(fullfile(srcdir,'math_tools'));
     addpath(fullfile(srcdir,'plots'));
     addpath(fullfile(srcdir,'results'));
@@ -45,6 +46,7 @@ if ismember('d',options)%disable = rmpath
     rmpath(fullfile(srcdir,'data_tools'));
     rmpath(fullfile(srcdir,'data_tools','bitrode'));
     rmpath(fullfile(srcdir,'data_tools','biologic'));
+    rmpath(fullfile(srcdir,'ident'));
     rmpath(fullfile(srcdir,'math_tools'));
     rmpath(fullfile(srcdir,'plots'));
     rmpath(fullfile(srcdir,'results'));
