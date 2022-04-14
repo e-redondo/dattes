@@ -46,7 +46,7 @@ end
 if ismember('P',options)
     %show result of 'P', i.e pseudoOCV
     %TODO: InherOptions
-    plotPOCV(result.pDoD, result.pOCV, result.pUCi, result.pUDi)
+    plot_pocv(result.pDoD, result.pOCV, result.pUCi, result.pUDi)
 end
 if ismember('O',options)
     %show result of 'O', i.e. OCV by points

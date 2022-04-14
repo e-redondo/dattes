@@ -186,7 +186,7 @@ end
 
 %6.1. pseudo ocv
 if ismember('P',options)
-    [pOCV, pDoD, pPol,pEff,pUCi,pUDi,pRegime] = ident_pOCV(t,U,DoDAh,config,phases,InherOptions);
+    [pOCV, pDoD, pPol,pEff,pUCi,pUDi,pRegime] = ident_pocv(t,U,DoDAh,config,phases,InherOptions);
     %sauvegarder les resultats
     result.pOCV = pOCV;
     result.pDoD = pDoD;
