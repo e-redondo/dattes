@@ -56,7 +56,7 @@ end
 if ismember('E',options)
     %show result of 'E', i.e. Efficiency
     %TODO: InherOptions
-    plotEffi(result.pDoD,result.pEff);
+    plot_eff(result.pDoD,result.pEff);
 end
 if ismember('R',options)
     %show result of 'R', i.e. Resistance
