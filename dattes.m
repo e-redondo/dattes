@@ -212,11 +212,12 @@ end
 %6.3. impedances
 %6.3.1. resistance
 if ismember('R',options)
-    [R, RDoD, RRegime] = ident_R2(t,U,I,DoDAh,config,InherOptions);
+    [R, RDoD, RRegime, Rt] = ident_r(t,U,I,DoDAh,config,phases,InherOptions);
     %impedances
     result.R = R;
     result.RDoD = RDoD;
     result.RRegime = RRegime;
+    result.Rt = Rt;
 end
 %6.3.2. CPE
 if ismember('W',options)

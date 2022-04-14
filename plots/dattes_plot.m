@@ -61,7 +61,7 @@ end
 if ismember('R',options)
     %show result of 'R', i.e. Resistance
     %TODO: InherOptions
-    plotR(result.R, result.RDoD,result.RRegime);
+    plot_r(result.R, result.RDoD,result.RRegime);
 end
 if ismember('W',options)
     %show result of 'W', i.e. impedance

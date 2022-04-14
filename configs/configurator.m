@@ -154,7 +154,7 @@ config.pCapaDV = pCapaDV;
 config.pCapaCV = pCapaCV;
 %ident_R2
 config.pR = pR;
-config.tR = tFins(pRr);%temps de fins de repos immediatememnt anterieur
+%config.tR = tFins(pRr);%temps de fins de repos immediatememnt anterieur
 %ident_CPE2
 config.tW = tFins(pWr);%temps de fins de repos immediatememnt anterieur
 config.pW = pW;
