@@ -200,7 +200,7 @@ end
 
 %6.2. ocv by points
 if ismember('O',options)
-    [OCVp, DoDp, tOCVp, Ipsign] = ident_OCVr2(t,U,DoDAh,m,config,phases,InherOptions);
+    [OCVp, DoDp, tOCVp, Ipsign] = ident_ocvp(t,U,DoDAh,m,config,phases,InherOptions);
     %OCVs
     result.OCVp = OCVp;
     result.DoDp = DoDp;

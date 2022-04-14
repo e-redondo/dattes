@@ -78,6 +78,7 @@ IfinRepos = m==3 & [m(2:end);0]~=3;
 Imin = U<=(config.Umin+0.02);
 Imax = U>=config.Umax-0.02;%BRICOLE essai 20171211_1609 HONORAT
 %instants a SoC100 (ou presque I100cc: fin de charge CC)
+%TODO: add config.Iendcv (typically C/20).
 I100 = Ifincv & Imax;
 I100cc = Ifincc & Imax;%ca marche pas pour LYP
 %instants a SoC0 (ou presque I0cc: fin de decharge CC)
