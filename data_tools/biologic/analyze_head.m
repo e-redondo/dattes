@@ -26,7 +26,8 @@ ligne = regexprep(ligne,'Ece/V','Ece{V}');%IFPen dans SIMCAL
 ligne = regexprep(ligne,'z cycle','z_cycle');%202101 v1.31 MB et autres?
 ligne(ligne==65533)='u';%v10.40 'micro' par 'u'
 %BT-Lab
-ligne(ligne=='µ')='u';%EC-LAB mars 2021
+%ligne(ligne=='µ')='u';%EC-LAB mars 2021
+ligne(ligne==181)='u';%EC-LAB mars 2021, adapted to octave
 ligne = strrep(ligne,'°C','degC');%BT-LAB mars 2021
 ligne = strrep(ligne,'Temperature/degC','Temperature{degC}');%BT-LAB mars 2021
 ligne = strrep(ligne,'Ecell/V','U{V}');%OVC SCGPL

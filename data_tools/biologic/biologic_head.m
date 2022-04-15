@@ -38,7 +38,7 @@ dateEssai = '';
 ligneDate = regexpFiltre(tete,'^Acquisition started on : ');
 if ~isempty(ligneDate)
     dateEssai = regexprep(ligneDate{1},'^Acquisition started on : ','');
-    aNum = datenum(dateEssai);%default date format in MATLAB = Biologic MM/DD/YY
+    aNum = datenum(dateEssai,'mm/dd/yyyy HH:MM:SS');%default date format in MATLAB = Biologic MM/DD/YY
     dateEssai = datestr(aNum,'yymmdd_HHMMSS.FFF');%v10.23
 else%try to deduct date time from filename
     %try on filename
