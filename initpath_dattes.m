@@ -31,12 +31,10 @@ if ismember('e',options)%enable = addpath
     
     %if no VEHLIB is found in this computer add minimal dependencies
     if isempty(which('initpath'))
-        msg = ['No VEHLIB found in this computer. '...
-              'Adding vehlib_minimal dependencies'];
+        fprintf('No VEHLIB found in this computer. '...
+              'Adding vehlib_minimal dependencies')
         
-        warning(msg)
-        
-        fprintf('Please consider getting VEHLIB at https:/framagit.org/vehlib\n')
+        fprintf('If you are interested in energy management for electrified vehicles, please consider getting VEHLIB at https:/framagit.org/eco7/vehlib\n')
         addpath(fullfile(srcdir,'vehlib_minimal'));
     end
 end
