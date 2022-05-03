@@ -152,6 +152,11 @@ end
 %% 3. Capacity measurements at different C-rates 1C, C/2, C/5....
 if ismember('C',options)
     [Capa, CapaRegime, UCV, dCV, CapaCV] = ident_capacity(config,phases,InherOptions);
+    result.Capa = Capa;
+    result.CapaRegime = CapaRegime;
+    result.UCV = UCV;
+    result.dCV = dCV;
+    result.QCV = CapaCV;
 end
 
 %% 5. SOC
