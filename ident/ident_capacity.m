@@ -1,21 +1,21 @@
-function [Capa, Regime, UCV, dCV, CapaCV] = ident_capacity(config,phases,options)
+function [cc_capacity, cc_crate, cc_time, cc_duration, cv_capacity, cv_voltage, cv_time, cv_duration] = ident_capacity(config,phases,options)
 %ident_capacity capacity identification
-% [Capa, Regime, UCV, dCV, CapaCV] = ident_capacity(config,phases,options)
+% [capacity, capacity_rate, capa_time, cv_voltage, cv_duration, cv_capacity, cv_time] = ident_capacity(config,phases,options)
 %
 % INPUTS:
-% t (mx1) time vector (seconds)
-% U (mx1) voltage vector (Volts)
+% config (1x1) configuration structure from configurator
 % phases (1xn) phases array structure from decompose_bench
-% config (1x1) configuraiton structure from configurator
 % options (string) containing:
 %   - 'v': verbose, tell what you do
 %
 % OUTPUTS:
-% Capa (1xk) double: CC capacity measurements
-% Regime (1xk) double: C-Rate of each CC capacity measurement
-% UCV (1xj) double: voltage of each CV phase
-% dCV (1xj) double: duration of each CV phase
-% CapaCV (1xj) double: reisdual capacity of each CV phase
+% cc_capacity (1xk) double: CC capacity measurements
+% cc_crate (1xk) double: C-Rate of each CC capacity measurement
+% cc_time (1xk) double: time of each CC capacity measurement
+% cv_voltage (1xj) double: voltage of each CV phase
+% cv_duration (1xj) double: duration of each CV phase
+% cv_capacity (1xj) double: residual capacity of each CV phase
+% cv_time (1xj) double: time of each CV phase
 %
 % See also dattes, decompose_bench, configurator, plot_capacity
 
@@ -28,8 +28,8 @@ end
 if ismember('v',options)
     fprintf('ident_capacity:...');
 end
-Capa = [];
-Regime = [];
+cc_capacity = [];
+cc_crate = [];
 %gestion d'erreurs:
 if nargin<2 || nargin>3
     fprintf('ident_capacity:nombre incorrect de parametres, trouves %d\n',nargin);
@@ -49,14 +49,19 @@ if ~isfield(phases,'capacity') || ~isfield(phases,'duration') || ~isfield(phases
 end
 
 %CC part
-Capa = abs([phases(config.pCapaD | config.pCapaC).capacity]);
-Regime = [phases(config.pCapaD | config.pCapaC).Iavg]./config.Capa;
+phasesCC = phases(config.pCapaD | config.pCapaC);
+cc_capacity = abs([phasesCC.capacity]);
+cc_crate = [phasesCC.Iavg]./config.Capa;
+cc_time = [phasesCC.t_ini];
+cc_duration = [phasesCC.duration];
 
 %CV part
 phasesCV = phases(config.pCapaDV | config.pCapaCV);
-CapaCV = abs([phases(config.pCapaDV | config.pCapaCV).capacity]);
-dCV = [phasesCV.duration];
-UCV = [phasesCV.Uavg];
+cv_capacity = abs([phasesCV.capacity]);
+cv_voltage = [phasesCV.Uavg];
+cv_time = [phasesCV.t_ini];
+cv_duration = [phasesCV.duration];
+
 % for ind = 1:length(phasesCV)
 %     [tp,Up] = get_phase(phasesCV(ind),t,U);
 %     
