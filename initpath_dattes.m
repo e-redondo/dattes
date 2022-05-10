@@ -22,6 +22,7 @@ if ismember('e',options)%enable = addpath
     %subfolders
     addpath(fullfile(srcdir,'configs'));
     addpath(fullfile(srcdir,'data_tools'));
+    addpath(fullfile(srcdir,'data_tools','arbin'));
     addpath(fullfile(srcdir,'data_tools','bitrode'));
     addpath(fullfile(srcdir,'data_tools','biologic'));
     addpath(fullfile(srcdir,'ident'));
@@ -44,6 +45,7 @@ if ismember('d',options)%disable = rmpath
     rmpath(srcdir);
     rmpath(fullfile(srcdir,'configs'));
     rmpath(fullfile(srcdir,'data_tools'));
+    rmpath(fullfile(srcdir,'data_tools','arbin'));
     rmpath(fullfile(srcdir,'data_tools','bitrode'));
     rmpath(fullfile(srcdir,'data_tools','biologic'));
     rmpath(fullfile(srcdir,'ident'));

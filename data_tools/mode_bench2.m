@@ -61,6 +61,7 @@ if ismember('g',options)
 end
 end
 
+
 function  m  = quelMode(t,U,I,sU,sI)
 %fonction pour les cas des points non isoles length(t)>1
 %si max(abs(I))<sI/2 >>> m=3
@@ -130,9 +131,11 @@ end
 function indCCCV = findCCCV(t,I)
 %experimentalement  j'ai trouve que la transition CCCV se produit avant le
 %pic de dIdt, il faut trouver le premier 'zero' de dIdt avant le pic:
-if length(unique(diff(t)))~=1
-    warning('vector sampled with variable frequency')
-end
+
+%DEBUG
+% if length(unique(diff(t)))~=1
+%     warning('vector sampled with variable frequency')
+% end
 %1.-calcul de dIdt:
 dIdt = moving_derivative(t,I,5*(t(2)-t(1)));%ordre 5, TODO: fixer, configurer?
 %2 Filtrer:
