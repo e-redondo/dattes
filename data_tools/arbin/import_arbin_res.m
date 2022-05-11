@@ -94,24 +94,21 @@ if isempty(corps)
 end
 fprintf('Channel_Normal_Table: %s OK\n',csvFile);
 
-%3.- prendre Auxiliary_Table, lire et trier par data_point (TODO)
-%3.0- consulter quelles variables sont mappees dans cette voie (TODO)
-%3.1- verifier son existence (TODO)
-%3.2- lire (TODO)
-%3.3- trier par data_point (TODO)
+%3.- take Auxiliary_Table, read and classify by data_point
 csvFile = fullfile(D,F,'Auxiliary_Table.csv');
 [tete1, corps1] = read_aux_table(csvFile);
 
-%4.-merge Channel_Normal_Table and Auxiliary_Table
-%4.1 Check if datapoints are equal:
-if isequal(corps(:,2),corps1(:,1))
-    corps = [corps, corps1(:,2:end)];
-    tete = [tete, tete1(2:end)];
-else
-    %if not, do not merge
-    fprintf('ERROR: Data_Point and Aux_Data_Point are not equal\n');
+if ~isempty(corps1)
+    %4.-merge Channel_Normal_Table and Auxiliary_Table
+    %4.1 Check if datapoints are equal:
+    if isequal(corps(:,2),corps1(:,1))
+        corps = [corps, corps1(:,2:end)];
+        tete = [tete, tete1(2:end)];
+    else
+        %if not, do not merge
+        fprintf('ERROR: Data_Point and Aux_Data_Point are not equal\n');
+    end
 end
-
 %5.-lire les metadonnees dans les autres fichiers csv (TODO)
 
 %6.-construire la structure XML
@@ -225,6 +222,12 @@ I = ~cellfun(@isempty,tete1);
 tete1 = tete1(I);
 corps1 = fscanf(fid,'%f');
 fclose(fid);
+
+if isempty(corps1)
+    corps1 = [];
+    tete1 = [];
+    return;
+end
 %TODO gerer l'erreur de taille de corps ici
 corps1 = reshape(corps1,length(tete1),[])';
 

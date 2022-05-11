@@ -14,7 +14,7 @@ function [head, body, empty_mpt] = read_biologic_file(fid,just_head)
 %
 % See also import_biologic
 
-if ~exist('onlyTete','var')
+if ~exist('just_head','var')
     just_head = false;
 end
 %initialisation des sorties
