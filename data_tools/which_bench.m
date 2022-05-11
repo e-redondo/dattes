@@ -57,7 +57,29 @@ if strncmp(line1,'Total Time,Cycle,Loop Counter #1',32)
     fseek(fid,-100,1);
     s=fread(fid,inf, 'uint8=>char')';
     s = regexp(s,'\n','split');
-    %put last last in 'line2'
+    %put last line in 'line2'
+    line2 = s{end};
+    %rewind the file
+    fseek(fid,0,-1);
+    return
+elseif ~isempty(regexp(line1,'^"Total Time, S"','match'))
+    bench = 'bitrode_csv_v2';
+    %find last line:
+    fseek(fid,-100,1);
+    s=fread(fid,inf, 'uint8=>char')';
+    s = regexp(s,'\n','split');
+    %put last line in 'line2'
+    line2 = s{end};
+    %rewind the file
+    fseek(fid,0,-1);
+    return
+elseif ~isempty(regexp(line1,'^Test Name','match'))
+    bench = 'bitrode_csv_with_header';
+    %find last line:
+    fseek(fid,-100,1);
+    s=fread(fid,inf, 'uint8=>char')';
+    s = regexp(s,'\n','split');
+    %put last line in 'line2'
     line2 = s{end};
     %rewind the file
     fseek(fid,0,-1);
