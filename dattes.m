@@ -238,7 +238,7 @@ end
 
 %6.4. ICA/DVA
 if ismember('I',options)
-    [ICAC, ICAD] = ident_ICA(t,U,DoDAh,m,config,phases,InherOptions);
+    [ICAC, ICAD] = ident_ica(t,U,DoDAh,m,config,phases,InherOptions);
     %sauvegarder les resultats
     result.ICAC = ICAC;
     result.ICAD = ICAD;
