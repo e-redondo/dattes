@@ -27,12 +27,16 @@ if ismember('e',options)%enable = addpath
     addpath(fullfile(srcdir,'data_tools','biologic'));
     addpath(fullfile(srcdir,'ident'));
     addpath(fullfile(srcdir,'math_tools'));
+    if isempty(which('butter'))
+        fprintf('DATTES (initpath_dattes): Adding butter function from Octave signal package.\n')
+        addpath(fullfile(srcdir,'math_tools','octave'));
+    end
     addpath(fullfile(srcdir,'plots'));
     addpath(fullfile(srcdir,'results'));
     
     %if no VEHLIB is found in this computer add minimal dependencies
     if isempty(which('initpath'))
-        fprintf('No VEHLIB found in this computer. ');
+        fprintf('DATTES (initpath_dattes): No VEHLIB found in this computer. ');
         fprintf('Adding vehlib_minimal dependencies...\n');
         
         fprintf('If you are interested in energy management for electrified vehicles,\n')
@@ -52,11 +56,16 @@ if ismember('d',options)%disable = rmpath
     rmpath(fullfile(srcdir,'plots'));
     rmpath(fullfile(srcdir,'results'));
     
-    %remove vehlib_minimal only if it was added before:
+    %remove octave only if it was added before:
     P = path;
+    if ~isempty(strfind(P,fullfile(srcdir,'math_tools','octave')))
+        rmpath(fullfile(srcdir,'math_tools','octave'));
+    end
+    %remove vehlib_minimal only if it was added before:
     if ~isempty(strfind(P,fullfile(srcdir,'vehlib_minimal')))
         rmpath(fullfile(srcdir,'vehlib_minimal'));
     end
+    
 end
 
 end
