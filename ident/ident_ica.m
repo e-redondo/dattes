@@ -1,4 +1,4 @@
-function [ICAC, ICAD] = ident_ica(t,U,DoDAh,m,config,phases,options)
+function [ica] = ident_ica(t,U,DoDAh,config,phases,options)
 %ident_ICA interface entre RPT et essaiICA
 % See also RPT, essaiICA, configurator2
 if ~exist('options','var')
@@ -6,24 +6,25 @@ if ~exist('options','var')
 end
 
 %TODO check inputs
-phasesICAC = phases(config.pICAC);
-phasesICAD = phases(config.pICAD);
+% phasesICAC = phases(config.pICAC);
+% phasesICAD = phases(config.pICAD);
 
-
+%both charge and discharge phases:
+phasesICA = phases(config.pICAC | config.pICAD);
 %charge
-ICAC = struct;
-for ind = 1:length(phasesICAC)
-    [tp,Up,DoDAhp] = get_phase(phasesICAC(ind),t,U,DoDAh);
+ica = struct;
+
+%filter params:
+N = config.n_filter;%30
+wn = config.wn_filter;%0.1
+f_type = config.filter_type;%'G'
+
+for ind = 1:length(phasesICA)
+    [tp,Up,DoDAhp] = get_phase(phasesICA(ind),t,U,DoDAh);
     
-    [xi,yi,yf,dydx] = calcul_ica(DoDAhp,Up,config.Capa/100,30,5,'Gg');
-    [ICAC(ind).dQdU, ICAC(ind).dUdQ, ICAC(ind).Q, ICAC(ind).U] = essaiICA(tp,DoDAhp,Up,config,options);
-end
-%decharge
-ICAD = struct;
-for ind = 1:length(phasesICAD)
-    [tp,Up,DoDAhp] = get_phase(phasesICAD(ind),t,U,DoDAh);
-    
-    [ICAD(ind).dQdU, ICAD(ind).dUdQ, ICAD(ind).Q, ICAD(ind).U] = essaiICA(tp,DoDAhp,Up,config,options);
+    [ica(ind).dqdu, ica(ind).dudq, ica(ind).q, ica(ind).u] = calcul_ica(tp,DoDAhp,Up,N,wn,f_type);
+    ica(ind).crate = phasesICA(ind).Iavg/config.Capa;
+    ica(ind).time = phasesICA(ind).t_fin;
 end
 
 end

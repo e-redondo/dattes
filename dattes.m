@@ -238,10 +238,9 @@ end
 
 %6.4. ICA/DVA
 if ismember('I',options)
-    [ICAC, ICAD] = ident_ica(t,U,DoDAh,m,config,phases,InherOptions);
+    ica = ident_ica(t,U,DoDAh,config,phases,InherOptions);
     %sauvegarder les resultats
-    result.ICAC = ICAC;
-    result.ICAD = ICAD;
+    result.ica = ica;
 end
 
 %% 7. test temperature

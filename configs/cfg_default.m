@@ -23,9 +23,10 @@ config.dodminOCVr = 0.01;%delta soc min prise de point OCV en p.u. (0.01 = 1% so
 config.dQ = config.Capa/100;%dQ pour essaiICA
 config.dU = (config.Umax-config.Umin)/100;%dU pour essaiICA
 config.regimeICAmax = 0.25;%regime max pour ICA
-config.TsICA = 1;%sample time pour ICA
-config.TcICA = 20;%cut period (inverse de cut frequency pour ICA
-config.nFilterICA=3;%ordre du filtre pour la tension
+config.n_filter=3;%filter order
+config.wn_filter=0.1;%filter cut frequency
+config.filter_type='G';%filter type ('G' = gaussian)
+
 %pseudoOCV
 config.regimeOCVmax = 0.21;%regime max pour pseudoOCV (C/5)
 config.regimeOCVmin = 0.19;%regime max pour pseudoOCV (C/5)
