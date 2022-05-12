@@ -68,5 +68,10 @@ if ismember('W',options)
     %TODO: InherOptions
     plotCPE(result.CPEQ, result.CPEalpha,result.CPEDoD, result.CPERegime);
 end
+if ismember('I',options)
+    %show result of 'I', i.e. ica
+    %TODO: InherOptions
+    plot_ica(result.ica);
+end
 
 end
