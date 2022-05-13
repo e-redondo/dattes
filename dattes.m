@@ -23,7 +23,7 @@ function [result, config, phases] = dattes(xml_file,cfg_file,options)
 %   -'C': Capacity measurement
 %   -'S': SoC calculation
 %   -'R': Resistance identification
-%   -'W': CPE impedance identification (Warburg or other)
+%   -'Z': impedance identification (CPE, Warburg or other)
 %   -'P': peudoOCV (low current charge/discharge cycles)
 %   -'O': OCV by points (partial charge/discharges followed by rests)
 %   -'I': ICA/DVA
@@ -228,10 +228,11 @@ if ismember('R',options)
     result.Rt = Rt;
 end
 %6.3.2. CPE
-if ismember('W',options)
-    [CPEQ, CPEalpha, CPEDoD, CPERegime] = ident_CPE2(t,U,I,DoDAh,config,InherOptions);
+if ismember('Z',options)
+    [CPEQ, CPEalpha, CPER, CPEDoD, CPERegime] = ident_cpe(t,U,I,DoDAh,config,InherOptions);
     result.CPEQ = CPEQ;
     result.CPEalpha = CPEalpha;
+    result.CPER = CPER;
     result.CPEDoD = CPEDoD;
     result.CPERegime = CPERegime;
 end
