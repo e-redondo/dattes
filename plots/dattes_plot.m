@@ -63,10 +63,10 @@ if ismember('R',options)
     %TODO: InherOptions
     plot_r(result.R, result.RDoD,result.RRegime);
 end
-if ismember('W',options)
-    %show result of 'W', i.e. impedance
+if ismember('Z',options)
+    %show result of 'Z', i.e. impedance
     %TODO: InherOptions
-    plotCPE(result.CPEQ, result.CPEalpha,result.CPEDoD, result.CPERegime);
+    plot_cpe(result.CPEQ, result.CPEalpha,result.CPEDoD, result.CPERegime);
 end
 if ismember('I',options)
     %show result of 'I', i.e. ica
