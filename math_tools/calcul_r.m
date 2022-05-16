@@ -132,9 +132,9 @@ elseif any(diff(t)<= 0)
         if max(tpulse)-min(tpulse)<t_calcul_R(ind)
             continue
         else
-            w = tpulse-tpulse(1);                               %poids d'interpolation polynominal pour le pulse, les points loin de l'impulse de courant ont un poids plus eleve
+            w = abs(tpulse-tpulse(end));                               %poids d'interpolation polynominal pour le pulse, les points loin de l'impulse de courant ont un poids plus eleve
             Ural_pul = fitting_pol2(tpulse,Upulse,instant_end_rest+t_calcul_R(ind),w);%U ralonge pour le pulse, ont extrapole le point a l'instant de l'impulse
-            w = trepos-trepos(1);
+            w = abs(trepos-trepos(1));
             Ural_rep = fitting_pol2(trepos,Urepos,instant_end_rest+t_calcul_R(ind),w);%U ralonge pour le repos,ont extrapole le point a l'instant de l'impulse
             
             R_I(end+1) = mean(Ipulse);                                 %le courant d'estimation de la resistance est la moyenne du courant (filtrer le bruit)
@@ -176,10 +176,10 @@ end
 function montrer_resultats(t,U,I,instant_end_rest,Ural_pul,Ural_rep,R_I,tpulse,Upulse,trepos,Urepos,t_calcul_R)
 %en fonction du SOC
 figure,
-w = tpulse-tpulse(1);
-Ural_pul_syn = fittingPol2(tpulse,Upulse,tpulse+t_calcul_R,w);%U ralonge pour le pulse
-w = trepos-trepos(1);
-Ural_rep_syn = fittingPol2(trepos,Urepos,trepos+t_calcul_R,w);%U ralonge pour le repos
+w = abs(tpulse-tpulse(end));  
+Ural_pul_syn = fitting_pol2(tpulse,Upulse,tpulse+t_calcul_R,w);%U ralonge pour le pulse
+w = abs(trepos-trepos(1));
+Ural_rep_syn = fitting_pol2(trepos,Urepos,trepos+t_calcul_R,w);%U ralonge pour le repos
 
 subplot(211),plot(t-instant_end_rest,U,'.-',0,Ural_pul,'r^',0,Ural_rep,'rs'),hold on
 subplot(211),plot(tpulse-instant_end_rest,Ural_pul_syn,'m.-',trepos-instant_end_rest+t_calcul_R,Ural_rep_syn,'c.-'),hold on

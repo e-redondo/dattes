@@ -19,6 +19,7 @@ if ismember('v',options)
 end
 CPEQ = [];
 CPEalpha = [];
+CPER = [];
 CPEDoD = [];
 CPERegime = [];
 
@@ -67,7 +68,9 @@ for ind = 1:length(config.tW)
         Uocv = zeros(size(Up));
     end
     %TODO: correction chute ohmique
-    [R, RRegime] = calcul_r(tp,Up,Ip,config.tW(ind),config.tminR,config.tminWr);
+%     [R, RRegime] = calcul_r(tp,Up,Ip,config.tW(ind),config.tminR,config.tminWr);
+%     [R, RRegime] = calcul_r(tp,Up,Ip,DoDAhp,tp(find(tp==trepos(end))+1),config.minimal_duration_pulse,config.minimal_duration_rest_before_pulse,0);
+    [R, RRegime] = calcul_r(tp,Up,Ip,DoDAhp,trepos(end),config.minimal_duration_pulse,config.minimal_duration_rest_before_pulse,0);
     Ur = zeros(size(Up));
     Ur = Ip*R;
     %applique les corrections:

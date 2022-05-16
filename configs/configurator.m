@@ -132,7 +132,8 @@ Ipulse = m==1 & [0; m(1:end-1)]==3;
 
 %5.1.- mode CC et dernier point avant en repos (3)
 pR = ismember(tInis,t(Ipulse))& durees<=config.maximal_duration_pulse;
-pW = pR;
+pW = ismember(tInis,t(Ipulse));
+
 %5.2.- duree minimale pour pR, tminR (10secondes); pour pW, tminW (300sec)
 pR = pR & durees>=config.minimal_duration_pulse;
 pW = pW & durees>=config.tminW;
