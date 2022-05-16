@@ -13,6 +13,7 @@ config.tminRr = 9;%duree min repos avant
 config.tminW = 299;%duree min d'un pulse pour diffusion
 config.tminWr = 299;%duree min repos avant
 config.CPEafixe = 0.5;%ident CPE2: valeur d'alpha du CPE (si = zero, alpha non fixe).
+config.ident_z = @ident_cpe;%fcn handler for impedance identification
 
 %ident_OCVr
 config.tminOCVr = 35;%duree min repos pour prise de point OCV

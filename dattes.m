@@ -62,7 +62,7 @@ function [result, config, phases] = dattes(xml_file,cfg_file,options)
 % dattes(XMLfile,CFGfile,'As'), fait tout: lecture, config, tous les calculs,
 % sauvegarde de resultats.
 %
-% See also extractBanc, decoupeBanc, ident_Capa2, ident_OCVr2, ident_R2,
+% See also extract_bench, decoupeBanc, ident_Capa2, ident_OCVr2, ident_R2,
 % ident_CPE2
 
 %TODO: review results' structure
@@ -112,7 +112,6 @@ if iscell(xml_file)
     [result, config, phases] = compil_result(result, config, phases);
     return;
 end
-
 
 %% 1. LOAD
 %1.0.- load previous results (if they exist)
@@ -229,7 +228,8 @@ if ismember('R',options)
 end
 %6.3.2. CPE
 if ismember('Z',options)
-    [CPEQ, CPEalpha, CPER, CPEDoD, CPERegime] = ident_cpe(t,U,I,DoDAh,config,InherOptions);
+    ident_z = config.ident_z;
+    [CPEQ, CPEalpha, CPER, CPEDoD, CPERegime] = ident_z(t,U,I,DoDAh,config,InherOptions);
     result.CPEQ = CPEQ;
     result.CPEalpha = CPEalpha;
     result.CPER = CPER;
