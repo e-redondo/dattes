@@ -24,11 +24,11 @@ if nargin<6 || nargin>7
 end
 if ~isstruct(config) || ~ischar(options) || ~isnumeric(t) ...
         || ~isnumeric(U) || ~isnumeric(I) || ~isnumeric(DoDAh)
-    fprintf('ident_R2:type de parametres, incorrect\n');
+    fprintf('ident_r:type de parametres, incorrect\n');
     return;
 end
-if ~isfield(config,'minimal_duration_rest_before_pulse') || ~isfield(config,'minimal_duration_pulse') || ~isfield(config,'instant_end_rest')
-    fprintf('ident_R2:structure config incomplete\n');
+if ~isfield(config,'pR') || ~isfield(config,'minimal_duration_rest_before_pulse') || ~isfield(config,'minimal_duration_pulse') || ~isfield(config,'instant_end_rest')
+    fprintf('ident_r:structure config incomplete\n');
     return;
 end
 %%

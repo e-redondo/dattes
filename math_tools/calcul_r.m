@@ -1,6 +1,6 @@
-function [Rp, R_I,Rt,RDoD,Rdt,err] = calculR(t,U,I,DoDAh,instant_end_rest,duration_pulse,duration_repos,t_calcul_R,graph)
+function [Rp, R_I,Rt,RDoD,Rdt,err] = calcul_r(t,U,I,DoDAh,instant_end_rest,duration_pulse,duration_repos,t_calcul_R,graph)
 %--------------------------------------------------------------------------
-%function [Rp R_I] = calculR(t,I,U,ind_fin_repos,duration_pulse,graph)
+%function [Rp, R_I,Rt,RDoD,Rdt,err] = calcul_r(t,U,I,DoDAh,instant_end_rest,duration_pulse,duration_repos,t_calcul_R,graph)
 % fonction pour calculer la resistance vu par un pulse
 % vu le front montant(impulsion) de courant du pulse, on va interpoller separement les
 % points de la phase de repos et les points de la phase pulse pour
@@ -133,9 +133,9 @@ elseif any(diff(t)<= 0)
             continue
         else
             w = tpulse-tpulse(1);                               %poids d'interpolation polynominal pour le pulse, les points loin de l'impulse de courant ont un poids plus eleve
-            Ural_pul = fittingPol2(tpulse,Upulse,instant_end_rest+t_calcul_R(ind),w);%U ralonge pour le pulse, ont extrapole le point a l'instant de l'impulse
+            Ural_pul = fitting_pol2(tpulse,Upulse,instant_end_rest+t_calcul_R(ind),w);%U ralonge pour le pulse, ont extrapole le point a l'instant de l'impulse
             w = trepos-trepos(1);
-            Ural_rep = fittingPol2(trepos,Urepos,instant_end_rest+t_calcul_R(ind),w);%U ralonge pour le repos,ont extrapole le point a l'instant de l'impulse
+            Ural_rep = fitting_pol2(trepos,Urepos,instant_end_rest+t_calcul_R(ind),w);%U ralonge pour le repos,ont extrapole le point a l'instant de l'impulse
             
             R_I(end+1) = mean(Ipulse);                                 %le courant d'estimation de la resistance est la moyenne du courant (filtrer le bruit)
             Rp(end+1) = (Ural_pul-Ural_rep)/R_I(end);                       %la resistance est la difference de potentiel entre le repos et le pulse divise par le courant
