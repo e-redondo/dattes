@@ -68,18 +68,35 @@ plot(tCV,UCV,'c.','displayname','capaCV'),xlabel(sprintf('time [%s]',tunit))
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %figure3: impedances
 tR = [];UR = [];tW = [];UW = [];tRr = [];URr = [];tWr = [];UWr = [];
+
+%resistance (ident_r):config.pR
+phases_r = phases(config.pR);
+time_before_after_phase = [config.minimal_duration_rest_before_pulse 0];
+for ind = 1:length(phases_r)
+    [tpRabs,tpR,UpR] = get_phase2(phases_r(ind),time_before_after_phase,t,tc,U);
+    Ip = tpRabs>=phases_r(ind).t_ini;
+    Ir = tpRabs<phases_r(ind).t_ini;
+    tR = [tR;tpR(Ip)];
+    tRr = [tRr;tpR(Ir)];
+    UR = [UR;UpR(Ip)];
+    URr = [URr;UpR(Ir)];
+    
+end
+%impedance (iden_z): TODO new method like ident_r
+
+%resistance and impedance (old method):
 for ind = 1:length(phases)
     
-    if config.pR(ind)
-        Ip = t>=phases(ind).t_ini & t<=phases(ind).t_ini+config.tminR;
-        Ir = t>=phases(ind-1).t_fin-config.tminRr & t<=phases(ind-1).t_fin;
-        
-        tR = [tR;tc(Ip)];
-        UR = [UR;U(Ip)];
-        tRr = [tRr;tc(Ir)];
-        URr = [URr;U(Ir)];
-        
-    end
+%     if config.pR(ind)
+%         Ip = t>=phases(ind).t_ini & t<=phases(ind).t_ini+config.tminR;
+%         Ir = t>=phases(ind-1).t_fin-config.tminRr & t<=phases(ind-1).t_fin;
+%         
+%         tR = [tR;tc(Ip)];
+%         UR = [UR;U(Ip)];
+%         tRr = [tRr;tc(Ir)];
+%         URr = [URr;U(Ir)];
+%         
+%     end
     if config.pW(ind)
         Ip = t>=phases(ind).t_ini & t<=phases(ind).t_ini+config.tminW;
         Ir = t>=phases(ind-1).t_fin-config.tminWr & t<=phases(ind-1).t_fin;

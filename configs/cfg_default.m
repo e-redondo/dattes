@@ -6,8 +6,23 @@ function config = cfg_default(config)
 % See also configurator
 
 %ident_R
-config.tminR = 9;%duree min d'un pulse pour resistance
-config.tminRr = 9;%duree min repos avant
+config.instant_calcul_R=[0 4 9 29 59]; %Instant du pulse auquel on mesure R (par défaut 0 secondes)
+config.minimal_duration_pulse = 9;%duree min d'un pulse pour resistance
+config.minimal_duration_rest_before_pulse =9;%duree min repos avant
+
+% ident_RC
+config.maximal_duration_pulse = 300; % Durée maximale pour l'identification d'un RC
+config.R1ini = 1e-3;
+config.C1ini = 150;
+
+config.R2ini = 1e-2;
+config.C2ini = 400;
+
+config.Rmin=1e-4;
+config.Cmin=50;
+config.Rmax=5e-2;
+config.Cmax=800;
+
 
 %ident_CPE2
 config.tminW = 299;%duree min d'un pulse pour diffusion

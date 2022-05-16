@@ -131,13 +131,13 @@ pCapaCV = [phases.Iavg]>0 & ismember(tFins,t(I100)) & [0 pCapaC(1:end-1)];
 Ipulse = m==1 & [0; m(1:end-1)]==3;
 
 %5.1.- mode CC et dernier point avant en repos (3)
-pR = ismember(tInis,t(Ipulse));
+pR = ismember(tInis,t(Ipulse))& durees<=config.maximal_duration_pulse;
 pW = pR;
 %5.2.- duree minimale pour pR, tminR (10secondes); pour pW, tminW (300sec)
-pR = pR & durees>=config.tminR;
+pR = pR & durees>=config.minimal_duration_pulse;
 pW = pW & durees>=config.tminW;
 %5.3- duree minimale du repos avant?
-pR = pR & [0 durees(1:end-1)]>=config.tminRr;
+pR = pR & [0 durees(1:end-1)]>=config.minimal_duration_rest_before_pulse;
 pW = pW & [0 durees(1:end-1)]>=config.tminWr;
 %TODO: 5.4.-verification echantillonnage pour eviter warnings calculR
 %nb points repos > 3
@@ -153,8 +153,9 @@ config.pCapaC = pCapaC;
 %ident_CapaCV
 config.pCapaDV = pCapaDV;
 config.pCapaCV = pCapaCV;
-%ident_R2
+%ident_r
 config.pR = pR;
+config.instant_end_rest = tFins(pRr);%temps de fins de repos immediatememnt anterieur
 %config.tR = tFins(pRr);%temps de fins de repos immediatememnt anterieur
 %ident_CPE2
 config.tW = tFins(pWr);%temps de fins de repos immediatememnt anterieur
