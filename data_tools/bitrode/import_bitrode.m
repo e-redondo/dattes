@@ -43,7 +43,7 @@ end
 %0.1 check if file is a bitrode file
 [bench, line1, line2] = which_bench(fid_in);
 % bench ='oup';
-if ~strcmp(bench,'bitrode_csv')
+if ~strncmp(bench,'bitrode_csv',11)
     fprintf('ERROR: file does not seem a bitrode *.csv file: %s\n',file_in);
     xml = [];
     return;
@@ -68,7 +68,7 @@ end
     %TODO: le faire sans fichier intermediaire, cf. lectureBiologicFile:
     % isempty(strfind(ligne1,'XXX')...
 %     nb_lignes=find_replace(fidIn,fidOut,strold,strnew);
-    nb_lignes=find_replace(fid_in,fid_out,strold,strnew,1);
+    nb_lignes=find_replace(fid_in,fid_out,strold,strnew,0);
     fclose(fid_in);
     fclose(fid_out);
     
@@ -100,19 +100,23 @@ end
 %     if isempty(testDate)%if not found, test date is now
 %         testDate = date;
 %     end
+%     if thisLine(1)=='"'
+%         % new format: "Total Time, S","Cycle","Loop Counter #1",...
+%         thisLine = regexprep(thisLine,'","','\t');
+%         thisLine = regexprep(thisLine,'"','');
+%     else
+%         % old format: Total Time,Cycle,Loop Counter #1,...
+%         thisLine = regexprep(thisLine,',','\t');
+%     end
     if thisLine(1)=='"'
         % new format: "Total Time, S","Cycle","Loop Counter #1",...
-        thisLine = regexprep(thisLine,'","','\t');
-        thisLine = regexprep(thisLine,'"','');
-    else
-        % old format: Total Time,Cycle,Loop Counter #1,...
-        thisLine = regexprep(thisLine,',','\t');
+        thisLine = regexprep(thisLine,'\t ','_');
     end
     %variables
     variables = thisLine;
 %     variables = regexprep(variables,' ','');%erase spaces
-    strold = {'#';' ';'-'};
-    strnew = {'Nr';'';''};
+    strold = {'#';' ';'-';'"'};
+    strnew = {'Nr';'';'';''};
     variables = regexprep(variables,strold,strnew);
     
     variables = regexp(variables,'\t','split');
@@ -268,5 +272,8 @@ variables = regexprep(variables,'TemperatureA' , 'T');
 %     'DataAcquisitionFlag'
 
 
-
+%nettoyer '_unit' à la fin:
+variables = regexprep(variables,'_[a-zA-Z°]*$' , '');
+%si besoin, 'plus hard'
+% variables = regexprep(variables,'_.*$' , '');
 end
