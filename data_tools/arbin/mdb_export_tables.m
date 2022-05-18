@@ -13,7 +13,7 @@ if ~exist(resFile,'file')
     fprintf('File not found: %s\n',resFile);
     return;
 end
-[A, B] = dos(sprintf('mdb-tables %s',resFile));
+[A, B] = dos(sprintf('mdb-tables "%s"',resFile));
 tablelist = B;
 tablelist = regexp(tablelist,'\s','split');
 Ie = cellfun(@isempty,tablelist);
@@ -23,8 +23,8 @@ tablelist = tablelist(~Ie);
 dirOut = fullfile(D,F);
 mkdir(dirOut);
 for ind = 1:length(tablelist)
-    cmd = sprintf('mdb-export -d " " %s %s > %s%s%s.csv',resFile,tablelist{ind},dirOut,filesep,tablelist{ind});
-%     fprintf('%s\n',cmd);%DEBUG
+    fileOut = fullfile(dirOut,sprintf('%s.csv',tablelist{ind}));
+    cmd = sprintf('mdb-export -d " " "%s" %s > "%s"',resFile,tablelist{ind},fileOut);
     [A, B] = dos(cmd);
 end
 %TODO: gestion d'erreurs

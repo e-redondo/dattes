@@ -1,4 +1,4 @@
-function arbin_xls2xml(dirname,options)
+function [xml_list] = arbin_xls2xml(dirname,options)
 % arbin_xls2xml convert all arbin *.xls(x) files in dirname to VEHLIB's xml format
 % Usage:
 % arbin_xls2xml(dirname) search all *.res in srcdir and write a *.xml for every *.res
@@ -24,7 +24,7 @@ else
     %search for both *.xls and *.xlsx files
     XLS = lsFiles(dirname,'.xls');
     XLSX = lsFiles(dirname,'.xlsx');
-    XLS = [XLS(:) XLSX(:)];
+    XLS = [XLS(:); XLSX(:)];
     
 end
 XML = regexprep(XLS,'xls$','xml');
@@ -39,11 +39,12 @@ end
 
 
 %TODO: multicore
-
+xml_list = cell(0);
 for ind = 1:length(XLS)
     xml = import_arbin_xls(XLS{ind});
     if ~isempty(xml)
         ecritureXMLFile4Vehlib(xml,XML{ind});
+        xml_list{end+1} = XML{ind};
     end
     fprintf('%d of %d OK\n',ind,length(XLS));
 end

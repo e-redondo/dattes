@@ -20,6 +20,7 @@ function [result, config, phases] = dattes(xml_file,cfg_file,options)
 %   -'u': update, redo the actions even if the xml_file is more recent
 %   -'v': verbose, tell what you do
 %   -'c': run the configuraiton following cfg_file
+%   -'e': EIS (plot_eis)
 %   -'C': Capacity measurement
 %   -'S': SoC calculation
 %   -'R': Resistance identification
@@ -95,7 +96,7 @@ options = unique(options);%on enleve les doublons
 % -u: update
 % -v: verbose
 % -s: save
-InherOptions = options(ismember(options,'gfuvs'));
+InherOptions = options(ismember(options,'gfuvse'));
 
 %% Graphics mode 
 if ismember('G',options)
@@ -117,11 +118,14 @@ end
 %1.0.- load previous results (if they exist)
 [result, config, phases] = load_result(xml_file,InherOptions);
 %1.1.- load data in XML
-[t,U,I,m,DoDAh,SOC,T] = extract_bench(xml_file,InherOptions,config);
+[t,U,I,m,DoDAh,SOC,T, eis] = extract_bench(xml_file,InherOptions,config);
 %1.3.- update result
 result.fileIn = xml_file;
 result.tIni = t(1);
 result.tFin = t(end);
+if ~isempty(eis)
+    result.eis = eis;
+end
 %1.4. DECOMPOSE IN PHASES
 [phases] = decompose_bench(t,I,U,m,InherOptions);
 

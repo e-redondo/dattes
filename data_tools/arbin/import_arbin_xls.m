@@ -26,6 +26,13 @@ end
 % chrono=tic;
 fprintf('Lecture des metadonnees du fichier xls: %s...',filename);
 [st, sheets, fo] = xlsfinfo(fileIn);
+
+if ~iscell(sheets)
+    %Probably an error reading xls file:
+    fprintf('ERROR: unreadable xls file?: %s\n',fileIn);
+    xml = [];
+    return;
+end
 % dataSheets = sheets(~(cellfun(@isempty,regexp(sheets,'^Channel'))));
 dataSheets = sheets;
 % if length(dataSheets)>1

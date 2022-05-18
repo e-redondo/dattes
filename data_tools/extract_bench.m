@@ -1,4 +1,4 @@
-function [t,U,I,m,DoDAh,SOC,T, err] = extract_bench(thisXML,options,config)
+function [t,U,I,m,DoDAh,SOC,T, eis, err] = extract_bench(thisXML,options,config)
 %extract_bench extract important variables from a battery test bench file.
 % 1.- Read a .xml file (Biologic,Arbin, Bitrode...), if a dattes' results
 % file exists this latter will be read (faster)
@@ -130,6 +130,10 @@ if xml_read
     if ismember('v',options)
         fprintf('OK (XML file)\n');
     end
+    
+    %read EIS
+    eis = extract_eis(xml,options);
+    
 else
     %list variables in MAT file
     S = who('-file',thisMAT);
@@ -139,11 +143,26 @@ else
         fprintf('Bad MAT file: %s\n',thisMAT);
         return;
     end
+    % read profiles
     load(thisMAT);
     if ismember('v',options)
         fprintf('OK (MAT file)\n');
     end
+    %read EIS
+    thisMAT_result = result_filename(thisMAT);
+    
+    if exist(thisMAT_result,'file')
+        load(thisMAT_result);
+        if isfield(result,'eis')
+            eis = result.eis;
+        else
+            eis = [];
+        end
+    else
+        eis = [];
+    end
 end
+
 if ismember('g',options)
     showResult(t,U,I,m,thisMAT,options);
 end
@@ -170,5 +189,146 @@ function showResult(t,U,I,m,thisMAT,options)
 InherOptions = options(ismember(options,'hj'));
 h = plot_bench(t,U,I,m,titre,InherOptions);
 set(h,'name','extract_bench');
+
+end
+
+function showResulteis(eis)
+
+h = plot_eis(eis,'extract_eis');
+set(h,'name','extract_eis');
+
+end
+
+function [eis] = extract_eis(xml,options)
+%extract_eis extraire les variables importantes d'un essai d'impedancemetrie.
+% 1.- Detecte s'il y a ReZ, ImZ, f dans la structure xml
+% 2.- Extrait les vecteurs importants: t,U,I,m,ReZ, ImZ, f
+%
+% [t,U,I,m,ReZ, ImZ, f, err] = extract_eis(xml,thisMAT): utilisation normale, codes
+% d'erreur:
+% err = 0: tout est OK
+% err = -1: le fichier thisXML n'existe pas
+% err = 1: des NaNs sont presents dans les vecteurs (t,U,I,m)
+%
+
+if ~exist('config','var')
+    Uname = 'U';
+else
+    if ~isfield(config,'Uname')
+        Uname = 'U';
+    else
+        Uname = config.Uname;
+    end
+    if ~isfield(config,'Tname')
+        Tname = '';
+    else
+        Tname = config.Tname;
+    end
+end
+
+if ismember('v',options)
+    fprintf('extract_eis: %s ....',thisMATeis);
+end
+
+
+Is = cellfun(@(x) isfield(x,'freq'),xml.table);
+t = cellfun(@(x) x.tabs.vector,xml.table(Is),'uniformoutput',false);
+U = cellfun(@(x) x.(Uname).vector,xml.table(Is),'uniformoutput',false);
+I = cellfun(@(x) x.I.vector,xml.table(Is),'uniformoutput',false);
+m = cellfun(@(x) x.mode.vector,xml.table(Is),'uniformoutput',false);
+ReZ = cellfun(@(x) x.ReZ.vector,xml.table(Is),'uniformoutput',false);
+ImZ = cellfun(@(x) x.ImZ.vector,xml.table(Is),'uniformoutput',false);
+f = cellfun(@(x) x.freq.vector,xml.table(Is),'uniformoutput',false);
+%decapsuler les cellules
+t = vertcat(t{:});
+U = vertcat(U{:});
+I = vertcat(I{:});
+m = vertcat(m{:});
+ReZ = vertcat(ReZ{:});
+ImZ = vertcat(ImZ{:});
+f = vertcat(f{:});
+% non eis (f==0)
+Is = f~=0;
+t = t(Is);
+U = U(Is);
+I = I(Is);
+m = m(Is);
+ReZ = ReZ(Is);
+ImZ = ImZ(Is);
+f = f(Is);
+
+%sort by time
+[t, Is] = sort(t);
+U = U(Is);
+I = I(Is);
+m = m(Is);
+ReZ = ReZ(Is);
+ImZ = ImZ(Is);
+f = f(Is);
+
+
+if isnan(max(t+I+U+m))%gestion d'erreurs
+    error('Oups! extract_eis a trouve des nans: %s\n',thisXML);
+end
+%     %doublons
+%     [t, Iu] = unique(t);
+%     U = U(Iu);
+%     I = I(Iu);
+%     m = m(Iu);
+% cut vectors into individual EIS (diff(f)>0 = new EIS):
+
+% frequency sweep can be positive (low to high frequencies) >> Iend1
+% or negative (low to high frequencies) Iend2
+% Keep shortest vector (most probable situation)
+Iend1 = [diff(f)>0; true];
+Iend2 = [diff(f)<0; true];
+if length(find(Iend1))< length(find(Iend2))
+    Iend = Iend1;
+else
+    Iend = Iend2;
+end
+
+% Iend = [diff(f)>0; true];
+Istart = [true; Iend(1:end-1)];
+
+% Iend = [diff(f)>0; true];
+% Istart = [true; Iend(1:end-1)];
+Iend = find(Iend);
+Istart = find(Istart);
+tc = cell(size(Istart));
+Uc = cell(size(Istart));
+Ic = cell(size(Istart));
+mc = cell(size(Istart));
+ReZc = cell(size(Istart));
+ImZc = cell(size(Istart));
+fc = cell(size(Istart));
+for ind = 1:length(Istart)
+    tc{ind} = ReZ(Istart(ind):Iend(ind));
+    Uc{ind} = ReZ(Istart(ind):Iend(ind));
+    Ic{ind} = ReZ(Istart(ind):Iend(ind));
+    mc{ind} = ReZ(Istart(ind):Iend(ind));
+    ReZc{ind} = ReZ(Istart(ind):Iend(ind));
+    ImZc{ind} = ImZ(Istart(ind):Iend(ind));
+    fc{ind} = f(Istart(ind):Iend(ind));
+end
+
+
+if isempty(t)
+    eis = [];
+else
+    eis.t = tc;
+    eis.U = Uc;
+    eis.I = Ic;
+    eis.m = mc;
+    eis.ReZ = ReZc;
+    eis.ImZ = ImZc;
+    eis.f = fc;
+    if ismember('v',options)
+        fprintf('OK (EIS file)\n');
+    end
+    if ismember('g',options)
+        showResulteis(eis);
+    end
+end
 
 end

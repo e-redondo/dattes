@@ -1,9 +1,11 @@
-function mpt2xmlf(srcdir,options)
-% MPT2XML  mass import of *.mpt files (Biologic) to *.xml
+function [xml_list] = mpt2xmlf(srcdir,options)
+% mpt2xmlf  mass import of *.mpt files (Biologic) to *.xml
 % Usage:
-% MPT2XML(srcdir) search all folders containing *.mpt in srcdir and write
+% mpt2xmlf(srcdir) search all folders containing *.mpt in srcdir and write
 % a *.xml for every folder
-%
+%    - if srcdir contains mpt files AND does not contain any subfolder an
+%    xmlfile wil be created at the same place that srcdir with
+% 
 % mpt2xmlf(srcdir,'v') , verbose: tells what it does
 % mpt2xmlf(srcdir,'f') , force: write *.xml even if it already exists
 %
@@ -24,6 +26,13 @@ verbose = ismember('v',options);
 
 %liste de repertoires
 D = lsDirs(srcdir);
+
+if isempty(D)
+    MPT = lsFiles(srcdir,'.mpt');
+    if ~isempty(MPT)
+        D = unique(cellfun(@fileparts,MPT,'UniformOutput',false));
+    end
+end
 %les fichiers XML s'appelent comme les repertoires, avec extension .xml
 XML = cellfun(@(x) [x '.xml'],D,'uniformoutput',false);
 
@@ -36,10 +45,13 @@ if ~force %cf. options
 end
 
 %TODO: multicore
+xml_list = cell(0);
+
 for ind = 1:length(D)
     xml = import_biologic(D{ind});
     if ~isempty(xml)
         ecritureXMLFile4Vehlib(xml,XML{ind});
+        xml_list{end+1} = XML{ind};
     end
     if verbose %cf. options
         fprintf('>>>>>>>>>>>>>>>%.1f%% OK\n',ind*100/length(D));

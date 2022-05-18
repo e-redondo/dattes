@@ -1,14 +1,17 @@
-function mpt2xml(srcdir,options)
+function [xml_list] = mpt2xml(srcdir,options)
 % MPT2XML  mass import of *.mpt files (Biologic) to *.xml
 % Usage:
 % MPT2XML(srcdir) search all *.mpt in srcdir and write a *.xml for every *.mpt
+%
+% MPT2XML(fileList) fileList is a cell string containing a list of *.mpt
+% files to convert
 %
 % MPT2XML(srcdir,'v') , verbose: tells what it does
 % MPT2XML(srcdir,'t') , txt: search *.txt files instead *.mpt
 % MPT2XML(srcdir,'f') , force: write *.xml even if it already exists
 %
-% WARNING! this funciton creates one *.xml per *.mpt file.
-% If you want one *.xml per folder (multi-mpt test) use MPT2XMLD
+% WARNING! this function creates one *.xml per *.mpt file.
+% If you want one *.xml per folder (multi-mpt test) use mpt2xmlf
 %
 % See also import_biologic, mpt2xmlf
 %
@@ -31,7 +34,12 @@ if txt
 else
     ext = '.mpt';
 end
-MPT = lsFiles(srcdir,ext);
+
+if iscell(srcdir)
+    MPT = srcdir;
+else
+    MPT = lsFiles(srcdir,ext);
+end
 XML = regexprep(MPT,[ext '$'],'.xml');
 
 if ~force %cf. options
@@ -43,6 +51,8 @@ end
 
 
 %TODO: multicore
+xml_list = cell(0);
+
 if verbose %cf. options
     fprintf('MPT2XML: trouve %d fichiers\n',length(MPT));
 end
@@ -50,6 +60,7 @@ for ind = 1:length(MPT)
     xml = import_biologic({MPT{ind}});
     if ~isempty(xml)
         ecritureXMLFile4Vehlib(xml,XML{ind});
+        xml_list{end+1} = XML{ind};
     end
     if verbose %cf. options
         fprintf('>>>>>>>>>>>>>>>%.1f%% OK\n',ind*100/length(MPT));

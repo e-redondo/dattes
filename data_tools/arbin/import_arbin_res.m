@@ -101,7 +101,7 @@ csvFile = fullfile(D,F,'Auxiliary_Table.csv');
 if ~isempty(corps1)
     %4.-merge Channel_Normal_Table and Auxiliary_Table
     %4.1 Check if datapoints are equal:
-    if isequal(corps(:,2),corps1(:,1))
+    if isequal(corps(:,1),corps1(:,1))
         corps = [corps, corps1(:,2:end)];
         tete = [tete, tete1(2:end)];
     else
