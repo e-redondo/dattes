@@ -53,7 +53,7 @@ for ind = 1:length(folder_list)
         fprintf(' deleted %d xml files\n',length(xml_list));
         deleted_files = deleted_files+length(xml_list);
     catch e
-        fprintf('FAILED',this_folder);
+        fprintf('\n%s FAILED\n',this_folder);
         delete_errors = delete_errors+1;
     end
 end
@@ -82,7 +82,7 @@ for ind =  1:length(folder_list)
                 wrote_files = wrote_files+length(xml_list2);
             end
         catch e
-            fprintf('FAILED',this_folder);
+            fprintf('\n%s FAILED\n',csv_list1{ind2});
             import_errors = import_errors+1;
         end
     end
@@ -90,12 +90,12 @@ end
 
 %7. final report:
 fprintf('\n\ntest_import_bitrode results:\n');
-fprintf('Found bitrode folders:%d\n',length(folder_list));
-fprintf('Found csv files:%d\n',length(csv_list));
-fprintf('Deleted xml files :%d\n',deleted_files);
-fprintf('Deletion failures :%d\n',delete_errors);
-fprintf('Created xml files :%d\n',wrote_files);
-fprintf('xml file creation failures :%d\n',import_errors);
+fprintf('Found bitrode folders: %d\n',length(folder_list));
+fprintf('Found csv files: %d\n',length(csv_list));
+fprintf('Deleted xml files: %d\n',deleted_files);
+fprintf('Deletion failures: %d\n',delete_errors);
+fprintf('Created xml files: %d\n',wrote_files);
+fprintf('xml file creation failures: %d\n',import_errors);
 
 %8. full report (TODO)
 if any(success)

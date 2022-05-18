@@ -82,7 +82,7 @@ for ind =  1:length(folder_list)
                 wrote_files = wrote_files+length(xml_list2);
             end
         catch e
-            fprintf('FAILED',this_folder);
+            fprintf('\n%s FAILED\n',res_list1{ind2});
             import_errors = import_errors+1;
         end
     end
@@ -90,12 +90,12 @@ end
 
 %7. final report:
 fprintf('\n\ntest_import_arbin results:\n');
-fprintf('Found arbin folders:%d\n',length(folder_list));
-fprintf('Found res files:%d\n',length(res_list));
-fprintf('Deleted xml files :%d\n',deleted_files);
-fprintf('Deletion failures :%d\n',delete_errors);
-fprintf('Created xml files (arbin_res2xml) :%d\n',wrote_files);
-fprintf('xml file creation failures (arbin_res2xml) :%d\n',import_errors);
+fprintf('Found arbin folders: %d\n',length(folder_list));
+fprintf('Found res files: %d\n',length(res_list));
+fprintf('Deleted xml files: %d\n',deleted_files);
+fprintf('Deletion failures: %d\n',delete_errors);
+fprintf('Created xml files (arbin_res2xml): %d\n',wrote_files);
+fprintf('xml file creation failures (arbin_res2xml): %d\n',import_errors);
 
 %8. full report (TODO)
 if any(success)
