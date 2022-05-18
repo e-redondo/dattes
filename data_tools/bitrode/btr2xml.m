@@ -1,4 +1,4 @@
-function btr2xml(srcdir,options)
+function [xml_list] = btr2xml(srcdir,options)
 % btr2xml mass import of *.csv file (Bitrode) to *.xml
 %
 % Usage:
@@ -51,13 +51,22 @@ end
 XML = regexprep(CSV,'csv$','xml');
 
 %TODO: multicore
+xml_list = cell(0);
 
 for ind = 1:length(CSV)
     xml = import_bitrode(CSV{ind});
     
     if isempty(xml.table{end}.metatable.date)
-%    if isempty('')%DEBUG
-        Date = read_bitrode_log(srcdir,CSV{ind});%from user created log file
+        %    if isempty('')%DEBUG
+        if iscell(srcdir)
+            % if a file list is provided, take the parent folder of each
+            % CSV file
+            Date = read_bitrode_log(fileparts(CSV{ind}),CSV{ind});%from user created log file
+        else
+            % if a srcdir is provided, take it to search bitrode.log file
+            Date = read_bitrode_log(srcdir,CSV{ind});%from user created log file
+        end
+        
         if isempty(Date)
             fprintf('No test date found for %s\n',CSV{ind});
             Date = '2000/1/1 00:00';
@@ -76,12 +85,14 @@ for ind = 1:length(CSV)
     if ~isempty(xml)
         if ~multicell
             ecritureXMLFile4Vehlib(xml,XML{ind});
+             xml_list{end+1} = XML{ind};
         else
             xmls = extraitMultiCell(xml);
             for ind2 = 1:length(xmls)
                 ceXML = xmls{ind2};
                 XMLfile = regexprep(XML{ind},'.xml$',sprintf('_el%d.xml',ind2));
                 ecritureXMLFile4Vehlib(ceXML,XMLfile);
+                xml_list{end+1} = XMLfile;
             end
         end
     end

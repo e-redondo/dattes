@@ -1,11 +1,11 @@
-function res2xml(dirname,options)
-% RES2XML mass import of  *.res (Arbin) to *.xml
+function [xml_list] = arbin_res2xml(dirname,options)
+% arbin_res2xml mass import of  *.res (Arbin) to *.xml
 % Usage:
-% RES2XML(dirname) search all *.res in srcdir and write a *.xml for every *.res
+% arbin_res2xml(dirname) search all *.res in srcdir and write a *.xml for every *.res
 %
-% RES2XML(dirname,'f') force: write *.xml even if it already exists
+% arbin_res2xml(dirname,'f') force: write *.xml even if it already exists
 %
-% RES2XML(fileList) with fileList a cell string containing a list of *.res files
+% arbin_res2xml(fileList) with fileList a cell string containing a list of *.res files
 %
 % See also import_arbin_res
 %
@@ -36,11 +36,12 @@ end
 
 
 %TODO: multicore
-
+xml_list = cell(0);
 for ind = 1:length(RES)
     xml = import_arbin_res(RES{ind});
     if ~isempty(xml)
         ecritureXMLFile4Vehlib(xml,XML{ind});
+        xml_list{end+1} = XML{ind};
     end
     fprintf('%d of %d OK\n',ind,length(RES));
 end
