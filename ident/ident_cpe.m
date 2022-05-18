@@ -1,4 +1,4 @@
-function [CPEQ, CPEalpha, CPER, CPEDoD, CPERegime] = ident_cpe(t,U,I,DoDAh,config,options)
+function [impedance] = ident_cpe(t,U,I,DoDAh,config,phases,options)
 %ident_cpe CPE (Constant phase element) impedance identification from a
 % temporal profile (t,U,I,m).
 %
@@ -17,20 +17,14 @@ end
 if ismember('v',options)
     fprintf('ident_cpe:...');
 end
-CPEQ = [];
-CPEalpha = [];
-CPER = [];
-CPEDoD = [];
-CPERegime = [];
 
-%%
-%gestion d'erreurs:
-if nargin<5 || nargin>6
+%% 0- Inputs management
+
+if nargin<6 || nargin>8
     fprintf('ident_cpe: wrong number of parameters, found %d\n',nargin);
     return;
 end
-if ~isstruct(config) || ~ischar(options) || ~isnumeric(t) ...
-        || ~isnumeric(U) || ~isnumeric(I) || ~isnumeric(DoDAh)
+if ~isstruct(config) || ~ischar(options) || ~isnumeric(t) || ~isstruct(phases)   || ~isnumeric(U) || ~isnumeric(I) || ~isnumeric(DoDAh)
     fprintf('ident_cpe: wrong type of parametres\n');
     return;
 end
@@ -38,62 +32,69 @@ if ~isfield(config,'tW') || ~isfield(config,'tminWr') || ~isfield(config,'tminW'
     fprintf('ident_cpe: config struct incomplete\n');
     return;
 end
-%%
-% TODO: stop using tW in config, use pW and get_phase
-%%
+%% 1- Initialization
+impedance=struct;
+CPEQ = [];
+CPEalpha = [];
+CPER = [];
+CPEDoD = [];
+CPERegime = [];
 
-tIniPulses = config.tW-config.tminWr;
-tFinPulses = config.tW+config.tminW;
+%% 2- Determine the phases for which a CPE identification is relevant
+ind_CPE = find(config.pCPE);
+time_before_after_phase = [config.rest_duration_before_pulse 0];
+% phases_identify_CPE=phases(config.pCPE);
 
-for ind = 1:length(config.tW)
-    Ipulse = t>=tIniPulses(ind) & t<=tFinPulses(ind);
-    tp = t(Ipulse);
-    Up = U(Ipulse);%TODO: U - Ur - Uocv?
-    Ip = I(Ipulse);
-    DoDAhp = DoDAh(Ipulse);
+
+%% 3-CPEQ and CPEalpha are identified for each of these phases
+for phase_k = 1:length(ind_CPE)
+    [tp,Up,Ip,DoDp] = get_phase2(phases(ind_CPE(phase_k)),time_before_after_phase,t,U,I,DoDAh);
+%     for i=1:length(DoDp)
+%         if DoDp(i)<0
+%             DoDp(i)=abs(DoDp(i));
+%         end
+%     end
+
+        
     
-    %correction relaxation
-    Irepos = t>=tIniPulses(ind) & t<=config.tW(ind);
-    trepos = t(Irepos);
-    Urepos = U(Irepos);
-    ws = warning('off','all');%TODO gerer ca un peu mieux...
-    Urelax = polyval(polyfit(trepos,Urepos,2),tp);%BRICOLE
-    warning(ws);%TODO gerer ca un peu mieux...
-    %TODO: correction derive SoC > derive OCV
-    if isfield(config,'ocv')
-        Uocv = interp1(config.dod_ocv,config.ocv,DoDAhp);
-        Urelax = mean(Urepos)-Uocv(1);%phenomène d'hysteresis
-%          Uocv = zeros(size(Up));
-    else
-        Uocv = zeros(size(Up));
-    end
-    %TODO: correction chute ohmique
-%     [R, RRegime] = calcul_r(tp,Up,Ip,config.tW(ind),config.tminR,config.tminWr);
-%     [R, RRegime] = calcul_r(tp,Up,Ip,DoDAhp,tp(find(tp==trepos(end))+1),config.minimal_duration_pulse,config.minimal_duration_rest_before_pulse,0);
-    [R, RRegime] = calcul_r(tp,Up,Ip,DoDAhp,trepos(end),config.minimal_duration_pulse,config.minimal_duration_rest_before_pulse,0);
+    %Ohmic polarization is extracted
+    [R, RRegime] = calcul_r(tp,Up,Ip,DoDp,config.instant_end_rest(phase_k),config.minimal_duration_pulse,config.minimal_duration_rest_before_pulse ,config.instant_calcul_R);
     Ur = zeros(size(Up));
-    Ur = Ip*R;
-    %applique les corrections:
-    Up = Up-Urelax-Uocv-Ur;
+    Ur = Ip*R(1);
+    Up = Up-Ur;
+    
+       %Relaxation voltage is extracted
+    OCV = Up(1);
+    Up  = Up-OCV; 
     %TODO: comment transmettre 'g' a calculCPE? il genere beaucoup de
     %figures!!
     if ~config.CPEafixe
-        [CPEQ(ind), CPEalpha(ind), ~, CPERegime(ind)] = calcul_cpe_pulse(tp,Up,Ip);
+        [CPEQ(phase_k), CPEalpha(phase_k), ~, CPERegime(phase_k)] = calcul_cpe_pulse(tp,Up,Ip);
     else
-        [CPEQ(ind), CPEalpha(ind), ~, CPERegime(ind)] = calcul_cpe_pulse(tp,Up,Ip,'a',config.CPEafixe);
+        [CPEQ(phase_k), CPEalpha(phase_k), ~, CPERegime(phase_k)] = calcul_cpe_pulse(tp,Up,Ip,'a',config.CPEafixe);
     end
-    CPEt(ind) = t(t==config.tW(ind));
-    CPEDoD(ind) = DoDAh(t==config.tW(ind));%TODO: DoD ini ou moyen?
-    CPER(ind) = R;
+    CPEt(phase_k) = t(t==config.tW(phase_k));
+    CPEDoD(phase_k) = DoDAh(t==config.tW(phase_k));%TODO: DoD ini ou moyen?
+    CPER(phase_k) = R(1);
 end
 CPERegime = CPERegime/config.Capa;
 
 if ismember('v',options)
     fprintf('OK\n');
 end
+
+
 if ismember('g',options)
     show_result(t,U,I,DoDAh,CPEQ, CPEalpha, CPEDoD, CPERegime,CPEt);
 end
+
+    
+impedance.CPEQ = CPEQ;
+impedance.CPEalpha = CPEalpha;
+impedance.CPER = CPER;
+impedance.CPEDoD = CPEDoD;
+impedance.CPERegime = CPERegime;
+
 end
 
 function show_result(t,U,I,DoDAh,CPEQ, CPEalpha, CPEDoD, CPERegime,CPEt)

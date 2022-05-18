@@ -78,9 +78,11 @@ IfinRepos = m==3 & [m(2:end);0]~=3;
 Imin = U<=(config.Umin+0.02);
 Imax = U>=config.Umax-0.02;%BRICOLE essai 20171211_1609 HONORAT
 %instants a SoC100 (ou presque I100cc: fin de charge CC)
-%TODO: add config.Iendcv (typically C/20).
-I100 = Ifincv & Imax;
 I100cc = Ifincc & Imax;%ca marche pas pour LYP
+Regime = I/config.Capa;
+Ic20 = Regime<=config.regimeOCVmax*1.1; % typiquement 0.05
+% I100 = Ifincv & Imax;
+I100 = (Ifincv & Imax) | (I100cc & Ic20);
 %instants a SoC0 (ou presque I0cc: fin de decharge CC)
 I0 = Ifincv & Imin;
 %fin de decharge et touche Umin ou suivi de floating a Umin:
@@ -132,7 +134,7 @@ Ipulse = m==1 & [0; m(1:end-1)]==3;
 
 %5.1.- mode CC et dernier point avant en repos (3)
 pR = ismember(tInis,t(Ipulse))& durees<=config.maximal_duration_pulse;
-pW = ismember(tInis,t(Ipulse));
+pW =pR;
 
 %5.2.- duree minimale pour pR, tminR (10secondes); pour pW, tminW (300sec)
 pR = pR & durees>=config.minimal_duration_pulse;
@@ -140,29 +142,47 @@ pW = pW & durees>=config.tminW;
 %5.3- duree minimale du repos avant?
 pR = pR & [0 durees(1:end-1)]>=config.minimal_duration_rest_before_pulse;
 pW = pW & [0 durees(1:end-1)]>=config.tminWr;
-%TODO: 5.4.-verification echantillonnage pour eviter warnings calculR
+%5.4- duree maximale du pulse pour l'identification d'un RC
+pRC=pR & durees<=config.maximal_duration_pulse ;
+%5.5- duree maximale du pulse pour l'identification d'un CPE
+pCPE=pW & durees<=config.maximal_duration_pulse ;
+%TODO: 5.6.-verification echantillonnage pour eviter warnings calculR
 %nb points repos > 3
 %...
 %repos immediatememnt anterieurs
 pRr = [pR(2:end) false];
 pWr = [pW(2:end) false];
-
+pRCr = [pRC(2:end) false];
+pCPEr = [pCPE(2:end) false];
 
 %ident_Capa2
 config.pCapaD = pCapaD;
 config.pCapaC = pCapaC;
+
 %ident_CapaCV
 config.pCapaDV = pCapaDV;
 config.pCapaCV = pCapaCV;
+
 %ident_r
 config.pR = pR;
 config.instant_end_rest = tFins(pRr);%temps de fins de repos immediatememnt anterieur
-%config.tR = tFins(pRr);%temps de fins de repos immediatememnt anterieur
-%ident_CPE2
+
+%ident_rrc
+config.pRC=pRC;
+config.instant_fin_repos_RC = tFins(pRCr);%temps de fins de repos immediatememnt anterieur
+
+
+
+%ident_cpe
+config.pCPE=pCPE;
+config.instant_fin_repos_CPE = tFins(pCPEr);%temps de fins de repos immediatememnt anterieur
 config.tW = tFins(pWr);%temps de fins de repos immediatememnt anterieur
 config.pW = pW;
+
+
 %calculSOC
 config.t100 = t(I100);%pour le calcul du SOC
+config.t0 = t(I0);%pour le calcul du SOC
 %Note: retourne matrice vide s'il ne trouve pas de phase CCCV a Umax.
 %Dans ces cas il faut trouver le test immediatement anterieur (ou
 %posterieur), calculer le DoDAh et fixer DoDAhIni ou DoDAhFin pour pouvoir

@@ -230,15 +230,11 @@ if ismember('R',options)
     resultat.Rd = R(RRegime<0);
     
 end
-%6.3.2. CPE
+%6.3.2. Impedance
 if ismember('Z',options)
     ident_z = config.ident_z;
-    [CPEQ, CPEalpha, CPER, CPEDoD, CPERegime] = ident_z(t,U,I,DoDAh,config,InherOptions);
-    result.CPEQ = CPEQ;
-    result.CPEalpha = CPEalpha;
-    result.CPER = CPER;
-    result.CPEDoD = CPEDoD;
-    result.CPERegime = CPERegime;
+    [impedance] = ident_z(t,U,I,DoDAh,config,phases,InherOptions);
+    result.impedance= impedance;
 end
 
 %6.4. ICA/DVA
