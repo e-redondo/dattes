@@ -25,6 +25,11 @@ if ismember('x',options)
     %show result of 'x', i.e. profiles
     plot_bench(t,U,I,m,titre,InherOptions);
 end
+if ismember('e',options)%EIS
+    if isfield(result,'eis')
+        plot_eis(result.eis,titre);
+    end
+end
 if ismember('p',options)
     %show result of 'd', i.e. decompose_bench
     plot_phases(t,U,I,phases,titre,InherOptions);
