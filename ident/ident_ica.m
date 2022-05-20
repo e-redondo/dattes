@@ -5,7 +5,6 @@ if ~exist('options','var')
     options = '';
 end
 
-%TODO check inputs
 % phasesICAC = phases(config.pICAC);
 % phasesICAD = phases(config.pICAD);
 

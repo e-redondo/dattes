@@ -19,9 +19,6 @@ function [cc_capacity, cc_crate, cc_time, cc_duration, cv_capacity, cv_voltage, 
 %
 % See also dattes, decompose_bench, configurator, plot_capacity
 
-%TODO: 'g' option
-%TODO: process separately charge and discharge phases
-%TODO: restructure: Qccdis, Qcvdis, Qdis=Qccdis+Qcvdis, etc.
 if ~exist('options','var')
     options='';
 end

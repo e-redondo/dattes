@@ -10,7 +10,6 @@ function xml = import_arbin_res(file_in)
 %   IFSTTAR/LTE  - E. REDONDO
 %   $Revision: 0.1 $  $Created: 2015/08/12, Modified: 2015/08/12$
 
-%TODO: options 'v','g'
 if nargin==0
     print_usage
 end
@@ -72,7 +71,6 @@ I = ~cellfun(@isempty,tete);
 tete = tete(I);
 corps = fscanf(fid,'%f');
 fclose(fid);
-%TODO gerer l'erreur de taille de corps ici
 corps = reshape(corps,length(tete),[])';
 
 %2.3- trier par data_point
@@ -228,7 +226,7 @@ if isempty(corps1)
     tete1 = [];
     return;
 end
-%TODO gerer l'erreur de taille de corps ici
+
 corps1 = reshape(corps1,length(tete1),[])';
 
 

@@ -18,9 +18,7 @@ end
 %title for figures
 [~, titre, ~] = fileparts(result.fileIn);
 InherOptions = options(ismember(options,'hdD'));
-%TODO SOC/DOD:
-% en p.u. en pc ou en Ah
-% par rapport à capa actuelle ou capa nominale
+
 if ismember('x',options)
     %show result of 'x', i.e. profiles
     plot_bench(t,U,I,m,titre,InherOptions);
@@ -44,23 +42,19 @@ if ismember('S',options)
 end
 if ismember('C',options)
     %show result of 'C', i.e. Capacity
-    %TODO: InherOptions
     plot_capacity(result.Capa, result.CapaRegime);
     title(XMLfile,'interpreter','none')
 end
 if ismember('P',options)
     %show result of 'P', i.e pseudoOCV
-    %TODO: InherOptions
     plot_pocv(result.pDoD, result.pOCV, result.pUCi, result.pUDi)
 end
 if ismember('O',options)
     %show result of 'O', i.e. OCV by points
-    %TODO: InherOptions
     plot_ocvp(t,U, DoDAh, result.tOCVp, result.OCVp, result.DoDp, result.Ipsign)
 end
 if ismember('E',options)
     %show result of 'E', i.e. Efficiency
-    %TODO: InherOptions
     plot_eff(result.pDoD,result.pEff);
 end
 if ismember('R',options)
@@ -70,12 +64,10 @@ if ismember('R',options)
 end
 if ismember('Z',options)
     %show result of 'Z', i.e. impedance
-    %TODO: InherOptions
     plot_cpe(result.CPEQ, result.CPEalpha,result.CPEDoD, result.CPERegime);
 end
 if ismember('I',options)
     %show result of 'I', i.e. ica
-    %TODO: InherOptions
     plot_ica(result.ica);
 end
 
