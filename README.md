@@ -1,16 +1,22 @@
  #  DATTES : **D**ata **A**nalysis **T**ools for **T**ests on **E**nergy **S**torage  
 
-DATTES is a collection of tools to read, adapt, analyze and visualize data from experiments on energy storage systems such as lithium-ion batteries or supercapacitors.
+[![Code](https://img.shields.io/badge/dynamic/json?color=sucess&label=Code&prefix=PREFIX&query=%24.DATA.SUBDATA&suffix=SUFFIX&url=https%3A%2F%2Fgitlab.com%2Fdattes_project%2Fdattes)](https://gitlab.com/dattes_project/dattes)
+[![Release](https://img.shields.io/badge/dynamic/json?color=yellow&label=Release&prefix=PREFIX&query=%24.DATA.SUBDATA&suffix=SUFFIX&url=https%3A%2F%2Fgitlab.com%2Fdattes_project%2Fdattes%2F-%2Freleases)](https://gitlab.com/dattes__project/dattes_website/-/releases)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Langage: Matlab- Octave](https://img.shields.io/badge/Made%20with-Matlab_Octave-orange)](https://www.gnu.org/software/octave/index)
 
-DATTES is written in MATLAB and most of functions are GNU Octave compatible
+DATTES is a collection of tools to read, adapt, analyze and visualize data from experiments on energy storage  syst>
+
+DATTES is written in MATLAB and all functions are GNU Octave compatible
 
 DATTES makes it possible to:
+- Parse results file from a wide range of battery cyclers
+- Extract main characteristics of a cell from a characterization test
+- Analyze notably pseudo-open circuit voltage, electrochemical impedance spectroscopy or incremental capacity analysis tests
+- Visualize your experimental and data analysis results
+- Use your experimental results for model identification
 
-  - Parse results file from a wide range of battery cyclers
-  - Extract main characteristics of a cell from a characterization test
-  - Analyze pseudo-open circuit voltage and incremental capacity analysis tests
-  - Visualize your experimental and data analysis results
-  - Use your experimental results for model identification
+
 
 ## :link: Useful links
 - [**Documentation**](https://dattes_project.gitlab.io/dattes_website/)
@@ -21,7 +27,7 @@ DATTES makes it possible to:
 
 ## :scroll: License
 ```
-Copyright (c) 2019, E. Redondo, M. Hassini.
+Copyright (c) 2015, E. Redondo, M. Hassini.
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -43,24 +49,14 @@ You should have received a copy of the GNU General Public License along with thi
     <br /><sub><b>Eduardo Redondo-Iglesias</b></sub></a><br />
     <a href="Created DATTES" title="Created DATTES"> <img class="emoji" alt="nrain" src="https://github.githubassets.com/images/icons/emoji/unicode/1f9e0.png?v8" width="20" height="20"> </a>
     <a href="Codes" title="Codes"><img class="emoji" alt="computer" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4bb.png" width="20" height="20"></a> 
-    <a href="" title="Reviews Pull Requests">👀</a>
-    <a href="" title="Ideas, Planning, & Feedback"> <img class="emoji" alt="thinking" src="https://github.githubassets.com/images/icons/emoji/unicode/1f914.png" width="20" height="20"></a>
-    <a href="" title="Tests DATTES"><img class="emoji" alt="warning" src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png" width="20" height="20"></a> 
-    <a href="" title="Do maintenance"><img class="emoji" alt="construction" src="https://github.githubassets.com/images/icons/emoji/unicode/1f6a7.png" width="20" height="20"></a>
-    <a href="" title="Corrects bugs"><img class="emoji" alt="bug" src="https://github.githubassets.com/images/icons/emoji/unicode/1f41b.png" width="20" height="20"></a>
-    <a href="" title="Mentors contributors"> <img class="emoji" alt="teacher" src="https://github.githubassets.com/images/icons/emoji/unicode/1f9d1-1f3eb.png?v8" width="20" height="20"></a> 
-    <a href="" title="Writes article and blogposts"><img class="emoji" alt="memo" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4dd.png" width="20" height="20"></a>
+    <a href="" title="Make documentation"><img class="emoji" alt="book" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png" width="20" height="20"></a> 
     </td>
     <td align="center">
     <a href="https://marwan-hassini.gitlab.io/marwan/">
     <img src="https://cv.archives-ouvertes.fr/photo/882114" height="120px;" alt=""/>
     <br /><sub><b>Marwan Hassini</b></sub></a><br />
-    <a href="" title="Reports bugs"><img class="emoji" alt="bug" src="https://github.githubassets.com/images/icons/emoji/unicode/1f41b.png" width="20" height="20"></a>
+    <a href="Codes" title="Codes"><img class="emoji" alt="computer" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4bb.png" width="20" height="20"></a> 
     <a href="" title="Make documentation"><img class="emoji" alt="book" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png" width="20" height="20"></a> 
-    <a href="" title="Create examples"><img class="emoji" alt="bulb" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4a1.png" width="20" height="20"></a> 
-    <a href="" title="Ideas, Planning, & Feedback"> <img class="emoji" alt="thinking" src="https://github.githubassets.com/images/icons/emoji/unicode/1f914.png" width="20" height="20"></a> 
-    <a href="" title="Make tutorials"><img class="emoji" alt="white_check_mark" src="https://github.githubassets.com/images/icons/emoji/unicode/2705.png" width="20" height="20"></a>
-    <a href="" title="Writes article and blogposts"><img class="emoji" alt="memo" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4dd.png" width="20" height="20"></a>
     </td>
   </tr>
 </table>
