@@ -110,16 +110,16 @@ if xml_read
     U = U(Iu);
     I = I(Iu);
     m = m(Iu);
-   
+    
     if all(cellfun(@(x) isfield(x,Tname),xml.table))
-       %extraire
-       T = cellfun(@(x) x.(Tname).vector,xml.table,'uniformoutput',false);
-       %decapsuler les cellules
-       T = vertcat(T{:});
-       %doublons
-       T = T(Iu);
+        %extraire
+        T = cellfun(@(x) x.(Tname).vector,xml.table,'uniformoutput',false);
+        %decapsuler les cellules
+        T = vertcat(T{:});
+        %doublons
+        T = T(Iu);
     else
-       T = [];
+        T = [];
     end
     if isnan(max(t+I+U+m))%gestion d'erreurs
         error('Oups! extract_bench a trouve des nans: %s\n',thisXML);
@@ -227,7 +227,7 @@ else
 end
 
 if ismember('v',options)
-    fprintf('extract_eis: %s ....',thisMATeis);
+    fprintf('extract_eis ....');
 end
 
 
@@ -266,56 +266,57 @@ ReZ = ReZ(Is);
 ImZ = ImZ(Is);
 f = f(Is);
 
-
-if isnan(max(t+I+U+m))%gestion d'erreurs
-    error('Oups! extract_eis a trouve des nans: %s\n',thisXML);
-end
-%     %doublons
-%     [t, Iu] = unique(t);
-%     U = U(Iu);
-%     I = I(Iu);
-%     m = m(Iu);
-% cut vectors into individual EIS (diff(f)>0 = new EIS):
-
-% frequency sweep can be positive (low to high frequencies) >> Iend1
-% or negative (low to high frequencies) Iend2
-% Keep shortest vector (most probable situation)
-Iend1 = [diff(f)>0; true];
-Iend2 = [diff(f)<0; true];
-if length(find(Iend1))< length(find(Iend2))
-    Iend = Iend1;
-else
-    Iend = Iend2;
-end
-
-% Iend = [diff(f)>0; true];
-Istart = [true; Iend(1:end-1)];
-
-% Iend = [diff(f)>0; true];
-% Istart = [true; Iend(1:end-1)];
-Iend = find(Iend);
-Istart = find(Istart);
-tc = cell(size(Istart));
-Uc = cell(size(Istart));
-Ic = cell(size(Istart));
-mc = cell(size(Istart));
-ReZc = cell(size(Istart));
-ImZc = cell(size(Istart));
-fc = cell(size(Istart));
-for ind = 1:length(Istart)
-    tc{ind} = ReZ(Istart(ind):Iend(ind));
-    Uc{ind} = ReZ(Istart(ind):Iend(ind));
-    Ic{ind} = ReZ(Istart(ind):Iend(ind));
-    mc{ind} = ReZ(Istart(ind):Iend(ind));
-    ReZc{ind} = ReZ(Istart(ind):Iend(ind));
-    ImZc{ind} = ImZ(Istart(ind):Iend(ind));
-    fc{ind} = f(Istart(ind):Iend(ind));
-end
-
-
 if isempty(t)
     eis = [];
 else
+    
+    if isnan(max(t+I+U+m))%gestion d'erreurs
+        error('Oups! extract_eis found some nans\n');
+    end
+    %     %doublons
+    %     [t, Iu] = unique(t);
+    %     U = U(Iu);
+    %     I = I(Iu);
+    %     m = m(Iu);
+    % cut vectors into individual EIS (diff(f)>0 = new EIS):
+    
+    % frequency sweep can be positive (low to high frequencies) >> Iend1
+    % or negative (low to high frequencies) Iend2
+    % Keep shortest vector (most probable situation)
+    Iend1 = [diff(f)>0; true];
+    Iend2 = [diff(f)<0; true];
+    if length(find(Iend1))< length(find(Iend2))
+        Iend = Iend1;
+    else
+        Iend = Iend2;
+    end
+    
+    % Iend = [diff(f)>0; true];
+    Istart = [true; Iend(1:end-1)];
+    
+    % Iend = [diff(f)>0; true];
+    % Istart = [true; Iend(1:end-1)];
+    Iend = find(Iend);
+    Istart = find(Istart);
+    tc = cell(size(Istart));
+    Uc = cell(size(Istart));
+    Ic = cell(size(Istart));
+    mc = cell(size(Istart));
+    ReZc = cell(size(Istart));
+    ImZc = cell(size(Istart));
+    fc = cell(size(Istart));
+    for ind = 1:length(Istart)
+        tc{ind} = ReZ(Istart(ind):Iend(ind));
+        Uc{ind} = ReZ(Istart(ind):Iend(ind));
+        Ic{ind} = ReZ(Istart(ind):Iend(ind));
+        mc{ind} = ReZ(Istart(ind):Iend(ind));
+        ReZc{ind} = ReZ(Istart(ind):Iend(ind));
+        ImZc{ind} = ImZ(Istart(ind):Iend(ind));
+        fc{ind} = f(Istart(ind):Iend(ind));
+    end
+    
+    
+    
     eis.t = tc;
     eis.U = Uc;
     eis.I = Ic;

@@ -105,8 +105,22 @@ end
 %% 1. LOAD
 %1.0.- load previous results (if they exist)
 [result, config, phases] = load_result(xml_file,InherOptions);
-%1.1.- load data in XML
-[t,U,I,m,DoDAh,SOC,T, eis] = extract_bench(xml_file,InherOptions,config);
+
+%1.1.-take some basic config parameters in config0 struct
+% (e.g. Uname and Tname needed in extract_bench)
+if isstruct(cfg_file)
+    %CFGfile is given as struct, e.g. dattes(xml,cfg_battery,'cdvs')
+    config0 = cfg_file;
+elseif ~isempty(which(cfg_file))
+    %CFGfile is given as script, e.g. dattes(xml,'cfg_battery','cdvs')
+    config0 = eval(cfg_file);
+else
+    %CFGfile is empty, e.g. dattes(xml,'','cdvs'), take config from loadRPT
+    config0 = config;
+end
+    
+%1.2.- load data in XML
+[t,U,I,m,DoDAh,SOC,T, eis] = extract_bench(xml_file,InherOptions,config0);
 %1.3.- update result
 result.fileIn = xml_file;
 result.tIni = t(1);
@@ -120,17 +134,8 @@ end
 
 %% 2. CONFIGURE
 if ismember('c',options)
-    if isstruct(cfg_file)
-        %CFGfile is given as struct, e.g. dattes(xml,cfg_battery,'cdvs')
-        config0 = cfg_file;
-    elseif ~isempty(which(cfg_file))
-        %CFGfile is given as script, e.g. dattes(xml,'cfg_battery','cdvs')
-        config0 = eval(cfg_file);
-    else
-        %CFGfile is empty, e.g. dattes(xml,'','cdvs'), take config from loadRPT
-        config0 = config;
-    end
-    % TODO check if no 'd' was done before
+
+    % TODO check if no 'p' was done before
     [config] = configurator(t,U,I,m,config0,phases,InherOptions);
     % traceability: if a script for config is given
     if ischar(cfg_file)

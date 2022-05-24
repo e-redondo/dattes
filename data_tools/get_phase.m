@@ -20,7 +20,7 @@ if nargin~=nargout+1
     return;
 end
 %0.3.- phase doit etre struct de taille 1
-if ~isstruct(phase) || length(struct)~=1
+if ~isstruct(phase) || length(phase)~=1
     fprintf('get_phase: ERREUR, phase doit etre struct de taille 1\n');
     return;
 end
