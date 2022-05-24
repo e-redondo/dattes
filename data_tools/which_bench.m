@@ -17,9 +17,7 @@ function [bench, line1, line2] = which_bench(fid)
 bench = '';
 line1 = '';
 line2 = '';
-% TODO: Arbin files (xls, res)
-% TODO: Bitrode csv file with header
-% TODO: Bitrode mdb file
+
 
 %read first line
 line1 = fgetl(fid);

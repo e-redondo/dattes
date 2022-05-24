@@ -56,7 +56,7 @@ for ind = 1:length(indP)
     tp = tp(Is);
     Up = Up(Is);
     Ip = Ip(Is);
-    
+
     [thisR, thisRRegime, thisRt, thisRDoD,thisRdt, err] = calcul_r(tp,Up,Ip,DoDp,config.instant_end_rest(ind),config.minimal_duration_pulse,config.minimal_duration_rest_before_pulse ,config.instant_calcul_R);
    
     R = [R thisR];
@@ -65,11 +65,7 @@ for ind = 1:length(indP)
     RDoD = [RDoD thisRDoD];
     Rdt = [Rdt thisRdt];
     
-%     %TODO: comment transmettre 'g' a calculR? il genere beaucoup de figures!!
-%     [R(ind), RRegime(ind)] = calcul_r(tp,Up,Ip,phases(indP(ind)-1).t_fin,config.tminR,config.tminRr);
-%     Rt(ind) = t(t==phases(indP(ind)-1).t_fin);
-%     %RDoD(ind) = DoDAh(t==config.tR(ind));
-%     RDoD(ind) = DoDp(1);
+
     
 end
 RRegime = RRegime/config.Capa;

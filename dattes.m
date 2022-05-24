@@ -66,18 +66,6 @@ function [result, config, phases] = dattes(xml_file,cfg_file,options)
 % See also extract_bench, decoupeBanc, ident_Capa2, ident_OCVr2, ident_R2,
 % ident_CPE2
 
-%TODO: review results' structure
-% result
-%   .x
-%     .t, .U, .I, .m, .T
-%   .phases
-%   .config
-%   .Capacity
-%       .QCCdis, .QCVdis, QCCcha, QCVcha
-%   .Resistance
-%       .R, .CRate, .DoD, .dt
-
-%TODO: put all the results in one file (profiles + result + phases + config
 
 %% 0.-interpreter les options
 if ~exist('options','var')
@@ -183,8 +171,6 @@ end
 
 %% 6. Profile processing (t,U,I,m,DoDAh) >>> R, CPE, ICA, OCV, etc.
 
-%TODO: Gestion d'erreurs: tous les calculs a partir d'ici ont besoin des
-%profils (t,U,I,m,DoDAh)
 if any(ismember('PORWI',options))
     if isempty(DoDAh)
         %on a pas fait calculSOC ou s'est mal passe, on arrete (on ne

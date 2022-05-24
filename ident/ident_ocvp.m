@@ -70,7 +70,6 @@ end
 if ismember('g',options)
 %     showResult(t,U,DoDAh, tOCVp, OCVp, DoDp);
     plotOCVp(t,U,DoDAh, tOCVp, OCVp, DoDp, Ipsign);
-    %TODO adapter echele verticale a config.Umax,config.Umin
 end
 
 end

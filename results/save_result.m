@@ -5,8 +5,6 @@ function err = save_result(result,config,phases)
 %
 %See also dattes, load_result, edit_result
 
-%TODO: verification de types en entree (1x1 struct,1x1 struct,1xp struct)
-%ou (1xn struct,1xn struct,1xn cell de struct)
 err = 0;
 if length(result)==1
 %     XMLfile = {XMLfile};

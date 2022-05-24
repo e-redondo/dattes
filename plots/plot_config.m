@@ -11,7 +11,6 @@ function hf = plot_config(t,U,config,phases,title_str,options)
 % See also dattes, configurator
 
 
-%TODO: mettre aussi les phases OCV
 if ~exist('options','var')
     options = '';
 end

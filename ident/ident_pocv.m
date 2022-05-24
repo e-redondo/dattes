@@ -4,7 +4,6 @@ function [pOCV, pDoD, pPol, pEff,UCi,UDi,Regime] = ident_pocv(t,U,DoDAh,config,p
 % See also dattes, configurator
 
 %si plus d'une phase en charge ou plus d'une phase en decharge > ERREUR
-%TODO check inputs
 
 phasesOCVC = phases(config.pOCVpC);
 phasesOCVD = phases(config.pOCVpD);

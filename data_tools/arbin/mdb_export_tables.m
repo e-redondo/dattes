@@ -27,6 +27,5 @@ for ind = 1:length(tablelist)
     cmd = sprintf('mdb-export -d " " "%s" %s > "%s"',resFile,tablelist{ind},fileOut);
     [A, B] = dos(cmd);
 end
-%TODO: gestion d'erreurs
 end
 
