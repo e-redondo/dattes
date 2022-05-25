@@ -21,9 +21,14 @@ if ~exist('options','var')
 end
 
 % TENTATIVE: différencier des phases avec le même mode et changment de
+if ismember('u',options)%unsigned
+  ms = m;  
+else
 % polarité
 ms = m.*sign(I);
-% ms = m;
+ms(sign(I)==0 | ms==-3) = 3;
+end
+
 
 Idecoupe = find(diff(ms));
 

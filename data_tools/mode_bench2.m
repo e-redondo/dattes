@@ -21,7 +21,7 @@ seuilI2 = 2*seuilI;
 seuilU2 = 2*seuilU;
 
 %decouper en fonction de la valeur de Step
-[phases, tcell, Icell, Ucell, Steps] = decompose_bench(t,I,U,Step);
+[phases, tcell, Icell, Ucell, Steps] = decompose_bench(t,I,U,Step,'u');
 
 %FUSION DE STEPS COURTS (profil)
 %trouver des Steps courts et les fusionner
@@ -46,7 +46,7 @@ for ind = 1:length(Debuts)
 end
 
 %redecoupe, cette fois avec newStep (Steps courts fusionnes)
-[phases, tcell, Icell, Ucell, Steps] = decompose_bench(t,I,U,newStep);
+[phases, tcell, Icell, Ucell, Steps] = decompose_bench(t,I,U,newStep,'u');
 for ind = 1:length(phases)
    indices = t>=tcell{ind}(1) & t<=tcell{ind}(end);
    if Steps(ind)==-1%marquage profil
