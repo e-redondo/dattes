@@ -58,7 +58,7 @@ for ind = 1:length(folder_list)
     end
 end
 
-%6. make btr2xml on each folder:
+%6. make bitrode_csv2xml on each folder:
 import_errors = 0;
 wrote_files = 0;
 
@@ -66,17 +66,17 @@ csv_list = cell(0);
 success = logical([]);
 for ind =  1:length(folder_list)
     this_folder = folder_list{ind};
-    fprintf('btr2xml on folder %s...',this_folder);
+    fprintf('bitrode_csv2xml on folder %s...',this_folder);
     csv_list1 = lsFiles(this_folder,'.csv');%csv_list for this folder
     csv_list = [csv_list(:); csv_list1(:)];%csv_list for all folders
     for ind2 = 1:length(csv_list1)
         %do one csv file to better manage wrote_files and import_errors
         %count
         try
-            xml_list2 = btr2xml(csv_list1(ind2));
+            xml_list2 = bitrode_csv2xml(csv_list1(ind2));
             if isempty(xml_list2)
                 success(end+1) = false;
-                ME = MException('btr2xml:no xml file created','error in btr2xml');
+                ME = MException('bitrode_csv2xml:no xml file created','error in bitrode_csv2xml');
             else
                 success(end+1) = true;
                 wrote_files = wrote_files+length(xml_list2);

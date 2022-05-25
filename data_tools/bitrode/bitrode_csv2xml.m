@@ -1,15 +1,15 @@
-function [xml_list] = btr2xml(srcdir,options)
-% btr2xml mass import of *.csv file (Bitrode) to *.xml
+function [xml_list] = bitrode_csv2xml(srcdir,options)
+% bitrode_csv2xml mass import of *.csv file (Bitrode) to *.xml
 %
 % Usage:
-% btr2xml(srcdir) search all *.csv in srcdir and write a *.xml for every *.csv
+% bitrode_csv2xml(srcdir) search all *.csv in srcdir and write a *.xml for every *.csv
 %
-% btr2xml(fileList) fileList is a cell string containing a list of *.csv
+% bitrode_csv2xml(fileList) fileList is a cell string containing a list of *.csv
 % files to convert
 %
-% btr2xml(...,'f') option 'force', write *.xml if it already exists
-% btr2xml(...,'v') option 'verbose', tells what it does
-% btr2xml(...,'m') option 'multicell', write *.xml separately for each cell
+% bitrode_csv2xml(...,'f') option 'force', write *.xml if it already exists
+% bitrode_csv2xml(...,'v') option 'verbose', tells what it does
+% bitrode_csv2xml(...,'m') option 'multicell', write *.xml separately for each cell
 %
 %
 % See also import_bitrode, read_bitrode_log, write_bitrode_log
@@ -26,7 +26,7 @@ end
 verbose = ismember('v',options);
 
 if ~exist('srcdir','var')
-    fprintf('ERROR: btr2xml needs at least one input\n')
+    fprintf('ERROR: bitrode_csv2xml needs at least one input\n')
     return
 end
 

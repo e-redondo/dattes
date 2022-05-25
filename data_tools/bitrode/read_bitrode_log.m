@@ -8,7 +8,7 @@ function Date = read_bitrode_log(srcdir,CSVfile)
 %
 %L'utilisateur devra venir modifier ces dates avec la VRAIE DATE du test.
 %
-% See also write_bitrode_log, btr2xml
+% See also write_bitrode_log, bitrode_csv2xml
 
 fid = fopen(fullfile(srcdir,'bitrode.log'),'r');
 if fid<0

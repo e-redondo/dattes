@@ -12,7 +12,7 @@ function xml = import_bitrode(filename,dirname,options)
 % OUTPUTS:
 % - xml (struct): structure with XML format 4 VEHLIB
 % 
-% See also btr2xml, which_bench
+% See also bitrode_csv2xml, which_bench
 
 if ~exist('options','var')
     options='';

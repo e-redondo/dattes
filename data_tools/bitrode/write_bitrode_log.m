@@ -8,7 +8,7 @@ function write_bitrode_log(srcdir,options)
 %
 %L'utilisateur devra venir modifier ces dates avec la VRAIE DATE du test.
 %
-% See also read_bitrode_log, btr2xml
+% See also read_bitrode_log, bitrode_csv2xml
 if ~exist('options','var')
     options = 'm';
 end

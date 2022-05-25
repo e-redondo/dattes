@@ -58,7 +58,7 @@ for ind = 1:length(folder_list)
     end
 end
 
-%6. make btr2xml on each folder:
+%6. make mpt2xmlf on each folder:
 import_errors = 0;
 wrote_files = 0;
 
