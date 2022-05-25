@@ -1,13 +1,13 @@
-function [xml_list] = mpt2xmlf(srcdir,options)
-% mpt2xmlf  mass import of *.mpt files (Biologic) to *.xml
+function [xml_list] = biologic_mpt2xml_folders(srcdir,options)
+% biologic_mpt2xml_folders  mass import of *.mpt files (Biologic) to *.xml
 % Usage:
-% mpt2xmlf(srcdir) search all folders containing *.mpt in srcdir and write
+% biologic_mpt2xml_folders(srcdir) search all folders containing *.mpt in srcdir and write
 % a *.xml for every folder
 %    - if srcdir contains mpt files AND does not contain any subfolder an
 %    xmlfile wil be created at the same place that srcdir with
 % 
-% mpt2xmlf(srcdir,'v') , verbose: tells what it does
-% mpt2xmlf(srcdir,'f') , force: write *.xml even if it already exists
+% biologic_mpt2xml_folders(srcdir,'v') , verbose: tells what it does
+% biologic_mpt2xml_folders(srcdir,'f') , force: write *.xml even if it already exists
 %
 % See also import_biologic, mpt2xml
 %

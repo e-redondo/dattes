@@ -11,9 +11,9 @@ function [xml_list] = mpt2xml(srcdir,options)
 % MPT2XML(srcdir,'f') , force: write *.xml even if it already exists
 %
 % WARNING! this function creates one *.xml per *.mpt file.
-% If you want one *.xml per folder (multi-mpt test) use mpt2xmlf
+% If you want one *.xml per folder (multi-mpt test) use biologic_mpt2xml_folders
 %
-% See also import_biologic, mpt2xmlf
+% See also import_biologic, biologic_mpt2xml_folders
 %
 %   IFSTTAR/LTE  - E. REDONDO
 %   $Revision: 0.1 $  $Created: 2015/08/12, Modified: 2022/04/01$

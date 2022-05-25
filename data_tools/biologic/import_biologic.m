@@ -16,7 +16,7 @@ function [outStruct, err, errS] = import_biologic(dirname)
 %   3) [outStruct, err, errS] = import_biologic({filename}) : convert just
 %   one *.mpt file (put filename into a cell string)
 %
-%   See also: mpt2xml, mpt2xmlf, which_bench
+%   See also: mpt2xml, biologic_mpt2xml_folders, which_bench
 %
 %   IFSTTAR/LTE  - E. REDONDO
 %   $Revision: 0.1 $  $Created: 2012$
