@@ -1,14 +1,14 @@
-function [xml_list] = mpt2xml(srcdir,options)
-% MPT2XML  mass import of *.mpt files (Biologic) to *.xml
+function [xml_list] = biologic_mpt2xml_files(srcdir,options)
+% biologic_mpt2xml_files  mass import of *.mpt files (Biologic) to *.xml
 % Usage:
-% MPT2XML(srcdir) search all *.mpt in srcdir and write a *.xml for every *.mpt
+% biologic_mpt2xml_files(srcdir) search all *.mpt in srcdir and write a *.xml for every *.mpt
 %
-% MPT2XML(fileList) fileList is a cell string containing a list of *.mpt
+% biologic_mpt2xml_files(fileList) fileList is a cell string containing a list of *.mpt
 % files to convert
 %
-% MPT2XML(srcdir,'v') , verbose: tells what it does
-% MPT2XML(srcdir,'t') , txt: search *.txt files instead *.mpt
-% MPT2XML(srcdir,'f') , force: write *.xml even if it already exists
+% biologic_mpt2xml_files(srcdir,'v') , verbose: tells what it does
+% biologic_mpt2xml_files(srcdir,'t') , txt: search *.txt files instead *.mpt
+% biologic_mpt2xml_files(srcdir,'f') , force: write *.xml even if it already exists
 %
 % WARNING! this function creates one *.xml per *.mpt file.
 % If you want one *.xml per folder (multi-mpt test) use biologic_mpt2xml_folders
@@ -54,7 +54,7 @@ end
 xml_list = cell(0);
 
 if verbose %cf. options
-    fprintf('MPT2XML: trouve %d fichiers\n',length(MPT));
+    fprintf('biologic_mpt2xml_files: trouve %d fichiers\n',length(MPT));
 end
 for ind = 1:length(MPT)
     xml = import_biologic({MPT{ind}});

@@ -58,7 +58,7 @@ for ind = 1:length(folder_list)
     end
 end
 
-%6. make mpt2xml on each folder:
+%6. make biologic_mpt2xml_files on each folder:
 import_errors = 0;
 wrote_files = 0;
 
@@ -66,17 +66,17 @@ mpt_list = cell(0);
 success = logical([]);
 for ind =  1:length(folder_list)
     this_folder = folder_list{ind};
-    fprintf('mpt2xml on folder %s...',this_folder);
+    fprintf('biologic_mpt2xml_files on folder %s...',this_folder);
     mpt_list1 = lsFiles(this_folder,'.mpt');%mpt_list for this folder
     mpt_list = [mpt_list(:); mpt_list1(:)];%mpt_list for all folders
     for ind2 = 1:length(mpt_list1)
         %do one mpt file to better manage wrote_files and import_errors
         %count
         try
-            xml_list2 = mpt2xml(mpt_list1(ind2));
+            xml_list2 = biologic_mpt2xml_files(mpt_list1(ind2));
             if isempty(xml_list2)
                 success(end+1) = false;
-                ME = MException('mpt2xml:no xml file created','error in mpt2xml');
+                ME = MException('biologic_mpt2xml_files:no xml file created','error in biologic_mpt2xml_files');
             else
                 success(end+1) = true;
                 wrote_files = wrote_files+length(xml_list2);

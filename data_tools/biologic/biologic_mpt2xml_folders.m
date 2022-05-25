@@ -9,7 +9,7 @@ function [xml_list] = biologic_mpt2xml_folders(srcdir,options)
 % biologic_mpt2xml_folders(srcdir,'v') , verbose: tells what it does
 % biologic_mpt2xml_folders(srcdir,'f') , force: write *.xml even if it already exists
 %
-% See also import_biologic, mpt2xml
+% See also import_biologic, biologic_mpt2xml_files
 %
 %   IFSTTAR/LTE  - E. REDONDO
 %   $Revision: 0.1 $  $Created: 2015/09/08, Modified: 2022/04/01$
