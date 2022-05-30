@@ -33,6 +33,6 @@ fid = fopen(fullfile(srcdir,'bitrode.log'),'w+');
 for ind = 1:length(CSV)
     fprintf(fid,'%s\t%s\n',CSV{ind},Dates{ind});
 end
-fclose(fid)
+fclose(fid);
 
 end

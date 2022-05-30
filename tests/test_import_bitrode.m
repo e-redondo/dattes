@@ -58,6 +58,7 @@ for ind = 1:length(folder_list)
     end
 end
 
+
 %6. make bitrode_csv2xml on each folder:
 import_errors = 0;
 wrote_files = 0;
@@ -67,7 +68,18 @@ success = logical([]);
 for ind =  1:length(folder_list)
     this_folder = folder_list{ind};
     fprintf('bitrode_csv2xml on folder %s...',this_folder);
+    
     csv_list1 = lsFiles(this_folder,'.csv');%csv_list for this folder
+    
+    %remove also all bitrode.log  files:
+    log_list = lsFiles(this_folder,'.log');
+    log_list = regexpFiltre(log_list,'bitrode.log$');
+    cellfun(@delete,log_list);
+    
+
+    %write bitrode log on each folder containing csv files:
+    D = unique(cellfun(@fileparts,csv_list1,'UniformOutput',false));
+    cellfun(@(x) write_bitrode_log(x,'n'),D);
     csv_list = [csv_list(:); csv_list1(:)];%csv_list for all folders
     for ind2 = 1:length(csv_list1)
         %do one csv file to better manage wrote_files and import_errors
