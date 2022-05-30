@@ -15,8 +15,6 @@ end
 %         t1 = t-t(1);%enlever le debut
 % end
 
-
-%fonction copiee de modeBanc
 h = figure;
 for ind = 1:length(eis.ReZ)
     plot(eis.ReZ{ind},eis.ImZ{ind},'.-'),hold on

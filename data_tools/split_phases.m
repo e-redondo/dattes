@@ -31,7 +31,7 @@ function [phases, tcell, Icell, Ucell, modes] = split_phases(t,I,U,m,options)
 % split_phases(t,I,U,m,'g') % 'graphics', show results in a figure.
 % split_phases(t,I,U,m,'v') % 'verbose', tell what it does.
 %
-% See also mode_bench2, extract_profiles, plot_phases
+% See also which_mode, extract_profiles, plot_phases
 
 if ~exist('options','var')
     options = '';

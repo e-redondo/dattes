@@ -1,8 +1,8 @@
-function m = mode_bench2(t,I,U,Step,I_threshold,U_threshold,options)
-% mode_bench2 calculate the working mode of the cycler (rest, CC, CV, EIS, profile)
+function m = which_mode(t,I,U,Step,I_threshold,U_threshold,options)
+% which_mode calculate the working mode of the cycler (rest, CC, CV, EIS, profile)
 %
 % Usage:
-% m = mode_bench2(t,I,U,Step,I_threshold,U_threshold,options)
+% m = which_mode(t,I,U,Step,I_threshold,U_threshold,options)
 %
 % Inputs:
 % - t,I,U,Step (nx1 double): from test data
@@ -107,7 +107,6 @@ end
 if sum(modes)==0
     %     error('mode non trouve')
     %je ne sais pas ce que c'est, ca doit etre un profil
-    %     m = modeBanc(1:length(I),I,U,sI,sU);
     %     return;
     indCCCV = findCCCV(t,I);
     m = ones(size(I));%CC = 1
@@ -120,7 +119,7 @@ end
 
 function showResult(t,U,I,m)
 
-h = figure('name','mode_bench2');
+h = figure('name','which_mode');
 subplot(211),plot(t,U,'b','tag','essai'),hold on,xlabel('time'),ylabel('voltage')
 subplot(212),plot(t,I,'b','tag','essai'),hold on,xlabel('time'),ylabel('current')
 

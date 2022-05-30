@@ -21,7 +21,6 @@ else
 end
 
 
-%fonction copiee de modeBanc
 h = figure;
 subplot(211),plot(t1,U,'b','displayname','test'),hold on,xlabel(x_lab),ylabel('voltage')
 

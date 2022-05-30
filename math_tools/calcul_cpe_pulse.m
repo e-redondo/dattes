@@ -4,11 +4,17 @@ function [Q, alpha, err_rel, Ip] = calcul_cpe_pulse(tm,Um,Im,options,alpha0)
 %
 % Usage:
 % [Q, alpha, err_rel, Ip] = calcul_cpe_pulse(tm,Um,Im,options,alpha0)
+%
+% Inputs:
 % - tm, Um, Im (nx1 double): time, voltage, current vectors
 % - options (string): 
 %    - 'g': graphics (plot results)
 %    - 'a': fixed alpha parameter (alpha0)
 % - alpha0 (1x1 double): initial (or fixed) value for alpha 
+% Outputs:
+% - Q, alpha (1x1 double): identified Q, alpha parammeter of CPE
+% - err_rel (1x1 double): average absolute relative error
+% - Ip (1x1 double): pulse amplitude (A)
 %
 % See also ident_cpe, response_cpe_pulse
 
@@ -21,7 +27,7 @@ if ~exist('alpha0','var')
 end
 
 [Ip,td,tf,Ts] = param_pulse(tm,Im);
-if isempty(strfind(options, 'a'))
+if ~ismember('a',options)
     %deux parametres
     monCaller = @(x) error_cpe_pulse(x(1),x(2),Ip,td,tf,tm,Um);
     x0 = [1000; alpha0];
@@ -41,7 +47,7 @@ if exitflag<1
 end
 
 Q = x(1);
-if isempty(strfind(options, 'a'))%deux parametres
+if ~ismember('a',options)%two parameters
     alpha = x(2);
 end
 
@@ -50,7 +56,7 @@ Is = Im;
 ts = tm;
 err_rel = mean(abs(error_relative(Um,Us)));
 
-if ~isempty(strfind(options, 'g'))
+if ismember('g',options)
         show_result(tm,Im,Um,ts,Is,Us,err_rel);
 end
 
@@ -151,8 +157,9 @@ function [Ip,td,tf,Ts] = param_pulse(t,I)
 % moyen (Ts).
 %
 % See also calcul_cpe_pulse
-%
-%TODO: utiliser la fonction modeBanc ou vecteur m en 3eme argument.
+
+
+%TODO: use function which_mode or vector m in 3rd input.
 
 %trier les points de Im en deux classes
 Is = sort(abs(I));

@@ -21,7 +21,7 @@ function [t,U,I,m,DoDAh,SOC,T, eis, err] = extract_profiles(thisXML,options,conf
 % extract_profiles(thisXML, 'u') 'update', read XML if result file is older
 %
 % extract_profiles(this_result_file) works also
-% See also dattes, mode_bench2, split_phases
+% See also dattes, which_mode, split_phases
 
 if ~exist('config','var')
     Uname = 'U';

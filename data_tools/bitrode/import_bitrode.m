@@ -147,7 +147,7 @@ end
     end
     
     [xml, errorcode] = makeXMLStruct(XMLHead, XMLMetatable, XMLVars);
-    %calculer modeBanc
+    %get cycler mode
     t = xml.table{end}.tc.vector;
     U = xml.table{end}.U.vector;
     I = xml.table{end}.I.vector;
@@ -155,7 +155,7 @@ end
     
     seuilI = 0.200;
     seuilU = 0.010;
-    m = mode_bench2(t,I,U,Step,seuilI,seuilU);
+    m = which_mode(t,I,U,Step,seuilI,seuilU);
     %ajouter aux variables de xml
     mode = makeXMLVariable('mode','', '%f','mode', m);
     xml.table{end}.mode = mode;

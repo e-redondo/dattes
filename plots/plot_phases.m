@@ -9,7 +9,7 @@ function hf = plot_phases(t,U,I,phases,title_str,options)
 %
 % TODO: option plot complet pas de duration min
 %
-% See also dattes, split_phases, mode_bench2
+% See also dattes, split_phases, which_mode
 
 if ~exist('options','var')
     options = '';

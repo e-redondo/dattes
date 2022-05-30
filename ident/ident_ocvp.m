@@ -13,7 +13,7 @@ function [OCVp, DoDp, tOCVp, Ipsign] = ident_ocvp(t,U,DoDAh,m,config,phases,opti
 %    - 'v' = verbose
 %    - 'g' = graphics
 %
-% See also mode_bench2, split_phases, configurator
+% See also which_mode, split_phases, configurator
 
 if ~exist('options','var')
     options = '';

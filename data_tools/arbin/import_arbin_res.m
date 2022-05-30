@@ -184,8 +184,7 @@ I = xml.table{end}.I.vector;
 Step =  xml.table{end}.Step.vector;
 seuilI = 0.010;
 seuilU = 0.010;
-% m = mode_bench(t,I,U,seuilI,seuilU);
-m = mode_bench2(t,I,U,Step,seuilI,seuilU);
+m = which_mode(t,I,U,Step,seuilI,seuilU);
 mode = makeXMLVariable('mode','', '%f','mode', m);
 xml.table{end}.mode = mode;
 %6.7: Qc (redondant avec extractBanc)
