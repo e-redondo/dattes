@@ -1,10 +1,10 @@
  function [impedance]=ident_rrc(t,U,I,DoDAh,config,phases,options)
 %ident_rrc R+RC identification from a profile t,U,I,m
-%t,U,I from extract_bench
+%t,U,I from extract_profiles
 %DoDAh from calcul_soc, depth of discharge in Amphours
 %config from configurator
 %
-%See also dattes, calcul_soc, configurator, extract_bench
+%See also dattes, calcul_soc, configurator, extract_profiles
 %%%
 %% 0- Inputs management
 

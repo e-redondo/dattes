@@ -1,26 +1,26 @@
-function [t,U,I,m,DoDAh,SOC,T, eis, err] = extract_bench(thisXML,options,config)
-%extract_bench extract important variables from a battery test bench file.
+function [t,U,I,m,DoDAh,SOC,T, eis, err] = extract_profiles(thisXML,options,config)
+%extract_profiles extract important variables from a battery test bench file.
 % 1.- Read a .xml file (Biologic,Arbin, Bitrode...), if a dattes' results
 % file exists this latter will be read (faster)
 % 2.- Extract important vectors: t,U,I,m,DoDAh,SOC,T
 % 3.- Save the important vectors in a dattes' results file (if 's' in
 % options)
 %
-% [t,U,I,m,DoDAh,SOC,T, err] = extract_bench(thisXML): normal operation,
+% [t,U,I,m,DoDAh,SOC,T, err] = extract_profiles(thisXML): normal operation,
 % error codes:
 % err = 0: OK
 % err = -1: thisXML file does not exist
 % err = -2: dattes' result file is wrong
 % err = -3: some vectors are missing (t,U,I,m)
 %
-% extract_bench(thisXML, 's') 'save' the extracted vecors in a dattes'
+% extract_profiles(thisXML, 's') 'save' the extracted vecors in a dattes'
 % result file
-% extract_bench(thisXML, 'g') 'graphic', show figures
-% extract_bench(thisXML, 'v') 'verbose', tell what you do
-% extract_bench(thisXML, 'f') 'force', read XML even if result file exists
-% extract_bench(thisXML, 'u') 'update', read XML if result file is older
+% extract_profiles(thisXML, 'g') 'graphic', show figures
+% extract_profiles(thisXML, 'v') 'verbose', tell what you do
+% extract_profiles(thisXML, 'f') 'force', read XML even if result file exists
+% extract_profiles(thisXML, 'u') 'update', read XML if result file is older
 %
-% extract_bench(this_result_file) works also
+% extract_profiles(this_result_file) works also
 % See also mode_bench2, decompose_bench
 
 if ~exist('config','var')
@@ -61,7 +61,7 @@ else
 end
 
 if ismember('v',options)
-    fprintf('extract_bench: %s ....',thisXML);
+    fprintf('extract_profiles: %s ....',thisXML);
 end
 if xml_read
     if ~exist(thisXML,'file')
@@ -122,7 +122,7 @@ if xml_read
         T = [];
     end
     if isnan(max(t+I+U+m))%gestion d'erreurs
-        error('Oups! extract_bench a trouve des nans: %s\n',thisXML);
+        error('Oups! extract_profiles a trouve des nans: %s\n',thisXML);
     end
     if ismember('s',options)
         saveMAT(t,U,I,m,T,thisMAT);
@@ -188,7 +188,7 @@ function showResult(t,U,I,m,thisMAT,options)
 [~, titre, ~] = fileparts(thisMAT);
 InherOptions = options(ismember(options,'hj'));
 h = plot_bench(t,U,I,m,titre,InherOptions);
-set(h,'name','extract_bench');
+set(h,'name','extract_profiles');
 
 end
 

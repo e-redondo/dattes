@@ -63,7 +63,7 @@ function [result, config, phases] = dattes(xml_file,cfg_file,options)
 % dattes(XMLfile,CFGfile,'As'), fait tout: lecture, config, tous les calculs,
 % sauvegarde de resultats.
 %
-% See also extract_bench, decoupeBanc, ident_Capa2, ident_OCVr2, ident_R2,
+% See also extract_profiles, decoupeBanc, ident_Capa2, ident_OCVr2, ident_R2,
 % ident_CPE2
 
 
@@ -107,7 +107,7 @@ end
 [result, config, phases] = load_result(xml_file,InherOptions);
 
 %1.1.-take some basic config parameters in config0 struct
-% (e.g. Uname and Tname needed in extract_bench)
+% (e.g. Uname and Tname needed in extract_profiles)
 if isstruct(cfg_file)
     %CFGfile is given as struct, e.g. dattes(xml,cfg_battery,'cdvs')
     config0 = cfg_file;
@@ -120,7 +120,7 @@ else
 end
     
 %1.2.- load data in XML
-[t,U,I,m,DoDAh,SOC,T, eis] = extract_bench(xml_file,InherOptions,config0);
+[t,U,I,m,DoDAh,SOC,T, eis] = extract_profiles(xml_file,InherOptions,config0);
 %1.3.- update result
 result.fileIn = xml_file;
 result.tIni = t(1);

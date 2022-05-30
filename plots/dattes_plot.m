@@ -13,7 +13,7 @@ if isempty(fieldnames(result))
     return;
 end
 %2.load profiles
-[t,U,I,m,DoDAh,SOC,T] = extract_bench(XMLfile,options,config);
+[t,U,I,m,DoDAh,SOC,T] = extract_profiles(XMLfile,options,config);
 
 %title for figures
 [~, titre, ~] = fileparts(result.fileIn);

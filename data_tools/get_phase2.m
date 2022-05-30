@@ -1,7 +1,7 @@
 function [tp,varargout] = get_phase2(phases,t_be_af,t,varargin)
 %get_phase2 extract vectors for given phases
 % [tp,Up,Ip,mp...] = get_phase2(phases,t_be_af,t,U,I,m...) with 'phases' 
-% from decompose_bench and vectors of type t,U,I,m,... from extract_bench,
+% from decompose_bench and vectors of type t,U,I,m,... from extract_profiles,
 % tp,Up,Ip,mp... are the pieces of vectors corresponding to time during
 % phase (from phase.t_ini to phase.t_fin). In a different manner from
 % get_phase, get_phase2 takes t_be_af (1x2 double), t_be_af(1) is the time 
@@ -11,7 +11,7 @@ function [tp,varargout] = get_phase2(phases,t_be_af,t,varargin)
 % takes 30 seconds before beginning of phase(3) and 45 seconds after the
 % end of phase(5).
 %
-% See also get_phase, decompose_bench, extract_bench
+% See also get_phase, decompose_bench, extract_profiles
 
 %0.- gestion d'erreurs:
 %0.1.- initialisation des sorties

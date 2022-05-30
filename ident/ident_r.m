@@ -1,10 +1,10 @@
 function [R, RDoD, RRegime, Rt, Rdt] = ident_r(t,U,I,DoDAh,config,phases,options)
 %ident_r resistance identification from a profile t,U,I,m
-%t,U,I from extract_bench
+%t,U,I from extract_profiles
 %DoDAh from calcul_soc, depth of discharge in Amphours
 %config from configurator
 %
-%See also dattes, calcul_soc, configurator, extract_bench
+%See also dattes, calcul_soc, configurator, extract_profiles
 if ~exist('options','var')
     options = '';
 end

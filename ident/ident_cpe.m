@@ -4,7 +4,7 @@ function [impedance] = ident_cpe(t,U,I,DoDAh,config,phases,options)
 %
 % Usage:
 % [CPEQ, CPEalpha, CPER, CPEDoD, CPERegime] = ident_cpe(t,U,I,DoDAh,config,options)
-% - t,U,I,DoDAh (nx1 double) from extract_bench
+% - t,U,I,DoDAh (nx1 double) from extract_profiles
 % - DoDAh (nx1 double) from calcul_soc
 % - config (1x1 struct) from configurator
 % - options (string)
