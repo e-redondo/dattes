@@ -61,7 +61,7 @@ end
 if ismember('u',options)%option 'unpatch', defaire ce que l'on a fait
     [R,C,P] = load_result(XML);
     %search files with imposed DoDIni or DoDFin:
-    Ie = ~arrayfun(@(x) isempty(x.DoDAhIni) && isempty(x.DoDAhFin),C);
+    Ie = ~arrayfun(@(x) isempty(x.soc.dod_ah_ini) && isempty(x.soc.dod_ah_fin),C);
     %List of files that will be treated
     xml = XML(Ie);
     %Filter results to this files:
@@ -70,13 +70,13 @@ if ismember('u',options)%option 'unpatch', defaire ce que l'on a fait
     p = P(Ie);
     
     for ind = 1:length(r)
-        c(ind).DoDAhIni = [];
-        c(ind).DoDAhFin = [];
+        c(ind).soc.dod_ah_ini = [];
+        c(ind).soc.dod_ah_fin = [];
         
-        r(ind).DoDAhIni = [];
-        r(ind).SOCIni = [];
-        r(ind).DoDAhFin = [];
-        r(ind).SOCFin = [];
+        r(ind).dod_ah_ini = [];
+        r(ind).soc_ini = [];
+        r(ind).dod_ah_fin = [];
+        r(ind).soc_fin = [];
         if verbose
             fprintf('reset SOC for %s\n',r(ind).test.file_in);
         end
@@ -96,7 +96,7 @@ end
 
 [r,~,~] = load_result(xml);
 %take start times
-tInis = [r.test.t_ini];
+tInis = arrayfun(@(x) x.test.t_ini,r);
 
 %put in chronological order
 [~, Is] = sort(tInis);
@@ -107,7 +107,7 @@ xml = xml(Is);
 
 
 %2.-search tests with empty SOCIni
-Ie = arrayfun(@(x) isempty(x.SOCIni),r);
+Ie = arrayfun(@(x) isempty(x.test.soc_ini),r);
 indEmptySOC =  find(Ie);
 indAvant = indEmptySOC-1;
 indApres = indEmptySOC+1;
@@ -115,14 +115,14 @@ indApres = indEmptySOC+1;
 if ismember('b',options)%before: search for previous test
     for ind = 1:length(indEmptySOC)%direct for (start:1:end)
         if indAvant(ind)>0 && ismember('b',options)%recherche de l'anterieur
-            c(indEmptySOC(ind)).DoDAhIni = r(indAvant(ind)).DoDAhFin;
+            c(indEmptySOC(ind)).soc.dod_ah_ini = r(indAvant(ind)).test.dod_ah_fin;
             if verbose
                 fprintf('%s.DoDFin >>> %s.DoDIni\n',r(indAvant(ind)).test.file_in, r(indEmptySOC(ind)).test.file_in)
             end
         end
         save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%sauvegarder la configuration
         r(indEmptySOC(ind)) = dattes(xml{indEmptySOC(ind)},c(indEmptySOC(ind)).CFGfile,'Ss');%recalculer le SOC
-        if isempty(r(indEmptySOC(ind)).SOCIni)
+        if isempty(r(indEmptySOC(ind)).test.soc_ini)
             fprintf('calcul_soc %s >>>>>>>>>>>>NOK\n',r(indEmptySOC(ind)).test.file_in);
         else
             fprintf('calcul_soc %s >>>>>>>>>>>>OK\n',r(indEmptySOC(ind)).test.file_in);
@@ -132,14 +132,14 @@ if ismember('b',options)%before: search for previous test
 elseif ismember('a',options)%after: search for following test
     for ind = length(indEmptySOC):-1:1%reverse for (end:-1:start)
         if indApres(ind)<=length(r) && ismember('a',options)%recherche du posterieur
-            c(indEmptySOC(ind)).DoDAhFin = r(indApres(ind)).DoDAhIni;
+            c(indEmptySOC(ind)).soc.dod_ah_fin = r(indApres(ind)).test.dod_ah_ini;
             if verbose
                 fprintf('%s.DoDFin <<< %s.DoDIni\n', r(indEmptySOC(ind)).test.file_in,r(indApres(ind)).test.file_in)
             end
         end
         save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%sauvegarder la configuration
         r(indEmptySOC(ind)) = dattes(xml{indEmptySOC(ind)},c(indEmptySOC(ind)).CFGfile,'Ss');%recalculer le SOC
-        if isempty(r(indEmptySOC(ind)).SOCIni)
+        if isempty(r(indEmptySOC(ind)).soc_ini)
             fprintf('calcul_soc %s >>>>>>>>>>>>NOK\n',r(indEmptySOC(ind)).test.file_in);
         else
             fprintf('calcul_soc %s >>>>>>>>>>>>OK\n',r(indEmptySOC(ind)).test.file_in);

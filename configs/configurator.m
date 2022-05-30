@@ -183,17 +183,17 @@ config.pW = pW;
 
 
 %calcul_soc
-config.t100 = t(I100);%pour le calcul du SOC
-config.t0 = t(I0);%pour le calcul du SOC
+config.soc.soc100_time = t(I100);%pour le calcul du SOC
+config.soc.soc0_time = t(I0);%pour le calcul du SOC
 %Note: retourne matrice vide s'il ne trouve pas de phase CCCV a Umax.
 %Dans ces cas il faut trouver le test immediatement anterieur (ou
 %posterieur), calculer le DoDAh et fixer DoDAhIni ou DoDAhFin pour pouvoir
 %faire calcul_soc
-if ~isfield(config,'DoDAhIni')
-    config.DoDAhIni = [];
+if ~isfield(config.soc,'dod_ah_ini')
+    config.soc.dod_ah_ini = [];
 end
-if ~isfield(config,'DoDAhFin')
-    config.DoDAhFin = [];
+if ~isfield(config.soc,'dod_ah_fin')
+    config.soc.dod_ah_fin = [];
 end
 %ident_ocv_by_points (par points)
 config.pOCVr = durees>=config.tminOCVr & ismember(tInis,t(IiniRepos));

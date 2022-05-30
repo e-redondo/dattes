@@ -42,6 +42,8 @@ if ~isempty(err_msg)
     error(err_msg);
 end
  
+% soc ('S' action):
+config.soc.crate_cv_end = 1/20;
 
 % impedance ('Z' action):
 config.impedance.ident_fcn = @ident_cpe;% use ident_cpe
