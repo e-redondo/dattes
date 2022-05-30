@@ -28,10 +28,19 @@ if ~isstruct(config) || ~ischar(options) || ~isnumeric(t) || ~isstruct(phases)  
     fprintf('ident_cpe: wrong type of parametres\n');
     return;
 end
-if ~isfield(config,'tW') || ~isfield(config,'tminWr') || ~isfield(config,'tminW')
+if ~isfield(config,'impedance')
     fprintf('ident_cpe: config struct incomplete\n');
     return;
 end
+if ~isfield(config.impedance,'pulse_min_duration') || ...
+       ~isfield(config.impedance,'pulse_max_duration') || ...
+       ~isfield(config.impedance,'rest_min_duration') || ...
+       ~isfield(config.impedance,'fixed_params') || ...
+       ~isfield(config.impedance,'initial_params')   
+    fprintf('ident_cpe: config struct incomplete\n');
+    return;
+end
+
 %% 1- Initialization
 impedance=struct;
 CPEQ = [];
@@ -42,7 +51,7 @@ CPERegime = [];
 
 %% 2- Determine the phases for which a CPE identification is relevant
 ind_CPE = find(config.pCPE);
-time_before_after_phase = [config.rest_duration_before_pulse 0];
+time_before_after_phase = [config.impedance.rest_min_duration 0];
 % phases_identify_CPE=phases(config.pCPE);
 
 
@@ -58,7 +67,7 @@ for phase_k = 1:length(ind_CPE)
         
     
     %Ohmic polarization is extracted
-    [R, RRegime] = calcul_r(tp,Up,Ip,DoDp,config.instant_end_rest(phase_k),config.minimal_duration_pulse,config.minimal_duration_rest_before_pulse ,config.instant_calcul_R);
+    [R, RRegime] = calcul_r(tp,Up,Ip,DoDp,phases(ind_CPE(phase_k)).t_ini,9,config.impedance.rest_min_duration,0);
     Ur = zeros(size(Up));
     Ur = Ip*R(1);
     Up = Up-Ur;
@@ -68,10 +77,10 @@ for phase_k = 1:length(ind_CPE)
     Up  = Up-OCV; 
     %TODO: comment transmettre 'g' a calculCPE? il genere beaucoup de
     %figures!!
-    if ~config.CPEafixe
+    if ~config.impedance.fixed_params
         [CPEQ(phase_k), CPEalpha(phase_k), ~, CPERegime(phase_k)] = calcul_cpe_pulse(tp,Up,Ip);
     else
-        [CPEQ(phase_k), CPEalpha(phase_k), ~, CPERegime(phase_k)] = calcul_cpe_pulse(tp,Up,Ip,'a',config.CPEafixe);
+        [CPEQ(phase_k), CPEalpha(phase_k), ~, CPERegime(phase_k)] = calcul_cpe_pulse(tp,Up,Ip,'a',config.impedance.fixed_params);
     end
     CPEt(phase_k) = t(t==config.tW(phase_k));
     CPEDoD(phase_k) = DoDAh(t==config.tW(phase_k));%TODO: DoD ini ou moyen?
@@ -89,11 +98,13 @@ if ismember('g',options)
 end
 
     
-impedance.CPEQ = CPEQ;
-impedance.CPEalpha = CPEalpha;
-impedance.CPER = CPER;
-impedance.CPEDoD = CPEDoD;
-impedance.CPERegime = CPERegime;
+impedance.topology = 'R0 + CPE';
+impedance.Q = CPEQ;
+impedance.alpha = CPEalpha;
+impedance.R0 = CPER;
+impedance.dod = CPEDoD;
+impedance.crate = CPERegime;
+impedance.time = CPEt;
 
 end
 

@@ -140,10 +140,10 @@ pW =pR;
 
 %5.2.- duree minimale pour pR, tminR (10secondes); pour pW, tminW (300sec)
 pR = pR & durees>=config.minimal_duration_pulse;
-pW = pW & durees>=config.tminW;
+pW = pW & durees>=config.impedance.pulse_min_duration;
 %5.3- duree minimale du repos avant?
 pR = pR & [0 durees(1:end-1)]>=config.minimal_duration_rest_before_pulse;
-pW = pW & [0 durees(1:end-1)]>=config.tminWr;
+pW = pW & [0 durees(1:end-1)]>=config.impedance.rest_min_duration;
 %5.4- duree maximale du pulse pour l'identification d'un RC
 pRC=pR & durees<=config.maximal_duration_pulse ;
 %5.5- duree maximale du pulse pour l'identification d'un CPE
