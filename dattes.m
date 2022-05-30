@@ -64,7 +64,7 @@ function [result, config, phases] = dattes(xml_file,cfg_file,options)
 % sauvegarde de resultats.
 %
 % See also extract_profiles, split_phases, configurator
-% ident_capacity, ident_ocvp, ident_pocv, ident_r, ident_cpe, ident_rrc, ident_ica
+% ident_capacity, ident_ocvp, ident_pseudo_ocv, ident_r, ident_cpe, ident_rrc, ident_ica
 
 
 %% 0.-interpreter les options
@@ -188,7 +188,7 @@ end
 
 %6.1. pseudo ocv
 if ismember('P',options)
-    [pOCV, pDoD, pPol,pEff,pUCi,pUDi,pRegime] = ident_pocv(t,U,DoDAh,config,phases,InherOptions);
+    [pOCV, pDoD, pPol,pEff,pUCi,pUDi,pRegime] = ident_pseudo_ocv(t,U,DoDAh,config,phases,InherOptions);
     %sauvegarder les resultats
     result.pOCV = pOCV;
     result.pDoD = pDoD;

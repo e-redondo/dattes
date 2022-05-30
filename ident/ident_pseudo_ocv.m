@@ -1,5 +1,5 @@
-function [pOCV, pDoD, pPol, pEff,UCi,UDi,Regime] = ident_pocv(t,U,DoDAh,config,phases,options)
-%ident_pocv pseudoOCV identification
+function [pOCV, pDoD, pPol, pEff,UCi,UDi,Regime] = ident_pseudo_ocv(t,U,DoDAh,config,phases,options)
+%ident_pseudo_ocv pseudoOCV identification
 %
 % See also dattes, configurator
 
@@ -19,7 +19,7 @@ phasesOCVD = phases(config.pOCVpD);
     
 %error management, if no pseudoOCV phases, return empty arrays
 if isempty(phasesOCVC) || isempty(phasesOCVD)
-    fprintf('ident_pocv: ERREUR nombre de phases incorrect\n');
+    fprintf('ident_pseudo_ocv: ERREUR nombre de phases incorrect\n');
     return
 end
 
@@ -49,7 +49,7 @@ end
 phasesOCVC = phasesOCVC(indC);
 Regime = regimeD;
 if length(unique(indC))<indC
-    fprintf('ident_pocv: ERREUR à gerer\n');
+    fprintf('ident_pseudo_ocv: ERREUR à gerer\n');
     return
 end
 
@@ -64,7 +64,7 @@ end
 %     pOCV = [];
 %     pDoD = [];
 %     pPol = [];
-%     fprintf('ident_pocv: ERREUR nombre de phases incorrect\n');
+%     fprintf('ident_pseudo_ocv: ERREUR nombre de phases incorrect\n');
 %     return
 % end
 UC = cell(size(phasesOCVC));
@@ -117,7 +117,7 @@ end
 
 function showResult(UC,DoDAhC,UD,DoDAhD,pDoD,UCi,UDi,pOCV)
 
-hf = figure('name','ident_pocv');hold on
+hf = figure('name','ident_pseudo_ocv');hold on
 cellfun(@(x,y) plot(x,y,'b.-','tag','charge (mesure)'),DoDAhC,UC)
 cellfun(@(x,y) plot(x,y,'r.-','tag','decharge (mesure)'),DoDAhD,UD)
 % plot(pDoD,UCi,'b*','tag','charge (points)')

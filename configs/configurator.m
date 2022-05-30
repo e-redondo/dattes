@@ -1,15 +1,17 @@
 function config = configurator(t,U,I,m,config,phases,options)
 %configurator configuration for dattes
+%
+% Usage:
 % config = configurator(t,U,I,m,config,phases,options)
 %
-% INPUTS:
-% - t,U,I,m (nx1 doubles) from extract_profiles
-% - config (1x1 struct) containing minimal info (see cfg_default)
-% - phases (nx1 struct) from split_phases
-% - options (1xn string) some options ('v', 'g').
+% Inputs:
+% - t,U,I,m [(nx1) double] from extract_profiles
+% - config [(1x1) struct] containing minimal info (see cfg_default)
+% - phases [(mx1) struct] from split_phases
+% - options [(1xp) string] some options ('v', 'g').
 %
-% OUTPUTS:
-% config (1x1 struct) with fields:
+% Outputs:
+% config [(1x1) struct] with fields:
 %     - pCapaD: phases of full CC discharge
 %     - pCapaC: phases of full CC charge
 %     - pCapaDV: phases of residual CV discharge
@@ -155,11 +157,11 @@ pWr = [pW(2:end) false];
 pRCr = [pRC(2:end) false];
 pCPEr = [pCPE(2:end) false];
 
-%ident_Capa2
+%ident_capacity
 config.pCapaD = pCapaD;
 config.pCapaC = pCapaC;
 
-%ident_CapaCV
+%ident_capacity
 config.pCapaDV = pCapaDV;
 config.pCapaCV = pCapaCV;
 
@@ -180,28 +182,28 @@ config.tW = tFins(pWr);%temps de fins de repos immediatememnt anterieur
 config.pW = pW;
 
 
-%calculSOC
+%calcul_soc
 config.t100 = t(I100);%pour le calcul du SOC
 config.t0 = t(I0);%pour le calcul du SOC
 %Note: retourne matrice vide s'il ne trouve pas de phase CCCV a Umax.
 %Dans ces cas il faut trouver le test immediatement anterieur (ou
 %posterieur), calculer le DoDAh et fixer DoDAhIni ou DoDAhFin pour pouvoir
-%faire calculSOC
+%faire calcul_soc
 if ~isfield(config,'DoDAhIni')
     config.DoDAhIni = [];
 end
 if ~isfield(config,'DoDAhFin')
     config.DoDAhFin = [];
 end
-%ident_OCVr2 (par points)
+%ident_ocvp (par points)
 config.pOCVr = durees>=config.tminOCVr & ismember(tInis,t(IiniRepos));
 config.pOCVr(1) = false; % repos initial jamais retenu pour OCV
-%ident_pOCV (pseudoOCV)
+%ident_pseudo_ocv (pseudoOCV)
 Regime = [phases.Iavg]./config.Capa;
 config.pOCVpC = config.pCapaC & abs(Regime)<config.regimeOCVmax & abs(Regime)>config.regimeOCVmin;
 config.pOCVpD = config.pCapaD & abs(Regime)<config.regimeOCVmax & abs(Regime)>config.regimeOCVmin;
 
-%essaiICA
+%calcul_ica
 config.pICAC = config.pCapaC & abs(Regime)<config.regimeICAmax;
 config.pICAD = config.pCapaD & abs(Regime)<config.regimeICAmax;
 
