@@ -68,7 +68,7 @@ for ind = 1:length(indP)
 
     
 end
-RRegime = RRegime/config.Capa;
+RRegime = RRegime/config.test.capacity;
 
 if ismember('v',options)
     fprintf('OK\n');

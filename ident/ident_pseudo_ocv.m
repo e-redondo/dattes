@@ -23,7 +23,7 @@ if isempty(phasesOCVC) || isempty(phasesOCVD)
     return
 end
 
-regimeC = [phasesOCVC.Iavg]/config.Capa;
+regimeC = [phasesOCVC.Iavg]/config.test.capacity;
 [regimeC Is] = sort(regimeC);%on met dans l'ordre
 phasesOCVC = phasesOCVC(Is);
 rapports = regimeC(1:end-1)./regimeC(2:end);%on calcule les rapports
@@ -31,7 +31,7 @@ If = [true rapports<.99];% on filtre les doublons (99%)
 regimeC = regimeC(If);
 phasesOCVC = phasesOCVC(If);
 
-regimeD = -[phasesOCVD.Iavg]/config.Capa;
+regimeD = -[phasesOCVD.Iavg]/config.test.capacity;
 [regimeD Is] = sort(regimeD);%on met dans l'ordre
 phasesOCVD = phasesOCVD(Is);
 rapports = regimeD(1:end-1)./regimeD(2:end);%on calcule les rapports
@@ -91,7 +91,7 @@ UDs = cellfun(@(x,y) x(y),UD,Is,'uniformoutput',false);
 
 
 %TODO: aller jusqu'à la fin, ne pas rester a CapaNom
-pDoD = (0:config.dQOCV:config.Capa)';
+pDoD = (0:config.dQOCV:config.test.capacity)';
 % UCi = interp1(DoDAhCs,UCs,pDoD);
 % UDi = interp1(DoDAhDs,UDs,pDoD);
 

@@ -69,7 +69,7 @@ else
         return;
     end
 end
-SOC = 100*(1+Q/config.Capa);
+SOC = 100*(1+Q/config.test.capacity);
 DoDAh = -Q;
 
 if ismember('v',options)

@@ -42,7 +42,7 @@ for ind = 1:length(phasesICA)
     [tp,Up,DoDAhp] = extract_phase(phasesICA(ind),t,U,DoDAh);
     
     [ica(ind).dqdu, ica(ind).dudq, ica(ind).q, ica(ind).u] = calcul_ica(tp,DoDAhp,Up,N,wn,f_type);
-    ica(ind).crate = phasesICA(ind).Iavg/config.Capa;
+    ica(ind).crate = phasesICA(ind).Iavg/config.test.capacity;
     ica(ind).time = phasesICA(ind).t_fin;
 end
 

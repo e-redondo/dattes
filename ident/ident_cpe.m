@@ -77,7 +77,7 @@ for phase_k = 1:length(ind_CPE)
     CPEDoD(phase_k) = DoDAh(t==config.tW(phase_k));%TODO: DoD ini ou moyen?
     CPER(phase_k) = R(1);
 end
-CPERegime = CPERegime/config.Capa;
+CPERegime = CPERegime/config.test.capacity;
 
 if ismember('v',options)
     fprintf('OK\n');

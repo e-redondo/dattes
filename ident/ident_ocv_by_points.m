@@ -60,7 +60,7 @@ end
 %filter points with delta DOD > delta dod max:
 %TODO: Either do it in configurator2, either let it possible as option here
 %TODO: (bug) not working if phase(2) in phasesOCV, try filtering by DoDp? 
-% ddod = ([phasesAvant.capacity] + [phasesAvav.capacity])/config.Capa;
+% ddod = ([phasesAvant.capacity] + [phasesAvav.capacity])/config.test.capacity;
 % If = abs(ddod)<config.dodmaxOCVr & abs(ddod)>config.dodminOCVr;
 If = true(size(tOCVp));
 
