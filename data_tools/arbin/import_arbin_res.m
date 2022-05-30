@@ -196,7 +196,7 @@ xml.table{end}.mode = mode;
 % fprintf('fichier pret en %0.2f secondes.\n',tecoule);
 
 %met les variables dans l'ordre
-xml.table{end} = sort_bench_variables(xml.table{end});
+xml.table{end} = sort_cycler_variables(xml.table{end});
 %7.- clean temporary files (exported csv's)
 delete(fullfile(D,F,'*'));
 rmdir(fullfile(D,F));

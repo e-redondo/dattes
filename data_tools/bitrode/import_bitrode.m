@@ -160,7 +160,7 @@ end
     mode = makeXMLVariable('mode','', '%f','mode', m);
     xml.table{end}.mode = mode;
     %met les variables dans l'ordre
-    xml.table{end} = sort_bench_variables(xml.table{end});
+    xml.table{end} = sort_cycler_variables(xml.table{end});
     %on elimine le fichier 'copy'
     pause(0.1),  delete(file_out);
     tecoule = toc(chrono);

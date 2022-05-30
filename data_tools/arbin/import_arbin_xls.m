@@ -178,6 +178,6 @@ mode = makeXMLVariable('mode','', '%f','mode', m);
 xml.table{end}.mode = mode;
 
 %met les variables dans l'ordre
-xml.table{end} = sort_bench_variables(xml.table{end});
+xml.table{end} = sort_cycler_variables(xml.table{end});
 
 end

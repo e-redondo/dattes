@@ -104,7 +104,7 @@ end
 
 %3.2- trivariables:met en premier les variable les plus utilisees (t,U,I,Q)
 for ind = 1:length(outStruct.table)
-    outStruct.table{ind} = sort_bench_variables(outStruct.table{ind});
+    outStruct.table{ind} = sort_cycler_variables(outStruct.table{ind});
 end
 %4 verifFomatXML4Vehlib
 [outStruct, err, errS] = verifFomatXML4Vehlib(outStruct);

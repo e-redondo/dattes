@@ -81,7 +81,7 @@ for ind = 1:length(CSV)
     tabs = xml.table{end}.tc.vector + Datee;
     tabs = makeXMLVariable('tabs', 's', '%f', 'temps absolu', tabs);
     xml.table{end}.tabs = tabs;
-    xml.table{end} = sort_bench_variables(xml.table{end});
+    xml.table{end} = sort_cycler_variables(xml.table{end});
     if ~isempty(xml)
         if ~multicell
             ecritureXMLFile4Vehlib(xml,XML{ind});

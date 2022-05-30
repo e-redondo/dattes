@@ -1,5 +1,5 @@
-function XMLtable = sort_bench_variables(XMLtable)
-%sort_bench_variables put bench variable in a standard order
+function XMLtable = sort_cycler_variables(XMLtable)
+%sort_cycler_variables put bench variable in a standard order
 
 fieldList = fieldnames(XMLtable);
 
