@@ -33,16 +33,17 @@ end
 R0=[];
 R1=[];
 C1=[];
-R1C1t=[];
-R1C1DoD=[];
-R1C1Regime=[];
-
+% R1C1t=[];
+% R1C1DoD=[];
+% R1C1Regime=[];
 R2=[];
 C2=[];
-R2C2t=[];
-R2C2DoD=[];
-R2C2Regime=[];
-
+% R2C2t=[];
+% R2C2DoD=[];
+% R2C2Regime=[];
+rrc_time = [];
+rrc_dod = [];
+rrc_crate = [];
 
 %% 2- Determine the phases for which a RC identification is relevant
 
@@ -53,7 +54,7 @@ phases_identify_RC=phases(config.pRC);
 
 %% 3 - R0,C0,R1,C1 and R2,C2 are computed for each of these phases
 for phase_k = 1:length(ind_R)
-        %Time, voltage,current and DoD are extracted for the phase_k
+    %Time, voltage,current and DoD are extracted for the phase_k
     [tm,Um,Im,DoDm] = extract_phase2(phases_identify_RC(phase_k),rest_before_after_phase,t,U,I,DoDAh);
     for i=1:length(DoDm)
         if DoDm(i)<0
@@ -61,14 +62,18 @@ for phase_k = 1:length(ind_R)
         end
     end
     
-[R10,C10,R20,C20,tau2]=define_RCini(tm,config);
-
-% Step time is reduced to maximize the identification accuracy
-Ts = 0.1;
-tmi = (tm(1):Ts:tm(end))';
-Um = interp1(tm,Um,tmi);
-Im = interp1(tm,Im,tmi);
-tm = tmi;
+    rrc_time(phase_k) = tm(1);
+    rrc_dod(phase_k) = DoDm(1);
+    rrc_crate(phase_k) = phases_identify_RC(phase_k).Iavg/config.test.capacity;
+    
+    [R10,C10,R20,C20,tau2]=define_RCini(tm,config);
+    
+    % Step time is reduced to maximize the identification accuracy
+    Ts = 0.1;
+    tmi = (tm(1):Ts:tm(end))';
+    Um = interp1(tm,Um,tmi);
+    Im = interp1(tm,Im,tmi);
+    tm = tmi;
 
 %Relaxation voltage is extracted
 OCV = Um(1);
@@ -87,9 +92,9 @@ R0=[R0 Rsid];
 R1=[R1 R1id];
 C1=[C1 C1id];
 
-R1C1t=[R1C1t tm1(1)];
-R1C1DoD=[R1C1DoD DoDm(1)];
-R1C1Regime=[R1C1Regime max(abs(Im1))];
+% R1C1t=[R1C1t tm1(1)];
+% R1C1DoD=[R1C1DoD DoDm(1)];
+% R1C1Regime=[R1C1Regime max(abs(Im1))];
 
 Us_rsr1c1 = reponseRRC(tm,Im,Rsid,R1id,C1id);
 
@@ -103,9 +108,9 @@ Umrc2 = Um-Us_rsr1c1;
 R2=[R2 R2id];
 C2=[C2 C2id];
 
-R2C2t=[R2C2t tm(1)];
-R2C2DoD=[R2C2DoD DoDm(1)];
-R2C2Regime=[R2C2Regime max(abs(Im))];
+% R2C2t=[R2C2t tm(1)];
+% R2C2DoD=[R2C2DoD DoDm(1)];
+% R2C2Regime=[R2C2Regime max(abs(Im))];
 
 Usr2c2 = rc_output(tm,Im,R2id,C2id);
  
@@ -142,19 +147,22 @@ end
    if ismember('v',options)
         fprintf('OK\n');
    end
-   
+  
+  impedance.topology = 'R0 + R1C1 + R2C2';
   impedance.R0=R0;
   impedance.R1=R1;
   impedance.C1=C1;
-  impedance.R1C1t=R1C1t;
-  impedance.R1C1DoD=R1C1DoD;
-  impedance.R1C1Regime=R1C1Regime;
+%   impedance.R1C1t=R1C1t;
+%   impedance.R1C1DoD=R1C1DoD;
+%   impedance.R1C1Regime=R1C1Regime;
   impedance.R2=R2;
   impedance.C2=C2;
-  impedance.R2C2t=R2C2t;
-  impedance.R2C2DoD=R2C2DoD;
-  impedance.R2C2Regime=R2C2Regime;
-   
+%   impedance.R2C2t=R2C2t;
+%   impedance.R2C2DoD=R2C2DoD;
+%   impedance.R2C2Regime=R2C2Regime;
+  impedance.time = rrc_time;
+  impedance.dod = rrc_dod;
+  impedance.crate = rrc_crate;
 end
 
 

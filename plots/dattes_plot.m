@@ -64,7 +64,11 @@ if ismember('R',options)
 end
 if ismember('Z',options)
     %show result of 'Z', i.e. impedance
-    plot_impedance(result.CPEQ, result.CPEalpha,result.CPEDoD, result.CPERegime);
+    if isfield(result,'impedance')
+        plot_impedance(result.impedance,titre);
+    else
+        fprintf('no impedance result found in %s\n',result.fileIn);
+    end
 end
 if ismember('I',options)
     %show result of 'I', i.e. ica
