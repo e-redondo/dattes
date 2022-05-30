@@ -148,14 +148,14 @@ end
 %% 3. Capacity measurements at different C-rates 1C, C/2, C/5....
 if ismember('C',options)
     [cc_capacity, cc_crate, cc_time, cc_duration, cv_capacity, cv_voltage, cv_time, cv_duration] = ident_capacity(config,phases,InherOptions);
-    result.Capa = cc_capacity;
-    result.CapaRegime = cc_crate;
-    result.CapaTime = cc_time;
-    result.CapaDuration = cc_duration;
-    result.QCV = cv_capacity;
-    result.UCV = cv_voltage;
-    result.UTime = cv_time;
-    result.dCV = cv_duration;
+    result.capacity.cc_capacity = cc_capacity;
+    result.capacity.cc_crate = cc_crate;
+    result.capacity.cc_time = cc_time;
+    result.capacity.cc_duration = cc_duration;
+    result.capacity.cv_capacity = cv_capacity;
+    result.capacity.cv_voltage = cv_voltage;
+    result.capacity.cv_time = cv_time;
+    result.capacity.cv_duration = cv_duration;
 end
 
 %% 5. SOC
