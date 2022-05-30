@@ -8,7 +8,6 @@ config.test.capacity = 20;
 %charger les valeurs par defaut:
 config = cfg_default(config);
 %modification de valeurs:
-config.Uname = 'U1';
-config.tminWr = 10;%duree min repos avant
+config.test.Uname = 'U1';
 
 end

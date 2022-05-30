@@ -101,18 +101,18 @@ config.regimeOCVmin = 0.19;%regime max pour pseudoOCV (C/5)
 config.dQOCV = config.test.capacity/100;%dQ pour pseudoOCV
 
 %bancs monovoies:
-config.Uname = 'U';% par defaut
-%bancs multivoies:
-% config.Uname = 'U1';
-% config.Uname = 'U2';
-% config.Uname = 'U3';
+config.test.Uname = 'U';% default
+%multichannel cyclers:
+% config.test.Uname = 'U1';
+% config.test.Uname = 'U2';
+% config.test.Uname = 'U3';
 %etc.
-%capteurs temperature:
-config.Tname = '';%par defaut (pas de capteur)
-%bancs multivoies:
-% config.Tname = 'T1';
-% config.Tname = 'T2';
-% config.Tname = 'T3';
+%temperature probes:
+config.test.Tname = '';%default (no probe)
+%multichannel cyclers:
+% config.test.Tname = 'T1';
+% config.test.Tname = 'T2';
+% config.test.Tname = 'T3';
 % etc.
 
 %Graphics:

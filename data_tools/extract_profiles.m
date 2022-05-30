@@ -26,15 +26,15 @@ function [t,U,I,m,DoDAh,SOC,T, eis, err] = extract_profiles(thisXML,options,conf
 if ~exist('config','var')
     Uname = 'U';
 else
-    if ~isfield(config,'Uname')
+    if ~isfield(config.test,'Uname')
         Uname = 'U';
     else
-        Uname = config.Uname;
+        Uname = config.test.Uname;
     end
-    if ~isfield(config,'Tname')
+    if ~isfield(config.test,'Tname')
         Tname = '';
     else
-        Tname = config.Tname;
+        Tname = config.test.Tname;
     end
 end
 if ~exist('options','var')
@@ -214,15 +214,15 @@ function [eis] = extract_eis(xml,options)
 if ~exist('config','var')
     Uname = 'U';
 else
-    if ~isfield(config,'Uname')
+    if ~isfield(config.test,'Uname')
         Uname = 'U';
     else
-        Uname = config.Uname;
+        Uname = config.test.Uname;
     end
-    if ~isfield(config,'Tname')
+    if ~isfield(config.test,'Tname')
         Tname = '';
     else
-        Tname = config.Tname;
+        Tname = config.test.Tname;
     end
 end
 

@@ -9,8 +9,8 @@ config.test.capacity = 94;
 %charger les valeurs par defaut:
 config = cfg_default(config);
 
- config.Uname = 'U1';%nom pour la variable tension (Bitrode AuxVoltage1 = U1)
- config.Tname = 'T1';%nom pour la variable temperature 
+config.test.Uname = 'U1';%nom pour la variable tension (Bitrode AuxVoltage1 = U1)
+config.test.Tname = 'T1';%nom pour la variable temperature
 
  
 % %ident_R
