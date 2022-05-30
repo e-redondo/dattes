@@ -1,9 +1,9 @@
-function [OCVp, DoDp, tOCVp, Ipsign] = ident_ocvp(t,U,DoDAh,m,config,phases,options)
-%ident_ocvp OCV by points identification (rests after partial
+function [OCVp, DoDp, tOCVp, Ipsign] = ident_ocv_by_points(t,U,DoDAh,m,config,phases,options)
+%ident_ocv_by_points OCV by points identification (rests after partial
 %charges/discharges)
 %
 % Usage:
-% [OCVp, DoDp] = ident_ocvp(t,U,DoDAh,m,config,phases,options)
+% [OCVp, DoDp] = ident_ocv_by_points(t,U,DoDAh,m,config,phases,options)
 %
 % Inputs:
 % - t,U,DoDAh,m [(nx1) double]: vectors from extract_profiles
@@ -19,7 +19,7 @@ if ~exist('options','var')
     options = '';
 end
 if ismember('v',options)
-    fprintf('ident_ocvp:...');
+    fprintf('ident_ocv_by_points:...');
 end
 
 tOCVp =[];%instants pour la prise de la mesure
@@ -27,16 +27,16 @@ OCVp =[];
 DoDp =[];
 %gestion d'erreurs:
 if nargin<6 || nargin>7
-    fprintf('ident_ocvp:nombre incorrect de parametres, trouves %d\n',nargin);
+    fprintf('ident_ocv_by_points:nombre incorrect de parametres, trouves %d\n',nargin);
     return;
 end
 if ~isstruct(phases) || ~isstruct(config) || ~ischar(options)...
         || ~isnumeric(t) || ~isnumeric(U)|| ~isnumeric(DoDAh) || ~isnumeric(m)
-    fprintf('ident_ocvp:type de parametres, incorrect\n');
+    fprintf('ident_ocv_by_points:type de parametres, incorrect\n');
     return;
 end
 if ~isfield(config,'pOCVr')
-    fprintf('ident_ocvp:structure config incomplete\n');
+    fprintf('ident_ocv_by_points:structure config incomplete\n');
     return;
 end
 
@@ -47,7 +47,7 @@ Ipavav = [config.pOCVr(3:end) false false];
 phasesAvant = phases(Ipavant);
 phasesAvav = phases(Ipavav);
 if length(phasesAvant)<length(phasesOCV)
-    fprintf('ident_ocvp:error\n');
+    fprintf('ident_ocv_by_points:error\n');
 end
 for ind = 1:length(phasesOCV)
     [tp,Up,DoDAhp] = extract_phase(phasesOCV(ind),t,U,DoDAh);
@@ -81,7 +81,7 @@ end
 
 % function showResult(t,U,DoDAh, tOCVp, OCVp, DoDp)
 % 
-% hf = figure('name','ident_ocvp');
+% hf = figure('name','ident_ocv_by_points');
 % 
 % subplot(211),plot(t,U),hold on,ylabel('voltage [V]'),xlabel('temps [s]')
 % subplot(212),plot(DoDAh,U),hold on,ylabel('voltage [V]'),xlabel('DoDAh [Ah]')

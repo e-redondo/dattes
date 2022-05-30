@@ -1,6 +1,6 @@
 function plot_ocv_by_points(t,U,DoDAh, tOCVp, OCVp, DoDp, Ipsign)
 
-hf = figure('name','ident_ocvp');
+hf = figure('name','ident_ocv_by_points');
 
 subplot(211),plot(t,U),hold on,ylabel('voltage [V]'),xlabel('temps [s]')
 subplot(212),plot(DoDAh,U),hold on,ylabel('voltage [V]'),xlabel('DoDAh [Ah]')

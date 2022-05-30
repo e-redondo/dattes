@@ -64,7 +64,7 @@ function [result, config, phases] = dattes(xml_file,cfg_file,options)
 % sauvegarde de resultats.
 %
 % See also extract_profiles, split_phases, configurator
-% ident_capacity, ident_ocvp, ident_pseudo_ocv, ident_r, ident_cpe, ident_rrc, ident_ica
+% ident_capacity, ident_ocv_by_points, ident_pseudo_ocv, ident_r, ident_cpe, ident_rrc, ident_ica
 
 
 %% 0.-interpreter les options
@@ -202,7 +202,7 @@ end
 
 %6.2. ocv by points
 if ismember('O',options)
-    [OCVp, DoDp, tOCVp, Ipsign] = ident_ocvp(t,U,DoDAh,m,config,phases,InherOptions);
+    [OCVp, DoDp, tOCVp, Ipsign] = ident_ocv_by_points(t,U,DoDAh,m,config,phases,InherOptions);
     %OCVs
     result.OCVp = OCVp;
     result.DoDp = DoDp;

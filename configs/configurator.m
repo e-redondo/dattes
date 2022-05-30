@@ -195,7 +195,7 @@ end
 if ~isfield(config,'DoDAhFin')
     config.DoDAhFin = [];
 end
-%ident_ocvp (par points)
+%ident_ocv_by_points (par points)
 config.pOCVr = durees>=config.tminOCVr & ismember(tInis,t(IiniRepos));
 config.pOCVr(1) = false; % repos initial jamais retenu pour OCV
 %ident_pseudo_ocv (pseudoOCV)
