@@ -1,25 +1,26 @@
 function [outStruct, err, errS] = import_biologic(dirname)
-%import_biologic converts *.mpt files (Biologic) in *.xml.
-%   [outStruct, err, errS] = import_biologic(dirname)
-%   Inputs:
-%   - dirname [string]: folder containing *.mpt files
-%   - dirname [cell string]: file list to convert
-%   Outputs:
-%   - outStruct: XML structure in VEHLIB format
-%   - err [(1x1) double]: error code (==0 => OK, ~=0 => error)
-%   - errS [string]: error descirption
-%   Examples:
-%   1) [outStruct, err, errS] = import_biologic(dirname) : search for mpt
-%   files in dirname and convert them into *.xml
-%   2) [outStruct, err, errS] = import_biologic(filelist) : convert every
-%   *.mpt in filelist
-%   3) [outStruct, err, errS] = import_biologic({filename}) : convert just
+% import_biologic converts *.mpt files (Biologic) in *.xml
+%
+% Usage:
+% [outStruct, err, errS] = import_biologic(dirname)
+% Inputs:
+% - dirname [(1xp) string]: folder containing *.mpt files
+% - dirname [cell string]: file list to convert
+% Outputs:
+% - outStruct: xml structure in VEHLIB format
+% - err [(1x1) double]: error code (==0 => OK, ~=0 => error)
+% - errS [string]: error description
+%
+% Examples:
+% [outStruct, err, errS] = import_biologic(dirname) % search for mpt
+%   files in dirname and convert them into xml struct (outStruct)
+% [outStruct, err, errS] = import_biologic(filelist) : convert every
+%   *.mpt in filelist and convert them into xml struct (outStruct)
+% [outStruct, err, errS] = import_biologic({filename}) : convert just
 %   one *.mpt file (put filename into a cell string)
 %
-%   See also: biologic_mpt2xml_files, biologic_mpt2xml_folders, which_bench
-%
-%   IFSTTAR/LTE  - E. REDONDO
-%   $Revision: 0.1 $  $Created: 2012$
+% See also: biologic_mpt2xml_files, biologic_mpt2xml_folders, which_cycler
+
 if nargin==0
     print_usage;
 end

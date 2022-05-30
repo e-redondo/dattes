@@ -22,7 +22,7 @@ head = '';
 body = '';
 empty_mpt = false;
 %lecture de l'entete
-[banc, ligne1, ligne2] = which_bench(fid);
+[banc, ligne1, ligne2] = which_cycler(fid);
 if ~strcmp(banc,'bio')
     return%on force l'erreur si pas ECLAB file
 end

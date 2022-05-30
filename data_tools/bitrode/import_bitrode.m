@@ -12,7 +12,7 @@ function xml = import_bitrode(filename,dirname,options)
 % OUTPUTS:
 % - xml (struct): structure with XML format 4 VEHLIB
 % 
-% See also bitrode_csv2xml, which_bench
+% See also bitrode_csv2xml, which_cycler
 
 if ~exist('options','var')
     options='';
@@ -41,7 +41,7 @@ if verbose
 end
     fid_in = fopen(file_in,'r');
 %0.1 check if file is a bitrode file
-[bench, line1, line2] = which_bench(fid_in);
+[bench, line1, line2] = which_cycler(fid_in);
 % bench ='oup';
 if ~strncmp(bench,'bitrode_csv',11)
     fprintf('ERROR: file does not seem a bitrode *.csv file: %s\n',file_in);
