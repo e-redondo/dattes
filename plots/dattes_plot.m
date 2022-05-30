@@ -55,7 +55,7 @@ if ismember('O',options)
 end
 if ismember('E',options)
     %show result of 'E', i.e. Efficiency
-    plot_eff(result.pDoD,result.pEff);
+    plot_efficiency(result.pDoD,result.pEff);
 end
 if ismember('R',options)
     %show result of 'R', i.e. Resistance

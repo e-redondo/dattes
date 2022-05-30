@@ -1,4 +1,4 @@
-function plot_eff(pDoD, pEff)
+function plot_efficiency(pDoD, pEff)
 %plot an efficiency plot (pseudoOCV tests)
 
 hf = figure('name','ident pOCV(Effi)');hold on
