@@ -1,4 +1,4 @@
-function plotPOCV(pDoD, pOCV, UC, UD)
+function plot_pseudo_ocv(pDoD, pOCV, UC, UD)
 
 
 hf = figure('name','ident pOCV');hold on
