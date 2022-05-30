@@ -1,4 +1,4 @@
-function h = plot_bench(t,U,I,m,titre,options)
+function h = plot_profiles(t,U,I,m,titre,options)
 
 if ~exist('options','var')
     options = '';

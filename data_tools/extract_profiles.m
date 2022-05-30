@@ -187,7 +187,7 @@ function showResult(t,U,I,m,thisMAT,options)
 
 [~, titre, ~] = fileparts(thisMAT);
 InherOptions = options(ismember(options,'hj'));
-h = plot_bench(t,U,I,m,titre,InherOptions);
+h = plot_profiles(t,U,I,m,titre,InherOptions);
 set(h,'name','extract_profiles');
 
 end

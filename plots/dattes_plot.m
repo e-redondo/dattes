@@ -21,7 +21,7 @@ InherOptions = options(ismember(options,'hdD'));
 
 if ismember('x',options)
     %show result of 'x', i.e. profiles
-    plot_bench(t,U,I,m,titre,InherOptions);
+    plot_profiles(t,U,I,m,titre,InherOptions);
 end
 if ismember('e',options)%EIS
     if isfield(result,'eis')
