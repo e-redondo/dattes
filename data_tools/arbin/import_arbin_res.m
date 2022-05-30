@@ -44,11 +44,11 @@ mdb_export_tables(file_in);
 %     return;
 % end
 % %1.- export RES file to CSV
-% myCmd = sprintf('mdb_export_tables %s',fileIn);
+% myCmd = sprintf('mdb_export_tables %s',file_in);
 % [A, B] = dos(myCmd);
 % %1.1.- verifier que tout s'est bien passe
 % if ~isempty(B)
-%     fprintf('ERROR: mdb_export_tables %s\n',fileIn);
+%     fprintf('ERROR: mdb_export_tables %s\n',file_in);
 %     xml = [];
 %     return;
 % end

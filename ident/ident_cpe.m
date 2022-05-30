@@ -99,9 +99,9 @@ end
 
     
 impedance.topology = 'R0 + CPE';
-impedance.Q = CPEQ;
+impedance.r0 = CPER;
+impedance.q = CPEQ;
 impedance.alpha = CPEalpha;
-impedance.R0 = CPER;
 impedance.dod = CPEDoD;
 impedance.crate = CPERegime;
 impedance.time = CPEt;

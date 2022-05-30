@@ -16,7 +16,7 @@ end
 [t,U,I,m,DoDAh,SOC,T] = extract_profiles(XMLfile,options,config);
 
 %title for figures
-[~, titre, ~] = fileparts(result.fileIn);
+[~, titre, ~] = fileparts(result.test.file_in);
 InherOptions = options(ismember(options,'hdD'));
 
 if ismember('x',options)
@@ -67,7 +67,7 @@ if ismember('Z',options)
     if isfield(result,'impedance')
         plot_impedance(result.impedance,titre);
     else
-        fprintf('no impedance result found in %s\n',result.fileIn);
+        fprintf('no impedance result found in %s\n',result.test.file_in);
     end
 end
 if ismember('I',options)

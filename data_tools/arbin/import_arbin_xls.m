@@ -1,4 +1,4 @@
-function xml = import_arbin_xls(fileIn)
+function xml = import_arbin_xls(file_in)
 % importArbinXls Arbin *.XLS to VEHLIB XMLstruct converter (windows)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Nom              : importArbinXls.m
@@ -15,21 +15,21 @@ function xml = import_arbin_xls(fileIn)
 verveh = 2.0;
 %0.-Erreurs:
 %0.1.- verifier existance du fichier
-[D F E] = fileparts(fileIn);
+[D F E] = fileparts(file_in);
 filename = [F E];
 
-if ~exist(fileIn,'file')
-    fprintf('ERROR: file does not exist: %s\n',fileIn);
+if ~exist(file_in,'file')
+    fprintf('ERROR: file does not exist: %s\n',file_in);
     xml = [];
     return;
 end
 % chrono=tic;
 fprintf('Lecture des metadonnees du fichier xls: %s...',filename);
-[st, sheets, fo] = xlsfinfo(fileIn);
+[st, sheets, fo] = xlsfinfo(file_in);
 
 if ~iscell(sheets)
     %Probably an error reading xls file:
-    fprintf('ERROR: unreadable xls file?: %s\n',fileIn);
+    fprintf('ERROR: unreadable xls file?: %s\n',file_in);
     xml = [];
     return;
 end
@@ -41,7 +41,7 @@ dataSheets = sheets;
 %     
 %     %0.2.- compatibilite du fichier (nb de feuilles)
 %     if length(unique(channels))~=1
-%         fprintf('ERROR in %s, voici les feuilles trouvees:\n',fileIn);
+%         fprintf('ERROR in %s, voici les feuilles trouvees:\n',file_in);
 %         fprintf('%s\n',sheets{:});
 %         xml = [];
 %         return;
@@ -55,7 +55,7 @@ fprintf('OK, %d feuilles\n',length(sheets));
 
 %1.- lecture du fichier
 fprintf('Lecture du fichier xls: %s...',filename);
-% [A, tete, r] = xlsread(fileIn,dataSheets{1});
+% [A, tete, r] = xlsread(file_in,dataSheets{1});
 % if isnan(A(2,3))
 %     I = strcmp(tete(1,:),'Date_Time');
 %     datetime = tete(2:end,I);
@@ -65,13 +65,13 @@ fprintf('Lecture du fichier xls: %s...',filename);
 % end
 % fprintf('feuille %d: %d lignes\n',1,size(A,1));
 % for ind = 2:length(dataSheets)
-%     A1 = xlsread(fileIn,dataSheets{ind});
+%     A1 = xlsread(file_in,dataSheets{ind});
 %     fprintf('feuille %d: %d lignes\n',ind,size(A1,1));
 %     A = [A;A1];
 % end
 
 %read all datasheets
-[data, header, ~] = cellfun(@(x) xlsread(fileIn,x),dataSheets,'UniformOutput',false);
+[data, header, ~] = cellfun(@(x) xlsread(file_in,x),dataSheets,'UniformOutput',false);
 %remove sheets with empty header:
 Is = ~cellfun(@isempty, header);
 data = data(Is);
@@ -82,7 +82,7 @@ data = data(Is);
 header = header(Is);
 
 if isempty(header)
-    fprintf('ERROR: no data found in %s\n',fileIn);
+    fprintf('ERROR: no data found in %s\n',file_in);
      xml = [];
     return
 end

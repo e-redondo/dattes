@@ -50,7 +50,7 @@ for ind =  1:length(xml_list)
         else%do not reconfigure
             [r,c,p] = dattes(this_file,'','SCRZs');
         end
-        if ~exist(result_filename(r.fileIn),'file')
+        if ~exist(result_filename(r.test.file_in),'file')
             success(end+1) = false;
             ME = MException('dattes:no mat file created','error in dattes');
         else

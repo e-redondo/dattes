@@ -122,9 +122,9 @@ end
 %1.2.- load data in XML
 [t,U,I,m,DoDAh,SOC,T, eis] = extract_profiles(xml_file,InherOptions,config0);
 %1.3.- update result
-result.fileIn = xml_file;
-result.tIni = t(1);
-result.tFin = t(end);
+result.test.file_in = xml_file;
+result.test.t_ini = t(1);
+result.test.t_fin = t(end);
 if ~isempty(eis)
     result.eis = eis;
 end
@@ -181,7 +181,7 @@ if any(ismember('PORWI',options))
         %on a pas fait calculSOC ou s'est mal passe, on arrete (on ne
         %sauvegarde pas)
         fprintf('dattes: ERREUR il faut calculer le SoC de ce fichier:%s\n',...
-            result.fileIn);
+            result.test.file_in);
         return
     end
 end

@@ -57,7 +57,7 @@ end
 %TODO: changer ca
 %essayer de mettre comme argument (R,C,P), pour ne pas charger tout a
 %chaque fois.
-% XML = {R.fileIn};
+% XML = {R.test.file_in};
 if ismember('u',options)%option 'unpatch', defaire ce que l'on a fait
     [R,C,P] = load_result(XML);
     %search files with imposed DoDIni or DoDFin:
@@ -78,11 +78,11 @@ if ismember('u',options)%option 'unpatch', defaire ce que l'on a fait
         r(ind).DoDAhFin = [];
         r(ind).SOCFin = [];
         if verbose
-            fprintf('reset SOC for %s\n',r(ind).fileIn);
+            fprintf('reset SOC for %s\n',r(ind).test.file_in);
         end
     end
     save_result(r,c,p);
-    dattes({r.fileIn},'','Ss');%reset SOC
+    dattes({r.test.file_in},'','Ss');%reset SOC
     return;
 end
 
@@ -96,7 +96,7 @@ end
 
 [r,~,~] = load_result(xml);
 %take start times
-tInis = [r.tIni];
+tInis = [r.test.t_ini];
 
 %put in chronological order
 [~, Is] = sort(tInis);
@@ -117,15 +117,15 @@ if ismember('b',options)%before: search for previous test
         if indAvant(ind)>0 && ismember('b',options)%recherche de l'anterieur
             c(indEmptySOC(ind)).DoDAhIni = r(indAvant(ind)).DoDAhFin;
             if verbose
-                fprintf('%s.DoDFin >>> %s.DoDIni\n',r(indAvant(ind)).fileIn, r(indEmptySOC(ind)).fileIn)
+                fprintf('%s.DoDFin >>> %s.DoDIni\n',r(indAvant(ind)).test.file_in, r(indEmptySOC(ind)).test.file_in)
             end
         end
         save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%sauvegarder la configuration
         r(indEmptySOC(ind)) = dattes(xml{indEmptySOC(ind)},c(indEmptySOC(ind)).CFGfile,'Ss');%recalculer le SOC
         if isempty(r(indEmptySOC(ind)).SOCIni)
-            fprintf('calcul_soc %s >>>>>>>>>>>>NOK\n',r(indEmptySOC(ind)).fileIn);
+            fprintf('calcul_soc %s >>>>>>>>>>>>NOK\n',r(indEmptySOC(ind)).test.file_in);
         else
-            fprintf('calcul_soc %s >>>>>>>>>>>>OK\n',r(indEmptySOC(ind)).fileIn);
+            fprintf('calcul_soc %s >>>>>>>>>>>>OK\n',r(indEmptySOC(ind)).test.file_in);
         end
         save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%sauvegarder le resultat
     end
@@ -134,15 +134,15 @@ elseif ismember('a',options)%after: search for following test
         if indApres(ind)<=length(r) && ismember('a',options)%recherche du posterieur
             c(indEmptySOC(ind)).DoDAhFin = r(indApres(ind)).DoDAhIni;
             if verbose
-                fprintf('%s.DoDFin <<< %s.DoDIni\n', r(indEmptySOC(ind)).fileIn,r(indApres(ind)).fileIn)
+                fprintf('%s.DoDFin <<< %s.DoDIni\n', r(indEmptySOC(ind)).test.file_in,r(indApres(ind)).test.file_in)
             end
         end
         save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%sauvegarder la configuration
         r(indEmptySOC(ind)) = dattes(xml{indEmptySOC(ind)},c(indEmptySOC(ind)).CFGfile,'Ss');%recalculer le SOC
         if isempty(r(indEmptySOC(ind)).SOCIni)
-            fprintf('calcul_soc %s >>>>>>>>>>>>NOK\n',r(indEmptySOC(ind)).fileIn);
+            fprintf('calcul_soc %s >>>>>>>>>>>>NOK\n',r(indEmptySOC(ind)).test.file_in);
         else
-            fprintf('calcul_soc %s >>>>>>>>>>>>OK\n',r(indEmptySOC(ind)).fileIn);
+            fprintf('calcul_soc %s >>>>>>>>>>>>OK\n',r(indEmptySOC(ind)).test.file_in);
         end
         save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%sauvegarder le resultat
     end
