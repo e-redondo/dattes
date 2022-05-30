@@ -74,12 +74,12 @@ DoDAhD = cell(size(phasesOCVD));
 
 for ind =1:length(phasesOCVC)
     %extraire les phases
-    [~,UC{ind},DoDAhC{ind}] = get_phase(phasesOCVC(ind),t,U,DoDAh);
+    [~,UC{ind},DoDAhC{ind}] = extract_phase(phasesOCVC(ind),t,U,DoDAh);
 end
 
 for ind =1:length(phasesOCVD)
 %extraire les phases
-[~,UD{ind},DoDAhD{ind}] = get_phase(phasesOCVD(ind),t,U,DoDAh);
+[~,UD{ind},DoDAhD{ind}] = extract_phase(phasesOCVD(ind),t,U,DoDAh);
 end
 
 %mettre dans l'ordre (et enleve doublons) TODO: ameliorer

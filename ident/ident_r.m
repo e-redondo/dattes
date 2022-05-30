@@ -51,7 +51,7 @@ for ind = 1:length(indP)
 %     Ip = I(Ipulse);
 
 
-    [tp,Up,Ip,DoDp] = get_phase2(phases(indP(ind)),time_before_after_phase,t,U,I,DoDAh);%FIX (BRICOLE) la même mais avec getPhases 2
+    [tp,Up,Ip,DoDp] = extract_phase2(phases(indP(ind)),time_before_after_phase,t,U,I,DoDAh);%FIX (BRICOLE) la même mais avec getPhases 2
     Is = tp-tp(1)<config.minimal_duration_rest_before_pulse+config.minimal_duration_pulse+3;%FIX (BRICOLE) la même mais avec getPhases 2
     tp = tp(Is);
     Up = Up(Is);

@@ -48,7 +48,7 @@ end
 
 to = 0;
 for ind = 1:length(phases)
-    [tp,timep,Up,Ip] = get_phase(phases(ind),t,t1,U,I);
+    [tp,timep,Up,Ip] = extract_phase(phases(ind),t,t1,U,I);
 %     tp = tcell{ind};
 %     Up = Ucell{ind};
 %     Ip = Icell{ind};

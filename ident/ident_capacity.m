@@ -59,11 +59,6 @@ cv_voltage = [phasesCV.Uavg];
 cv_time = [phasesCV.t_ini];
 cv_duration = [phasesCV.duration];
 
-% for ind = 1:length(phasesCV)
-%     [tp,Up] = get_phase(phasesCV(ind),t,U);
-%     
-%     UCV(ind) = mean(Up);%TODO en realite il fallait faire trapz(tp,Up)/range(tp);
-% end
 
 if ismember('v',options)
     fprintf('OK\n');

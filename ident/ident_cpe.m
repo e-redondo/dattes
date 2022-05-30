@@ -48,7 +48,7 @@ time_before_after_phase = [config.rest_duration_before_pulse 0];
 
 %% 3-CPEQ and CPEalpha are identified for each of these phases
 for phase_k = 1:length(ind_CPE)
-    [tp,Up,Ip,DoDp] = get_phase2(phases(ind_CPE(phase_k)),time_before_after_phase,t,U,I,DoDAh);
+    [tp,Up,Ip,DoDp] = extract_phase2(phases(ind_CPE(phase_k)),time_before_after_phase,t,U,I,DoDAh);
 %     for i=1:length(DoDp)
 %         if DoDp(i)<0
 %             DoDp(i)=abs(DoDp(i));

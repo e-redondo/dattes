@@ -45,7 +45,7 @@ if length(phasesAvant)<length(phasesOCV)
     fprintf('ident_ocvp:error\n');
 end
 for ind = 1:length(phasesOCV)
-    [tp,Up,DoDAhp] = get_phase(phasesOCV(ind),t,U,DoDAh);
+    [tp,Up,DoDAhp] = extract_phase(phasesOCV(ind),t,U,DoDAh);
     
     tOCVp(ind) = tp(end);
     OCVp(ind) = Up(end);%TODO: extrapolation, calcul de la relaxation, etc.

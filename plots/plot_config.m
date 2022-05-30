@@ -72,7 +72,7 @@ tR = [];UR = [];tW = [];UW = [];tRr = [];URr = [];tWr = [];UWr = [];
 phases_r = phases(config.pR);
 time_before_after_phase = [config.minimal_duration_rest_before_pulse 0];
 for ind = 1:length(phases_r)
-    [tpRabs,tpR,UpR] = get_phase2(phases_r(ind),time_before_after_phase,t,tc,U);
+    [tpRabs,tpR,UpR] = extract_phase2(phases_r(ind),time_before_after_phase,t,tc,U);
     Ip = tpRabs>=phases_r(ind).t_ini;
     Ir = tpRabs<phases_r(ind).t_ini;
     tR = [tR;tpR(Ip)];

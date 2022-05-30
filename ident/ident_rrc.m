@@ -54,7 +54,7 @@ phases_identify_RC=phases(config.pRC);
 %% 3 - R0,C0,R1,C1 and R2,C2 are computed for each of these phases
 for phase_k = 1:length(ind_R)
         %Time, voltage,current and DoD are extracted for the phase_k
-    [tm,Um,Im,DoDm] = get_phase2(phases_identify_RC(phase_k),rest_before_after_phase,t,U,I,DoDAh);
+    [tm,Um,Im,DoDm] = extract_phase2(phases_identify_RC(phase_k),rest_before_after_phase,t,U,I,DoDAh);
     for i=1:length(DoDm)
         if DoDm(i)<0
             DoDm(i)=abs(DoDm(i));
