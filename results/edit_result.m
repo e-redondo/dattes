@@ -16,9 +16,9 @@ end
 end
 
 function S = setfieldArray(S,Field,Values)
-%postRPTmanuel setfield of struct array
+%setfieldArray setfield of struct array
 %
-% S = postRPTmanuel(S,'field',V) sets the contents of the specified
+% S = setfieldArray(S,'field',V) sets the contents of the specified
 %     field to the values V. S must be a m-by-n structure and V and m-by-n
 %     array. This is equivalent to the following syntax:
 % for ind = 1:length(S)
@@ -26,6 +26,6 @@ function S = setfieldArray(S,Field,Values)
 % end
 % The changed structure is returned.
 %
-% see also setfield, RPT
+% see also setfield, dattes
 S = arrayfun(@(s,x) setfield(s,Field,x),S,Values);
 end

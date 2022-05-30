@@ -29,19 +29,19 @@ cc_capacity = [];
 cc_crate = [];
 %gestion d'erreurs:
 if nargin<2 || nargin>3
-    fprintf('ident_capacity:nombre incorrect de parametres, trouves %d\n',nargin);
+    fprintf('ident_capacity: wrong number of parametres, found %d\n',nargin);
     return;
 end
 if ~isstruct(phases) || ~isstruct(config) || ~ischar(options)
-    fprintf('ident_CapaCV:type de parametres, incorrect\n');
+    fprintf('ident_capacity: wrong type of parametres\n');
     return;
 end
 if ~isfield(config,'pCapaD') || ~isfield(config,'pCapaC') || ~isfield(config,'pCapaDV') || ~isfield(config,'pCapaCV')
-    fprintf('ident_Capa2:structure config incomplete, refaire config: RPT(''cs'')\n');
+    fprintf('ident_capacity: structure config incomplete, redo configurator: dattes(''cs'')\n');
     return;
 end
 if ~isfield(phases,'capacity') || ~isfield(phases,'duration') || ~isfield(phases,'Iavg') || ~isfield(phases,'Uavg')
-    fprintf('ident_Capa2:structure phases incomplete, refaire decoupe: RPT(''ps'')\n');
+    fprintf('ident_capacity: structure phases incomplete, redo decompose: dattes(''ps'')\n');
     return;
 end
 

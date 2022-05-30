@@ -1,6 +1,26 @@
 function [ica] = ident_ica(t,U,DoDAh,config,phases,options)
-%ident_ICA interface entre RPT et essaiICA
-% See also RPT, essaiICA, configurator2
+% ident_ICA incremental capacity analisys
+% Usage:
+% [ica] = ident_ica(t,U,DoDAh,config,phases,options)
+%
+% Inputs:
+% - t [nx1 double]: time in seconds
+% - U [nx1 double]: cell voltage
+% - DoDAh [nx1 double]: depth of discharge in AmpHours
+% - config [1x1 struct]: config struct from configurator
+% - phases [1x1 struct]: phases struct from decompose_phases
+%
+% Output:
+% - ica [mx1 struct] with fields:
+%   - dqdu [px1 double]: voltage derivative of capacity
+%   - dudq [px1 double]: capacity derivative of voltage
+%   - q [px1 double]: capacity vector for dudq
+%   - u [px1 double]: voltage vector for dqdu
+%   - crate [1x1 double]: charge or discharge C-rate
+%   - time [1x1 double]: time of measurement
+%
+% See also dattes, calcul_ica, configurator
+
 if ~exist('options','var')
     options = '';
 end

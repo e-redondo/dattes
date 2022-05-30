@@ -1,7 +1,7 @@
 function config = cfg_default(config)
 % function config = cfg_default(config)
 %
-% Create default configuration for RPT.
+% Create default configuration for dattes.
 %
 % See also configurator
 
@@ -70,6 +70,6 @@ config.Tname = '';%par defaut (pas de capteur)
 % etc.
 
 %Graphics:
-config.GdDureeMin=300;%duree min pour afficher la phase dans RPT(XML,'','Gd')
+config.GdDureeMin=300;%duree min pour afficher la phase dans dattes(XML,'','Gd')
 config.GdmaxPhases=100;%nombre de phases à partir duquel on doit appliquer GdDureeMin
 end

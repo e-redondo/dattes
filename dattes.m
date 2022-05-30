@@ -115,7 +115,7 @@ elseif ~isempty(which(cfg_file))
     %CFGfile is given as script, e.g. dattes(xml,'cfg_battery','cdvs')
     config0 = eval(cfg_file);
 else
-    %CFGfile is empty, e.g. dattes(xml,'','cdvs'), take config from loadRPT
+    %CFGfile is empty, e.g. dattes(xml,'','cdvs'), take config from load_result
     config0 = config;
 end
     

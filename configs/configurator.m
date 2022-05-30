@@ -1,5 +1,5 @@
 function config = configurator(t,U,I,m,config,phases,options)
-%configurator configuration for RPT
+%configurator configuration for dattes
 % config = configurator(t,U,I,m,config,phases,options)
 %
 % INPUTS:
