@@ -64,7 +64,7 @@ if ismember('R',options)
 end
 if ismember('Z',options)
     %show result of 'Z', i.e. impedance
-    plot_cpe(result.CPEQ, result.CPEalpha,result.CPEDoD, result.CPERegime);
+    plot_impedance(result.CPEQ, result.CPEalpha,result.CPEDoD, result.CPERegime);
 end
 if ismember('I',options)
     %show result of 'I', i.e. ica

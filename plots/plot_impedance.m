@@ -1,4 +1,4 @@
-function plot_cpe(CPEQ, CPEalpha, CPEDoD, CPERegime)
+function plot_impedance(CPEQ, CPEalpha, CPEDoD, CPERegime)
 
 
 hf = figure('name','ident CPE');hold on
