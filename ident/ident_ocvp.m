@@ -2,13 +2,18 @@ function [OCVp, DoDp, tOCVp, Ipsign] = ident_ocvp(t,U,DoDAh,m,config,phases,opti
 %ident_ocvp OCV by points identification (rests after partial
 %charges/discharges)
 %
+% Usage:
 % [OCVp, DoDp] = ident_ocvp(t,U,DoDAh,m,config,phases,options)
-% - t,U,DoDAh,m [(nx1) double]: vecteurs temps,tension DoD(Ah) et mode
-% - config: [struct] issue de configurator2
-% - phases: [struct] issue de decoupeBanc
-% - options: [string] options d'execution ('v' = verbose, 'g' = graphique)
 %
-% See also modeBanc, decoupeBanc, configurator2
+% Inputs:
+% - t,U,DoDAh,m [(nx1) double]: vectors from extract_profiles
+% - config [(1x1) struct]: config struct from configurator
+% - phases [(mx1) struct] phases from decompose_bench
+% - options: [string] execution options
+%    - 'v' = verbose
+%    - 'g' = graphics
+%
+% See also mode_bench2, decompose_bench, configurator
 
 if ~exist('options','var')
     options = '';

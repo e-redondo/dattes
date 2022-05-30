@@ -49,11 +49,11 @@ function [result, config, phases] = dattes(xml_file,cfg_file,options)
 % dattes(XMLfile,CFGfile,'gs'): idem en montrant les figures
 % dattes(XMLfile,CFGfile,'gsv'): idem en disant ce qu'il fait (verbose)
 %
-% dattes(XMLfile,CFGfile,'ds'), decoupe l'essai en phases et sauvegarde
-% dattes(XMLfile,CFGfile,'cs'), configure l'essai et sauvegarde
+% dattes(XMLfile,CFGfile,'ps'), cut the test in phases and save
+% dattes(XMLfile,CFGfile,'cs'), configure the test and save
 %
-% [resultat, config, phases] = dattes(XMLfile,CFGfile,'l'), juste charge les
-% resultats.
+% [resultat, config, phases] = dattes(XMLfile,CFGfile,'l'), just load the
+% results
 %
 % dattes(XMLfile,CFGfile,'C'), charge la configuration et calcule la Capacite.
 %
@@ -63,8 +63,8 @@ function [result, config, phases] = dattes(xml_file,cfg_file,options)
 % dattes(XMLfile,CFGfile,'As'), fait tout: lecture, config, tous les calculs,
 % sauvegarde de resultats.
 %
-% See also extract_profiles, decoupeBanc, ident_Capa2, ident_OCVr2, ident_R2,
-% ident_CPE2
+% See also extract_profiles, decompose_bench, configurator
+% ident_capacity, ident_ocvp, ident_pocv, ident_r, ident_cpe, ident_rrc, ident_ica
 
 
 %% 0.-interpreter les options

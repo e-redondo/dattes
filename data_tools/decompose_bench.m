@@ -1,20 +1,37 @@
 function [phases, tcell, Icell, Ucell, modes] = decompose_bench(t,I,U,m,options)
-%decompose_bench decoupe des profils (t,U,I,m) en phases par la valeur de m.
+%decompose_bench split profiles (t,U,I,m) into phases by m value.
 %
-%[phases, tcell, Icell, Ucell, modes] = decompose_bench(t,I,U,m) cherche les
-%changements du vecteur m et decoupe les quatre vecteurs (t,U,I,m). la
-%fonction retourne:
-% - phases: [(nx1) struct] avec quelques informations concernant chaque
-% phase (tIni,tFin,Imoy,capa,Umax,Umin)
-% - quatre cellules [tcell, Icell, Ucell] qui contiennent les portions des
-% vecteurs.
-% - modes: [(nx1) double] avec le mode (modeBanc) de chaque phase
+% Usage:
+% [phases, tcell, Icell, Ucell, modes] = decompose_bench(t,I,U,m)
+% Search for changes in 'm' vector and cut the four vectors (t,U,I,m)
 %
+% Inputs:
+% - t,I,U,m [(nx1) double]: vectors from extract_profiles
+% - options [(1xp) string]: execution options:
+%    - 'u': unsigned ignore changes in polarity of current
+%    - 'v': verbose
+%    - 'g': graphics
 %
-%decompose_bench(t,I,U,m,'g') 'graphic', montre les resultats dans une figure.
-%decompose_bench(t,I,U,m,'v') 'verbose', raconte ce qu'il fait.
+% Outputs:
+% - phases [(mx1) struct]: structure array with fields:
+%    - t_ini [(1x1) double]: phase start time (seconds)
+%    - t_fin [(1x1) double]: phase end time (seconds)
+%    - duration [(1x1) double]: phase duration (seconds)
+%    - Uini [(1x1) double]: phase initial voltage
+%    - Ufin [(1x1) double]: phase final voltage
+%    - Iavg [(1x1) double]: phase average current
+%    - Uavg [(1x1) double]:  phase average voltage
+%    - capacity [(1x1) double]: phase capacity (Ah)
+%    - mode [(1x1) double]: phase mode (rest, CC, CV, EIS, profile)
+% - tcell Icell, Ucell [(mx1) cell]: cell arrays, each 'k' element
+% correspond to the 'cut' of t,U,I or m for 'k' phase
+% - modes [(mx1) double]: mode of each phase
 %
-% See also modeBanc, extractBanc, plot_phases
+% Examples:
+% decompose_bench(t,I,U,m,'g') % 'graphics', show results in a figure.
+% decompose_bench(t,I,U,m,'v') % 'verbose', tell what it does.
+%
+% See also mode_bench2, extract_profiles, plot_phases
 
 if ~exist('options','var')
     options = '';
@@ -30,10 +47,10 @@ ms(sign(I)==0 | ms==-3) = 3;
 end
 
 
-Idecoupe = find(diff(ms));
+Icut = find(diff(ms));
 
-iniPhase = [1;Idecoupe+1];
-finPhase = [Idecoupe;length(t)];
+iniPhase = [1;Icut+1];
+finPhase = [Icut;length(t)];
 
 tcell = cell(size(iniPhase));
 Icell = cell(size(iniPhase));
@@ -81,7 +98,7 @@ for ind = 1:length(tcell)
         phases(ind).capacity = phases(ind).Iavg*phases(ind).duration/3600;
     end
 
-    phases(ind).modes = modes(ind);
+    phases(ind).mode = modes(ind);
 end
 if ismember('v',options)
     fprintf('OK\n');

@@ -1,12 +1,26 @@
-function m = mode_bench2(t,I,U,Step,seuilI,seuilU,options)
-% mode_bench2 mode de fonctionnement du banc (repos, CC, CV, EIS, profil)
-%     mode_bench2(t,I,U,seuilI,seuilU) Calcule le vecteur mode ("m") apartir des
-%     informations suivantes:
-%     1.- U: si constant (i.e. deltaU < seuilU), phase CV
-%     2.- I: si constant (i.e. deltaI < seuilI), phase CC ou repos (si 0)
-%     Valeur de retour:
-%     m [nx1 (double)]:'mode (1=CC, 2=CV, 3=repos, 4=EIS, 5 = profil de courant)'
-%   See also importArbinRes, importBiologic,decompose_bench
+function m = mode_bench2(t,I,U,Step,I_threshold,U_threshold,options)
+% mode_bench2 calculate the working mode of the cycler (rest, CC, CV, EIS, profile)
+%
+% Usage:
+% m = mode_bench2(t,I,U,Step,I_threshold,U_threshold,options)
+%
+% Inputs:
+% - t,I,U,Step (nx1 double): from test data
+% - I_threshold (1x1 double): current threshold to consider change
+% - U_threshold (1x1 double): voltage threshold to consider change
+% - options (1xp string): execution options
+%    - 'v': verbose
+%    - 'g': graphics
+%
+% Output:
+% - m (nx1 double): cycler working mode
+%    - 1 = CC (constant current)
+%    - 2 = CV (constant voltage)
+%    - 3 = rest 
+%    - 4 = EIS (impedance spectroscopy)
+%    - 5 = profile (random profile)
+%
+%   See also import_arbin_res, import_arbin_xls, import_bitrode, decompose_bench
 
 if ~exist('options','var')
     options = '';
@@ -17,10 +31,10 @@ verbose = ismember('v',options);
 
 m = zeros(size(t));
 
-seuilI2 = 2*seuilI;
-seuilU2 = 2*seuilU;
+I_threshold2 = 2*I_threshold;
+U_threshold2 = 2*U_threshold;
 
-%decouper en fonction de la valeur de Step
+%decompose vectors depending of Step value
 [phases, tcell, Icell, Ucell, Steps] = decompose_bench(t,I,U,Step,'u');
 
 %FUSION DE STEPS COURTS (profil)
@@ -41,18 +55,17 @@ for ind = 1:length(Debuts)
     tDebut = phases(Debuts(ind)).t_ini;%debut de la premiere phase courte
     t_fin = phases(Fins(ind)).t_fin;%fin de la derniere phase courte
     indices = t>=tDebut & t<=t_fin;%FIX: effet de bord?
-%     newValue = phases(Debuts(ind)).modes;
     newStep(indices) = -1;%marquage profil
 end
 
-%redecoupe, cette fois avec newStep (Steps courts fusionnes)
+%decompose again, this time with newStep (short merged Steps)
 [phases, tcell, Icell, Ucell, Steps] = decompose_bench(t,I,U,newStep,'u');
 for ind = 1:length(phases)
    indices = t>=tcell{ind}(1) & t<=tcell{ind}(end);
    if Steps(ind)==-1%marquage profil
        m(indices) = 5;
    else
-       m(indices)  = quelMode(tcell{ind},Ucell{ind},Icell{ind},seuilU2,seuilI2);
+       m(indices)  = quelMode(tcell{ind},Ucell{ind},Icell{ind},U_threshold2,I_threshold2);
    end
 end
 
