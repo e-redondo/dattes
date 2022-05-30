@@ -136,8 +136,8 @@ end
 function [Um2,Im,tm,DoDm,Urelax,Instant_rest]=remove_spikes(Um2,Im,tm,DoDm,p_RC,phase_RC)
 %remove_spikes Nettoie les points de courants abberants lors d'un pulse
 %Um2,Im,tm,sont issus de getPhase2
-%p_RC vient de decompose_bench
-%See also getPhase2, decompose_bench
+%p_RC vient de split_phases
+%See also getPhase2, split_phases
 %%
 
 

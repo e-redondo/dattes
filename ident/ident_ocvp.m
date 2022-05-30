@@ -8,12 +8,12 @@ function [OCVp, DoDp, tOCVp, Ipsign] = ident_ocvp(t,U,DoDAh,m,config,phases,opti
 % Inputs:
 % - t,U,DoDAh,m [(nx1) double]: vectors from extract_profiles
 % - config [(1x1) struct]: config struct from configurator
-% - phases [(mx1) struct] phases from decompose_bench
+% - phases [(mx1) struct] phases from split_phases
 % - options: [string] execution options
 %    - 'v' = verbose
 %    - 'g' = graphics
 %
-% See also mode_bench2, decompose_bench, configurator
+% See also mode_bench2, split_phases, configurator
 
 if ~exist('options','var')
     options = '';

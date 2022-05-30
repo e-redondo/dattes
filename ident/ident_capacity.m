@@ -4,7 +4,7 @@ function [cc_capacity, cc_crate, cc_time, cc_duration, cv_capacity, cv_voltage, 
 %
 % INPUTS:
 % config (1x1) configuration structure from configurator
-% phases (1xn) phases array structure from decompose_bench
+% phases (1xn) phases array structure from split_phases
 % options (string) containing:
 %   - 'v': verbose, tell what you do
 %
@@ -17,7 +17,7 @@ function [cc_capacity, cc_crate, cc_time, cc_duration, cv_capacity, cv_voltage, 
 % cv_capacity (1xj) double: residual capacity of each CV phase
 % cv_time (1xj) double: time of each CV phase
 %
-% See also dattes, decompose_bench, configurator, plot_capacity
+% See also dattes, split_phases, configurator, plot_capacity
 
 if ~exist('options','var')
     options='';

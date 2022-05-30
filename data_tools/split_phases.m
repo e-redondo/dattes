@@ -1,8 +1,8 @@
-function [phases, tcell, Icell, Ucell, modes] = decompose_bench(t,I,U,m,options)
-%decompose_bench split profiles (t,U,I,m) into phases by m value.
+function [phases, tcell, Icell, Ucell, modes] = split_phases(t,I,U,m,options)
+%split_phases split profiles (t,U,I,m) into phases by m value.
 %
 % Usage:
-% [phases, tcell, Icell, Ucell, modes] = decompose_bench(t,I,U,m)
+% [phases, tcell, Icell, Ucell, modes] = split_phases(t,I,U,m)
 % Search for changes in 'm' vector and cut the four vectors (t,U,I,m)
 %
 % Inputs:
@@ -28,8 +28,8 @@ function [phases, tcell, Icell, Ucell, modes] = decompose_bench(t,I,U,m,options)
 % - modes [(mx1) double]: mode of each phase
 %
 % Examples:
-% decompose_bench(t,I,U,m,'g') % 'graphics', show results in a figure.
-% decompose_bench(t,I,U,m,'v') % 'verbose', tell what it does.
+% split_phases(t,I,U,m,'g') % 'graphics', show results in a figure.
+% split_phases(t,I,U,m,'v') % 'verbose', tell what it does.
 %
 % See also mode_bench2, extract_profiles, plot_phases
 
@@ -57,7 +57,7 @@ Icell = cell(size(iniPhase));
 Ucell = cell(size(iniPhase));
 modes = zeros(size(iniPhase));
 if ismember('v',options)
-    fprintf('decompose_bench: t,U,I,m >>>');
+    fprintf('split_phases: t,U,I,m >>>');
 end
 for ind = 1:length(iniPhase)
     indices = iniPhase(ind):finPhase(ind);
@@ -71,7 +71,7 @@ if ismember('v',options)
     fprintf('tcell,Ucell,Icell,modes OK\n');
 end
 if ismember('v',options)
-    fprintf('decompose_bench: phases...');
+    fprintf('split_phases: phases...');
 end
 
 for ind = 1:length(tcell)
@@ -106,7 +106,7 @@ end
 
 if ismember('g',options)
     hf = plot_phases(t,U,I,phases,'','h');
-    set(hf,'name','decompose_bench');
+    set(hf,'name','split_phases');
 end
 end
 

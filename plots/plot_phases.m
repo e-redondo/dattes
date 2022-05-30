@@ -4,12 +4,12 @@ function hf = plot_phases(t,U,I,phases,title_str,options)
 % hf = plot_phases(t,U,I,phases,title_str,options)
 %
 % Make a figure with two subplots: U vs. t et I vs. t. with identified
-% phases by decompose_bench function (CC, CV, rest, etc.). If more than 100
+% phases by split_phases function (CC, CV, rest, etc.). If more than 100
 % phases, only longer 100 phases will be ploted (color and number).
 %
 % TODO: option plot complet pas de duration min
 %
-% See also dattes, decompose_bench, mode_bench2
+% See also dattes, split_phases, mode_bench2
 
 if ~exist('options','var')
     options = '';

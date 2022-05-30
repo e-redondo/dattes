@@ -29,7 +29,7 @@ if ismember('e',options)%EIS
     end
 end
 if ismember('p',options)
-    %show result of 'd', i.e. decompose_bench
+    %show result of 'd', i.e. split_phases
     plot_phases(t,U,I,phases,titre,InherOptions);
 end
 if ismember('c',options)

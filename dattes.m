@@ -63,7 +63,7 @@ function [result, config, phases] = dattes(xml_file,cfg_file,options)
 % dattes(XMLfile,CFGfile,'As'), fait tout: lecture, config, tous les calculs,
 % sauvegarde de resultats.
 %
-% See also extract_profiles, decompose_bench, configurator
+% See also extract_profiles, split_phases, configurator
 % ident_capacity, ident_ocvp, ident_pocv, ident_r, ident_cpe, ident_rrc, ident_ica
 
 
@@ -129,7 +129,7 @@ if ~isempty(eis)
     result.eis = eis;
 end
 %1.4. DECOMPOSE IN PHASES
-[phases] = decompose_bench(t,I,U,m,InherOptions);
+[phases] = split_phases(t,I,U,m,InherOptions);
 
 
 %% 2. CONFIGURE

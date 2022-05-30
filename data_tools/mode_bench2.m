@@ -20,7 +20,7 @@ function m = mode_bench2(t,I,U,Step,I_threshold,U_threshold,options)
 %    - 4 = EIS (impedance spectroscopy)
 %    - 5 = profile (random profile)
 %
-%   See also import_arbin_res, import_arbin_xls, import_bitrode, decompose_bench
+%   See also import_arbin_res, import_arbin_xls, import_bitrode, split_phases
 
 if ~exist('options','var')
     options = '';
@@ -35,7 +35,7 @@ I_threshold2 = 2*I_threshold;
 U_threshold2 = 2*U_threshold;
 
 %decompose vectors depending of Step value
-[phases, tcell, Icell, Ucell, Steps] = decompose_bench(t,I,U,Step,'u');
+[phases, tcell, Icell, Ucell, Steps] = split_phases(t,I,U,Step,'u');
 
 %FUSION DE STEPS COURTS (profil)
 %trouver des Steps courts et les fusionner
@@ -59,7 +59,7 @@ for ind = 1:length(Debuts)
 end
 
 %decompose again, this time with newStep (short merged Steps)
-[phases, tcell, Icell, Ucell, Steps] = decompose_bench(t,I,U,newStep,'u');
+[phases, tcell, Icell, Ucell, Steps] = split_phases(t,I,U,newStep,'u');
 for ind = 1:length(phases)
    indices = t>=tcell{ind}(1) & t<=tcell{ind}(end);
    if Steps(ind)==-1%marquage profil

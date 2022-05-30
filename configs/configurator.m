@@ -5,7 +5,7 @@ function config = configurator(t,U,I,m,config,phases,options)
 % INPUTS:
 % - t,U,I,m (nx1 doubles) from extract_profiles
 % - config (1x1 struct) containing minimal info (see cfg_default)
-% - phases (nx1 struct) from decompose_bench
+% - phases (nx1 struct) from split_phases
 % - options (1xn string) some options ('v', 'g').
 %
 % OUTPUTS:
@@ -23,7 +23,7 @@ function config = configurator(t,U,I,m,config,phases,options)
 %     - DoDAhFin: final DoD in Amphours
 %
 %
-% See also dattes, extract_profiles, decompose_bench, cfg_default, plot_config
+% See also dattes, extract_profiles, split_phases, cfg_default, plot_config
 
 if ~exist('options','var')
     options = '';
