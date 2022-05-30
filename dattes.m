@@ -215,14 +215,12 @@ end
 %6.3.1. resistance
 if ismember('R',options)
     [R, RDoD, RRegime, Rt, Rdt] = ident_r(t,U,I,DoDAh,config,phases,InherOptions);
-    %impedances
-    result.R = R;
-    result.RDoD = RDoD;
-    result.RRegime = RRegime;
-    result.Rt = Rt;
-    resultat.Rdt = Rdt;
-    resultat.Rc = R(RRegime>0);
-    resultat.Rd = R(RRegime<0);
+    %resistances
+    result.resistance.R = R;
+    result.resistance.dod = RDoD;
+    result.resistance.crate = RRegime;
+    result.resistance.time = Rt;
+    result.resistance.delta_time = Rdt;
     
 end
 %6.3.2. Impedance

@@ -64,8 +64,12 @@ if ismember('E',options)
 end
 if ismember('R',options)
     %show result of 'R', i.e. Resistance
-    %TODO: InherOptions
-    plot_r(result.R, result.RDoD,result.RRegime);
+    if isfield(result,'resistance')
+        plot_r(result.resistance);
+    else
+        fprintf('no resistance result found in %s\n',result.test.file_in);
+    end
+    
 end
 if ismember('Z',options)
     %show result of 'Z', i.e. impedance
