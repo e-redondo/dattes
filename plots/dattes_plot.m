@@ -51,7 +51,7 @@ if ismember('P',options)
 end
 if ismember('O',options)
     %show result of 'O', i.e. OCV by points
-    plot_ocvp(t,U, DoDAh, result.tOCVp, result.OCVp, result.DoDp, result.Ipsign)
+    plot_ocv_by_points(t,U, DoDAh, result.tOCVp, result.OCVp, result.DoDp, result.Ipsign)
 end
 if ismember('E',options)
     %show result of 'E', i.e. Efficiency

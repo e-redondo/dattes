@@ -1,4 +1,4 @@
-function plot_ocvp(t,U,DoDAh, tOCVp, OCVp, DoDp, Ipsign)
+function plot_ocv_by_points(t,U,DoDAh, tOCVp, OCVp, DoDp, Ipsign)
 
 hf = figure('name','ident_ocvp');
 
