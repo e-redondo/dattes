@@ -50,7 +50,7 @@ dod = [];
 crate = [];
 
 %% 2- Determine the phases for which a CPE identification is relevant
-indices_cpe = find(config.pCPE);
+indices_cpe = find(config.impedance.pZ);
 time_before_after_phase = [config.impedance.rest_min_duration 0];
 % phases_identify_CPE=phases(config.pCPE);
 
@@ -82,8 +82,8 @@ for phase_k = 1:length(indices_cpe)
     else
         [q(phase_k), alpha(phase_k), ~, crate(phase_k)] = calcul_cpe_pulse(time_phase,voltage_phase,current_phase,'a',config.impedance.fixed_params);
     end
-    time(phase_k) = t(t==config.tW(phase_k));
-    dod(phase_k) = dod_ah(t==config.tW(phase_k));%TODO: DoD ini ou moyen?
+    time(phase_k) = t(t==config.impedance.instant_end_rest(phase_k));
+    dod(phase_k) = dod_ah(t==config.impedance.instant_end_rest(phase_k));%TODO: DoD ini ou moyen?
     resistance(phase_k) = R(1);
 end
 crate = crate/config.test.capacity;

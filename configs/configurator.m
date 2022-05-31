@@ -135,27 +135,27 @@ pCapaCV = [phases.Iavg]>0 & ismember(tFins,t(I100)) & [0 pCapaC(1:end-1)];
 Ipulse = m==1 & [0; m(1:end-1)]==3;
 
 %5.1.- mode CC et dernier point avant en repos (3)
-pR = ismember(tInis,t(Ipulse))& durees<=config.maximal_duration_pulse;
-pW =pR;
+pR = ismember(tInis,t(Ipulse))& durees<=config.resistance.pulse_max_duration;
+pZ =pR;
 
 %5.2.- duree minimale pour pR, tminR (10secondes); pour pW, tminW (300sec)
-pR = pR & durees>=config.minimal_duration_pulse;
-pW = pW & durees>=config.impedance.pulse_min_duration;
+pR = pR & durees>=config.resistance.pulse_min_duration;
+pZ = pZ & durees>=config.impedance.pulse_min_duration;
 %5.3- duree minimale du repos avant?
-pR = pR & [0 durees(1:end-1)]>=config.minimal_duration_rest_before_pulse;
-pW = pW & [0 durees(1:end-1)]>=config.impedance.rest_min_duration;
+pR = pR & [0 durees(1:end-1)]>=config.resistance.rest_min_duration;
+pZ = pZ & [0 durees(1:end-1)]>=config.impedance.rest_min_duration;
 %5.4- duree maximale du pulse pour l'identification d'un RC
-pRC=pR & durees<=config.maximal_duration_pulse ;
+% pRC=pR & durees<=config.impedance.pulse_max_duration ;
 %5.5- duree maximale du pulse pour l'identification d'un CPE
-pCPE=pW & durees<=config.maximal_duration_pulse ;
+% pCPE=pZ & durees<=config.impedance.pulse_max_duration ;
 %TODO: 5.6.-verification echantillonnage pour eviter warnings calculR
 %nb points repos > 3
 %...
 %repos immediatememnt anterieurs
 pRr = [pR(2:end) false];
-pWr = [pW(2:end) false];
-pRCr = [pRC(2:end) false];
-pCPEr = [pCPE(2:end) false];
+pZr = [pZ(2:end) false];
+% pRCr = [pRC(2:end) false];
+% pCPEr = [pCPE(2:end) false];
 
 %ident_capacity
 config.pCapaD = pCapaD;
@@ -166,20 +166,24 @@ config.pCapaDV = pCapaDV;
 config.pCapaCV = pCapaCV;
 
 %ident_r
-config.pR = pR;
-config.instant_end_rest = tFins(pRr);%temps de fins de repos immediatememnt anterieur
+config.resistance.pR = pR;
+config.resistance.instant_end_rest = tFins(pRr);%temps de fins de repos immediatememnt anterieur
 
-%ident_rrc
-config.pRC=pRC;
-config.instant_fin_repos_RC = tFins(pRCr);%temps de fins de repos immediatememnt anterieur
+%ident_z
+config.impedance.pZ = pZ;
+config.impedance.instant_end_rest = tFins(pZr);%temps de fins de repos immediatememnt anterieur
+
+% %ident_rrc
+% config.pRC=pRC;
+% config.instant_fin_repos_RC = tFins(pRCr);%temps de fins de repos immediatememnt anterieur
 
 
 
 %ident_cpe
-config.pCPE=pCPE;
-config.instant_fin_repos_CPE = tFins(pCPEr);%temps de fins de repos immediatememnt anterieur
-config.tW = tFins(pWr);%temps de fins de repos immediatememnt anterieur
-config.pW = pW;
+% config.pCPE=pCPE;
+% config.instant_fin_repos_CPE = tFins(pCPEr);%temps de fins de repos immediatememnt anterieur
+% config.tW = tFins(pWr);%temps de fins de repos immediatememnt anterieur
+% config.pW = pW;
 
 
 %calcul_soc

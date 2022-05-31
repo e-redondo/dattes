@@ -42,15 +42,24 @@ if ~isstruct(config) || ~ischar(options) || ~isnumeric(t) ...
     fprintf('ident_r:type de parametres, incorrect\n');
     return;
 end
-if ~isfield(config,'pR') || ~isfield(config,'minimal_duration_rest_before_pulse') || ~isfield(config,'minimal_duration_pulse') || ~isfield(config,'instant_end_rest')
+if ~isfield(config,'resistance')
     fprintf('ident_r:structure config incomplete\n');
     return;
 end
+if ~isfield(config.resistance,'pR') || ~isfield(config.resistance,'rest_min_duration') || ~isfield(config.resistance,'pulse_min_duration') || ~isfield(config.resistance,'delta_time') || ~isfield(config.resistance,'instant_end_rest')
+    fprintf('ident_r:structure config incomplete\n');
+    return;
+end
+
+pulse_min_duration = config.resistance.pulse_min_duration;
+rest_min_duration = config.resistance.rest_min_duration;
+delta_time_cfg = config.resistance.delta_time;
+
 %%
 % tIniPulses = config.tR-config.tminRr-1;%FIX (BRICOLE) je met une seconde de plus (sinon warning dans calculR ligne69)
 % tFinPulses = config.tR+config.tminR+1;%FIX (BRICOLE) je met une seconde de plus (sinon warning dans calculR ligne72)
-indices_phases_r = find(config.pR);
-time_before_after_phase = [config.minimal_duration_rest_before_pulse 0];
+indices_phases_r = find(config.resistance.pR);
+time_before_after_phase = [rest_min_duration 0];
 
 resistance = struct([]);
 R = [];
@@ -69,12 +78,12 @@ for ind = 1:length(indices_phases_r)
 
 
     [tp,Up,Ip,DoDp] = extract_phase2(phases(indices_phases_r(ind)),time_before_after_phase,t,U,I,dod_ah);%FIX (BRICOLE) la même mais avec getPhases 2
-    Is = tp-tp(1)<config.minimal_duration_rest_before_pulse+config.minimal_duration_pulse+3;%FIX (BRICOLE) la même mais avec getPhases 2
+    Is = tp-tp(1)<rest_min_duration+pulse_min_duration+3;%FIX (BRICOLE) la même mais avec getPhases 2
     tp = tp(Is);
     Up = Up(Is);
     Ip = Ip(Is);
 
-    [thisR, this_crate, this_time, this_dod,this_delta_time, err] = calcul_r(tp,Up,Ip,DoDp,config.instant_end_rest(ind),config.minimal_duration_pulse,config.minimal_duration_rest_before_pulse ,config.instant_calcul_R);
+    [thisR, this_crate, this_time, this_dod,this_delta_time, err] = calcul_r(tp,Up,Ip,DoDp,config.resistance.instant_end_rest(ind),pulse_min_duration,rest_min_duration ,delta_time_cfg);
    
     R = [R thisR];
     crate = [crate this_crate];

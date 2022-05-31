@@ -45,47 +45,30 @@ end
 % soc ('S' action):
 config.soc.crate_cv_end = 1/20;
 
+%ident_R
+config.resistance.delta_time = [0 4 9 29 59]; % config.instant_calcul_R %Instant du pulse auquel on mesure R (par défaut 0 secondes)
+config.resistance.pulse_min_duration = 9; %config.minimal_duration_pulse = 9;%duree min d'un pulse pour resistance
+config.resistance.pulse_max_duration = 599;% maximal pulse 600sec
+config.resistance.rest_min_duration = 9; % config.minimal_duration_rest_before_pulse =9;%duree min repos avant
+
 % impedance ('Z' action):
 config.impedance.ident_fcn = @ident_cpe;% use ident_cpe
 % config.impedance.ident_fcn = @ident_rrc;% use ident_rrc
 config.impedance.pulse_min_duration = 299;% minimal pulse 300sec
 config.impedance.pulse_max_duration = 599;% maximal pulse 600sec
-config.impedance.rest_min_duration = 299;% minimal rest before 300sec
+config.impedance.rest_min_duration = 9;% minimal rest before 300sec
 config.impedance.fixed_params = false;% not fixed params
 % config.impedance.fixed_params = 0.5;% ident_cpe 2nd param fixed to 0.5
-config.impedance.initial_params = [1000, 0.5];% Q0 = 1000, alpha0 = 0.5
-
-%ident_R
-config.instant_calcul_R=[0 4 9 29 59]; %Instant du pulse auquel on mesure R (par défaut 0 secondes)
-config.minimal_duration_pulse = 9;%duree min d'un pulse pour resistance
-config.minimal_duration_rest_before_pulse =9;%duree min repos avant
-
-% ident_RC
-
-config.maximal_duration_pulse = 600; % Durée maximale pour l'identification d'un RC
-config.R1ini = 1e-3;
-config.C1ini = 150;
-
-config.R2ini = 1e-2;
-config.C2ini = 400;
-
-config.Rmin=1e-4;
-config.Cmin=50;
-config.Rmax=5e-2;
-config.Cmax=800;
+config.impedance.initial_params = [1000, 0.5];% ident_cpe: Q0 = 1000, alpha0 = 0.5
+% config.impedance.initial_params = [1e-3, 150, 1e-2, 400];% ident_rrc R1ini, C1ini, R2ini, C2ini
+% config.impedance.min_params = [1e-4, 50, 1e-4, 50];% ident_rrc
+% config.impedance.max_params = [5e-2, 800, 5e-2, 800];% ident_rrc
 
 
-%ident_CPE2
-% config.maximal_duration_pulse = 600; % Durée maximale pour l'identification d'un CPE
-
-
-% config.minimal_duration_rest_before_pulse =59;
-% config.instant_calcul_R=[0]; % Only one instant can be considered
-% config.tminW = 59;%duree min d'un pulse pour diffusion
-% config.tminWr = 299;%duree min repos avant
-% config.CPEafixe = 0.5;%ident CPE2: valeur d'alpha du CPE (si = zero, alpha non fixe).
-% config.ident_z = @ident_cpe;%fcn handler for impedance identification
-
+% config.Rmin=1e-4;
+% config.Cmin=50;
+% config.Rmax=5e-2;
+% config.Cmax=800;
 
 %ident_OCVr
 config.tminOCVr = 35;%duree min repos pour prise de point OCV

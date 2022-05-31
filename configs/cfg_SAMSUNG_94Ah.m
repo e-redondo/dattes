@@ -14,13 +14,14 @@ config.test.Tname = 'T1';%nom pour la variable temperature
 
  
 % %ident_R
-config.t_calcul_R=[0 4 9 29 59]; %Instant du pulse auquel on mesure R (par défaut 0 secondes)
-config.duree_min_pulse_mesure_R = 9;%duree min d'un pulse pour resistance
-config.rest_duration_before_pulse =9;%duree min repos avant
+config.resistance.delta_time=[0 4 9 29 59]; %Instant du pulse auquel on mesure R (par défaut 0 secondes)
+config.resistance.pulse_min_duration = 9;%duree min d'un pulse pour resistance
+config.resistance.rest_min_duration =9;%duree min repos avant
+
 % ident_RC
-config.maximal_duration_pulse_measurement_R = 40; % Durée maximale pour l'identification d'un RC
-config.R1ini = 1e-3;
-config.R2ini = 1e-2;
+% config.maximal_duration_pulse_measurement_R = 40; % Durée maximale pour l'identification d'un RC
+config.impedance.initial_params = [1e-3, 150, 1e-2, 400];% ident_rrc R1ini, C1ini, R2ini, C2ini
+config.impedance.ident_fcn = @ident_rrc;% use ident_rrc
 
 config.Rmin=1e-4;
 config.Cmin=50;

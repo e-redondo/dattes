@@ -23,8 +23,12 @@ if ~isstruct(config) || ~ischar(options) || ~isnumeric(t) || ~isstruct(phases)  
     fprintf('ident_rrc:input class is not correct\n');
     return;
 end
-if ~isfield(config,'R1ini') || ~isfield(config,'R2ini') || ~isfield(config,'maximal_duration_pulse_measurement_R')
-    fprintf('ident_rrc: configuration structure is not complete\n R1ini, R2ini and maximal_duration_pulse_measurement_R are expected ');
+if ~isfield(config,'impedance')
+    fprintf('ident_rrc: impedance field in config is missing');
+    return;
+end    
+if ~isfield(config.impedance,'initial_params') || ~isfield(config.impedance,'pulse_max_duration')
+    fprintf('ident_rrc: configuration structure is not complete\n initial_params and pulse_max_duration are expected ');
     return;
 end
 
@@ -50,10 +54,10 @@ rrc_crate = [];
 
 %% 2- Determine the phases for which a RC identification is relevant
 
-indice_r = find(config.pRC);
-rest_duration_before_pulse=config.rest_duration_before_pulse;
+indice_r = find(config.impedance.pZ);
+rest_duration_before_pulse=config.impedance.rest_min_duration;
 rest_before_after_phase = [rest_duration_before_pulse 0];
-phases_identify_rc=phases(config.pRC);
+phases_identify_rc=phases(config.impedance.pZ);
 
 %% 3 - r0,C0,r1,c1 and r2,c2 are computed for each of these phases
 for phase_k = 1:length(indice_r)
@@ -65,9 +69,9 @@ for phase_k = 1:length(indice_r)
         end
     end
  
-    rrc_time(phase_k) = tm(1);
-    rrc_dod(phase_k) = DoDm(1);
-    rrc_crate(phase_k) = phases_identify_RC(phase_k).Iavg/config.test.capacity;   
+    rrc_time(phase_k) = time_phase(1);
+    rrc_dod(phase_k) = dod_phase(1);
+    rrc_crate(phase_k) = phases_identify_rc(phase_k).Iavg/config.test.capacity;   
     [R10,C10,R20,C20,tau2]=define_RCini(time_phase,config);
 
     % Step time is reduced to maximize the identification accuracy
@@ -82,7 +86,7 @@ ocv = voltage_phase(1);
 voltage_phase  = voltage_phase-ocv;
 
 %% Rs and first RC are identified as a whole
-time_phase = time_phase-tm(1);
+time_phase = time_phase-time_phase(1);
 
 tm1 = time_phase(time_phase<rest_duration_before_pulse+tau2);
 Im1 = current_phase(time_phase<rest_duration_before_pulse+tau2);
@@ -323,8 +327,8 @@ duration_pulse=time_phase(end)-time_phase(1);
 tau1ini=duration_pulse/2;
 tau2ini=duration_pulse;
 
-R1ini=config.R1ini;
-R2ini=config.R2ini;
+R1ini=config.impedance.initial_params(1);
+R2ini=config.impedance.initial_params(3);
 
 C1ini=tau1ini/R1ini;
 C2ini=tau2ini/R2ini;

@@ -139,9 +139,9 @@ if ismember('c',options)
     [config] = configurator(t,U,I,m,config0,phases,inher_options);
     % traceability: if a script for config is given
     if ischar(cfg_file)
-        config.cfg_file = cfg_file;
-    elseif ~isfield(config,'cfg_file')
-        config.cfg_file = '';
+        config.test.cfg_file = cfg_file;
+    elseif ~isfield(config.test,'cfg_file')
+        config.test.cfg_file = '';
     end
 end
 
