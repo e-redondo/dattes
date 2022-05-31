@@ -59,7 +59,6 @@ config.minimal_duration_pulse = 9;%duree min d'un pulse pour resistance
 config.minimal_duration_rest_before_pulse =9;%duree min repos avant
 
 % ident_RC
-config.ident_z = @ident_rrc;%fcn handler for impedance identification
 
 config.maximal_duration_pulse = 600; % Durée maximale pour l'identification d'un RC
 config.R1ini = 1e-3;

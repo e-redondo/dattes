@@ -227,7 +227,8 @@ if ismember('R',options)
 end
 %6.3.2. Impedance
 if ismember('Z',options)
-    ident_z = config.ident_z;
+
+    ident_z = config.impedance.ident_fcn;
     [impedance] = ident_z(t,U,I,dod_ah,config,phases,inher_options);
     result.impedance= impedance;
 end

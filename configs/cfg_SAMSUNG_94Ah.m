@@ -30,8 +30,8 @@ config.Cmax=800000;
 
 
 % %ident_CPE2
-config.tminW = 59;%duree min d'un pulse pour diffusion
-config.tminWr = 59;%duree min repos avant
+% config.tminW = 59;%duree min d'un pulse pour diffusion
+% config.tminWr = 59;%duree min repos avant
 % config.CPEafixe = 0.5;%ident CPE2: valeur d'alpha du CPE (si = zero, alpha non fixe).
 % 
 % %ident_OCVr

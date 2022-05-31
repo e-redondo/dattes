@@ -4,6 +4,9 @@
 *.asv
 *.xls
 *.xlsx
+*.ods
 *.xml
 *.mdb
 
+# exluce dthese folders:
+configs/*

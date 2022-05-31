@@ -37,11 +37,14 @@ if ~isstruct(config) || ~isnumeric(t) || ~isnumeric(I) || ~ischar(options)
     fprintf('calcul_soc:type de parametres, incorrect\n');
     return;
 end
-if ~isfield(config,'t100') || ~isfield(config,'Capa')
+if ~isfield(config,'t100') || ~isfield(config,'test')
     fprintf('calcul_soc:structure config incomplete\n');
     return;
 end
-
+if ~isfield(config.test,'capacity')
+    fprintf('calcul_soc:structure config incomplete\n');
+    return;
+end
 Q = calcul_amphour(t,I); %calcule Q
 %vecteur logique qu'indique les instants au le SOC atteint 100%
 I100 = ismember(t,config.t100);
