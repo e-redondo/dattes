@@ -71,22 +71,30 @@ config.impedance.initial_params = [1000, 0.5];% ident_cpe: Q0 = 1000, alpha0 = 0
 % config.Cmax=800;
 
 %ident_OCVr
-config.tminOCVr = 35;%duree min repos pour prise de point OCV
-config.dodmaxOCVr = 0.3;%delta soc max prise de point OCV en p.u. (0.5 = 50% soc)
-config.dodminOCVr = 0.01;%delta soc min prise de point OCV en p.u. (0.01 = 1% soc)
+config.ocv_points.rest_min_duration = 35;% (tminOCVr) minimal duration for a constant current phase to be used for OCV measurement
+config.ocv_points.max_delta_dod_ah = 0.3;% (dodmaxOCVr) maximal dod variation to be taken into account for OCV measurement (p.u., 0.5 = 50% soc)
+config.ocv_points.min_delta_dod_ah = 0.01;% (dodminOCVr) minimal dod variation to be taken into account for OCV measurement (p.u., 0.5 = 50% soc)
 
 %ICA
-config.dQ = config.test.capacity/100;%dQ pour essaiICA
-config.dU = (config.test.max_voltage-config.test.min_voltage)/100;%dU pour essaiICA
-config.regimeICAmax = 0.25;%regime max pour ICA
-config.n_filter=3;%filter order
-config.wn_filter=0.1;%filter cut frequency
-config.filter_type='G';%filter type ('G' = gaussian)
+config.ica.capacity_resolution = config.test.capacity/100;% (dQ) for ICA test
+config.ica.voltage_resolution = (config.test.max_voltage-config.test.min_voltage)/100;% (dU) for ICA test
+config.ica.max_crate = 0.25;% (regimeICAmax) maximal current rate for ICA
+config.ica.filter_type = 'G';%filter type (N: no filter,G: gaussian filter,M: mean filter,B: butter filter)
+config.ica.filter_order = 30;%for gaussian (see essaiICA2); change ident_ICA
+config.ica.filter_cut = 5;%for gaussian (see essaiICA2); change ident_ICA
+
+% config.dQ = config.test.capacity/100;%dQ pour essaiICA
+% config.dU = (config.test.max_voltage-config.test.min_voltage)/100;%dU pour essaiICA
+% config.regimeICAmax = 0.25;%regime max pour ICA
+% config.n_filter=3;%filter order
+% config.wn_filter=0.1;%filter cut frequency
+% config.filter_type='G';%filter type ('G' = gaussian)
 
 %pseudoOCV
-config.regimeOCVmax = 1;%regime max pour pseudoOCV (C/5)
-config.regimeOCVmin = 0;%regime max pour pseudoOCV (C/5)
-config.dQOCV = config.test.capacity/100;%dQ pour pseudoOCV
+config.pseudo_ocv.max_crate = 1;% (regimeOCVmax) maximal current rate for pseudoOCV (C/5)
+config.pseudo_ocv.min_crate = 0;% (regimeOCVmin) minimal current rate forpseudoOCV (C/5)
+config.pseudo_ocv.capacity_resolution = config.test.capacity/100;% (dQOCV) for pseudoOCV
+
 
 %bancs monovoies:
 config.test.Uname = 'U';% default

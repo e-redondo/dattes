@@ -29,8 +29,8 @@ if ~exist('options','var')
 end
 %si plus d'une phase en charge ou plus d'une phase en decharge > ERREUR
 
-phases_ocv_charge = phases(config.pOCVpC);
-phases_ocv_discharge = phases(config.pOCVpD);
+phases_ocv_charge = phases(config.pseudo_ocv.pOCVpC);
+phases_ocv_discharge = phases(config.pseudo_ocv.pOCVpD);
 
 %default values: empty arrays
 pseudo_ocv = struct([]);
@@ -129,7 +129,7 @@ voltage_discharge_sorted = cellfun(@(x,y) x(y),voltage_discharge,sorting_index_c
 
 
 %TODO: aller jusqu'à la fin, ne pas rester a CapaNom
-dod = (0:config.dQOCV:config.test.capacity)';
+dod = (0:config.pseudo_ocv.capacity_resolution:config.test.capacity)';
 % u_charge = interp1(dod_ah_charge_sorted,voltage_charge_sorted,dod);
 % u_discharge = interp1(dod_ah_discharge_sorted,voltage_discharge_sorted,dod);
 

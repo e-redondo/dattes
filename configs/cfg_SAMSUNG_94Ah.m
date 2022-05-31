@@ -41,9 +41,9 @@ config.Cmax=800000;
 % config.dodminOCVr = 0.01;%delta soc min prise de point OCV en p.u. (0.01 = 1% soc)
 % 
 % %pseudoOCV
-config.regimeOCVmax = 0.08;%regime max pour pseudoOCV (C/20) 
-config.regimeOCVmin = 0.03;%regime max pour pseudoOCV (C/20)
-config.dQOCV = config.test.capacity/100;%dQ pour pseudoOCV
+config.pseudo_ocv.max_crate = 0.08;%regime max pour pseudoOCV (C/20) 
+config.pseudo_ocv.min_crate = 0.03;%regime max pour pseudoOCV (C/20)
+config.pseudo_ocv.capacity_resolution = config.test.capacity/100;%dQ pour pseudoOCV
 
 
 %%Graphiques

@@ -43,15 +43,19 @@ if ~isstruct(phases) || ~isstruct(config) || ~ischar(options)...
     fprintf('ident_ocv_by_points:type de parametres, incorrect\n');
     return;
 end
-if ~isfield(config,'pOCVr')
+if ~isfield(config,'ocv_points')
+    fprintf('ident_ocv_by_points:structure config incomplete\n');
+    return;
+end
+if ~isfield(config.ocv_points,'pOCVr')
     fprintf('ident_ocv_by_points:structure config incomplete\n');
     return;
 end
 
 
-phases_ocv = phases(config.pOCVr);
-ip_avant = [config.pOCVr(2:end) false];
-ip_avav = [config.pOCVr(3:end) false false];
+phases_ocv = phases(config.ocv_points.pOCVr);
+ip_avant = [config.ocv_points.pOCVr(2:end) false];
+ip_avav = [config.ocv_points.pOCVr(3:end) false false];
 phases_avant = phases(ip_avant);
 phases_avav = phases(ip_avav);
 if length(phases_avant)<length(phases_ocv)

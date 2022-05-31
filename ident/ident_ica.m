@@ -29,14 +29,14 @@ end
 % phases_ica_discharge = phases(config.pICAD);
 
 %both charge and discharge phases:
-phases_ica = phases(config.pICAC | config.pICAD);
+phases_ica = phases(config.ica.pICA);
 %charge
 ica = struct([]);
 
 %filter params:
-N = config.n_filter;%30
-wn = config.wn_filter;%0.1
-f_type = config.filter_type;%'G'
+N = config.ica.filter_order;%30
+wn = config.ica.filter_cut;%0.1
+f_type = config.ica.filter_type;%'G'
 
 for ind = 1:length(phases_ica)
     [tp,Up,dod_ah_phase] = extract_phase(phases_ica(ind),t,U,dod_ah);

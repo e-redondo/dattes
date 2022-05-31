@@ -82,7 +82,7 @@ Imax = U>=config.test.max_voltage-0.02;%BRICOLE essai 20171211_1609 HONORAT
 %instants a SoC100 (ou presque I100cc: fin de charge CC)
 I100cc = Ifincc & Imax;%ca marche pas pour LYP
 Regime = I/config.test.capacity;
-Ic20 = Regime<=config.regimeOCVmax*1.1; % typiquement 0.05
+Ic20 = Regime<=0.05*1.1; % typiquement 0.05
 % I100 = Ifincv & Imax;
 I100 = (Ifincv & Imax) | (I100cc & Ic20);
 %instants a SoC0 (ou presque I0cc: fin de decharge CC)
@@ -200,16 +200,18 @@ if ~isfield(config.soc,'dod_ah_fin')
     config.soc.dod_ah_fin = [];
 end
 %ident_ocv_by_points (par points)
-config.pOCVr = durees>=config.tminOCVr & ismember(tInis,t(IiniRepos));
-config.pOCVr(1) = false; % repos initial jamais retenu pour OCV
+config.ocv_points.pOCVr = durees>=config.ocv_points.rest_min_duration & ismember(tInis,t(IiniRepos));
+config.ocv_points.pOCVr(1) = false; % repos initial jamais retenu pour OCV
+
 %ident_pseudo_ocv (pseudoOCV)
 Regime = [phases.Iavg]./config.test.capacity;
-config.pOCVpC = config.pCapaC & abs(Regime)<config.regimeOCVmax & abs(Regime)>config.regimeOCVmin;
-config.pOCVpD = config.pCapaD & abs(Regime)<config.regimeOCVmax & abs(Regime)>config.regimeOCVmin;
+config.pseudo_ocv.pOCVpC = config.pCapaC & abs(Regime)<config.pseudo_ocv.max_crate & abs(Regime)>config.pseudo_ocv.min_crate;
+config.pseudo_ocv.pOCVpD = config.pCapaD & abs(Regime)<config.pseudo_ocv.max_crate & abs(Regime)>config.pseudo_ocv.min_crate;
 
 %calcul_ica
-config.pICAC = config.pCapaC & abs(Regime)<config.regimeICAmax;
-config.pICAD = config.pCapaD & abs(Regime)<config.regimeICAmax;
+config.ica.pICA = (config.pCapaC | config.pCapaD) & abs(Regime)<config.ica.max_crate;
+% config.pICAC = config.pCapaC & abs(Regime)<config.regimeICAmax;
+% config.pICAD = config.pCapaD & abs(Regime)<config.regimeICAmax;
 
 
 
