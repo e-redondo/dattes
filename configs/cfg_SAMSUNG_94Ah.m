@@ -1,10 +1,10 @@
 function config = cfg_SAMSUNG_94Ah
-%valeurs propres a cette cellule:
-config.Umax = 4.15;%umax cellule
-% config.Umax = 4.2;%umax cellule
-config.Umin = 2.7;%umin cellule
-% config.Umin = 2.65;%umin cellule
-config.Capa = 94;%capa nominale
+
+
+%values for this cell:
+config.test.max_voltage = 4.15;
+config.test.min_voltage = 2.7;
+config.test.capacity = 94;
 
 %charger les valeurs par defaut:
 config = cfg_default(config);
@@ -42,7 +42,7 @@ config.tminWr = 59;%duree min repos avant
 % %pseudoOCV
 config.regimeOCVmax = 0.08;%regime max pour pseudoOCV (C/20) 
 config.regimeOCVmin = 0.03;%regime max pour pseudoOCV (C/20)
-config.dQOCV = config.Capa/100;%dQ pour pseudoOCV
+config.dQOCV = config.test.capacity/100;%dQ pour pseudoOCV
 
 
 %%Graphiques

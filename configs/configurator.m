@@ -72,16 +72,16 @@ IfinRepos = m==3 & [m(2:end);0]~=3;
 %pour comparer aux Umax et Umin
 % Ur = round(U*1000/10)*10/1000;%FIX: arrondi aux 20mV, besoin avec Bitrode LYP
 % %instants a Umax
-% Imax = Ur==config.Umax;%FIX: sinon: Imax = Ur>=config.Umax-.02;
+% Imax = Ur==config.test.max_voltage;%FIX: sinon: Imax = Ur>=config.test.max_voltage-.02;
 % %instant a Umin
-% Imin = Ur==config.Umin;%FIX: sinon: Imin = Ur>=config.Umin+.02;
+% Imin = Ur==config.test.min_voltage;%FIX: sinon: Imin = Ur>=config.test.min_voltage+.02;
 
 %ca marche avec  Bitrode LYP, verifier avec Mobicus
-Imin = U<=(config.Umin+0.02);
-Imax = U>=config.Umax-0.02;%BRICOLE essai 20171211_1609 HONORAT
+Imin = U<=(config.test.min_voltage+0.02);
+Imax = U>=config.test.max_voltage-0.02;%BRICOLE essai 20171211_1609 HONORAT
 %instants a SoC100 (ou presque I100cc: fin de charge CC)
 I100cc = Ifincc & Imax;%ca marche pas pour LYP
-Regime = I/config.Capa;
+Regime = I/config.test.capacity;
 Ic20 = Regime<=config.regimeOCVmax*1.1; % typiquement 0.05
 % I100 = Ifincv & Imax;
 I100 = (Ifincv & Imax) | (I100cc & Ic20);
@@ -199,7 +199,7 @@ end
 config.pOCVr = durees>=config.tminOCVr & ismember(tInis,t(IiniRepos));
 config.pOCVr(1) = false; % repos initial jamais retenu pour OCV
 %ident_pseudo_ocv (pseudoOCV)
-Regime = [phases.Iavg]./config.Capa;
+Regime = [phases.Iavg]./config.test.capacity;
 config.pOCVpC = config.pCapaC & abs(Regime)<config.regimeOCVmax & abs(Regime)>config.regimeOCVmin;
 config.pOCVpD = config.pCapaD & abs(Regime)<config.regimeOCVmax & abs(Regime)>config.regimeOCVmin;
 

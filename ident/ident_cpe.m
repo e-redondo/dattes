@@ -77,7 +77,7 @@ for phase_k = 1:length(indices_cpe)
     dod(phase_k) = dod_ah(t==config.tW(phase_k));%TODO: DoD ini ou moyen?
     resistance(phase_k) = R(1);
 end
-crate = crate/config.Capa;
+crate = crate/config.test.capacity;
 
 if ismember('v',options)
     fprintf('OK\n');

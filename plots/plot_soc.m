@@ -21,7 +21,7 @@ subplot(311),plot(tc,I),hold on,ylabel('current [A]'),xlabel(sprintf('time [%s]'
 subplot(311),plot(tc(I100),I(I100),'ro')
 if ~isempty(DoDAh)
     subplot(312),plot(tc,DoDAh),hold on,ylabel('DoDAh [Ah]'),xlabel(sprintf('time [%s]',tunit)), grid on
-    subplot(312),plot(tc(I100),DoDAh(I100),'ro'),ylim([min(0,min(DoDAh)) max(config.Capa,max(DoDAh))])
+    subplot(312),plot(tc(I100),DoDAh(I100),'ro'),ylim([min(0,min(DoDAh)) max(config.test.capacity,max(DoDAh))])
     subplot(313),plot(tc(I100),SOC(I100),'ro'),ylim([min(0,min(SOC)) max(100,max(SOC))])
     subplot(313),plot(tc,SOC),hold on,ylabel('SOC [%]'),xlabel(sprintf('time [%s]',tunit)), grid on
 end

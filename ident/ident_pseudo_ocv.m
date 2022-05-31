@@ -23,7 +23,7 @@ if isempty(phases_ocv_charge) || isempty(phases_ocv_discharge)
     return
 end
 
-current_rate_charge = [phases_ocv_charge.Iavg]/config.Capa;
+current_rate_charge = [phases_ocv_charge.Iavg]/config.test.capacity;
 [current_rate_charge sorting_index_current_rate_charge] = sort(current_rate_charge);%on met dans l'ordre
 phases_ocv_charge = phases_ocv_charge(sorting_index_current_rate_charge);
 rapports = current_rate_charge(1:end-1)./current_rate_charge(2:end);%on calcule les rapports
@@ -31,7 +31,7 @@ filter_index_current_rate_charge = [true rapports<.99];% on filtre les doublons 
 current_rate_charge = current_rate_charge(filter_index_current_rate_charge);
 phases_ocv_charge = phases_ocv_charge(filter_index_current_rate_charge);
 
-current_rate_discharge = -[phases_ocv_discharge.Iavg]/config.Capa;
+current_rate_discharge = -[phases_ocv_discharge.Iavg]/config.test.capacity;
 [current_rate_discharge sorting_index_current_rate_discharge] = sort(current_rate_discharge);%on met dans l'ordre
 phases_ocv_discharge = phases_ocv_discharge(sorting_index_current_rate_discharge);
 rapports = current_rate_discharge(1:end-1)./current_rate_discharge(2:end);%on calcule les rapports
@@ -91,7 +91,7 @@ voltage_discharge_sorted = cellfun(@(x,y) x(y),voltage_discharge,sorting_index_c
 
 
 %TODO: aller jusqu'à la fin, ne pas rester a CapaNom
-dod = (0:config.dQOCV:config.Capa)';
+dod = (0:config.dQOCV:config.test.capacity)';
 % u_charge = interp1(dod_ah_charge_sorted,voltage_charge_sorted,dod);
 % u_discharge = interp1(dod_ah_discharge_sorted,voltage_discharge_sorted,dod);
 

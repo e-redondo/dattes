@@ -1,8 +1,9 @@
 function config = cfg_LMO_5Ah3
-%valeurs propres a cette cellule:
-config.Umax = 4.2;%umax cellule
-config.Umin = 2.5;%umin cellule
-config.Capa = 5.3;%capa nominale
+
+%values for this cell:
+config.test.max_voltage = 4.2;
+config.test.min_voltage = 2.5;
+config.test.capacity = 5.3;
 
 %charger les valeurs par defaut:
 config = cfg_default(config);
