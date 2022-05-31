@@ -1,4 +1,4 @@
-function [cc_capacity, cc_crate, cc_time, cc_duration, cv_capacity, cv_voltage, cv_time, cv_duration] = ident_capacity(config,phases,options)
+function [capacity] = ident_capacity(config,phases,options)
 %ident_capacity capacity identification
 % [capacity, capacity_rate, capa_time, cv_voltage, cv_duration, cv_capacity, cv_time] = ident_capacity(config,phases,options)
 %
@@ -9,13 +9,15 @@ function [cc_capacity, cc_crate, cc_time, cc_duration, cv_capacity, cv_voltage, 
 %   - 'v': verbose, tell what you do
 %
 % OUTPUTS:
-% cc_capacity (1xk) double: CC capacity measurements
-% cc_crate (1xk) double: C-Rate of each CC capacity measurement
-% cc_time (1xk) double: time of each CC capacity measurement
-% cv_voltage (1xj) double: voltage of each CV phase
-% cv_duration (1xj) double: duration of each CV phase
-% cv_capacity (1xj) double: residual capacity of each CV phase
-% cv_time (1xj) double: time of each CV phase
+% - capacity [(1x1) struct] with fields:
+%     - cc_capacity (1xk) double: CC capacity measurements
+%     - cc_crate (1xk) double: C-Rate of each CC capacity measurement
+%     - cc_time (1xk) double: time of each CC capacity measurement
+%     - cc_duration (1xj) double: duration of each CC phase
+%     - cv_capacity (1xj) double: residual capacity of each CV phase
+%     - cv_voltage (1xj) double: voltage of each CV phase
+%     - cv_time (1xj) double: time of each CV phase
+%     - cv_duration (1xj) double: duration of each CV phase
 %
 % See also dattes, split_phases, configurator, plot_capacity
 
@@ -25,8 +27,11 @@ end
 if ismember('v',options)
     fprintf('ident_capacity:...');
 end
+
+capacity = struct([]);
 cc_capacity = [];
 cc_crate = [];
+
 %gestion d'erreurs:
 if nargin<2 || nargin>3
     fprintf('ident_capacity: wrong number of parametres, found %d\n',nargin);
@@ -60,6 +65,16 @@ cv_time = [phases_cv.t_ini];
 cv_duration = [phases_cv.duration];
 
 
+%put into output structure:
+capacity(1).cc_capacity = cc_capacity;
+capacity.cc_crate = cc_crate;
+capacity.cc_time = cc_time;
+capacity.cc_duration = cc_duration;
+capacity.cv_capacity = cv_capacity;
+capacity.cv_voltage = cv_voltage;
+capacity.cv_time = cv_time;
+capacity.cv_duration = cv_duration;
+    
 if ismember('v',options)
     fprintf('OK\n');
 end

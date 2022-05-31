@@ -1,9 +1,9 @@
-function [ocv, dod, time, signe] = ident_ocv_by_points(t,U,DoDAh,m,config,phases,options)
+function [ocv_by_points] = ident_ocv_by_points(t,U,DoDAh,m,config,phases,options)
 %ident_ocv_by_points OCV by points identification (rests after partial
 %charges/discharges)
 %
 % Usage:
-% [ocv, dod] = ident_ocv_by_points(t,U,DoDAh,m,config,phases,options)
+% [ocv_by_points] = ident_ocv_by_points(t,U,DoDAh,m,config,phases,options)
 %
 % Inputs:
 % - t,U,DoDAh,m [(nx1) double]: vectors from extract_profiles
@@ -12,8 +12,14 @@ function [ocv, dod, time, signe] = ident_ocv_by_points(t,U,DoDAh,m,config,phases
 % - options: [string] execution options
 %    - 'v' = verbose
 %    - 'g' = graphics
+% Outputs:
+% - ocv_by_points [(1x1) struct] with fields:
+%     - ocv [(px1) double]: ocv measurements
+%     - dod [(px1) double]: depth of discharge
+%     - sign [(px1) double]: current sign before rest
+%     - time [(px1) double]: time of measurement
 %
-% See also which_mode, split_phases, configurator
+% See also dattes, ident_pseudo_ocv
 
 if ~exist('options','var')
     options = '';
@@ -21,6 +27,8 @@ end
 if ismember('v',options)
     fprintf('ident_ocv_by_points:...');
 end
+
+ocv_by_points = struct([]);
 
 time =[];%instants pour la prise de la mesure
 ocv =[];
@@ -68,6 +76,11 @@ time = time(If);
 ocv = ocv(If);
 dod = dod(If);
 signe = signe(If);
+
+ocv_by_points(1).ocv = ocv;
+ocv_by_points.dod = dod;
+ocv_by_points.sign = signe;
+ocv_by_points.time = time;
 
 if ismember('v',options)
     fprintf('OK\n');

@@ -147,15 +147,8 @@ end
 
 %% 3. Capacity measurements at different C-rates 1C, C/2, C/5....
 if ismember('C',options)
-    [cc_capacity, cc_crate, cc_time, cc_duration, cv_capacity, cv_voltage, cv_time, cv_duration] = ident_capacity(config,phases,inher_options);
-    result.capacity.cc_capacity = cc_capacity;
-    result.capacity.cc_crate = cc_crate;
-    result.capacity.cc_time = cc_time;
-    result.capacity.cc_duration = cc_duration;
-    result.capacity.cv_capacity = cv_capacity;
-    result.capacity.cv_voltage = cv_voltage;
-    result.capacity.cv_time = cv_time;
-    result.capacity.cv_duration = cv_duration;
+    [capacity] = ident_capacity(config,phases,inher_options);
+    result.capacity = capacity;
 end
 
 %% 5. soc
@@ -196,13 +189,9 @@ if any(ismember('PORZI',options))
         
         %6.2. ocv by points
         if ismember('O',options)
-            [OCVp, DoDp, tOCVp, Ipsign] = ident_ocv_by_points(t,U,dod_ah,m,config,phases,inher_options);
-            %OCVs
-            result.OCVp = OCVp;
-            result.DoDp = DoDp;
-            result.tOCVp = tOCVp;
-            result.Ipsign = Ipsign;
-            
+            [ocv_by_points] = ident_ocv_by_points(t,U,dod_ah,m,config,phases,inher_options);
+            %save the results
+            result.ocv_by_points = ocv_by_points;
         end
         
         %6.3. impedances
