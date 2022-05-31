@@ -1,4 +1,4 @@
-function [result, config, phases] = dattes(xml_file,cfg_file,options)
+function [result, config, phases] = dattes(xml_file,options,cfg_file)
 %DATTES Data Analysis Tools for Tests on Energy Storage
 %
 % [result, config, phases] = dattes(xml_file,cfg_file,options):
@@ -67,13 +67,43 @@ function [result, config, phases] = dattes(xml_file,cfg_file,options)
 % ident_capacity, ident_ocv_by_points, ident_pseudo_ocv, ident_r, ident_cpe, ident_rrc, ident_ica
 
 
-%% 0.-interpreter les options
+%% 0.- optional inputs, set defaults:
 if ~exist('options','var')
     %par defaut lits les fichiers et sauvegarde:
     %1.1.- fichier _result.mat vide
     %1.2.- profil en fichier MAT (extractBanc)
     options = 's';
 end
+
+if ~exist('cfg_file','var')
+    cfg_file = '';
+end
+
+%% 0.1.- check inputs:
+if ~ischar(xml_file) && ~iscell(xml_file)
+    error('dattes: xml_file must be a string (pathname) or a cell (filelist)');
+end
+
+if ischar(xml_file)
+    if ~exist(xml_file,'file')
+        error('dattes: file not found');
+    end
+end
+
+if ~ischar(cfg_file) && ~isstruct(cfg_file)
+    error('dattes: cfg_file must be a string (pathname to cfg_file) or a struct (config struct)');
+end
+
+if ischar(cfg_file) && ~isempty(cfg_file)
+    if isempty(which(cfg_file))
+        error('dattes: cfg_file not found');
+    end
+end
+
+if ~ischar(options) 
+    error('dattes: options must be a string (actions/options list)');
+end
+
 %options d'abreviation:
 options = strrep(options,'A','CSRWPOI');
 %enfin:
@@ -96,7 +126,7 @@ end
 
 %% Bulk mode (XML is a cellstring)
 if iscell(xml_file)
-    [result, config, phases] = cellfun(@(x) dattes(x,cfg_file,options),xml_file,'UniformOutput',false);
+    [result, config, phases] = cellfun(@(x) dattes(x,options,cfg_file),xml_file,'UniformOutput',false);
     %mise en forme (cell 2 struct):
     [result, config, phases] = compil_result(result, config, phases);
     return;
