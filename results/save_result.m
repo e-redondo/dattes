@@ -25,10 +25,10 @@ function err = save1result(result,config,phases)
 %sauvegarde 1 fichier de resultats
 err = 0;
 %get file name
-if isfield(result,'fileIn')
-    fileOut = result_filename(result.fileIn);
+if isfield(result,'file_in')
+    fileOut = result_filename(result.file_in);
 else
-    fprintf('save_result:ERROR, result structure is not valid (no field ''fileIn'')\n');
+    fprintf('save_result:ERROR, result structure is not valid (no field ''file_in'')\n');
     err = -1;
     return
 end

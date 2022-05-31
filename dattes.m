@@ -33,7 +33,7 @@ function [result, config, phases] = dattes(xml_file,cfg_file,options)
 %     - 'Gx': visualize extracted profiles (t,U,I)
 %     - 'Gp': visualize phase decomposition
 %     - 'Gc': visualize configuration
-%     - 'GS': visualize SOC
+%     - 'GS': visualize soc
 %     - 'GC': visualize capacity
 %     - 'GP': visualize pseudoOCV
 %     - 'GO': visualize OCV by points
@@ -45,23 +45,23 @@ function [result, config, phases] = dattes(xml_file,cfg_file,options)
 %     - 'G*D': time as date/time (* = x,p,c,S,C,R,W,P,O,I)
 %
 % Exemples:
-% dattes(XMLfile,CFGfile,'s'): lit le fichier (t,U,I,m) et sauvegarde dans XMLfile_results.mat.
-% dattes(XMLfile,CFGfile,'gs'): idem en montrant les figures
-% dattes(XMLfile,CFGfile,'gsv'): idem en disant ce qu'il fait (verbose)
+% dattes(xml_file,cfg_file,'s'): lit le fichier (t,U,I,m) et sauvegarde dans xml_file_results.mat.
+% dattes(xml_file,cfg_file,'gs'): idem en montrant les figures
+% dattes(xml_file,cfg_file,'gsv'): idem en disant ce qu'il fait (verbose)
 %
-% dattes(XMLfile,CFGfile,'ps'), cut the test in phases and save
-% dattes(XMLfile,CFGfile,'cs'), configure the test and save
+% dattes(xml_file,cfg_file,'ps'), cut the test in phases and save
+% dattes(xml_file,cfg_file,'cs'), configure the test and save
 %
-% [resultat, config, phases] = dattes(XMLfile,CFGfile,'l'), just load the
+% [result, config, phases] = dattes(xml_file,cfg_file,'l'), just load the
 % results
 %
-% dattes(XMLfile,CFGfile,'C'), charge la configuration et calcule la Capacite.
+% dattes(xml_file,cfg_file,'C'), charge la configuration et calcule la Capacite.
 %
-% dattes(XMLfile,CFGfile,'Cs'), pareil mais sauvegarde le resultat dans
-% XMLfile_results.mat.
+% dattes(xml_file,cfg_file,'Cs'), pareil mais sauvegarde le result dans
+% xml_file_results.mat.
 %
-% dattes(XMLfile,CFGfile,'As'), fait tout: lecture, config, tous les calculs,
-% sauvegarde de resultats.
+% dattes(xml_file,cfg_file,'As'), fait tout: lecture, config, tous les calculs,
+% sauvegarde de results.
 %
 % See also extract_profiles, split_phases, configurator
 % ident_capacity, ident_ocv_by_points, ident_pseudo_ocv, ident_r, ident_cpe, ident_rrc, ident_ica
@@ -84,7 +84,7 @@ options = unique(options);%on enleve les doublons
 % -u: update
 % -v: verbose
 % -s: save
-InherOptions = options(ismember(options,'gfuvse'));
+inher_options = options(ismember(options,'gfuvse'));
 
 %% Graphics mode 
 if ismember('G',options)
@@ -104,50 +104,50 @@ end
 
 %% 1. LOAD
 %1.0.- load previous results (if they exist)
-[result, config, phases] = load_result(xml_file,InherOptions);
+[result, config, phases] = load_result(xml_file,inher_options);
 
 %1.1.-take some basic config parameters in config0 struct
 % (e.g. Uname and Tname needed in extract_profiles)
 if isstruct(cfg_file)
-    %CFGfile is given as struct, e.g. dattes(xml,cfg_battery,'cdvs')
+    %cfg_file is given as struct, e.g. dattes(xml,cfg_battery,'cdvs')
     config0 = cfg_file;
 elseif ~isempty(which(cfg_file))
-    %CFGfile is given as script, e.g. dattes(xml,'cfg_battery','cdvs')
+    %cfg_file is given as script, e.g. dattes(xml,'cfg_battery','cdvs')
     config0 = eval(cfg_file);
 else
-    %CFGfile is empty, e.g. dattes(xml,'','cdvs'), take config from load_result
+    %cfg_file is empty, e.g. dattes(xml,'','cdvs'), take config from load_result
     config0 = config;
 end
     
 %1.2.- load data in XML
-[t,U,I,m,DoDAh,SOC,T, eis] = extract_profiles(xml_file,InherOptions,config0);
+[t,U,I,m,dod_ah,soc,temperature, eis] = extract_profiles(xml_file,inher_options,config0);
 %1.3.- update result
-result.fileIn = xml_file;
-result.tIni = t(1);
-result.tFin = t(end);
+result.file_in = xml_file;
+result.t_ini = t(1);
+result.t_fin = t(end);
 if ~isempty(eis)
     result.eis = eis;
 end
 %1.4. DECOMPOSE IN PHASES
-[phases] = split_phases(t,I,U,m,InherOptions);
+[phases] = split_phases(t,I,U,m,inher_options);
 
 
 %% 2. CONFIGURE
 if ismember('c',options)
 
     % TODO check if no 'p' was done before
-    [config] = configurator(t,U,I,m,config0,phases,InherOptions);
+    [config] = configurator(t,U,I,m,config0,phases,inher_options);
     % traceability: if a script for config is given
     if ischar(cfg_file)
-        config.CFGfile = cfg_file;
-    elseif ~isfield(config,'CFGfile')
-        config.CFGfile = '';
+        config.cfg_file = cfg_file;
+    elseif ~isfield(config,'cfg_file')
+        config.cfg_file = '';
     end
 end
 
 %% 3. Capacity measurements at different C-rates 1C, C/2, C/5....
 if ismember('C',options)
-    [cc_capacity, cc_crate, cc_time, cc_duration, cv_capacity, cv_voltage, cv_time, cv_duration] = ident_capacity(config,phases,InherOptions);
+    [cc_capacity, cc_crate, cc_time, cc_duration, cv_capacity, cv_voltage, cv_time, cv_duration] = ident_capacity(config,phases,inher_options);
     result.Capa = cc_capacity;
     result.CapaRegime = cc_crate;
     result.CapaTime = cc_time;
@@ -158,38 +158,38 @@ if ismember('C',options)
     result.dCV = cv_duration;
 end
 
-%% 5. SOC
+%% 5. soc
 if ismember('S',options)
-    [DoDAh, SOC] = calcul_soc(t,I,config,InherOptions);
-    if isempty(DoDAh)
-        result.DoDAhIni = [];
-        result.SOCIni = [];
-        result.DoDAhFin = [];
-        result.SOCFin = [];
+    [dod_ah, soc] = calcul_soc(t,I,config,inher_options);
+    if isempty(dod_ah)
+        result.dod_ahIni = [];
+        result.socIni = [];
+        result.dod_ahFin = [];
+        result.socFin = [];
     else
-        result.DoDAhIni = DoDAh(1);
-        result.SOCIni = SOC(1);
-        result.DoDAhFin = DoDAh(end);
-        result.SOCFin = SOC(end);
+        result.dod_ahIni = dod_ah(1);
+        result.socIni = soc(1);
+        result.dod_ahFin = dod_ah(end);
+        result.socFin = soc(end);
     end
 end
 
-%% 6. Profile processing (t,U,I,m,DoDAh) >>> R, CPE, ICA, OCV, etc.
+%% 6. Profile processing (t,U,I,m,dod_ah) >>> R, CPE, ICA, OCV, etc.
 
 if any(ismember('PORWI',options))
-    if isempty(DoDAh)
-        %on a pas fait calculSOC ou s'est mal passe, on arrete (on ne
+    if isempty(dod_ah)
+        %on a pas fait calculsoc ou s'est mal passe, on arrete (on ne
         %sauvegarde pas)
         fprintf('dattes: ERREUR il faut calculer le SoC de ce fichier:%s\n',...
-            result.fileIn);
+            result.file_in);
         return
     end
 end
 
 %6.1. pseudo ocv
 if ismember('P',options)
-    [pOCV, pDoD, pPol,pEff,pUCi,pUDi,pRegime] = ident_pseudo_ocv(t,U,DoDAh,config,phases,InherOptions);
-    %sauvegarder les resultats
+    [pOCV, pDoD, pPol,pEff,pUCi,pUDi,pRegime] = ident_pseudo_ocv(t,U,dod_ah,config,phases,inher_options);
+    %sauvegarder les results
     result.pOCV = pOCV;
     result.pDoD = pDoD;
     result.pPol = pPol;
@@ -202,7 +202,7 @@ end
 
 %6.2. ocv by points
 if ismember('O',options)
-    [OCVp, DoDp, tOCVp, Ipsign] = ident_ocv_by_points(t,U,DoDAh,m,config,phases,InherOptions);
+    [OCVp, DoDp, tOCVp, Ipsign] = ident_ocv_by_points(t,U,dod_ah,m,config,phases,inher_options);
     %OCVs
     result.OCVp = OCVp;
     result.DoDp = DoDp;
@@ -214,40 +214,40 @@ end
 %6.3. impedances
 %6.3.1. resistance
 if ismember('R',options)
-    [R, RDoD, RRegime, Rt, Rdt] = ident_r(t,U,I,DoDAh,config,phases,InherOptions);
+    [R, RDoD, RRegime, Rt, Rdt] = ident_r(t,U,I,dod_ah,config,phases,inher_options);
     %impedances
     result.R = R;
     result.RDoD = RDoD;
     result.RRegime = RRegime;
     result.Rt = Rt;
-    resultat.Rdt = Rdt;
-    resultat.Rc = R(RRegime>0);
-    resultat.Rd = R(RRegime<0);
+    result.Rdt = Rdt;
+    result.Rc = R(RRegime>0);
+    result.Rd = R(RRegime<0);
     
 end
 %6.3.2. Impedance
 if ismember('Z',options)
     ident_z = config.ident_z;
-    [impedance] = ident_z(t,U,I,DoDAh,config,phases,InherOptions);
+    [impedance] = ident_z(t,U,I,dod_ah,config,phases,inher_options);
     result.impedance= impedance;
 end
 
 %6.4. ICA/DVA
 if ismember('I',options)
-    ica = ident_ica(t,U,DoDAh,config,phases,InherOptions);
-    %sauvegarder les resultats
+    ica = ident_ica(t,U,dod_ah,config,phases,inher_options);
+    %sauvegarder les results
     result.ica = ica;
 end
 
 %% 7. test temperature
-% T = 25;%DEBUG TODO: lire a partir d'un fichier d'histoire?
-if ~isfield(result,'T')
-    result.T = 25;
+% temperature = 25;%DEBUG TODO: lire a partir d'un fichier d'histoire?
+if ~isfield(result,'temperature')
+    result.temperature = 25;
 end
 %autres:
-% resultat.rendFar = rendFar; %d'un cycle charge-decharge
-% resultat.rendEne = rendEne; %d'un cycle charge-decharge
-% resultat.rendRegime = rendRegime;%d'un cycle charge-decharge
+% result.rendFar = rendFar; %d'un cycle charge-decharge
+% result.rendEne = rendEne; %d'un cycle charge-decharge
+% result.rendRegime = rendRegime;%d'un cycle charge-decharge
 %encore?
 
 %% 8. Save results
@@ -255,15 +255,15 @@ if ismember('s',options)
     if ismember('v',options)
         fprintf('dattes: save result...');
     end
-    %sauvegarde de resultat,config,phases dans XMLfile_result.mat
+    %sauvegarde de result,config,phases dans xml_file_result.mat
     save_result(result,config,phases);
     if ismember('S',options)
-        %sauvegarde de DoDAh, SOC dans XMLfile.mat
-        MATfile = regexprep(xml_file,'xml$','mat');
-        save(MATfile,'-append','DoDAh', 'SOC');
+        %sauvegarde de dod_ah, soc dans xml_file.mat
+        mat_file = regexprep(xml_file,'xml$','mat');
+        save(mat_file,'-append','dod_ah', 'soc');
     end
     %TODO ajouter option 'T' pour lecture externe de la température et
-    %sauvegarde avec 'append' comme pour le SOC
+    %sauvegarde avec 'append' comme pour le soc
     if ismember('v',options)
         fprintf('OK\n');
     end
