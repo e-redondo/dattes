@@ -154,14 +154,14 @@ if ismember('g',options)
 end
 
 %convert to pseudo_ocv struct:
-for ind = length(pOCV)
-    pseudo_ocv(ind).ocv = pOCV{ind};
-    pseudo_ocv(ind).dod = pDoD;
-    pseudo_ocv(ind).polarization = pPol{ind};
-    pseudo_ocv(ind).efficiency = pEff{ind};
-    pseudo_ocv(ind).u_charge = UCi{ind};
-    pseudo_ocv(ind).u_discharge = UDi{ind};
-    pseudo_ocv(ind).crate = Regime(ind);
+for ind = length(ocv)
+    pseudo_ocv(ind).ocv = ocv{ind};
+    pseudo_ocv(ind).dod = dod;
+    pseudo_ocv(ind).polarization = polarization{ind};
+    pseudo_ocv(ind).efficiency = efficiency{ind};
+    pseudo_ocv(ind).u_charge = u_charge{ind};
+    pseudo_ocv(ind).u_discharge = u_discharge{ind};
+    pseudo_ocv(ind).crate = crate(ind);
     pseudo_ocv(ind).time = pTime(ind);
 end
 end

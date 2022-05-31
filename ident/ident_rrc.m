@@ -54,7 +54,6 @@ rest_duration_before_pulse=config.rest_duration_before_pulse;
 rest_before_after_phase = [rest_duration_before_pulse 0];
 phases_identify_rc=phases(config.pRC);
 
-<<<<<<< HEAD
 %% 3 - r0,C0,r1,c1 and r2,c2 are computed for each of these phases
 for phase_k = 1:length(indice_r)
         %Time, voltage,current and DoD are extracted for the phase_k

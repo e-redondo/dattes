@@ -48,7 +48,7 @@ end
 %CC part
 phases_cc = phases(config.pCapaD | config.pCapaC);
 cc_capacity = abs([phases_cc.capacity]);
-cc_crate = [phases_cc.Iavg]./config.Capa;
+cc_crate = [phases_cc.Iavg]./config.test.capacity;
 cc_time = [phases_cc.t_ini];
 cc_duration = [phases_cc.duration];
 

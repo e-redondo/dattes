@@ -57,7 +57,7 @@ for ind = 1:length(indices_phases_r)
     Up = Up(Is);
     Ip = Ip(Is);
 
-    [thisR, this_crate, this_time, this_dod,this_time, err] = calcul_r(tp,Up,Ip,DoDp,config.instant_end_rest(ind),config.minimal_duration_pulse,config.minimal_duration_rest_before_pulse ,config.instant_calcul_R,'g');
+    [thisR, this_crate, this_time, this_dod,this_time, err] = calcul_r(tp,Up,Ip,DoDp,config.instant_end_rest(ind),config.minimal_duration_pulse,config.minimal_duration_rest_before_pulse ,config.instant_calcul_R);
    
     R = [R thisR];
     crate = [crate this_crate];
@@ -68,7 +68,7 @@ for ind = 1:length(indices_phases_r)
 
     
 end
-crate = crate/config.Capa;
+crate = crate/config.test.capacity;
 
 if ismember('v',options)
     fprintf('OK\n');

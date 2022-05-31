@@ -147,7 +147,7 @@ end
 
 %% 3. Capacity measurements at different C-rates 1C, C/2, C/5....
 if ismember('C',options)
-    [cc_capacity, cc_crate, cc_time, cc_duration, cv_capacity, cv_voltage, cv_time, cv_duration] = ident_capacity(config,phases,InherOptions);
+    [cc_capacity, cc_crate, cc_time, cc_duration, cv_capacity, cv_voltage, cv_time, cv_duration] = ident_capacity(config,phases,inher_options);
     result.capacity.cc_capacity = cc_capacity;
     result.capacity.cc_crate = cc_crate;
     result.capacity.cc_time = cc_time;
@@ -160,24 +160,24 @@ end
 
 %% 5. soc
 if ismember('S',options)
-    [dod_ah, soc] = calcul_soc(t,I,config,InherOptions);
-    if isempty(DoDAh)
+    [dod_ah, soc] = calcul_soc(t,I,config,inher_options);
+    if isempty(dod_ah)
         result.test.dod_ah_ini = [];
         result.test.soc_ini = [];
         result.test.dod_ah_fin = [];
         result.test.soc_fin = [];
     else
-        result.test.dod_ah_ini = DoDAh(1);
-        result.test.soc_ini = SOC(1);
-        result.test.dod_ah_fin = DoDAh(end);
-        result.test.soc_fin = SOC(end);
+        result.test.dod_ah_ini = dod_ah(1);
+        result.test.soc_ini = soc(1);
+        result.test.dod_ah_fin = dod_ah(end);
+        result.test.soc_fin = soc(end);
     end
 end
 
 %% 6. Profile processing (t,U,I,m,dod_ah) >>> R, CPE, ICA, OCV, etc.
 
 if any(ismember('PORZI',options))
-    if isempty(DoDAh)
+    if isempty(dod_ah)
         %on a pas fait calculSOC ou s'est mal passe, on arrete (on ne
         %sauvegarde pas)
         fprintf('dattes: ERREUR il faut calculer le SoC de ce fichier:%s\n',...
