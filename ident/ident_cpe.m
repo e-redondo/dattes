@@ -42,7 +42,7 @@ if ~isfield(config.impedance,'pulse_min_duration') || ...
 end
 
 %% 1- Initialization
-impedance=struct;
+impedance=struct([]);
 q = [];
 alpha = [];
 resistance = [];
@@ -98,7 +98,7 @@ if ismember('g',options)
 end
 
     
-impedance.topology = 'R0 + CPE';
+impedance(1).topology = 'R0 + CPE';
 impedance.q = q;
 impedance.alpha = alpha;
 impedance.r0 = resistance;

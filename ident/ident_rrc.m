@@ -29,6 +29,7 @@ if ~isfield(config,'R1ini') || ~isfield(config,'R2ini') || ~isfield(config,'maxi
 end
 
 %% 1- Initialization
+impedance=struct([]);
 
 r0=[];
 r1=[];
@@ -150,7 +151,7 @@ end
         fprintf('OK\n');
    end
    
-  impedance.topology = 'R0 + R1C1 + R2C2';
+  impedance(1).topology = 'R0 + R1C1 + R2C2';
   impedance.r0=r0;
   impedance.r1=r1;
   impedance.c1=c1;
