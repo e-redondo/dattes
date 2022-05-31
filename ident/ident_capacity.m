@@ -41,7 +41,11 @@ if ~isstruct(phases) || ~isstruct(config) || ~ischar(options)
     fprintf('ident_capacity: wrong type of parametres\n');
     return;
 end
-if ~isfield(config,'pCapaD') || ~isfield(config,'pCapaC') || ~isfield(config,'pCapaDV') || ~isfield(config,'pCapaCV')
+if ~isfield(config,'capacity')
+    fprintf('ident_capacity: structure config incomplete, redo configurator: dattes(''cs'')\n');
+    return;
+end
+if ~isfield(config.capacity,'pCapaD') || ~isfield(config.capacity,'pCapaC') || ~isfield(config.capacity,'pCapaDV') || ~isfield(config.capacity,'pCapaCV')
     fprintf('ident_capacity: structure config incomplete, redo configurator: dattes(''cs'')\n');
     return;
 end
@@ -51,14 +55,14 @@ if ~isfield(phases,'capacity') || ~isfield(phases,'duration') || ~isfield(phases
 end
 
 %CC part
-phases_cc = phases(config.pCapaD | config.pCapaC);
+phases_cc = phases(config.capacity.pCapaD | config.capacity.pCapaC);
 cc_capacity = abs([phases_cc.capacity]);
 cc_crate = [phases_cc.Iavg]./config.test.capacity;
 cc_time = [phases_cc.t_ini];
 cc_duration = [phases_cc.duration];
 
 %CV part
-phases_cv = phases(config.pCapaDV | config.pCapaCV);
+phases_cv = phases(config.capacity.pCapaDV | config.capacity.pCapaCV);
 cv_capacity = abs([phases_cv.capacity]);
 cv_voltage = [phases_cv.Uavg];
 cv_time = [phases_cv.t_ini];

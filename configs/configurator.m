@@ -158,12 +158,12 @@ pZr = [pZ(2:end) false];
 % pCPEr = [pCPE(2:end) false];
 
 %ident_capacity
-config.pCapaD = pCapaD;
-config.pCapaC = pCapaC;
+config.capacity.pCapaD = pCapaD;
+config.capacity.pCapaC = pCapaC;
 
 %ident_capacity
-config.pCapaDV = pCapaDV;
-config.pCapaCV = pCapaCV;
+config.capacity.pCapaDV = pCapaDV;
+config.capacity.pCapaCV = pCapaCV;
 
 %ident_r
 config.resistance.pR = pR;
@@ -205,11 +205,11 @@ config.ocv_points.pOCVr(1) = false; % repos initial jamais retenu pour OCV
 
 %ident_pseudo_ocv (pseudoOCV)
 Regime = [phases.Iavg]./config.test.capacity;
-config.pseudo_ocv.pOCVpC = config.pCapaC & abs(Regime)<config.pseudo_ocv.max_crate & abs(Regime)>config.pseudo_ocv.min_crate;
-config.pseudo_ocv.pOCVpD = config.pCapaD & abs(Regime)<config.pseudo_ocv.max_crate & abs(Regime)>config.pseudo_ocv.min_crate;
+config.pseudo_ocv.pOCVpC = config.capacity.pCapaC & abs(Regime)<config.pseudo_ocv.max_crate & abs(Regime)>config.pseudo_ocv.min_crate;
+config.pseudo_ocv.pOCVpD = config.capacity.pCapaD & abs(Regime)<config.pseudo_ocv.max_crate & abs(Regime)>config.pseudo_ocv.min_crate;
 
 %calcul_ica
-config.ica.pICA = (config.pCapaC | config.pCapaD) & abs(Regime)<config.ica.max_crate;
+config.ica.pICA = (config.capacity.pCapaC | config.capacity.pCapaD) & abs(Regime)<config.ica.max_crate;
 % config.pICAC = config.pCapaC & abs(Regime)<config.regimeICAmax;
 % config.pICAD = config.pCapaD & abs(Regime)<config.regimeICAmax;
 
