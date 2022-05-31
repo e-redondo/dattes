@@ -15,7 +15,7 @@ end
 xml_list = lsFiles(srcdir,'.xml');
 
 %2. filtering criteria:
-filter_strs_must_be = {'ICA','OCV'};%include all files containing this
+filter_strs_must_be = {'ICA','OCV','BAROM'};%include all files containing this
 filter_strs_do_not_must_be = {};%exclude this folders because big files
 
 %3. filter the folder_list

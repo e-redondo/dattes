@@ -1,10 +1,25 @@
-function [R, dod, crate, time, delta_time] = ident_r(t,U,I,dod_ah,config,phases,options)
+function [resistance] = ident_r(t,U,I,dod_ah,config,phases,options)
 %ident_r resistance identification from a profile t,U,I,m
-%t,U,I from extract_profiles
-%dod_ah from calcul_soc, depth of discharge in Amphours
-%config from configurator
 %
-%See also dattes, calcul_soc, configurator, extract_profiles
+% Usage:
+% [resistance] = ident_r(t,U,I,dod_ah,config,phases,options)
+%
+% Inputs:
+% - t, U, I, dod_ah [(nx1) double]: from extract_profiles
+% - config [(1x1) struct] from configurator
+% - phases [(mx1) struct] from split_phases
+% - options [(1xp) string] execution options:
+%     - 'v': verbose
+%     - 'g': graphics
+% Outputs:
+% - resistance [(1x1) struct] with fields:
+%     - R [(qx1) double]: resistance value (Ohms)
+%     - dod [(qx1) double]: depth of discharge (Ah)
+%     - crate [(qx1) double]: current rate (C)
+%     - time [(qx1) double]: time of measurement (s)
+%     - delta_time [(qx1) double]: time from pulse start (s)
+%
+%See also dattes, calcul_r
 if ~exist('options','var')
     options = '';
 end
@@ -36,6 +51,8 @@ end
 % tFinPulses = config.tR+config.tminR+1;%FIX (BRICOLE) je met une seconde de plus (sinon warning dans calculR ligne72)
 indices_phases_r = find(config.pR);
 time_before_after_phase = [config.minimal_duration_rest_before_pulse 0];
+
+resistance = struct([]);
 R = [];
 crate = [];
 time = [];
@@ -57,18 +74,25 @@ for ind = 1:length(indices_phases_r)
     Up = Up(Is);
     Ip = Ip(Is);
 
-    [thisR, this_crate, this_time, this_dod,this_time, err] = calcul_r(tp,Up,Ip,DoDp,config.instant_end_rest(ind),config.minimal_duration_pulse,config.minimal_duration_rest_before_pulse ,config.instant_calcul_R);
+    [thisR, this_crate, this_time, this_dod,this_delta_time, err] = calcul_r(tp,Up,Ip,DoDp,config.instant_end_rest(ind),config.minimal_duration_pulse,config.minimal_duration_rest_before_pulse ,config.instant_calcul_R);
    
     R = [R thisR];
     crate = [crate this_crate];
     time = [time this_time];
     dod = [dod this_dod];
-    delta_time = [delta_time this_time];
+    delta_time = [delta_time this_delta_time];
     
 
     
 end
 crate = crate/config.test.capacity;
+
+%put all in output struct:
+resistance(1).R = R;
+resistance.dod = dod;
+resistance.crate = crate;
+resistance.time = time;
+resistance.delta_time = delta_time;
 
 if ismember('v',options)
     fprintf('OK\n');
