@@ -31,7 +31,7 @@ end
 %both charge and discharge phases:
 phases_ica = phases(config.pICAC | config.pICAD);
 %charge
-ica = struct;
+ica = struct([]);
 
 %filter params:
 N = config.n_filter;%30

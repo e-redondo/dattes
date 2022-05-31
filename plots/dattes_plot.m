@@ -89,7 +89,15 @@ if ismember('Z',options)
 end
 if ismember('I',options)
     %show result of 'I', i.e. ica
-    plot_ica(result.ica);
+    if isfield(result,'ica')
+        if ~isempty(result.ica)
+            plot_ica(result.ica);
+        else
+            fprintf('no ica result found in %s\n',result.test.file_in);
+        end
+    else
+        fprintf('no ica result found in %s\n',result.test.file_in);
+    end
 end
 
 end
