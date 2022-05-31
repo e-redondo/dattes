@@ -46,18 +46,18 @@ if ~isfield(phases,'capacity') || ~isfield(phases,'duration') || ~isfield(phases
 end
 
 %CC part
-phasesCC = phases(config.pCapaD | config.pCapaC);
-cc_capacity = abs([phasesCC.capacity]);
-cc_crate = [phasesCC.Iavg]./config.test.capacity;
-cc_time = [phasesCC.t_ini];
-cc_duration = [phasesCC.duration];
+phases_cc = phases(config.pCapaD | config.pCapaC);
+cc_capacity = abs([phases_cc.capacity]);
+cc_crate = [phases_cc.Iavg]./config.Capa;
+cc_time = [phases_cc.t_ini];
+cc_duration = [phases_cc.duration];
 
 %CV part
-phasesCV = phases(config.pCapaDV | config.pCapaCV);
-cv_capacity = abs([phasesCV.capacity]);
-cv_voltage = [phasesCV.Uavg];
-cv_time = [phasesCV.t_ini];
-cv_duration = [phasesCV.duration];
+phases_cv = phases(config.pCapaDV | config.pCapaCV);
+cv_capacity = abs([phases_cv.capacity]);
+cv_voltage = [phases_cv.Uavg];
+cv_time = [phases_cv.t_ini];
+cv_duration = [phases_cv.duration];
 
 
 if ismember('v',options)

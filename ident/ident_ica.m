@@ -1,12 +1,12 @@
-function [ica] = ident_ica(t,U,DoDAh,config,phases,options)
+function [ica] = ident_ica(t,U,dod_ah,config,phases,options)
 % ident_ICA incremental capacity analisys
 % Usage:
-% [ica] = ident_ica(t,U,DoDAh,config,phases,options)
+% [ica] = ident_ica(t,U,dod_ah,config,phases,options)
 %
 % Inputs:
 % - t [nx1 double]: time in seconds
 % - U [nx1 double]: cell voltage
-% - DoDAh [nx1 double]: depth of discharge in AmpHours
+% - dod_ah [nx1 double]: depth of discharge in AmpHours
 % - config [1x1 struct]: config struct from configurator
 % - phases [1x1 struct]: phases struct from decompose_phases
 %
@@ -25,11 +25,11 @@ if ~exist('options','var')
     options = '';
 end
 
-% phasesICAC = phases(config.pICAC);
-% phasesICAD = phases(config.pICAD);
+% phases_ica_charge = phases(config.pICAC);
+% phases_ica_discharge = phases(config.pICAD);
 
 %both charge and discharge phases:
-phasesICA = phases(config.pICAC | config.pICAD);
+phases_ica = phases(config.pICAC | config.pICAD);
 %charge
 ica = struct;
 
@@ -38,12 +38,12 @@ N = config.n_filter;%30
 wn = config.wn_filter;%0.1
 f_type = config.filter_type;%'G'
 
-for ind = 1:length(phasesICA)
-    [tp,Up,DoDAhp] = extract_phase(phasesICA(ind),t,U,DoDAh);
+for ind = 1:length(phases_ica)
+    [tp,Up,dod_ah_phase] = extract_phase(phases_ica(ind),t,U,dod_ah);
     
-    [ica(ind).dqdu, ica(ind).dudq, ica(ind).q, ica(ind).u] = calcul_ica(tp,DoDAhp,Up,N,wn,f_type);
-    ica(ind).crate = phasesICA(ind).Iavg/config.test.capacity;
-    ica(ind).time = phasesICA(ind).t_fin;
+    [ica(ind).dqdu, ica(ind).dudq, ica(ind).q, ica(ind).u] = calcul_ica(tp,dod_ah_phase,Up,N,wn,f_type);
+    ica(ind).crate = phases_ica(ind).Iavg/config.test.capacity;
+    ica(ind).time = phases_ica(ind).t_fin;
 end
 
 end
