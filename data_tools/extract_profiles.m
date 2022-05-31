@@ -1,4 +1,4 @@
-function [t,U,I,m,DoDAh,SOC,T, eis, err] = extract_profiles(thisXML,options,config)
+function [t,U,I,m,dod_ah,soc,T, eis, err] = extract_profiles(thisXML,options,config)
 %extract_profiles extract important variables from a battery test bench file.
 % 1.- Read a .xml file (Biologic,Arbin, Bitrode...), if a dattes' results
 % file exists this latter will be read (faster)
@@ -91,7 +91,7 @@ if xml_read
             any(cellfun(@(x) ~isfield(x,'I'),xml.table)) ||...
             any(cellfun(@(x) ~isfield(x,'mode'),xml.table))
         
-        t = [];U = [];I = [];m = [];DoDAh = [];SOC = [];err = -3;
+        t = [];U = [];I = [];m = [];dod_ah = [];soc = [];err = -3;
         fprintf('Bad XML file: %s\n',thisXML);
         return;
     end
@@ -139,7 +139,7 @@ else
     S = who('-file',thisMAT);
     if ~ismember('t',S) || ~ismember('U',S) || ~ismember('I',S) || ~ismember('m',S)
         err = -2;
-        t = [];U = [];I = [];m = [];DoDAh = [];SOC = [];
+        t = [];U = [];I = [];m = [];dod_ah = [];soc = [];
         fprintf('Bad MAT file: %s\n',thisMAT);
         return;
     end
@@ -168,11 +168,11 @@ if ismember('g',options)
 end
 
 err=0;
-if ~exist('DoDAh','var')
-    DoDAh = [];
+if ~exist('dod_ah','var')
+    dod_ah = [];
 end
-if ~exist('SOC','var')
-    SOC = [];
+if ~exist('soc','var')
+    soc = [];
 end
 if ~exist('T','var')
     T = [];
