@@ -183,58 +183,53 @@ if any(ismember('PORZI',options))
         fprintf('dattes: ERREUR il faut calculer le SoC de ce fichier:%s\n',...
             result.test.file_in);
         %         return
-    end
-else
-    
-    %6.1. pseudo ocv
-    if ismember('P',options)
-        [pOCV, pDoD, pPol,pEff,pUCi,pUDi,pRegime] = ident_pseudo_ocv(t,U,DoDAh,config,phases,InherOptions);
-        %sauvegarder les resultats
-        result.pOCV = pOCV;
-        result.pDoD = pDoD;
-        result.pPol = pPol;
-        result.pEff = pEff;
-        result.pUCi = pUCi;
-        result.pUDi = pUDi;
-        result.pRegime = pRegime;
+    else
         
-    end
-    
-    %6.2. ocv by points
-    if ismember('O',options)
-        [OCVp, DoDp, tOCVp, Ipsign] = ident_ocv_by_points(t,U,DoDAh,m,config,phases,InherOptions);
-        %OCVs
-        result.OCVp = OCVp;
-        result.DoDp = DoDp;
-        result.tOCVp = tOCVp;
-        result.Ipsign = Ipsign;
         
-    end
-    
-    %6.3. impedances
-    %6.3.1. resistance
-    if ismember('R',options)
-        [R, RDoD, RRegime, Rt, Rdt] = ident_r(t,U,I,DoDAh,config,phases,InherOptions);
-        %resistances
-        result.resistance.R = R;
-        result.resistance.dod = RDoD;
-        result.resistance.crate = RRegime;
-        result.resistance.time = Rt;
-        result.resistance.delta_time = Rdt;
+        %6.1. pseudo ocv
+        if ismember('P',options)
+            [pseudo_ocv] = ident_pseudo_ocv(t,U,DoDAh,config,phases,InherOptions);
+            %save the results
+            result.pseudo_ocv = pseudo_ocv;
+            
+        end
         
-    end
-    %6.3.2. Impedance
-    if ismember('Z',options)
-        ident_z = config.impedance.ident_fcn;
-        [impedance] = ident_z(t,U,I,DoDAh,config,phases,InherOptions);
-        result.impedance= impedance;
-    end
-    
-    %6.4. ICA/DVA
-    if ismember('I',options)
-        ica = ident_ica(t,U,DoDAh,config,phases,InherOptions);
-        %sauvegarder les resultats
-        result.ica = ica;
+        %6.2. ocv by points
+        if ismember('O',options)
+            [OCVp, DoDp, tOCVp, Ipsign] = ident_ocv_by_points(t,U,DoDAh,m,config,phases,InherOptions);
+            %OCVs
+            result.OCVp = OCVp;
+            result.DoDp = DoDp;
+            result.tOCVp = tOCVp;
+            result.Ipsign = Ipsign;
+            
+        end
+        
+        %6.3. impedances
+        %6.3.1. resistance
+        if ismember('R',options)
+            [R, RDoD, RRegime, Rt, Rdt] = ident_r(t,U,I,DoDAh,config,phases,InherOptions);
+            %resistances
+            result.resistance.R = R;
+            result.resistance.dod = RDoD;
+            result.resistance.crate = RRegime;
+            result.resistance.time = Rt;
+            result.resistance.delta_time = Rdt;
+            
+        end
+        %6.3.2. Impedance
+        if ismember('Z',options)
+            ident_z = config.impedance.ident_fcn;
+            [impedance] = ident_z(t,U,I,DoDAh,config,phases,InherOptions);
+            result.impedance= impedance;
+        end
+        
+        %6.4. ICA/DVA
+        if ismember('I',options)
+            ica = ident_ica(t,U,DoDAh,config,phases,InherOptions);
+            %sauvegarder les resultats
+            result.ica = ica;
+        end
     end
 end
 

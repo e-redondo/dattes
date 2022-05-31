@@ -98,8 +98,8 @@ config.wn_filter=0.1;%filter cut frequency
 config.filter_type='G';%filter type ('G' = gaussian)
 
 %pseudoOCV
-config.regimeOCVmax = 0.21;%regime max pour pseudoOCV (C/5)
-config.regimeOCVmin = 0.19;%regime max pour pseudoOCV (C/5)
+config.regimeOCVmax = 1;%regime max pour pseudoOCV (C/5)
+config.regimeOCVmin = 0;%regime max pour pseudoOCV (C/5)
 config.dQOCV = config.test.capacity/100;%dQ pour pseudoOCV
 
 %bancs monovoies:

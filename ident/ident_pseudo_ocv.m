@@ -1,22 +1,48 @@
-function [pOCV, pDoD, pPol, pEff,UCi,UDi,Regime] = ident_pseudo_ocv(t,U,DoDAh,config,phases,options)
+function [pseudo_ocv] = ident_pseudo_ocv(t,U,DoDAh,config,phases,options)
 %ident_pseudo_ocv pseudoOCV identification
+%
+% Usage:
+% [pseudo_ocv] = ident_pseudo_ocv(t,U,DoDAh,config,phases,options)
+%
+% Inputs:
+% - t,U,DoDAh [(nx1) double]: from extract_profiles and calcul_soc
+% - config [(1x1) struct]: from configurator
+% - phases [(mx1) struct]: from split_phases
+% - options [(1xp) string]: execution options
+%
+% Outputs:
+% - pseudo_ocv [(qx1) struct]: if found "q" pairs charge/discharge half
+% cycles of equal C-rate, with fields:
+%      - ocv [(kx1) double]: pseudo_ocv vector
+%      - dod [(kx1) double]: depth of discharge vector
+%      - polarization [(kx1) double]: difference between charge and discharge
+%      - efficiency [(kx1) double]: u_charge over u_discharge
+%      - u_charge [(kx1) double]: voltage during charging half cycle
+%      - u_discharge [(kx1) double]: voltage during discharging half cycle
+%      - crate [(1x1) double]: C-rate
+%      - time [(1x1) double]: time of measurement
 %
 % See also dattes, configurator
 
+if ~exist('options','var')
+    options = '';
+end
 %si plus d'une phase en charge ou plus d'une phase en decharge > ERREUR
 
 phasesOCVC = phases(config.pOCVpC);
 phasesOCVD = phases(config.pOCVpD);
 
 %default values: empty arrays
-    pOCV = [];
-    pDoD = [];
-    pPol = [];
-    pEff = [];
-    UCi = [];
-    UDi = [];
-    Regime = [];
-    
+pseudo_ocv = struct([]);
+pOCV = [];
+pDoD = [];
+pPol = [];
+pEff = [];
+UCi = [];
+UDi = [];
+Regime = [];
+pTime = [];
+
 %error management, if no pseudoOCV phases, return empty arrays
 if isempty(phasesOCVC) || isempty(phasesOCVD)
     fprintf('ident_pseudo_ocv: ERREUR nombre de phases incorrect\n');
@@ -24,20 +50,28 @@ if isempty(phasesOCVC) || isempty(phasesOCVD)
 end
 
 regimeC = [phasesOCVC.Iavg]/config.test.capacity;
+timeC = [phasesOCVC.t_fin];
 [regimeC Is] = sort(regimeC);%on met dans l'ordre
 phasesOCVC = phasesOCVC(Is);
+timeC = timeC(Is);
+
 rapports = regimeC(1:end-1)./regimeC(2:end);%on calcule les rapports
 If = [true rapports<.99];% on filtre les doublons (99%)
 regimeC = regimeC(If);
 phasesOCVC = phasesOCVC(If);
+timeC = timeC(If);
 
 regimeD = -[phasesOCVD.Iavg]/config.test.capacity;
+timeD = [phasesOCVC.t_fin];
 [regimeD Is] = sort(regimeD);%on met dans l'ordre
 phasesOCVD = phasesOCVD(Is);
+timeD = timeD(Is);
+
 rapports = regimeD(1:end-1)./regimeD(2:end);%on calcule les rapports
 If = [true rapports<.99];% on filtre les doublons (99%)
 regimeD = regimeD(If);
 phasesOCVD = phasesOCVD(If);
+timeD = timeD(If);
 
 for ind = 1:length(regimeD)
     ceRegD = regimeD(ind);
@@ -47,6 +81,7 @@ for ind = 1:length(regimeD)
 end
 %rearrange charges according to the discharges
 phasesOCVC = phasesOCVC(indC);
+timeC = timeC(indC);
 Regime = regimeD;
 if length(unique(indC))<indC
     fprintf('ident_pseudo_ocv: ERREUR à gerer\n');
@@ -85,6 +120,8 @@ end
 %mettre dans l'ordre (et enleve doublons) TODO: ameliorer
 [DoDAhCs, Is] = cellfun(@unique,DoDAhC,'uniformoutput',false);
 UCs = cellfun(@(x,y) x(y),UC,Is,'uniformoutput',false);
+
+
 %mettre dans l'ordre (et enleve doublons) TODO: ameliorer
 [DoDAhDs, Is] = cellfun(@unique,DoDAhD,'uniformoutput',false);
 UDs = cellfun(@(x,y) x(y),UD,Is,'uniformoutput',false);
@@ -109,9 +146,22 @@ UDi = cellfun(@(x,y) interp1(x,y,pDoD),DoDAhDs,UDs,'uniformoutput',false);
 pOCV = cellfun(@(x,y) (x+y)/2,UCi,UDi,'uniformoutput',false);
 pPol = cellfun(@(x,y) (x-y),UCi,UDi,'uniformoutput',false);
 pEff = cellfun(@(x,y) (y./x),UCi,UDi,'uniformoutput',false);
+pTime = max(timeC,timeD);
 
 if ismember('g',options)
     showResult(UC,DoDAhC,UD,DoDAhD,pDoD,UCi,UDi,pOCV);
+end
+
+%convert to pseudo_ocv struct:
+for ind = length(pOCV)
+    pseudo_ocv(ind).ocv = pOCV{ind};
+    pseudo_ocv(ind).dod = pDoD;
+    pseudo_ocv(ind).polarization = pPol{ind};
+    pseudo_ocv(ind).efficiency = pEff{ind};
+    pseudo_ocv(ind).u_charge = UCi{ind};
+    pseudo_ocv(ind).u_discharge = UDi{ind};
+    pseudo_ocv(ind).crate = Regime(ind);
+    pseudo_ocv(ind).time = pTime(ind);
 end
 end
 

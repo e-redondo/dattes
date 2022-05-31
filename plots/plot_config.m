@@ -31,7 +31,7 @@ hf = figure('Name','plot_config');
 subplot(311),title('calcul SOC');
 plot(tc,U,'k','displayname','test'),hold on
 
-I100 = ismember(t,config.t100);
+I100 = ismember(t,config.soc.soc100_time);
 plot(tc(I100),U(I100),'ro','displayname','t100')
 % plot(t(Iinicv),U(Iinicv),'r+','tag','debutCV')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,8 +97,8 @@ for ind = 1:length(phases)
 %         
 %     end
     if config.pW(ind)
-        Ip = t>=phases(ind).t_ini & t<=phases(ind).t_ini+config.tminW;
-        Ir = t>=phases(ind-1).t_fin-config.tminWr & t<=phases(ind-1).t_fin;
+        Ip = t>=phases(ind).t_ini & t<=phases(ind).t_ini+config.impedance.pulse_min_duration;
+        Ir = t>=phases(ind-1).t_fin-config.impedance.rest_min_duration & t<=phases(ind-1).t_fin;
         tW = [tW;tc(Ip)];
         UW = [UW;U(Ip)];
         tWr = [tWr;tc(Ir)];
