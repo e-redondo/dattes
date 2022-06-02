@@ -29,7 +29,11 @@ if ismember('e',options)%enable = addpath
     addpath(fullfile(srcdir,'math_tools'));
     if isempty(which('butter'))
         fprintf('DATTES (initpath_dattes): Adding butter function from Octave signal package.\n')
-        addpath(fullfile(srcdir,'math_tools','octave'));
+        addpath(fullfile(srcdir,'math_tools','octave','signal'));
+    end
+    if isempty(which('x2mdate'))
+        fprintf('DATTES (initpath_dattes): Adding x2mdate / m2xdate functions from Octave financial package.\n')
+        addpath(fullfile(srcdir,'math_tools','octave','financial'));
     end
     addpath(fullfile(srcdir,'plots'));
     addpath(fullfile(srcdir,'results'));
@@ -58,8 +62,11 @@ if ismember('d',options)%disable = rmpath
     
     %remove octave only if it was added before:
     P = path;
-    if ~isempty(strfind(P,fullfile(srcdir,'math_tools','octave')))
-        rmpath(fullfile(srcdir,'math_tools','octave'));
+    if ~isempty(strfind(P,fullfile(srcdir,'math_tools','octave','signal')))
+        rmpath(fullfile(srcdir,'math_tools','octave','signal'));
+    end
+    if ~isempty(strfind(P,fullfile(srcdir,'math_tools','octave','financial')))
+        rmpath(fullfile(srcdir,'math_tools','octave','financial'));
     end
     %remove vehlib_minimal only if it was added before:
     if ~isempty(strfind(P,fullfile(srcdir,'vehlib_minimal')))
