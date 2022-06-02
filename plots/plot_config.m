@@ -40,19 +40,19 @@ plot(tc(I100),U(I100),'ro','displayname','t100')
 tD = [];UD = [];tC = [];UC = [];tDV= [];UDV = [];tCV = [];UCV = [];
 for ind = 1:length(phases)
     Ip = t>=phases(ind).t_ini & t<=phases(ind).t_fin;
-    if config.pCapaD(ind)
+    if config.capacity.pCapaD(ind)
         tD = [tD;tc(Ip)];
         UD = [UD;U(Ip)];
     end
-    if config.pCapaC(ind)
+    if config.capacity.pCapaC(ind)
         tC = [tC;tc(Ip)];
         UC = [UC;U(Ip)];
     end
-    if config.pCapaDV(ind)
+    if config.capacity.pCapaDV(ind)
         tDV = [tDV;tc(Ip)];
         UDV = [UDV;U(Ip)];
     end
-    if config.pCapaCV(ind)
+    if config.capacity.pCapaCV(ind)
         tCV = [tCV;tc(Ip)];
         UCV = [UCV;U(Ip)];
     end
@@ -69,8 +69,8 @@ plot(tCV,UCV,'c.','displayname','capaCV'),xlabel(sprintf('time [%s]',tunit))
 tR = [];UR = [];tW = [];UW = [];tRr = [];URr = [];tWr = [];UWr = [];
 
 %resistance (ident_r):config.pR
-phases_r = phases(config.pR);
-time_before_after_phase = [config.minimal_duration_rest_before_pulse 0];
+phases_r = phases(config.resistance.pR);
+time_before_after_phase = [config.resistance.rest_min_duration 0];
 for ind = 1:length(phases_r)
     [tpRabs,tpR,UpR] = extract_phase2(phases_r(ind),time_before_after_phase,t,tc,U);
     Ip = tpRabs>=phases_r(ind).t_ini;
@@ -96,7 +96,7 @@ for ind = 1:length(phases)
 %         URr = [URr;U(Ir)];
 %         
 %     end
-    if config.pW(ind)
+    if config.impedance.pZ(ind)
         Ip = t>=phases(ind).t_ini & t<=phases(ind).t_ini+config.impedance.pulse_min_duration;
         Ir = t>=phases(ind-1).t_fin-config.impedance.rest_min_duration & t<=phases(ind-1).t_fin;
         tW = [tW;tc(Ip)];
