@@ -1,6 +1,6 @@
  #  DATTES : **D**ata **A**nalysis **T**ools for **T**ests on **E**nergy **S**torage  
-
-[![Code](https://img.shields.io/badge/dynamic/json?color=sucess&label=Code&prefix=PREFIX&query=%24.DATA.SUBDATA&suffix=SUFFIX&url=https%3A//gitlab.com/dattes/dattes/)](https://gitlab.com/dattes/dattes)
+[![Code - https://gitlab.com/dattes/dattes](https://img.shields.io/badge/Code-https%3A%2F%2Fgitlab.com%2Fdattes%2Fdattes-2ea44f?logo=Gitlab)](https://gitlab.com/dattes/dattes)
+[![Documentation - https://dattes.gitlab.io/](https://img.shields.io/badge/Documentation-https%3A%2F%2Fdattes.gitlab.io%2F-2ea44f?logo=BookStack)](https://dattes.gitlab.io/)
 [![Release](https://img.shields.io/badge/dynamic/json?color=yellow&label=Release&prefix=PREFIX&query=%24.DATA.SUBDATA&suffix=SUFFIX&url=https%3A%2F%2Fgitlab.com%2Fdattes%2Fdattes%2F-%2Freleases)](https://gitlab.com/dattes/dattes/-/releases)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Langage: Matlab- Octave](https://img.shields.io/badge/Made%20with-Matlab_Octave-orange)](https://www.gnu.org/software/octave/index)
