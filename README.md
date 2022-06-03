@@ -1,7 +1,7 @@
  #  DATTES : **D**ata **A**nalysis **T**ools for **T**ests on **E**nergy **S**torage  
 
-[![Code](https://img.shields.io/badge/dynamic/json?color=sucess&label=Code&prefix=PREFIX&query=%24.DATA.SUBDATA&suffix=SUFFIX&url=https%3A%2F%2Fgitlab.com%2Fdattes_project%2Fdattes)](https://gitlab.com/dattes_project/dattes)
-[![Release](https://img.shields.io/badge/dynamic/json?color=yellow&label=Release&prefix=PREFIX&query=%24.DATA.SUBDATA&suffix=SUFFIX&url=https%3A%2F%2Fgitlab.com%2Fdattes_project%2Fdattes%2F-%2Freleases)](https://gitlab.com/dattes__project/dattes_website/-/releases)
+[![Code](https://img.shields.io/badge/dynamic/json?color=sucess&label=Code&prefix=PREFIX&query=%24.DATA.SUBDATA&suffix=SUFFIX&url=https%3A%2F%2Fgitlab.com%2Fdattes%2Fdattes)](https://gitlab.com/dattes/dattes)
+[![Release](https://img.shields.io/badge/dynamic/json?color=yellow&label=Release&prefix=PREFIX&query=%24.DATA.SUBDATA&suffix=SUFFIX&url=https%3A%2F%2Fgitlab.com%2Fdattes%2Fdattes%2F-%2Freleases)](https://gitlab.com/dattes/dattes/-/releases)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Langage: Matlab- Octave](https://img.shields.io/badge/Made%20with-Matlab_Octave-orange)](https://www.gnu.org/software/octave/index)
 
@@ -19,14 +19,14 @@ DATTES makes it possible to:
 
 
 ## :link: Useful links
-- [**Documentation**](https://dattes_project.gitlab.io/dattes_website/)
-- [**License**](https://gitlab.com/dattes_project/dattes/-/blob/main/LICENSE)
-- [**Cheatsheet**](https://dattes_project.gitlab.io/dattes_website/cheatsheet/DATTES_cheatsheet.pdf)
-- [**Cite DATTES**](https://dattes_project.gitlab.io/dattes_website/page/citation/)
-- [**Contribute to DATTES**](https://dattes_project.gitlab.io/dattes_website/page/contribute/)
+- [**Documentation**](https://dattes.gitlab.io/)
+- [**License**](https://gitlab.com/dattes/dattes/-/blob/main/LICENSE)
+- [**Cheatsheet**](https://dattes.gitlab.io/cheatsheet/DATTES_cheatsheet.pdf)
+- [**Cite DATTES**](https://dattes.gitlab.io/page/citation/)
+- [**Contribute to DATTES**](https://dattes.gitlab.io/page/contribute/)
 
 ## :scroll: License
-```
+
 Copyright (c) 2015, E. Redondo, M. Hassini.
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -34,7 +34,7 @@ This program is free software: you can redistribute it and/or modify it under th
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
-```
+
 
 ## :sparkles: Contributors
 
