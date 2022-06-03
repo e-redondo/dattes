@@ -8,6 +8,10 @@ function p = polyfitweighted(x,y,n,w)
 % By S.S. Rogers (2006), based on polyfit.m by The MathWorks, Inc. - see doc
 % polyfit for more details.
 %
+% Salman Rogers (2022). polyfitweighted
+% (https://www.mathworks.com/matlabcentral/fileexchange/13520-polyfitweighted),
+% MATLAB Central File Exchange. Retrieved June 3, 2022.
+%
 % Usage
 % -----
 %
