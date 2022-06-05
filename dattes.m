@@ -95,7 +95,7 @@ end
 
 if ischar(xml_file)
     if ~exist(xml_file,'file')
-        error('dattes: file not found');
+        error('dattes: file %s not found',xml_file);
     end
 end
 
@@ -105,7 +105,7 @@ end
 
 if ischar(cfg_file) && ~isempty(cfg_file)
     if isempty(which(cfg_file))
-        error('dattes: cfg_file not found');
+        error('dattes: cfg_file %s not found',cfg_file);
     end
 end
 
