@@ -85,7 +85,7 @@ if ismember('c',options)%si deux parametres
     C = x(2);
 end
 
-Us = reponseRC(tm,Im,R,C);
+Us = rc_output(tm,Im,R,C);
 Is = Im;
 ts = tm;
 err = mean(erreurQuadratique(Um,Us));
@@ -122,7 +122,7 @@ if ~isequal(size(tm),size(Um)) || ~isequal(size(tm),size(Im)) || size(tm,1)~=len
 end
 
 
-U = reponseRC(tm,Im,R,C);
+U = rc_output(tm,Im,R,C);
 U = U(:);
 Um = Um(:);
 

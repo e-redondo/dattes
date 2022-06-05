@@ -69,7 +69,7 @@ if ismember('c',options)%si deux parametres
     C = x(3);
 end
 
-Us = reponseRRC(tm,Im,Rs,R,C);
+Us = rrc_output(tm,Im,Rs,R,C);
 Is = Im;
 ts = tm;
 err = mean(erreurQuadratique(Um,Us));

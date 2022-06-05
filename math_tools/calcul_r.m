@@ -127,7 +127,7 @@ end
 %DEBUG
 % show_result(t,U,I,instant_end_rest,Ural_pul,Ural_rep,R_I,tpulse,Upulse,trest,Urest,t_calcul_R)
 
-
+end
 
 
 function show_result(t,U,I,instant_end_rest,Ural_pul,Ural_rep,R_I,tpulse,Upulse,trest,Urest,t_calcul_R)

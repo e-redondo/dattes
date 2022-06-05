@@ -123,7 +123,7 @@ c1=[c1 C1id];
 
 
 
-Us_rsr1c1 = reponseRRC(time_phase,current_phase,Rsid,R1id,C1id);
+Us_rsr1c1 = rrc_output(time_phase,current_phase,Rsid,R1id,C1id);
 
 %residual voltage used for R2C2 identification
 Umrc2 = voltage_phase-Us_rsr1c1;
