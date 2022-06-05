@@ -1,5 +1,5 @@
 function [ica] = ident_ica(t,U,dod_ah,config,phases,options)
-% ident_ICA incremental capacity analysis
+% ident_ica incremental capacity analysis
 %
 % [ica] = ident_ica(t,U,dod_ah,config,phases,options)
 % Read the config and phases structure and performe several calculations
@@ -9,7 +9,7 @@ function [ica] = ident_ica(t,U,dod_ah,config,phases,options)
 % [ica] = ident_ica(t,U,dod_ah,config,phases,options)
 % Inputs:
 % - t [nx1 double]: time in seconds
-% - U [nx1 double]: cell voltage
+% - U [nx1 double]: cell voltage in V
 % - dod_ah [nx1 double]: depth of discharge in AmpHours
 % - config [1x1 struct]: config struct from configurator
 % - phases [1x1 struct]: phases struct from decompose_phases

@@ -20,6 +20,10 @@ function [tp,varargout] = extract_phase2(phases,t_be_af,t,varargin)
 % end of phase(5).
 %
 % See also extract_phase, split_phases, extract_profiles
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 %0.- gestion d'erreurs:
 %0.1.- initialisation des sorties

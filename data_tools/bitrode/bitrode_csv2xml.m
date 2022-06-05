@@ -2,23 +2,29 @@ function [xml_list] = bitrode_csv2xml(srcdir,options)
 % bitrode_csv2xml mass import of *.csv file (Bitrode) to *.xml
 %
 % Usage:
-% bitrode_csv2xml(srcdir) search all *.csv in srcdir and write a *.xml for every *.csv
+% [xml_list] = bitrode_csv2xml(srcdir,options)
+% Inputs:
+% - xml_list [1x,cell] : xml files list
+% Outputs:
+% - srcdir [string]: source directory path
+% - options :
+%    - 'f' : 'force', write *.xml if it already exists
+%    - 'v' : 'verbose', tells what it does
+%    - 'm' : 'multicell', write *.xml separately for each cell
 %
+% Examples
+% bitrode_csv2xml(srcdir) search all *.csv in srcdir and write a *.xml for every *.csv
 % bitrode_csv2xml(fileList) fileList is a cell string containing a list of *.csv
 % files to convert
-%
 % bitrode_csv2xml(...,'f') option 'force', write *.xml if it already exists
 % bitrode_csv2xml(...,'v') option 'verbose', tells what it does
 % bitrode_csv2xml(...,'m') option 'multicell', write *.xml separately for each cell
 %
-%
 % See also import_bitrode, read_bitrode_log, write_bitrode_log
 %
-%   IFSTTAR/LTE  - E. REDONDO
-%   $Created: 2015/09/08, Modified: 2022/04/01$
-
-%2015/09/09 4 fichiers CSV (178Mo), multiCell > 12 fichiers XML (459Mo),
-%111sec. (1.6Mo/sec. lecture)
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if ~exist('options','var')
     options='';

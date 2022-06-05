@@ -23,6 +23,31 @@ function [pseudo_ocv] = ident_pseudo_ocv(t,U,DoDAh,config,phases,options)
 %      - time [(1x1) double]: time of measurement
 %
 % See also dattes, configurator
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
+
+
+%% check inputs:
+if nargin<6 || nargin>7
+    fprintf('ident_pseudo_ocv: wrong number of parameters, found %d\n',nargin);
+    return;
+end
+if ~isstruct(phases) || ~isstruct(config) || ~ischar(options)
+    fprintf('ident_pseudo_ocv: wrong type of parameters\n');
+    return;
+end
+if ~isfield(config,'pseudo_ocv')
+    fprintf('ident_pseudo_ocv: incomplete structure config, redo configurator: dattes(''cs'')\n');
+    return;
+end
+if ~isfield(config.pseudo_ocv,'pOCVpC') || ~isfield(config.pseudo_ocv,'pOCVpD') || ~isfield(config.pseudo_ocv,'capacity_resolution') 
+    fprintf('ident_pseudo_ocv: incomplete structure config, redo configurator: dattes(''cs'')\n');
+    return;
+end
+
+
 
 if ~exist('options','var')
     options = '';
@@ -83,26 +108,14 @@ end
 phases_ocv_charge = phases_ocv_charge(index_sorting_charge);
 timeC = timeC(index_sorting_charge);
 crate = current_rate_discharge;
+
 if length(unique(index_sorting_charge))<index_sorting_charge
 
     fprintf('ident_pseudo_ocv: ERREUR à gerer\n');
     return
 end
 
-%BRICOLE pour SIMCAL KOKAM 12Ah
-% if length(phases_ocv_charge)>3
-%     phases_ocv_charge = phases_ocv_charge(1:3);
-% end
-% if length(phases_ocv_discharge)>2
-%     phases_ocv_discharge = phases_ocv_discharge(1:2);
-% end
-% if length(phases_ocv_charge)~=1 || length(phases_ocv_discharge)~=1
-%     ocv = [];
-%     dod = [];
-%     polarization = [];
-%     fprintf('ident_pseudo_ocv: ERREUR nombre de phases incorrect\n');
-%     return
-% end
+
 voltage_charge = cell(size(phases_ocv_charge));
 dod_ah_charge = cell(size(phases_ocv_charge));
 voltage_discharge = cell(size(phases_ocv_discharge));
@@ -171,9 +184,7 @@ function showResult(voltage_charge,dod_ah_charge,voltage_discharge,dod_ah_discha
 hf = figure('name','ident_pseudo_ocv');hold on
 cellfun(@(x,y) plot(x,y,'b.-','tag','charge (mesure)'),dod_ah_charge,voltage_charge)
 cellfun(@(x,y) plot(x,y,'r.-','tag','decharge (mesure)'),dod_ah_discharge,voltage_discharge)
-% plot(dod,u_charge,'b*','tag','charge (points)')
-% plot(dod,u_discharge,'r*','tag','decharge (points)')
-% plot(dod,ocv,'k*-','tag','pseudoOCV')
+
 
 cellfun(@(x,y) plot(dod,x,'b*','tag','charge (points)'),u_charge)
 cellfun(@(x,y) plot(dod,x,'r*','tag','decharge (points)'),u_discharge)
@@ -181,7 +192,7 @@ cellfun(@(x,y) plot(dod,x,'k-','tag','pseudoOCV'),ocv)
 
 ylabel('voltage [V]'),xlabel('DoD [Ah]')
 
-%cherche tout les handles du type axe et ignore les legendes
+%Look for all axis handles and ignore legends
 ha = findobj(hf,'type','axes','tag','');
 prettyAxes(ha);
 changeLine(ha,2,15);

@@ -1,5 +1,39 @@
 function plot_impedance(impedance,title_str)
-
+% plot_impedance plot impedance graphs
+%
+% plot_impedance(impedance,title_str)
+% Use impedance structure to plot impedance graphs
+%
+% Usage:
+% plot_impedance(impedance,title_str)
+% Inputs:
+% For CPE topology
+% - impedance [(1x1) struct] with fields:
+%     - topology [string]: Impedance model topology
+%     - r0 [kx1 double]: Ohmic resistance
+%     - q [kx1 double]: CPEQ
+%     - alpha [kx1 double]: CPEalpha
+%     - crate [kx1 double]: C-Rate of each impedance measurement
+%     - dod [kx1 double]: Depth of discharge of each impedance measurement
+%     - time [kx1 double]: time of each impedance measurement
+% For RC topology
+% - impedance [(1x1) struct] with fields:
+%     - topology [string]: Impedance model topology
+%     - r0 [kx1 double]: Ohmic resistance
+%     - r1 [kx1 double]: R1 resistance
+%     - C1 [kx1 double]: C1 capacity
+%     - r2 [kx1 double]: R2 resistance
+%     - C2 [kx1 double]: C2 capacity
+%     - crate [kx1 double]: C-Rate of each impedance measurement
+%     - dod [kx1 double]: Depth of discharge of each impedance measurement
+%     - time [kx1 double]: time of each impedance measurement
+% - title_str: [string] title string
+%
+% See also dattes, dattes_plot, configurator, extract_profiles
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if ~exist('title_str','var')
     title_str = '';
@@ -27,7 +61,7 @@ subplot(2,2,[3 4]),plot(impedance.time,impedance.(parameters{ind}),'o')
 xlabel('time (s)','interpreter','tex')
 ylabel(parameters{ind},'interpreter','tex')
 
-%cherche tout les handles du type axe et ignore les legendes
+%Look for all axis handles and ignore legends
 ha = findobj(hf,'type','axes','tag','');
 prettyAxes(ha);
 changeLine(ha,2,15);

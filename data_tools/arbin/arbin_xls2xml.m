@@ -1,14 +1,25 @@
 function [xml_list] = arbin_xls2xml(dirname,options)
 % arbin_xls2xml convert all arbin *.xls(x) files in dirname to VEHLIB's xml format
+%
 % Usage:
+% [xml_list] = arbin_xls2xml(dirname,options)
+% Inputs:
+% - xml_list [1x,cell] : xml files list
+% Outputs:
+% - dirname [string]: source directory path
+% - options :
+%    - 'f' : 'force', write *.xml if it already exists
+%
+% Examples
 % arbin_xls2xml(dirname) search all *.res in srcdir and write a *.xml for every *.res
-%
 % arbin_xls2xml(dirname,'f') force: write *.xml even if it already exists
-%
 % arbin_xls2xml(fileList) with fileList a cell string containing a list of *.res files
 %
 % See also import_arbin_xls, arbin_res2xml
-
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if ~exist('options','var')
     options='';

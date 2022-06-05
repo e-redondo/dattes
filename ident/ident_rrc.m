@@ -1,5 +1,5 @@
  function [impedance]=ident_rrc(t,U,I,dod_ah,config,phases,options)
- % ident_rrc impedance analysis of a R+two RC topology
+% ident_rrc impedance analysis of a R+two RC topology
 %
 % [impedance]=ident_rrc(t,U,I,dod_ah,config,phases,options)
 % Read the config and phases structure and performe several calculations

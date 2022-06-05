@@ -1,4 +1,26 @@
 function plot_r(resistance)
+% plot_r plot resistance graphs
+%
+% plot_r(resistance)
+% Use resistance structure to plot resistance graphs
+%
+% Usage:
+% plot_r(resistance)
+% Inputs:
+% - resistance [(1x1) struct] with fields:
+%     - R [(qx1) double]: resistance value (Ohms)
+%     - dod [(qx1) double]: depth of discharge (Ah)
+%     - crate [(qx1) double]: current rate (C)
+%     - time [(qx1) double]: time of measurement (s)
+%     - delta_time [(qx1) double]: time from pulse start (s)
+%
+%See also dattes, dattes_plot, configurator, extract_profiles
+%
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
+
 
 Idis = resistance.crate<0;
 Icha = resistance.crate>0;
@@ -35,7 +57,7 @@ for ind = 1:length(dt)
     
 end
 subplot(2,2,[3 4]),legend('location','eastoutside')
-%cherche tout les handles du type axe et ignore les legendes
+%Look for all axis handles and ignore legends
 ha = findobj(hf,'type','axes','tag','');
 prettyAxes(ha);
 changeLine(ha,2,15);

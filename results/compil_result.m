@@ -1,19 +1,29 @@
 function [rc, cc, pc] = compil_result(rc,cc,pc)
 % compil_result results compilation (configs et phases)
+%
+% [rc, cc, pc] = compil_result(rc,cc,pc)
 % When processing a batch of files with dattes, cellfun is used so
 % [r,c,p]=dattes(filelist,...), r,c and p are cell type.
 % This function convert cell types to structure arrays.
 %
+% Usage:
+% [rc, cc, pc] = compil_result(rc,cc,pc)
+% Inputs : 
 %[r, c, p] = compil_result(rc,cc,pc)
 % - rc [nx1 cell] each element is a structure type 'result'
 % - cc [nx1 cell] each element is a structure type 'config'
 % - pc [nx1 cell] each element is a structure type 'phases'
+% Outputs : 
 % - r [nx1 struct] nx1 structure array type 'resultt'
 % - c [nx1 struct] nx1 structure array type 'config'
 % - p [nx1 struct] nx1 structure array type 'phases'
 % Non existing fields will be initialized as empty arrays ([]).
 %
-% See also dattes
+% See also dattes, load_result, edit_result
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 %verifer les champs, ceux qui n'y sont pas les initialiser a vide
 %resultat

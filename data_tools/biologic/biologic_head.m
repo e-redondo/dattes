@@ -1,47 +1,62 @@
-function [tete, dateEssai, typeEssai, sourcefile, emptyfile] = biologic_head(filename)
-%enteteBiologic Lit et analyse l'entete des fichiers Biologic (MPT)
-%   [tete, dateEssai] = enteteBiologic(filename)
-%       - tete: [(mx1) cell string] informations de l'entete du fichier
-%       - dateEssai: [string] date au format yyyymmdd_HHMMSS
+function [head, date_test, type_test, source_file, empty_file] = biologic_head(file_name)
+% biologic_head Read and analyse .mpt Biologic files header
+% 
+% Usage :
+% [head, date_test, type_test, source_file, empty_file] = biologic_head(file_name)
+% Inputs :
+%   - file_name: [string] Path to the Biologic file
+% Outputs :
+%   - head: [(mx1) cell string] Header information
+%   - date_test: [string]  Test date with format yyyymmdd_HHMMSS
+%   - type_test : [string]  Test type 
+%   - source_file: [string]  Source file
+%   - empty_file : [Boolean]  True if last line
 %
+% See also read_biologic_file, analyze_head
+%
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
+
 if nargin==0
     print_usage
 end
-tete = '';
-dateEssai = '';
+head = '';
+date_test = '';
 
-%1.-lecture du fichier
-[D, F, E] = fileparts(filename);
+%1.-Reading file
+[D, F, E] = fileparts(file_name);
 F = [F,E];
-fid = fopen(filename,'r');
+fid = fopen(file_name,'r');
 if fid<0
-    fprintf('lectureBiologicTete: Erreur dans le fichier %s\n',F);
+    fprintf('biologic_head: Error in the file %s\n',F);
     return;
 end
-% [tete] = lectureBiologicTete(fid);
-[tete] = read_biologic_file(fid,true);
-if isempty(tete)
-    fprintf('enteteBiologic: Erreur dans le fichier %s\n',F);
+% [head] = lectureBiologicTete(fid);
+[head] = read_biologic_file(fid,true);
+if isempty(head)
+    fprintf('biologic_head: Error in the file %s\n',F);
     return%on force l'erreur si pas ECLAB file
 end
 %check if it was last line in file
 ligne = fgetl(fid);
 if ligne == -1
-    emptyfile = true;
+    empty_file = true;
 else
-    emptyfile = false;
+    empty_file = false;
 end
 fclose(fid);
 
 %2.- date essai
-dateEssai = '';
-ligneDate = regexpFiltre(tete,'^Acquisition started on : ');
+date_test = '';
+ligneDate = regexpFiltre(head,'^Acquisition started on : ');
 if ~isempty(ligneDate)
-    dateEssai = regexprep(ligneDate{1},'^Acquisition started on : ','');
-    aNum = datenum(dateEssai,'mm/dd/yyyy HH:MM:SS');%default date format in MATLAB = Biologic MM/DD/YY
-    dateEssai = datestr(aNum,'yymmdd_HHMMSS.FFF');%v10.23
-else%try to deduct date time from filename
-    %try on filename
+    date_test = regexprep(ligneDate{1},'^Acquisition started on : ','');
+    aNum = datenum(date_test,'mm/dd/yyyy HH:MM:SS');%default date format in MATLAB = Biologic MM/DD/YY
+    date_test = datestr(aNum,'yymmdd_HHMMSS.FFF');%v10.23
+else%try to deduct date time from file_name
+    %try on file_name
     ligneDate = regexp(F,'^[0-9]{8,8}_[0-9]{4,4}','match','once');
     if isempty(ligneDate) %try on last level folder name
         [~, D1] = fileparts(D)
@@ -49,63 +64,54 @@ else%try to deduct date time from filename
     end
     if ~isempty(ligneDate)
         aNum = datenum(ligneDate,'yyyymmdd_HHMM');
-        dateEssai = datestr(aNum,'yymmdd_HHMMSS.FFF');
+        date_test = datestr(aNum,'yymmdd_HHMMSS.FFF');
     end
 end
-%3.- typeEssai
-if length(tete)>3
-    if  strcmp(tete{4}, 'Special Galvanostatic Cycling with Potential Limitation')
-        typeEssai = 'SGCPL';
-    elseif strcmp(tete{4}, 'Galvanostatic Cycling with Potential Limitation')
-        typeEssai = 'GCPL';
-    elseif strcmp(tete{4}, 'Galvano Profile Importation')
-        typeEssai = 'GPI';
-    elseif  strcmp(tete{4}, 'Galvano Electrochemical Impedance Spectroscopy')
-        typeEssai = 'GEIS';
-    elseif  strcmp(tete{4}, 'Potentio Electrochemical Impedance Spectroscopy')
-        typeEssai = 'PEIS';
-    elseif  strcmp(tete{4}, 'Open Circuit Voltage')
-        typeEssai = 'OCV';
-    elseif  strcmp(tete{4}, 'Wait')
-        typeEssai = 'Wait';
-    elseif  strcmp(tete{4}, 'Modulo Bat')
-        typeEssai = 'MB';
+%3.- type_test
+if length(head)>3
+    if  strcmp(head{4}, 'Special Galvanostatic Cycling with Potential Limitation')
+        type_test = 'SGCPL';
+    elseif strcmp(head{4}, 'Galvanostatic Cycling with Potential Limitation')
+        type_test = 'GCPL';
+    elseif strcmp(head{4}, 'Galvano Profile Importation')
+        type_test = 'GPI';
+    elseif  strcmp(head{4}, 'Galvano Electrochemical Impedance Spectroscopy')
+        type_test = 'GEIS';
+    elseif  strcmp(head{4}, 'Potentio Electrochemical Impedance Spectroscopy')
+        type_test = 'PEIS';
+    elseif  strcmp(head{4}, 'Open Circuit Voltage')
+        type_test = 'OCV';
+    elseif  strcmp(head{4}, 'Wait')
+        type_test = 'Wait';
+    elseif  strcmp(head{4}, 'Modulo Bat')
+        type_test = 'MB';
     else
-        typeEssai = 'inconnu';
+        type_test = 'inconnu';
     end
 else
-    if  ~isempty(strfind(filename,'SGCPL'))
-        typeEssai = 'SGCPL';
-    elseif ~isempty(strfind(filename,'GCPL'))
-        typeEssai = 'GCPL';
-    elseif ~isempty(strfind(filename,'GPI'))
-        typeEssai = 'GPI';
-    elseif ~isempty(strfind(filename,'GEIS'))
-        typeEssai = 'GEIS';
-    elseif ~isempty(strfind(filename,'PEIS'))
-        typeEssai = 'PEIS';
-    elseif ~isempty(strfind(filename,'OCV'))
-        typeEssai = 'OCV';
+    if  ~isempty(strfind(file_name,'SGCPL'))
+        type_test = 'SGCPL';
+    elseif ~isempty(strfind(file_name,'GCPL'))
+        type_test = 'GCPL';
+    elseif ~isempty(strfind(file_name,'GPI'))
+        type_test = 'GPI';
+    elseif ~isempty(strfind(file_name,'GEIS'))
+        type_test = 'GEIS';
+    elseif ~isempty(strfind(file_name,'PEIS'))
+        type_test = 'PEIS';
+    elseif ~isempty(strfind(file_name,'OCV'))
+        type_test = 'OCV';
     else
-        typeEssai = 'inconnu';
+        type_test = 'inconnu';
     end
 end
-%4.- sourcefile
-% [s e] = regexp(tete,'\s(\w+).mpr$','start','end');
-%modification pour les noms de fichier SIMCAL (yyyymmdd-HHMM_...)
-% [s] = regexp(tete,'([a-zA-Z_0-9-]+).mpr$','start','end');
-[s] = regexp(tete,'([a-zA-Z%�_0-9-]+).mpr$','match','once');
+%4.- source_file
+[s] = regexp(head,'([a-zA-Z%�_0-9-]+).mpr$','match','once');
 indices = find(cellfun(@(x) ~isempty(x),s));
-if length(indices)~=1%pas trouve, on prend le nom du mpt
-    %     sourcefile = '';
-    [D sourcefile E] = fileparts(filename);
-    sourcefile = sprintf('%s%s',sourcefile,E);
+if length(indices)~=1%not found, mpt filename is considered
+    [D source_file E] = fileparts(file_name);
+    source_file = sprintf('%s%s',source_file,E);
 else
-    %     s = s{indices};
-    %     e = e{indices};
-    %     index = find(indices);
-    %     sourcefile =  tete{index}(s:e);
-    %     sourcefile = strtrim(sourcefile);
-    sourcefile = s{indices};
+    source_file = s{indices};
 end
 end

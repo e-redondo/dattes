@@ -2,9 +2,12 @@ function [ocv_by_points] = ident_ocv_by_points(t,U,DoDAh,m,config,phases,options
 %ident_ocv_by_points OCV by points identification (rests after partial
 %charges/discharges)
 %
-% Usage:
 % [ocv_by_points] = ident_ocv_by_points(t,U,DoDAh,m,config,phases,options)
+% Read the config and phases structure and performe several calculations
+% regarding OCV by points .  Results are returned in the structure ocv_by_points
 %
+% Usage:
+%[ocv_by_points] = ident_ocv_by_points(t,U,DoDAh,m,config,phases,options)
 % Inputs:
 % - t,U,DoDAh,m [(nx1) double]: vectors from extract_profiles
 % - config [(1x1) struct]: config struct from configurator
@@ -20,6 +23,10 @@ function [ocv_by_points] = ident_ocv_by_points(t,U,DoDAh,m,config,phases,options
 %     - time [(px1) double]: time of measurement
 %
 % See also dattes, ident_pseudo_ocv
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.%
 
 if ~exist('options','var')
     options = '';
@@ -30,25 +37,26 @@ end
 
 ocv_by_points = struct([]);
 
-time =[];%instants pour la prise de la mesure
+time =[];
 ocv =[];
 dod =[];
-%gestion d'erreurs:
+
+%% check inputs:
 if nargin<6 || nargin>7
-    fprintf('ident_ocv_by_points:nombre incorrect de parametres, trouves %d\n',nargin);
+    fprintf('ident_ocv_by_points: wrong number of parameters, found %d\n',nargin);
     return;
 end
 if ~isstruct(phases) || ~isstruct(config) || ~ischar(options)...
         || ~isnumeric(t) || ~isnumeric(U)|| ~isnumeric(DoDAh) || ~isnumeric(m)
-    fprintf('ident_ocv_by_points:type de parametres, incorrect\n');
+    fprintf('ident_ocv_by_points: wrong type of parameters\n');
     return;
 end
 if ~isfield(config,'ocv_points')
-    fprintf('ident_ocv_by_points:structure config incomplete\n');
+    fprintf('ident_ocv_by_points: incomplete structure config, redo configurator: dattes(''cs'')\n');
     return;
 end
 if ~isfield(config.ocv_points,'pOCVr')
-    fprintf('ident_ocv_by_points:structure config incomplete\n');
+    fprintf('ident_ocv_by_points: incomplete structure config, redo configurator: dattes(''cs'')\n');
     return;
 end
 
@@ -58,6 +66,8 @@ ip_avant = [config.ocv_points.pOCVr(2:end) false];
 ip_avav = [config.ocv_points.pOCVr(3:end) false false];
 phases_avant = phases(ip_avant);
 phases_avav = phases(ip_avav);
+
+
 if length(phases_avant)<length(phases_ocv)
     fprintf('ident_ocv_by_points:error\n');
 end
@@ -90,24 +100,7 @@ if ismember('v',options)
     fprintf('OK\n');
 end
 if ismember('g',options)
-%     showResult(t,U,DoDAh, time, ocv, dod);
     plotOCVp(t,U,DoDAh, time, ocv, dod, signe);
 end
 
 end
-
-% function showResult(t,U,DoDAh, time, ocv, dod)
-% 
-% hf = figure('name','ident_ocv_by_points');
-% 
-% subplot(211),plot(t,U),hold on,ylabel('voltage [V]'),xlabel('temps [s]')
-% subplot(212),plot(DoDAh,U),hold on,ylabel('voltage [V]'),xlabel('DoDAh [Ah]')
-% 
-% subplot(211),plot(time,ocv,'rx')
-% subplot(212),plot(dod,ocv,'r-x')
-% 
-% %cherche tout les handles du type axe et ignore les legendes
-% ha = findobj(hf,'type','axes','tag','');
-% prettyAxes(ha);
-% changeLine(ha,2,15);
-% end

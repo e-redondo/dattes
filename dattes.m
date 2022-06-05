@@ -19,7 +19,7 @@ function [result, config, phases] = dattes(xml_file,options,cfg_file)
 %   -'f': force, redo the actions even if the result file already exists
 %   -'u': update, redo the actions even if the xml_file is more recent
 %   -'v': verbose, tell what you do
-%   -'c': run the configuraiton following cfg_file
+%   -'c': run the configuration following cfg_file
 %   -'e': EIS (plot_eis)
 %   -'C': Capacity measurement
 %   -'S': SoC calculation

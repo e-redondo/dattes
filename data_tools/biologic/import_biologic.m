@@ -3,6 +3,7 @@ function [outStruct, err, errS] = import_biologic(dirname)
 %
 % Usage:
 % [outStruct, err, errS] = import_biologic(dirname)
+%
 % Inputs:
 % - dirname [(1xp) string]: folder containing *.mpt files
 % - dirname [cell string]: file list to convert
@@ -20,6 +21,10 @@ function [outStruct, err, errS] = import_biologic(dirname)
 %   one *.mpt file (put filename into a cell string)
 %
 % See also: biologic_mpt2xml_files, biologic_mpt2xml_folders, which_cycler
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if nargin==0
     print_usage;
@@ -35,7 +40,7 @@ else
     %01 verification de l'existence du repertoire
     if ~isdir(dirname)
         err = -1;
-        fprintf('Inexistent directory: %s\n',dirname);
+        fprintf('import_biologic: nonexistent directory: %s\n',dirname);
         if err
             outStruct = [];
             return
@@ -48,7 +53,7 @@ else
         D = lsFiles(dirname,'.txt',true);
         if isempty(D)
             err = -1;
-            fprintf('Nothing to import: %s\n',dirname);
+            fprintf('import_biologic: Nothing to import: %s\n',dirname);
             if err
                 outStruct = [];
                 return

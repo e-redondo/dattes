@@ -1,11 +1,21 @@
 function [xml_list] = biologic_mpt2xml_files(srcdir,options)
 % biologic_mpt2xml_files  mass import of *.mpt files (Biologic) to *.xml
-% Usage:
-% biologic_mpt2xml_files(srcdir) search all *.mpt in srcdir and write a *.xml for every *.mpt
 %
+% Usage:
+% [xml_list] = biologic_mpt2xml_files(srcdir,options)
+% Inputs:
+% - xml_list [1x,cell] : xml files list
+% Outputs:
+% - srcdir [string]: source directory path
+% - options :
+%    - 'f' : 'force', write *.xml if it already exists
+%    - 'v' : 'verbose', tells what it does
+%    - 'm' : 'multicell', write *.xml separately for each cell
+%
+% Examples
+% biologic_mpt2xml_files(srcdir) search all *.mpt in srcdir and write a *.xml for every *.mpt
 % biologic_mpt2xml_files(fileList) fileList is a cell string containing a list of *.mpt
 % files to convert
-%
 % biologic_mpt2xml_files(srcdir,'v') , verbose: tells what it does
 % biologic_mpt2xml_files(srcdir,'t') , txt: search *.txt files instead *.mpt
 % biologic_mpt2xml_files(srcdir,'f') , force: write *.xml even if it already exists
@@ -15,8 +25,10 @@ function [xml_list] = biologic_mpt2xml_files(srcdir,options)
 %
 % See also import_biologic, biologic_mpt2xml_folders
 %
-%   IFSTTAR/LTE  - E. REDONDO
-%   $Revision: 0.1 $  $Created: 2015/08/12, Modified: 2022/04/01$
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
+
 
 if nargin==0
     error('at least one input must be given')

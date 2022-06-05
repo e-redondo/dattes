@@ -9,7 +9,7 @@ function [impedance] = ident_cpe(t,U,I,dod_ah,config,phases,options)
 % [impedance] = ident_cpe(t,U,I,dod_ah,config,phases,options)
 % Inputs:
 % - t [nx1 double]: time in seconds
-% - U [nx1 double]: cell voltage
+% - U [nx1 double]: cell voltage in V
 % - dod_ah [nx1 double]: depth of discharge in AmpHours
 % - config [1x1 struct]: config struct from configurator
 % - phases [1x1 struct]: phases struct from decompose_phases

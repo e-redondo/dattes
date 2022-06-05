@@ -1,7 +1,8 @@
 function [head, body, empty_mpt] = read_biologic_file(fid,just_head)
 % read_biologic_file Read a *.mpt file (Biologic)
 %
-%[tete, corps] = read_biologic_file(fid,just_head)
+% Usage:
+% [head, body, empty_mpt] = read_biologic_file(fid,just_head)
 %
 % INPUTS
 % - fid : valid file handler
@@ -13,49 +14,55 @@ function [head, body, empty_mpt] = read_biologic_file(fid,just_head)
 % before)
 %
 % See also import_biologic
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
+
 
 if ~exist('just_head','var')
     just_head = false;
 end
-%initialisation des sorties
+%Initialise outputs
 head = '';
 body = '';
 empty_mpt = false;
-%lecture de l'entete
-[banc, ligne1, ligne2] = which_cycler(fid);
-if ~strcmp(banc,'bio')
-    return%on force l'erreur si pas ECLAB file
+% Reading header
+[cycler, line1, line2] = which_cycler(fid);
+if ~strcmp(cycler,'bio')
+    return% Error if not an ECLAB file
 end
 
-ligne2Decomposee = regexp(ligne2,'\s','split');
-indices = cellfun(@(x) ~isempty(x),ligne2Decomposee);
-ligne2Decomposee = ligne2Decomposee(indices);
-nb_lignes = sscanf(ligne2Decomposee{end},'%i');
+line2_split = regexp(line2,'\s','split');
+indices = cellfun(@(x) ~isempty(x),line2_split);
+line2_split = line2_split(indices);
+nb_lignes = sscanf(line2_split{end},'%i');
 
 head = cell(nb_lignes,1);
-head{1} = ligne1;
-head{2} = ligne2;
+head{1} = line1;
+head{2} = line2;
 for ind = 3:nb_lignes
     head{ind} = fgetl(fid);
 end
-%lecture du corps
-ligne1 = fgetl(fid);
-if ligne1 == -1
-    body=[];%pas de corps la manip a ete arretee avant cette etape
+
+%Reading body
+line1 = fgetl(fid);
+if line1 == -1
+    body=[]; %No body, test stopped before this step 
     just_head = true;
     empty_mpt = true;
 end
 if ~just_head
-    if ~isempty(strfind(ligne1,'XXX'))%v10.40
+    if ~isempty(strfind(line1,'XXX'))%v10.40
         %il faut remplacer les 'XXX' par 'NaN'
-        As1 = strrep(ligne1,'XXX','NaN');
+        As1 = strrep(line1,'XXX','NaN');
         As = fread(fid,inf, 'uint8=>char')';
         As = strrep(As,'XXX','NaN');
         A1 = sscanf(As1,'%f\t');
         A = sscanf(As,'%f\t');
         A = [A1(:); A(:)];
-    else%lecture classique
-        A1 = sscanf(ligne1,'%f\t');
+    else%Classic reading
+        A1 = sscanf(line1,'%f\t');
         A = fscanf(fid,'%f\t');
         A = [A1(:); A(:)];
     end

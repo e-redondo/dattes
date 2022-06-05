@@ -1,6 +1,18 @@
 function [xml_list] = biologic_mpt2xml_folders(srcdir,options)
 % biologic_mpt2xml_folders  mass import of *.mpt files (Biologic) to *.xml
+%
 % Usage:
+% [xml_list] = biologic_mpt2xml_folders(srcdir,options)
+% Inputs:
+% - xml_list [1x,cell] : xml files list
+% Outputs:
+% - srcdir [string]: source directory path
+% - options :
+%    - 'f' : 'force', write *.xml if it already exists
+%    - 'v' : 'verbose', tells what it does
+%    - 'm' : 'multicell', write *.xml separately for each cell
+%
+% Examples
 % biologic_mpt2xml_folders(srcdir) search all folders containing *.mpt in srcdir and write
 % a *.xml for every folder
 %    - if srcdir contains mpt files AND does not contain any subfolder an
@@ -11,8 +23,9 @@ function [xml_list] = biologic_mpt2xml_folders(srcdir,options)
 %
 % See also import_biologic, biologic_mpt2xml_files
 %
-%   IFSTTAR/LTE  - E. REDONDO
-%   $Revision: 0.1 $  $Created: 2015/09/08, Modified: 2022/04/01$
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if nargin==0
     error('at least one input must be given')

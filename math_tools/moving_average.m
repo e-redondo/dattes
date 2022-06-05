@@ -1,5 +1,25 @@
 function [xm] = moving_average(t,x,T)
-%function xm = moving_average(t,x,T)
+% moving_average Filter data with a moving average filter
+%
+% [xm] = moving_average(t,x,T)
+% Filter x vector with a moving average filter
+%
+% Usage:
+% [xm] = moving_average(t,x,T)
+% Inputs:
+% - x [nx1 double]: Vector to filter
+% - N [double]: Filter order vector
+% - wn [double]: Filter cut frequency
+%
+% Output:
+% - xm [nx1 double]: Filtered vector
+%
+%See also 
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
+
 %ATTENTION, Ts du signal doit etre constant
 indDebut = find(t-t(1)>=T,1);
 indFin = find(t>=t(end)-T,1);

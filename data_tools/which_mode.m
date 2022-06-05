@@ -21,11 +21,16 @@ function m = which_mode(t,I,U,Step,I_threshold,U_threshold,options)
 %    - 5 = profile (random profile)
 %
 %   See also import_arbin_res, import_arbin_xls, import_bitrode, split_phases
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
+
 
 if ~exist('options','var')
     options = '';
 end
-%options d'execution
+%Running options
 verbose = ismember('v',options);
 
 
@@ -37,24 +42,24 @@ U_threshold2 = 2*U_threshold;
 %decompose vectors depending of Step value
 [phases, tcell, Icell, Ucell, Steps] = split_phases(t,I,U,Step,'u');
 
-%FUSION DE STEPS COURTS (profil)
-%trouver des Steps courts et les fusionner
+%Merge short steps (profil)
+%Find and merge short steps
 Is = [phases.duration]<=1;
-Idebut = Is & ~[0 Is(1:end-1)];%step actuel est court et celui d'avant non
-Ifin = Is & ~[Is(2:end) 0];%step actuel est court et celui d'apres non
-Debuts = find(Idebut);
-Fins = find(Ifin);
-nbSteps = Fins-Debuts;%nb de steps entre un 'debut' et une 'fin'
-%on ne retient que les series d'au moins 10 steps courts consecutifs:
-Debuts = Debuts(nbSteps>10);
-Fins = Fins(nbSteps>10);
+Idebut = Is & ~[0 Is(1:end-1)];%current step is short and previous not
+Ifin = Is & ~[Is(2:end) 0];%current step is short and following not
+Starts = find(Idebut);
+Ends = find(Ifin);
+nbSteps = Ends-Starts;%steps number between 'start' and 'end'
+%Only the series with at least 10 consecutives shorts steps are kept 
+Starts = Starts(nbSteps>10);
+Ends = Ends(nbSteps>10);
 
 
 newStep = Step;
-for ind = 1:length(Debuts)
-    tDebut = phases(Debuts(ind)).t_ini;%debut de la premiere phase courte
-    t_fin = phases(Fins(ind)).t_fin;%fin de la derniere phase courte
-    indices = t>=tDebut & t<=t_fin;%FIX: effet de bord?
+for ind = 1:length(Starts)
+    tStart = phases(Starts(ind)).t_ini;%start of the first short phase 
+    t_fin = phases(Ends(ind)).t_fin;%end of the last short phase 
+    indices = t>=tStart & t<=t_fin;%FIX: effet de bord?
     newStep(indices) = -1;%marquage profil
 end
 
