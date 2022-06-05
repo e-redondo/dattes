@@ -19,7 +19,7 @@ function plot_efficiency(pDoD, pEff)
 
 hf = figure('name','ident pOCV(Effi)');hold on
 for ind = 1:length(pEff)
-plot(pDoD,pEff{ind},'k-','tag','efficiency')
+plot(pDoD,pEff,'k-','tag','efficiency')
 end
 ylabel('efficiency [p.u.]'),xlabel('DoD [Ah]')
 

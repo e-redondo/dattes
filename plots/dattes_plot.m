@@ -1,12 +1,12 @@
-function [result, config, phases] = dattes_plot(XMLfile,options)
+function [result, config, phases] = dattes_plot(xml_file,options)
 % dattes_plot calls plot functions
 %
-% [result, config, phases] = dattes_plot(XMLfile,options)
+% [result, config, phases] = dattes_plot(xml_file,options)
 % Read the *.xml file of a battery test and plot figures of
 % characteristics analysed
 %
 % Usage:
-% [result, config, phases] = dattes_plot(XMLfile,options)
+% [result, config, phases] = dattes_plot(xml_file,options)
 % Inputs:
 % - xml_file:
 %     -   [1xn string]: pathame to the xml file
@@ -27,11 +27,11 @@ function [result, config, phases] = dattes_plot(XMLfile,options)
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 %% 0.1.- check inputs:
-if ~ischar(XMLfile) && ~iscell(XMLfile)
+if ~ischar(xml_file) && ~iscell(xml_file)
     error('dattes_plot: xml_file must be a string (pathname) or a cell (filelist)');
 end
 
-if ischar(XMLfile)
+if ischar(xml_file)
     if ~exist(xml_file,'file')
         error('dattes_plot: file not found');
     end
@@ -42,20 +42,20 @@ if ~ischar(options)
 end
 
 
-if iscell(XMLfile)
-    [result, config, phases] = cellfun(@(x) dattes_plot(x,options),XMLfile,'UniformOutput',false);
+if iscell(xml_file)
+    [result, config, phases] = cellfun(@(x) dattes_plot(x,options),xml_file,'UniformOutput',false);
     %mise en forme (cell 2 struct):
     [result, config, phases] = compil_result(result, config, phases);
     return;
 end
 %1.load results
-[result, config, phases] = load_result(XMLfile,options);
+[result, config, phases] = load_result(xml_file,options);
 if isempty(fieldnames(result))
-    fprintf('dattes_plot: Nothing to plot in %s\n',XMLfile);
+    fprintf('dattes_plot: Nothing to plot in %s\n',xml_file);
     return;
 end
 %2.load profiles
-[t,U,I,m,DoDAh,SOC,T] = extract_profiles(XMLfile,options,config);
+[t,U,I,m,DoDAh,SOC,T] = extract_profiles(xml_file,options,config);
 
 %title for figures
 [~, title, ~] = fileparts(result.test.file_in);
@@ -86,7 +86,7 @@ if ismember('C',options)
     %show result of 'C', i.e. Capacity
     if isfield(result,'capacity')
         plot_capacity(result.capacity.cc_capacity, result.capacity.cc_crate);
-        title(XMLfile,'interpreter','none')
+        title(xml_file,'interpreter','none')
     else
         fprintf('no capacity result found in %s\n',result.test.file_in);
     end
@@ -114,7 +114,7 @@ if ismember('O',options)
 end
 if ismember('E',options)
     %show result of 'E', i.e. Efficiency
-    plot_efficiency(result.pDoD,result.pEff);
+    plot_efficiency(result.pseudo_ocv.dod,result.pseudo_ocv.efficiency);
 end
 if ismember('R',options)
     %show result of 'R', i.e. Resistance
