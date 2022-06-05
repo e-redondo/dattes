@@ -1,12 +1,42 @@
  function [impedance]=ident_rrc(t,U,I,dod_ah,config,phases,options)
-%ident_rrc R+RC identification from a profile t,U,I,m
-%t,U,I from extract_profiles
-%dod_ah from calcul_soc, depth of discharge in Amphours
-%config from configurator
+ % ident_rrc impedance analysis of a R+two RC topology
+%
+% [impedance]=ident_rrc(t,U,I,dod_ah,config,phases,options)
+% Read the config and phases structure and performe several calculations
+% regarding impedance analysis.  Results are returned in the structure impedance analysis 
+%
+% Usage:
+% [impedance]=ident_rrc(t,U,I,dod_ah,config,phases,options)
+% Inputs:
+% - t [nx1 double]: time in seconds
+% - U [nx1 double]: cell voltage
+% - dod_ah [nx1 double]: depth of discharge in AmpHours
+% - config [1x1 struct]: config struct from configurator
+% - phases [1x1 struct]: phases struct from decompose_phases
+% - options [string] containing:
+%   - 'v': verbose, tell what you do
+%   - 'g' : show figures
+%
+% Output:
+% - impedance [(1x1) struct] with fields:
+%     - topology [string]: Impedance model topology
+%     - r0 [kx1 double]: Ohmic resistance
+%     - r1 [kx1 double]: R1 resistance
+%     - C1 [kx1 double]: C1 capacity
+%     - r2 [kx1 double]: R2 resistance
+%     - C2 [kx1 double]: C2 capacity
+%     - crate [kx1 double]: C-Rate of each impedance measurement
+%     - dod [kx1 double]: Depth of discharge of each impedance measurement
+%     - time [kx1 double]: time of each impedance measurement
 %
 %See also dattes, calcul_soc, configurator, extract_profiles
-%%%
-%% 0- Inputs management
+%
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
+
+%% check inputs:
 
 if ~exist('options','var')
     options = '';
@@ -16,19 +46,19 @@ if ismember('v',options)
 end
 
 if nargin<6 || nargin>8
-    fprintf('ident_rrc: 7 inputs arguments are expected, found : %d\n',nargin);
+    fprintf('ident_rrc : wrong number of parameters, found %d\n',nargin);
     return;
 end
 if ~isstruct(config) || ~ischar(options) || ~isnumeric(t) || ~isstruct(phases)   || ~isnumeric(U) || ~isnumeric(I) || ~isnumeric(dod_ah)
-    fprintf('ident_rrc:input class is not correct\n');
+    fprintf('ident_rrc: wrong type of parameters\n');
     return;
 end
 if ~isfield(config,'impedance')
-    fprintf('ident_rrc: impedance field in config is missing');
+    fprintf('ident_rrc: incomplete structure config, redo configurator: dattes(''cs'')\n');
     return;
 end    
 if ~isfield(config.impedance,'initial_params') || ~isfield(config.impedance,'pulse_max_duration')
-    fprintf('ident_rrc: configuration structure is not complete\n initial_params and pulse_max_duration are expected ');
+    fprintf('ident_rrc: incomplete structure config, redo configurator: dattes(''cs'')\n');
     return;
 end
 
@@ -38,15 +68,8 @@ impedance=struct([]);
 r0=[];
 r1=[];
 c1=[];
-% r1c1_time=[];
-% r1c1_dod=[];
-% r1c1_crate=[];
-
 r2=[];
 c2=[];
-% r2c2_time=[];
-% r2c2_dod=[];
-% r2c2_crate=[];
 rrc_time = [];
 rrc_dod = [];
 rrc_crate = [];
@@ -99,9 +122,6 @@ r1=[r1 R1id];
 c1=[c1 C1id];
 
 
-% r1c1_time=[r1c1_time tm1(1)];
-% r1c1_dod=[r1c1_dod dod_phase(1)];
-% r1c1_crate=[r1c1_crate max(abs(Im1))];
 
 Us_rsr1c1 = reponseRRC(time_phase,current_phase,Rsid,R1id,C1id);
 
@@ -115,9 +135,7 @@ Umrc2 = voltage_phase-Us_rsr1c1;
 r2=[r2 R2id];
 c2=[c2 C2id];
 
-% r2c2_time=[r2c2_time tm(1)];
-% r2c2_dod=[r2c2_dod dod_phase(1)];
-% r2c2_crate=[r2c2_crate max(abs(current_phase))];
+
 
 Usr2c2 = rc_output(time_phase,current_phase,R2id,C2id);
  
@@ -159,14 +177,8 @@ end
   impedance.r0=r0;
   impedance.r1=r1;
   impedance.c1=c1;
-  % impedance.r1c1_time=r1c1_time;
-  % impedance.r1c1_dod=r1c1_dod;
-  % impedance.r1c1_crate=r1c1_crate;
   impedance.r2=r2;
   impedance.c2=c2;
-  % impedance.r2c2_time=r2c2_time;
-  % impedance.r2c2_dod=r2c2_dod;
-  % impedance.r2c2_crate=r2c2_crate;
   impedance.time = rrc_time;
   impedance.dod = rrc_dod;
   impedance.crate = rrc_crate;

@@ -1,14 +1,20 @@
 function [capacity] = ident_capacity(config,phases,options)
 %ident_capacity capacity identification
-% [capacity, capacity_rate, capa_time, cv_voltage, cv_duration, cv_capacity, cv_time] = ident_capacity(config,phases,options)
 %
-% INPUTS:
-% config (1x1) configuration structure from configurator
-% phases (1xn) phases array structure from split_phases
+% [capacity] = ident_capacity(config,phases,options)
+% Read the config and phases structure and performe several calculations
+% regarding capacity.  Results are returned in the structure capacity 
+%
+% Usage:
+% [capacity] = ident_capacity(config,phases,options)
+% Inputs : 
+% config (1x1 struct) configuration structure from configurator
+% phases (1xn struct) phases array structure from split_phases
 % options (string) containing:
 %   - 'v': verbose, tell what you do
+%   - 'g' : show figures
 %
-% OUTPUTS:
+% Output:
 % - capacity [(1x1) struct] with fields:
 %     - cc_capacity (1xk) double: CC capacity measurements
 %     - cc_crate (1xk) double: C-Rate of each CC capacity measurement
@@ -20,6 +26,10 @@ function [capacity] = ident_capacity(config,phases,options)
 %     - cv_duration (1xj) double: duration of each CV phase
 %
 % See also dattes, split_phases, configurator, plot_capacity
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if ~exist('options','var')
     options='';
@@ -32,25 +42,25 @@ capacity = struct([]);
 cc_capacity = [];
 cc_crate = [];
 
-%gestion d'erreurs:
+%% check inputs:
 if nargin<2 || nargin>3
-    fprintf('ident_capacity: wrong number of parametres, found %d\n',nargin);
+    fprintf('ident_capacity: wrong number of parameters, found %d\n',nargin);
     return;
 end
 if ~isstruct(phases) || ~isstruct(config) || ~ischar(options)
-    fprintf('ident_capacity: wrong type of parametres\n');
+    fprintf('ident_capacity: wrong type of parameters\n');
     return;
 end
 if ~isfield(config,'capacity')
-    fprintf('ident_capacity: structure config incomplete, redo configurator: dattes(''cs'')\n');
+    fprintf('ident_capacity: incomplete structure config, redo configurator: dattes(''cs'')\n');
     return;
 end
 if ~isfield(config.capacity,'pCapaD') || ~isfield(config.capacity,'pCapaC') || ~isfield(config.capacity,'pCapaDV') || ~isfield(config.capacity,'pCapaCV')
-    fprintf('ident_capacity: structure config incomplete, redo configurator: dattes(''cs'')\n');
+    fprintf('ident_capacity: incomplete structure config, redo configurator: dattes(''cs'')\n');
     return;
 end
 if ~isfield(phases,'capacity') || ~isfield(phases,'duration') || ~isfield(phases,'Iavg') || ~isfield(phases,'Uavg')
-    fprintf('ident_capacity: structure phases incomplete, redo decompose: dattes(''ps'')\n');
+    fprintf('ident_capacity: incomplete structure phases, redo decompose: dattes(''ps'')\n');
     return;
 end
 
