@@ -68,7 +68,7 @@ end
 phases_cc = phases(config.capacity.pCapaD | config.capacity.pCapaC);
 cc_capacity = abs([phases_cc.capacity]);
 cc_crate = [phases_cc.Iavg]./config.test.capacity;
-cc_time = [phases_cc.t_ini];
+cc_time = [phases_cc.t_fin];
 cc_duration = [phases_cc.duration];
 
 %CV part
@@ -78,7 +78,12 @@ cv_voltage = [phases_cv.Uavg];
 cv_time = [phases_cv.t_ini];
 cv_duration = [phases_cv.duration];
 
-
+%CC+CV
+[C,I_cc_time,I_cv_time] = intersect(cc_time+1,cv_time,'stable');
+cc_cv_capacity=cc_capacity(I_cc_time)+cv_capacity(I_cv_time);
+cc_cv_duration=cc_duration(I_cc_time)+cv_duration(I_cv_time);
+  
+  
 %put into output structure:
 capacity(1).cc_capacity = cc_capacity;
 capacity.cc_crate = cc_crate;
@@ -88,7 +93,10 @@ capacity.cv_capacity = cv_capacity;
 capacity.cv_voltage = cv_voltage;
 capacity.cv_time = cv_time;
 capacity.cv_duration = cv_duration;
-    
+
+capacity.cc_cv_capacity=cc_cv_capacity;
+capacity.cc_cv_duration=cc_cv_duration;
+
 if ismember('v',options)
     fprintf('OK\n');
 end
