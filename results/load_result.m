@@ -38,7 +38,7 @@ fileOut = result_filename(XMLfile);
 %check if file exists
 if exist(fileOut,'file')
     if ismember('v',options)
-        fprintf('load_result:charger resultats et config %s...',XMLfile);
+        fprintf('load_result:load results and config %s...',XMLfile);
     end
     %list variables in MAT file
     S = who('-file',fileOut);
@@ -59,7 +59,7 @@ if exist(fileOut,'file')
     end
 else
     if ismember('v',options)
-        fprintf('load_result:le fichier %s n''existe pas, variables initialisées\n',fileOut);
+        fprintf('load_result: the file %s did not exist yet, variables initialized\n',fileOut);
     end
 end
 if ~exist('config','var')
