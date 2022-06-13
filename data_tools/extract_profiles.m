@@ -25,7 +25,8 @@ function [t,U,I,m,dod_ah,soc,T, eis, err] = extract_profiles(thisXML,options,con
 
 if ~exist('config','var')
     Uname = 'U';
-else
+    Tname = '';
+elseif isfield(config,'test')
     if ~isfield(config.test,'Uname')
         Uname = 'U';
     else
@@ -36,6 +37,9 @@ else
     else
         Tname = config.test.Tname;
     end
+else
+    Uname = 'U';
+    Tname = '';
 end
 if ~exist('options','var')
     options = '';

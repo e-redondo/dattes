@@ -73,10 +73,10 @@ if ismember('u',options)%option 'unpatch', defaire ce que l'on a fait
         c(ind).soc.dod_ah_ini = [];
         c(ind).soc.dod_ah_fin = [];
         
-        r(ind).dod_ah_ini = [];
-        r(ind).soc_ini = [];
-        r(ind).dod_ah_fin = [];
-        r(ind).soc_fin = [];
+        r(ind).test.dod_ah_ini = [];
+        r(ind).test.soc_ini = [];
+        r(ind).test.dod_ah_fin = [];
+        r(ind).test.soc_fin = [];
         if verbose
             fprintf('reset SOC for %s\n',r(ind).test.file_in);
         end
@@ -121,7 +121,7 @@ if ismember('b',options)%before: search for previous test
             end
         end
         save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%sauvegarder la configuration
-        r(indEmptySOC(ind)) = dattes(xml{indEmptySOC(ind)},c(indEmptySOC(ind)).CFGfile,'Ss');%recalculer le SOC
+        r(indEmptySOC(ind)) = dattes(xml{indEmptySOC(ind)},'Ss',c(indEmptySOC(ind)).test.cfg_file);%recalculer le SOC
         if isempty(r(indEmptySOC(ind)).test.soc_ini)
             fprintf('calcul_soc %s >>>>>>>>>>>>NOK\n',r(indEmptySOC(ind)).test.file_in);
         else
@@ -138,8 +138,8 @@ elseif ismember('a',options)%after: search for following test
             end
         end
         save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%sauvegarder la configuration
-        r(indEmptySOC(ind)) = dattes(xml{indEmptySOC(ind)},c(indEmptySOC(ind)).CFGfile,'Ss');%recalculer le SOC
-        if isempty(r(indEmptySOC(ind)).soc_ini)
+        r(indEmptySOC(ind)) = dattes(xml{indEmptySOC(ind)},'Ss',c(indEmptySOC(ind)).test.cfg_file);%recalculer le SOC
+        if isempty(r(indEmptySOC(ind)).test.soc_ini)
             fprintf('calcul_soc %s >>>>>>>>>>>>NOK\n',r(indEmptySOC(ind)).test.file_in);
         else
             fprintf('calcul_soc %s >>>>>>>>>>>>OK\n',r(indEmptySOC(ind)).test.file_in);
