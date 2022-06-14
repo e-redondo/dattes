@@ -1,11 +1,11 @@
-function plot_ica(ica)
+function hf = plot_ica(ica)
 % plot_ica plot incremental capacity analysis graphs
 %
 % plot_ica(ica)
 % Use ica structure to plot incremental capacity analysis graphs
 %
 % Usage:
-% plot_ica(ica)
+% hf = plot_ica(ica)
 % Inputs:
 % - ica [mx1 struct] with fields:
 %   - dqdu [px1 double]: voltage derivative of capacity
@@ -15,6 +15,8 @@ function plot_ica(ica)
 %   - crate [1x1 double]: charge or discharge C-rate
 %   - time [1x1 double]: time of measurement
 % - title_str: [string] title string
+% Output:
+% - hf [1x1 figure handler]: handler for created figure
 %
 % See also dattes, dattes_plot, configurator, extract_profiles
 %
@@ -23,7 +25,7 @@ function plot_ica(ica)
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 
-    figure;
+    hf = figure;
     for ind = 1:length(ica)
         qf = ica(ind).q;
         uf = ica(ind).u;

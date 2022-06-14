@@ -1,14 +1,16 @@
-function plot_capacity(cc_capacity, cc_crate)
+function hf = plot_capacity(cc_capacity, cc_crate)
 % plot_capacity plot capacity graphs
 %
 % plot_capacity(cc_capacity, cc_crate)
 % Use cc_capacity and cc_crate to plot CC capacity graphs
 %
 % Usage:
-% plot_capacity(cc_capacity, cc_crate)
+% hf = plot_capacity(cc_capacity, cc_crate)
 % Inputs:
 %  - cc_capacity: [nx1] Capacity during CC phase in Ah
 %  - cc_crate: [nx1] C-rate during CC phase in Ah
+% Output:
+% - hf [1x1 figure handler]: handler for created figure
 %
 % See also dattes, dattes_plot, configurator, extract_profiles
 %

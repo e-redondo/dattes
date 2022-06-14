@@ -1,13 +1,12 @@
 function hf = plot_phases(t,U,I,phases,title_str,options)
 %plot_phases visualize phases of a test
 %
-% hf = plot_phases(t,U,I,phases,title_str,options)
 % Make a figure with two subplots: U vs. t et I vs. t. with identified
 % phases by split_phases function (CC, CV, rest, etc.). If more than 100
 % phases, only longer 100 phases will be ploted (color and number).
 %
 % Usage:
-% plot_phases(t,U,I,phases,title_str,options)
+% hf = plot_phases(t,U,I,phases,title_str,options)
 % Inputs:
 % - t [nx1 double]: time in seconds
 % - U [nx1 double]: voltage in V
@@ -16,6 +15,8 @@ function hf = plot_phases(t,U,I,phases,title_str,options)
 %     -  
 %     -  
 % - title: [string] title string
+% Output:
+% - hf [1x1 figure handler]: handler for created figure
 %
 %
 % See also dattes, split_phases, which_mode

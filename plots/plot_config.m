@@ -7,13 +7,15 @@ function hf = plot_config(t,U,config,phases,title_str,options)
 % phases, only longer 100 phases will be ploted (color and number).
 %
 % Usage:
-% plot_config(t,U,config,phases,title_str,options)
+% hf = plot_config(t,U,config,phases,title_str,options)
 % Inputs:
 % - t [nx1 double]: time in seconds
 % - U [nx1 double]: voltage in V
 % - config [nx1 struct]: configuration structure
 % - phases [nx1 struct]] phases structure
 % - title: [string] title string
+% Output:
+% - hf [1x1 figure handler]: handler for created figure
 %
 % See also dattes, dattes_plot, configurator, extract_profiles
 %

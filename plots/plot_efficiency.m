@@ -1,14 +1,16 @@
-function plot_efficiency(pDoD, pEff)
+function hf = plot_efficiency(pDoD, pEff)
 % plot_efficiency plot efficiency graphs
 %
 % plot_ocv_by_points(t,U,DoDAh, ocv_by_points)
 % Use pDoD and pEff structure to plot efficiency graphs
 %
 % Usage:
-% plot_efficiency(pDoD, pEff)
+% hf = plot_efficiency(pDoD, pEff)
 % Inputs:
 % - pDoD [nx1 double]: Depth of discharge
 % - pEff [nx1 double]: Efficiency
+% Output:
+% - hf [1x1 figure handler]: handler for created figure
 %
 %See also dattes, dattes_plot, configurator, extract_profiles
 %

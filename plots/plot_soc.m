@@ -1,7 +1,6 @@
 function hf = plot_soc(t, I, DoDAh, SOC, config,title_str,options)
 % plot_soc plot state of charge graphs
 %
-% hf = plot_soc(t, I, DoDAh, SOC, config,title_str,options)
 % Use t, I, DoDAh and SOC to plot state of charge graphs
 %
 % Usage:
@@ -16,9 +15,8 @@ function hf = plot_soc(t, I, DoDAh, SOC, config,title_str,options)
 % - options [string] containing:
 %   - 'v': verbose, tell what you do
 %   - 'g' : show figures
-%
-% Outputs : 
-% - hf: [1x1 struct] figure handle
+% Output:
+% - hf [1x1 figure handler]: handler for created figure
 %
 %See also dattes, dattes_plot, configurator, extract_profiles
 %

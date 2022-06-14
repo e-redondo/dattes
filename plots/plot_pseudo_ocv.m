@@ -1,11 +1,10 @@
-function plot_pseudo_ocv(pseudo_ocv)
+function hf = plot_pseudo_ocv(pseudo_ocv)
 % plot_pseudo_ocv plot pseudo ocv graphs
 %
-% plot_pseudo_ocv(pseudo_ocv)
 % Use pseudo_ocv structure to plot pseudo ocv graphs
 %
 % Usage:
-% plot_pseudo_ocv(pseudo_ocv)
+% hf = plot_pseudo_ocv(pseudo_ocv)
 % Inputs:
 % - pseudo_ocv [(qx1) struct]: if found "q" pairs charge/discharge half
 % cycles of equal C-rate, with fields:
@@ -17,6 +16,8 @@ function plot_pseudo_ocv(pseudo_ocv)
 %      - u_discharge [(kx1) double]: voltage during discharging half cycle
 %      - crate [(1x1) double]: C-rate
 %      - time [(1x1) double]: time of measurement
+% Output:
+% - hf [1x1 figure handler]: handler for created figure
 %
 % See also dattes, dattes_plot, configurator, extract_profiles
 %

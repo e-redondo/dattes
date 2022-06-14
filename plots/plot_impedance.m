@@ -1,11 +1,11 @@
-function plot_impedance(impedance,title_str)
+function hf = plot_impedance(impedance,title_str)
 % plot_impedance plot impedance graphs
 %
 % plot_impedance(impedance,title_str)
 % Use impedance structure to plot impedance graphs
 %
 % Usage:
-% plot_impedance(impedance,title_str)
+% hf = plot_impedance(impedance,title_str)
 % Inputs:
 % For CPE topology
 % - impedance [(1x1) struct] with fields:
@@ -28,6 +28,8 @@ function plot_impedance(impedance,title_str)
 %     - dod [kx1 double]: Depth of discharge of each impedance measurement
 %     - time [kx1 double]: time of each impedance measurement
 % - title_str: [string] title string
+% Output:
+% - hf [1x1 figure handler]: handler for created figure
 %
 % See also dattes, dattes_plot, configurator, extract_profiles
 %

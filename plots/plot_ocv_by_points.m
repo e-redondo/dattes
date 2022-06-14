@@ -1,11 +1,10 @@
-function plot_ocv_by_points(t,U,DoDAh, ocv_by_points)
+function hf = plot_ocv_by_points(t,U,DoDAh, ocv_by_points)
 % plot_ocv_by_points plot ocv by points graphs
 %
-% plot_ocv_by_points(t,U,DoDAh, ocv_by_points)
 % Use t, U, DoDAh and ocv_by_points structure to plot  ocv by points graphs
 %
 % Usage:
-% plot_ocv_by_points(t,U,DoDAh, ocv_by_points)
+% hf = plot_ocv_by_points(t,U,DoDAh, ocv_by_points)
 % Inputs:
 % - t [nx1 double]: time in seconds
 % - U [nx1 double]: voltage in V
@@ -15,6 +14,8 @@ function plot_ocv_by_points(t,U,DoDAh, ocv_by_points)
 %     - dod [(px1) double]: depth of discharge
 %     - sign [(px1) double]: current sign before rest
 %     - time [(px1) double]: time of measurement
+% Output:
+% - hf [1x1 figure handler]: handler for created figure
 %
 %
 %

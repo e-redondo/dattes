@@ -26,6 +26,12 @@ function [result, config, phases] = dattes_plot(xml_file,options)
 % For more information, see the <a href="matlab: 
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
+if iscell(xml_file)
+    [result, config, phases] = cellfun(@(x) dattes_plot(x,options),xml_file,'UniformOutput',false);
+    %mise en forme (cell 2 struct):
+    [result, config, phases] = compil_result(result, config, phases);
+    return;
+end
 %% 0.1.- check inputs:
 if ~ischar(xml_file) && ~iscell(xml_file)
     error('dattes_plot: xml_file must be a string (pathname) or a cell (filelist)');
@@ -42,12 +48,6 @@ if ~ischar(options)
 end
 
 
-if iscell(xml_file)
-    [result, config, phases] = cellfun(@(x) dattes_plot(x,options),xml_file,'UniformOutput',false);
-    %mise en forme (cell 2 struct):
-    [result, config, phases] = compil_result(result, config, phases);
-    return;
-end
 %1.load results
 [result, config, phases] = load_result(xml_file,options);
 if isempty(fieldnames(result))

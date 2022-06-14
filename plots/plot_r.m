@@ -1,11 +1,10 @@
-function plot_r(resistance)
+function hf = plot_r(resistance)
 % plot_r plot resistance graphs
 %
-% plot_r(resistance)
 % Use resistance structure to plot resistance graphs
 %
 % Usage:
-% plot_r(resistance)
+% hf = plot_r(resistance)
 % Inputs:
 % - resistance [(1x1) struct] with fields:
 %     - R [(qx1) double]: resistance value (Ohms)
@@ -13,6 +12,8 @@ function plot_r(resistance)
 %     - crate [(qx1) double]: current rate (C)
 %     - time [(qx1) double]: time of measurement (s)
 %     - delta_time [(qx1) double]: time from pulse start (s)
+% Output:
+% - hf [1x1 figure handler]: handler for created figure
 %
 %See also dattes, dattes_plot, configurator, extract_profiles
 %

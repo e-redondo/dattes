@@ -1,4 +1,4 @@
-function plot_eis(eis,title,options)
+function hf = plot_eis(eis,title,options)
 % plot_eis plot eis graphs
 %
 % plot_eis(eis,titre,options)
@@ -11,6 +11,8 @@ function plot_eis(eis,title,options)
 %   - ReZ [px1 double]: Real part of impedance 
 %   - ImZ [px1 double]: Imaginary part of impedance 
 % - title: [string] title string
+% Output:
+% - hf [1x1 figure handler]: handler for created figure
 %
 % See also dattes, dattes_plot, configurator, extract_profiles
 %
