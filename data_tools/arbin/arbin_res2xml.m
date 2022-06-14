@@ -4,11 +4,12 @@ function [xml_list] = arbin_res2xml(dirname,options)
 % Usage:
 % [xml_list] = arbin_res2xml(dirname,options)
 % Inputs:
-% - xml_list [1x,cell] : xml files list
-% Outputs:
-% - dirname [string]: source directory path
+% - dirname [string]: source directory path to search .res files in
+%           [nx1 cell string]: filelist instead srcdir
 % - options :
 %    - 'f' : 'force', write *.xml if it already exists
+% Output:
+% - xml_list [nx1,cell] : xml files list
 %
 % Examples
 % arbin_res2xml(dirname) search all *.res in srcdir and write a *.xml for every *.res

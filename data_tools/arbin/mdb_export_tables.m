@@ -15,17 +15,19 @@ function mdb_export_tables(res_file)
 % For more information, see the <a href="matlab: 
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
-if ~exist(res_file,'file')
-    fprintf('mdb_export_tables: File not found: %s\n',res_file);
+if iscell(res_file)
+    cellfun(@mdb_export_tables,res_file);
     return;
 end
 
-cellfun(@mdb_export_tables,res_file);
-  return;
-end
 if isdir(res_file)
     res = lsFiles(res_file,'.res');
     mdb_export_tables(res);
+    return;
+end
+
+if ~exist(res_file,'file')
+    fprintf('File not found: %s\n',res_file);
     return;
 end
 
