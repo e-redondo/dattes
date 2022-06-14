@@ -29,7 +29,7 @@ CSV = strtrim(regexp(lignes,'.*\t','match','once'));
 Dates = strtrim(regexp(lignes,'\t.*$','match','once'));
 
 %windows compatibility issue: always write with / separator
-CSV = regexprep(CSV,'/|\','/');
+CSV = regexprep(CSV,'/|\\','/');
 [~,~,Is] = regexpFiltre(CSV,CSVfile);
 Date = Dates(Is);
 end

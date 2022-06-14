@@ -35,7 +35,7 @@ end
 [Dates, Is] = sort(Dates);
 CSV = CSV(Is);
 %windows compatibility issue: always write with / separator
-CSV = regexprep(CSV,'/|\','/');
+CSV = regexprep(CSV,'/|\\','/');
 fid = fopen(fullfile(srcdir,'bitrode.log'),'w+');
 for ind = 1:length(CSV)
     fprintf(fid,'%s\t%s\n',CSV{ind},Dates{ind});
