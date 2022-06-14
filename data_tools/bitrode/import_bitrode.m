@@ -1,8 +1,8 @@
 function xml = import_bitrode(filename,dirname,options)
 % import_bitrode Bitrode *.csv to VEHLIB XMLstruct converter
 % 
-% xml = import_bitrode(filename,pathname)
 % Usage 
+% xml = import_bitrode(filename,pathname)
 % Inputs:
 % - filename (string): filename or full pathname
 % - dirname (string): path to the folder containing the file (empty if
