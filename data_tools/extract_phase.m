@@ -7,11 +7,11 @@ function [tp,varargout] = extract_phase(phase,t,varargin)
 % Inputs:
 % - phase (1x1 struct): phase struct from split_phases
 % - t (nx1 double): time vector from extract_profiles
-% - varargin
+% - varargin (nx1 doubles): other vectors (U, I, m, ...)
 %
 % Outputs:
 % - tp (px1 double): subvector corresponding to time at the specific phase
-% - varargout
+% - varargout (px1 doubles): other subvectors (Up, Ip, mp, ...)
 %
 % See also extract_phase2, split_phases, extract_profiles 
 %
