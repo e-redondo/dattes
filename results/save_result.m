@@ -63,5 +63,5 @@ else
     return
 end
 %save these variables in this file
-save(fileOut,'result','config','phases');
+save(fileOut,'-v7','result','config','phases');
 end
