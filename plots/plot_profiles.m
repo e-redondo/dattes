@@ -1,4 +1,4 @@
-function hf = plot_profiles(t,U,I,m,title,options)
+function hf = plot_profiles(t,U,I,m,title_str,options)
 %plot_profiles visualize profiles of a test
 %
 % plot_profiles(t,U,I,m,title,options)
@@ -11,7 +11,7 @@ function hf = plot_profiles(t,U,I,m,title,options)
 % - U [nx1 double]: voltage in V
 % - I [nx1 double]: current in A
 % - m [nx1 double]] phase mode
-% - title: [string] title string
+% - title_str: [string] title string
 % Output:
 % - hf [1x1 figure handler]: handler for created figure
 %
@@ -46,7 +46,7 @@ end
 hf = figure;
 subplot(211),plot(t1,U,'b','displayname','test'),hold on,xlabel(x_lab),ylabel('voltage')
 
-title(title,'interpreter','none')
+title(title_str,'interpreter','none')
 subplot(212),plot(t1,I,'b','displayname','test'),hold on,xlabel(x_lab),ylabel('current')
 
 c = 'rgcmk';
@@ -59,7 +59,7 @@ for ind = 1:5
 end
 
 %Look for all axis handles and ignore legends
-ha = findobj(h, 'type', 'axes', 'tag', '' );
+ha = findobj(hf, 'type', 'axes', 'tag', '' );
 arrayfun(@(x) legend(x,'show','location','eastoutside'),ha);
 % printLegTag(ha,'eastoutside');
 linkaxes(ha, 'x' );

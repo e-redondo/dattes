@@ -58,35 +58,35 @@ end
 [t,U,I,m,DoDAh,SOC,T] = extract_profiles(xml_file,options,config);
 
 %title for figures
-[~, title, ~] = fileparts(result.test.file_in);
+[~, title_str, ~] = fileparts(result.test.file_in);
 InherOptions = options(ismember(options,'hdD'));
 
 if ismember('x',options)
     %show result of 'x', i.e. profiles
-    plot_profiles(t,U,I,m,title,InherOptions);
+    plot_profiles(t,U,I,m,title_str,InherOptions);
 end
 if ismember('e',options)%EIS
     if isfield(result,'eis')
-        plot_eis(result.eis,title);
+        plot_eis(result.eis,title_str);
     end
 end
 if ismember('p',options)
     %show result of 'd', i.e. split_phases
-    plot_phases(t,U,I,phases,title,InherOptions);
+    plot_phases(t,U,I,phases,title_str,InherOptions);
 end
 if ismember('c',options)
     %show result of 'c', i.e. configurator
-    plot_config(t,U,config,phases,title,InherOptions);
+    plot_config(t,U,config,phases,title_str,InherOptions);
 end
 if ismember('S',options)
     %show result of 'S', i.e. SOC
-    plot_soc(t,I, DoDAh, SOC,config,title,InherOptions);
+    plot_soc(t,I, DoDAh, SOC,config,title_str,InherOptions);
 end
 if ismember('C',options)
     %show result of 'C', i.e. Capacity
     if isfield(result,'capacity')
         plot_capacity(result.capacity.cc_capacity, result.capacity.cc_crate);
-        title(xml_file,'interpreter','none')
+        title(title_str,'interpreter','none')
     else
         fprintf('no capacity result found in %s\n',result.test.file_in);
     end
@@ -114,7 +114,15 @@ if ismember('O',options)
 end
 if ismember('E',options)
     %show result of 'E', i.e. Efficiency
-    plot_efficiency(result.pseudo_ocv.dod,result.pseudo_ocv.efficiency);
+    if isfield(result,'pseudo_ocv')
+        if ~isempty(result.pseudo_ocv)
+           plot_efficiency(result.pseudo_ocv.dod,result.pseudo_ocv.efficiency);
+        else
+            fprintf('no efficiency (pseudo_ocv) result found in %s\n',result.test.file_in);
+        end
+    else
+        fprintf('no efficiency (pseudo_ocv) result found in %s\n',result.test.file_in);
+    end
 end
 if ismember('R',options)
     %show result of 'R', i.e. Resistance
@@ -128,7 +136,7 @@ end
 if ismember('Z',options)
     %show result of 'Z', i.e. impedance
     if isfield(result,'impedance')
-        plot_impedance(result.impedance,title);
+        plot_impedance(result.impedance,title_str);
     else
         fprintf('no impedance result found in %s\n',result.test.file_in);
     end
