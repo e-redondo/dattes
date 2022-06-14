@@ -4,10 +4,10 @@ function [head, body, empty_mpt] = read_biologic_file(fid,just_head)
 % Usage:
 % [head, body, empty_mpt] = read_biologic_file(fid,just_head)
 %
-% INPUTS
+% Inputs
 % - fid : valid file handler
 % - just_head (opional, boolean): if true, just read file header (metadata)
-% OUTPUTS
+% Outputs
 % - head (px1 cell string): file header (metadata)
 % - body (mxn double): du fichier (data)
 % - empty_mpt (boolean): true if file contains no data (test stopped

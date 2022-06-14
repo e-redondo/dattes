@@ -4,13 +4,13 @@ function [xml_list] = biologic_mpt2xml_files(srcdir,options)
 % Usage:
 % [xml_list] = biologic_mpt2xml_files(srcdir,options)
 % Inputs:
-% - xml_list [1x,cell] : xml files list
-% Outputs:
-% - srcdir [string]: source directory path
+% - srcdir [string]: source directory path to search .mpt files in.
+%          [nx1 cell string]: file list instead srcdir
 % - options :
 %    - 'f' : 'force', write *.xml if it already exists
 %    - 'v' : 'verbose', tells what it does
-%    - 'm' : 'multicell', write *.xml separately for each cell
+% Output:
+% - xml_list [nx1,cell] : xml files list
 %
 % Examples
 % biologic_mpt2xml_files(srcdir) search all *.mpt in srcdir and write a *.xml for every *.mpt

@@ -10,7 +10,7 @@ function [head, date_test, type_test, source_file, empty_file] = biologic_head(f
 %   - date_test: [string]  Test date with format yyyymmdd_HHMMSS
 %   - type_test : [string]  Test type 
 %   - source_file: [string]  Source file
-%   - empty_file : [Boolean]  True if last line
+%   - empty_file : [Boolean]  True if just header in file (no data)
 %
 % See also read_biologic_file, analyze_head
 %
