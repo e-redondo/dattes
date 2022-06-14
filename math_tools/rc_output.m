@@ -32,8 +32,7 @@ if ~isequal(size(t),size(I)) || size(t,1)~=length(t)
     fprintf('rc_output:Error, t and I must have the same size (nx1)\n');
     return
 end
-R = R(1);
-C = C(1);
+
 
 
 dI = [I(1); diff(I)];

@@ -70,10 +70,10 @@ if ismember('u',options)%option 'unpatch', defaire ce que l'on a fait
         c(ind).soc.dod_ah_ini = [];
         c(ind).soc.dod_ah_fin = [];
         
-        r(ind).dod_ah_ini = [];
-        r(ind).soc_ini = [];
-        r(ind).dod_ah_fin = [];
-        r(ind).soc_fin = [];
+        r(ind).test.dod_ah_ini = [];
+        r(ind).test.soc_ini = [];
+        r(ind).test.dod_ah_fin = [];
+        r(ind).test.soc_fin = [];
         if verbose
             fprintf('reset SOC for %s\n',r(ind).test.file_in);
         end
@@ -118,13 +118,13 @@ if ismember('b',options)%before: search for previous test
             end
         end
         save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%save configuration
-        r(indEmptySOC(ind)) = dattes(xml{indEmptySOC(ind)},c(indEmptySOC(ind)).CFGfile,'Ss');%recalculate SOC
+        r(indEmptySOC(ind)) = dattes(xml{indEmptySOC(ind)},'Ss',c(indEmptySOC(ind)).test.cfg_file);%recalculate SOC
         if isempty(r(indEmptySOC(ind)).test.soc_ini)
             fprintf('calcul_soc %s >>>>>>>>>>>>NOK\n',r(indEmptySOC(ind)).test.file_in);
         else
             fprintf('calcul_soc %s >>>>>>>>>>>>OK\n',r(indEmptySOC(ind)).test.file_in);
         end
-        save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%save resultat
+        save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%save result
     end
 elseif ismember('a',options)%after: search for following test
     for ind = length(indEmptySOC):-1:1%reverse for (end:-1:start)
@@ -135,7 +135,7 @@ elseif ismember('a',options)%after: search for following test
             end
         end
         save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%save configuration
-        r(indEmptySOC(ind)) = dattes(xml{indEmptySOC(ind)},c(indEmptySOC(ind)).CFGfile,'Ss');%recalculate SOC
+        r(indEmptySOC(ind)) = dattes(xml{indEmptySOC(ind)},'Ss',c(indEmptySOC(ind)).test.cfg_file);%recalculate SOC
         if isempty(r(indEmptySOC(ind)).soc_ini)
             fprintf('calcul_soc %s >>>>>>>>>>>>NOK\n',r(indEmptySOC(ind)).test.file_in);
         else

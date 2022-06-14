@@ -20,7 +20,7 @@
 % - R: [double] Identified resistance R in Ohm
 % - C: [double] Identified capacity C in Farad
 %
-% See also ident_rrc, rc_output
+% See also ident_rrc, rrc_output
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab: 
