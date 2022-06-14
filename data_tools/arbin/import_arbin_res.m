@@ -34,7 +34,7 @@ verveh = 2.0;
 
 
 if isunix
-    [A, B] = dos('which mdb-tables');
+    [A, B] = unix('which mdb-tables');
 else
     [A, B] = dos('where mdb-tables');
 end
@@ -109,7 +109,7 @@ end
 %6.1.- variables:
 variables = tete;
 % variables = regexprep(variables,'/|\|+|-|*', '_');
-variables = regexprep(variables,'\(.+)| |/','');%from import_arbin_xls
+variables = regexprep(variables,'\(.+\)| |/','');%from import_arbin_xls
 %6.2.- standardiser les noms des variables:
 %     'Test_Time', 'tc'
 variables = regexprep(variables,'Test_Time', 'tc');

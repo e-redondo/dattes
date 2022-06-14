@@ -31,7 +31,11 @@ if ~exist(res_file,'file')
     return;
 end
 
-[A, B] = dos(sprintf('mdb-tables "%s"',res_file));
+if isunix
+    [A, B] = unix(sprintf('mdb-tables "%s"',res_file));
+else
+    [A, B] = dos(sprintf('mdb-tables "%s"',res_file));
+end
 table_list = B;
 table_list = regexp(table_list,'\s','split');
 Ie = cellfun(@isempty,table_list);
@@ -43,7 +47,12 @@ mkdir(dirOut);
 for ind = 1:length(table_list)
     file_out = fullfile(dirOut,sprintf('%s.csv',table_list{ind}));
     cmd = sprintf('mdb-export -d " " "%s" %s > "%s"',res_file,table_list{ind},file_out);
-    [A, B] = dos(cmd);
+    if isunix
+      [A, B] = unix(cmd);
+    else
+      [A, B] = dos(cmd);
+    end
+    
 end
 end
 
