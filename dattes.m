@@ -269,7 +269,7 @@ if ismember('s',options)
     if ismember('S',options)
         %save dod_ah and soc in the xml_file.mat
         mat_file = regexprep(xml_file,'xml$','mat');
-        save(mat_file,'-append','dod_ah', 'soc');
+        save(mat_file,'-v7','-append','dod_ah', 'soc');
     end
     if ismember('v',options)
         fprintf('OK\n');

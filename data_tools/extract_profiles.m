@@ -211,7 +211,7 @@ end
 end
 
 function saveMAT(t,U,I,m,T,thisMAT)
-save(thisMAT);
+save(thisMAT,'-v7','t','U','I','m','T');
 end
 
 function showResult(t,U,I,m,thisMAT,options)

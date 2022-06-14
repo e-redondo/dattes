@@ -45,6 +45,8 @@ if exist(fileOut,'file')
     if ismember('config',S)
         %load config if it is in the MAT file
         load(fileOut,'config');
+        %convert strings back to function handlers (see save1result in save_result):
+        config.impedance.ident_fcn = str2func(config.impedance.ident_fcn);
     end
     if ismember('result',S)
         %load resultat if it is in the MAT file

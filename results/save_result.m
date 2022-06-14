@@ -62,6 +62,9 @@ else
     err = -1;
     return
 end
+%convert all function handlers into strings:
+config.impedance.ident_fcn = func2str(config.impedance.ident_fcn);
+
 %save these variables in this file
 save(fileOut,'-v7','result','config','phases');
 end

@@ -84,6 +84,8 @@ for ind =  1:length(folder_list)
     Is = ~cellfun(@isempty ,m_list);
     xml_list1 = xml_list1(Is);
     m_list = m_list(Is);
+    %keep just first m file found in folder
+    m_list = cellfun(@(x) x{1},m_list,'UniformOutput',false);
     
     xml_list = [xml_list(:); xml_list1(:)];%xml_list for all folders
     for ind2 = 1:length(xml_list1)
