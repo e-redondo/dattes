@@ -26,7 +26,11 @@ function err = save_result(result,config,phases)
 %% 0.1.- check inputs:
 err = 0;
 
-if ~isstruct(result) || ~isstruct(config) || ~isstruct(phases)
+if length(result)==1
+%     XMLfile = {XMLfile};
+    phases = {phases};
+end
+if ~isstruct(result) || ~isstruct(config) || ~iscell(phases)
     error('save_result: wrong type of parameters\n');
 end
 
@@ -35,11 +39,6 @@ if ~isequal(size(result),size(config))
     err = -1;
     return
 end
-
-if length(result)==1
-    phases = {phases};
-end
-
 
 for ind = 1:length(result)
     err(ind) = save1result(result(ind),config(ind),phases{ind});

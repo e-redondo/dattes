@@ -52,7 +52,7 @@ You should have received a copy of the GNU General Public License along with thi
     <a href="" title="Make documentation"><img class="emoji" alt="book" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png" width="20" height="20"></a> 
     </td>
     <td align="center">
-    <a href="https://marwan-hassini.gitlab.io/marwan/">
+    <a href="https://mhassini.gitlab.io">
     <img src="https://cv.archives-ouvertes.fr/photo/882114" height="120px;" alt=""/>
     <br /><sub><b>Marwan Hassini</b></sub></a><br />
     <a href="Codes" title="Codes"><img class="emoji" alt="computer" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4bb.png" width="20" height="20"></a> 
