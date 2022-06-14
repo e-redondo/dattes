@@ -1,31 +1,31 @@
 function [result, config, phases] = dattes(xml_file,options,cfg_file)
 %DATTES Data Analysis Tools for Tests on Energy Storage
 %
-% [result, config, phases] = dattes(xml_file,cfg_file,options):
-% Read the *.xml file of a battery test and performd several calculations
-% (Capacity, SoC, OCV, impedance idnetification, ICA/DVA, etc.).
-% Results are reutern as output variable and (optionnaly) stored in a file
+% [result, config, phases] = dattes(xml_file,options,cfg_file):
+% Read the *.xml file of a battery test and performe several calculations
+% (Capacity, SoC, OCV, impedance identification, ICA/DVA, etc.).
+% Results are returned as output variables and (optionally) stored in a file
 % named 'xml_file_result.mat'.
 %
 % Usage:
-% dattes(xml_file,cfg_file,options)
+% [result, config, phases] = dattes(xml_file,options,cfg_file)
+% Inputs : 
 % - xml_file:
-%     -   (1xn string): pathame to th xml file
-%     -   (nx1 cell string): xml filelist
-% - cfg_file: function name to configure the behavior (see configurator)
-% - options: string containing execution options:
+%     -   [1xn string]: pathame to the xml file
+%     -   [nx1 cell string]: xml filelist
+% - options:  [1xn string] string containing execution options:
 %   -'g': show figures
 %   -'s': save result, config, phases >>> 'xml_file_result.mat'.
 %   -'f': force, redo the actions even if the result file already exists
 %   -'u': update, redo the actions even if the xml_file is more recent
 %   -'v': verbose, tell what you do
-%   -'c': run the configuraiton following cfg_file
+%   -'c': run the configuration following cfg_file
 %   -'e': EIS (plot_eis)
 %   -'C': Capacity measurement
 %   -'S': SoC calculation
 %   -'R': Resistance identification
 %   -'Z': impedance identification (CPE, Warburg or other)
-%   -'P': peudoOCV (low current charge/discharge cycles)
+%   -'P': pseudoOCV (low current charge/discharge cycles)
 %   -'O': OCV by points (partial charge/discharges followed by rests)
 %   -'I': ICA/DVA
 %   -'A': synonym for 'CSRWPOI' (do all)
@@ -43,29 +43,38 @@ function [result, config, phases] = dattes(xml_file,options,cfg_file)
 %     - 'G*d': time in days (* = x,p,c,S,C,R,W,P,O,I)
 %     - 'G*h': time in hours (* = x,p,c,S,C,R,W,P,O,I)
 %     - 'G*D': time as date/time (* = x,p,c,S,C,R,W,P,O,I)
+% - cfg_file:  [1x1 struct] function name to configure the behavior (see configurator)
 %
-% Exemples:
-% dattes(xml_file,cfg_file,'s'): lit le fichier (t,U,I,m) et sauvegarde dans xml_file_results.mat.
-% dattes(xml_file,cfg_file,'gs'): idem en montrant les figures
-% dattes(xml_file,cfg_file,'gsv'): idem en disant ce qu'il fait (verbose)
+% Outputs : 
+% - result: [1x1 struct] structure containing analysis results 
+% - config:  [1x1 struct] function name used to configure the behavior (see configurator)
+% - phases: [1x1 struct] structure containing information about the different phases of the test
 %
-% dattes(xml_file,cfg_file,'ps'), cut the test in phases and save
-% dattes(xml_file,cfg_file,'cs'), configure the test and save
+% Examples:
+% dattes(xml_file,'s',cfg_file): Load the profiles (t,U,I,m) in .xml file and save them in a xml_file_result.mat.
+% dattes(xml_file,'gs',cfg_file): idem and plot profiles graphs
+% dattes(xml_file,'gsv',cfg_file): idem and describe ongoing analysis (verbose)
 %
-% [result, config, phases] = dattes(xml_file,cfg_file,'l'), just load the
-% results
+% dattes(xml_file,'ps',cfg_file), split the test in phases and save
+% dattes(xml_file,'cs',cfg_file), configure the test and save
 %
-% dattes(xml_file,cfg_file,'C'), charge la configuration et calcule la Capacite.
+% [result, config, phases] = dattes(xml_file,'l'), load the results
 %
-% dattes(xml_file,cfg_file,'Cs'), pareil mais sauvegarde le result dans
-% xml_file_results.mat.
+% dattes(xml_file,'C'), make capacity analysis.
 %
-% dattes(xml_file,cfg_file,'As'), fait tout: lecture, config, tous les calculs,
-% sauvegarde de results.
+% dattes(xml_file,'Cs'), idem and save results in a xml_file_results.mat.
+%
+% dattes(xml_file,'As'), Do all analysis : load, configuration all
+% analysis and save results in a xml_file_results.mat.
+%
 %
 % See also extract_profiles, split_phases, configurator
 % ident_capacity, ident_ocv_by_points, ident_pseudo_ocv, ident_r, ident_cpe, ident_rrc, ident_ica
-
+%
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 %% 0.- optional inputs, set defaults:
 if ~exist('options','var')
@@ -86,7 +95,7 @@ end
 
 if ischar(xml_file)
     if ~exist(xml_file,'file')
-        error('dattes: file not found');
+        error('dattes: file %s not found',xml_file);
     end
 end
 
@@ -96,7 +105,7 @@ end
 
 if ischar(cfg_file) && ~isempty(cfg_file)
     if isempty(which(cfg_file))
-        error('dattes: cfg_file not found');
+        error('dattes: cfg_file %s not found',cfg_file);
     end
 end
 
@@ -104,11 +113,11 @@ if ~ischar(options)
     error('dattes: options must be a string (actions/options list)');
 end
 
-%options d'abreviation:
+%abbreviation options
 options = strrep(options,'A','CSRWPOI');
-%enfin:
-options = unique(options);%on enleve les doublons
-%options qui vont etre transmises (inherit) aux sous fonctions:
+%remove duplicate:
+options = unique(options);
+%Options that will be given as inputs (inherit) to sub-fonctions:
 % -g: graphics
 % -f: force
 % -u: update
@@ -119,15 +128,14 @@ inher_options = options(ismember(options,'gfuvse'));
 %% Graphics mode 
 if ismember('G',options)
     [result, config, phases] = dattes_plot(xml_file,options);
-    %SI ON FAIT FIGURES ('G') ON NE FAIT PLUS RIEN APRES
-    %(pas de traitement ni sauvegarde)
+    %If figures are plotted ('G') none analysis is done then
     return;
 end
 
 %% Bulk mode (XML is a cellstring)
 if iscell(xml_file)
     [result, config, phases] = cellfun(@(x) dattes(x,options,cfg_file),xml_file,'UniformOutput',false);
-    %mise en forme (cell 2 struct):
+    %formatting (cell 2 struct):
     [result, config, phases] = compil_result(result, config, phases);
     return;
 end
@@ -165,7 +173,6 @@ end
 %% 2. CONFIGURE
 if ismember('c',options)
 
-    % TODO check if no 'p' was done before
     [config] = configurator(t,U,I,m,config0,phases,inher_options);
     % traceability: if a script for config is given
     if ischar(cfg_file)
@@ -201,8 +208,7 @@ end
 
 if any(ismember('PORZI',options))
     if isempty(dod_ah)
-        %on a pas fait calculSOC ou s'est mal passe, on arrete (on ne
-        %sauvegarde pas)
+        %If  calcul_soc have not been processed correctly, none analysis is processed (and neither saved)
         fprintf('dattes: ERREUR il faut calculer le SoC de ce fichier:%s\n',...
             result.test.file_in);
         %         return
@@ -247,31 +253,24 @@ if any(ismember('PORZI',options))
     end
 end
 
-%% 7. test temperature
-% temperature = 25;%DEBUG TODO: lire a partir d'un fichier d'histoire?
+%% 7. Test temperature
 if ~isfield(result,'temperature')
     result.temperature = 25;
 end
-%autres:
-% result.rendFar = rendFar; %d'un cycle charge-decharge
-% result.rendEne = rendEne; %d'un cycle charge-decharge
-% result.rendRegime = rendRegime;%d'un cycle charge-decharge
-%encore?
+
 
 %% 8. Save results
 if ismember('s',options)
     if ismember('v',options)
         fprintf('dattes: save result...');
     end
-    %sauvegarde de result,config,phases dans xml_file_result.mat
+    %save outputs result,config and phases in a xml_file_result.mat
     save_result(result,config,phases);
     if ismember('S',options)
-        %sauvegarde de dod_ah, soc dans xml_file.mat
+        %save dod_ah and soc in the xml_file.mat
         mat_file = regexprep(xml_file,'xml$','mat');
         save(mat_file,'-append','dod_ah', 'soc');
     end
-    %TODO ajouter option 'T' pour lecture externe de la température et
-    %sauvegarde avec 'append' comme pour le soc
     if ismember('v',options)
         fprintf('OK\n');
     end

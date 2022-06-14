@@ -9,6 +9,10 @@ function Date = read_bitrode_log(srcdir,CSVfile)
 %L'utilisateur devra venir modifier ces dates avec la VRAIE DATE du test.
 %
 % See also write_bitrode_log, bitrode_csv2xml
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 fid = fopen(fullfile(srcdir,'bitrode.log'),'r');
 if fid<0

@@ -1,25 +1,31 @@
 function xml = import_arbin_xls(file_in)
-% importArbinXls Arbin *.XLS to VEHLIB XMLstruct converter (windows)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Nom              : importArbinXls.m
+% import_arbin_xls Arbin *.XLS to VEHLIB XMLstruct converter 
 %
-%Language         : MATLAB R2010b
-%Auteur           : IFSTTAR/LTE - E. REDONDO
+% Usage
+%   xml = import_arbin_xls(file_in) 
+% Read filename (*.xls file) and converts   to xml (VEHLIB XMLstruct)
+% Inputs:
+% - file_in (string): filename or full pathname
 %
-%Date de creation : fevrier 2015
+% Outputs:
+% - xml (struct): structure with XML format 4 VEHLIB
+% 
+%   See also importArbinTxt, importArbinXls, importBiologic, importBitrode,
+%   arbin_res2xml, import_arbin_res
 %
-%Sujet            : conversion des fichiers du banc Arbin (*.xls)
-%                   au format XMLstruct de VEHLIB
-%Version          : 2.0
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-verveh = 2.0;
-%0.-Erreurs:
-%0.1.- verifier existance du fichier
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
+
+verveh=2.0;
+
+%0.-Errors:
+%0.1.- Check file existance
 [D F E] = fileparts(file_in);
 filename = [F E];
 
 if ~exist(file_in,'file')
-    fprintf('ERROR: file does not exist: %s\n',file_in);
+    fprintf('import_arbin_xls: file does not exist: %s\n',file_in);
     xml = [];
     return;
 end
@@ -33,42 +39,12 @@ if ~iscell(sheets)
     xml = [];
     return;
 end
-% dataSheets = sheets(~(cellfun(@isempty,regexp(sheets,'^Channel'))));
 dataSheets = sheets;
-% if length(dataSheets)>1
-%     noSheets = regexp(dataSheets,'_[0-9]$','match','once');
-%     channels = regexprep(dataSheets,noSheets,'');
-%     
-%     %0.2.- compatibilite du fichier (nb de feuilles)
-%     if length(unique(channels))~=1
-%         fprintf('ERROR in %s, voici les feuilles trouvees:\n',file_in);
-%         fprintf('%s\n',sheets{:});
-%         xml = [];
-%         return;
-%     end
-%     noSheets = strrep(noSheets,'_','');
-%     noSheets = cellfun(@(x) sscanf(x,'%f'),noSheets);
-%     [noSheets, I] = sort(noSheets);
-%     dataSheets = dataSheets(I);%met dans l'ordre
-% end
+
 fprintf('OK, %d feuilles\n',length(sheets));
 
 %1.- lecture du fichier
 fprintf('Lecture du fichier xls: %s...',filename);
-% [A, tete, r] = xlsread(file_in,dataSheets{1});
-% if isnan(A(2,3))
-%     I = strcmp(tete(1,:),'Date_Time');
-%     datetime = tete(2:end,I);
-% %     dateNum = m2xdate(datenum(datetime,'dd/mm/yyyy HH:MM:SS'));
-% %     A(:,I) = dateNum;
-%     tete = tete(1,:);%probleme des dates a regler TODO BRICOLE....
-% end
-% fprintf('feuille %d: %d lignes\n',1,size(A,1));
-% for ind = 2:length(dataSheets)
-%     A1 = xlsread(file_in,dataSheets{ind});
-%     fprintf('feuille %d: %d lignes\n',ind,size(A1,1));
-%     A = [A;A1];
-% end
 
 %read all datasheets
 [data, header, ~] = cellfun(@(x) xlsread(file_in,x),dataSheets,'UniformOutput',false);

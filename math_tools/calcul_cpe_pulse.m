@@ -1,10 +1,9 @@
 function [Q, alpha, err_rel, Ip] = calcul_cpe_pulse(tm,Um,Im,options,alpha0)
 % calcul_cpe_pulse Calculation of parametres of CPE impedance
-% This function uses response_cpe_pulse
+%
 %
 % Usage:
 % [Q, alpha, err_rel, Ip] = calcul_cpe_pulse(tm,Um,Im,options,alpha0)
-%
 % Inputs:
 % - tm, Um, Im (nx1 double): time, voltage, current vectors
 % - options (string): 
@@ -17,6 +16,11 @@ function [Q, alpha, err_rel, Ip] = calcul_cpe_pulse(tm,Um,Im,options,alpha0)
 % - Ip (1x1 double): pulse amplitude (A)
 %
 % See also ident_cpe, response_cpe_pulse
+%
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 
 if ~exist('options','var')
@@ -28,16 +32,16 @@ end
 
 [Ip,td,tf,Ts] = param_pulse(tm,Im);
 if ~ismember('a',options)
-    %deux parametres
+    %two parameters
     monCaller = @(x) error_cpe_pulse(x(1),x(2),Ip,td,tf,tm,Um);
     x0 = [1000; alpha0];
 else
-    %un parametre
+    %one parameter
     alpha = alpha0;%alpha fixe (p.ex.:0.5)
     monCaller = @(x) error_cpe_pulse(x,alpha,Ip,td,tf,tm,Um);
     x0 = [1000];
 end
-%recherche du minimum
+%looking for minimum
 [x,fval,exitflag,output] = fminsearch(monCaller,x0);
 if exitflag<1
     Q = nan;

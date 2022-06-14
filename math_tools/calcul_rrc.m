@@ -1,19 +1,30 @@
  function [Rs,R, C, err] = calcul_rrc(tm,Um,Im,options,Rs0,R0,C0)
-% function [R, C, err] = calcul_rrc(tm,Um,Im,options,R0,C0)
+% calcul_rrc identify Rs, R and C from t,U,I profiles
 %
-%calcul_rrc Calcul des parametres d'un circuit RC à partir des
-%mesures (temps,tension, courant)
-% Cette fonction utilise reponseRC
-% tm [nx1 double]: vecteur temps mesure
-% Um [nx1 double]: vecteur tension mesuree
-% Im [nx1 double]: vecteur courant mesure
-% options [string]: options d'execution:
-%       si options contient 'g': mode graphique, montre les resultats
-%       si options contient 'c': 'C fixe', on fixe C a C0
-% R0 [1x1 double]: valeur initiale de R
-% C0 [1x1 double]: valeur initiale de C
+% Usage
+% [Rs,R, C, err] = calcul_rrc(tm,Um,Im,options,Rs0,R0,C0)
+% Inputs
+% - tm: [nx1 double] time vector in s
+% - Um: [nx1 double] voltage vector in V
+% - Im: [nx1 double] current vector in A
+% - Rs: [double] Ohmic resistance vector in Ohm
+% - options [string]: 
+%       -'g': show results
+%       -'c': 'C fixed' and C=C0
+% - Rs0: [double] Initial value for ohmic resistance R in Ohm
+% - R0: [double] Initial value for resistance R in Ohm
+% - C0: [double] Initial value for  capacity C in Farad
 %
-% See also  reponseRC
+% Outputs
+% - Rs: [double] Identified ohmic resistance vector in Ohm
+% - R: [double] Identified resistance R in Ohm
+% - C: [double] Identified capacity C in Farad
+%
+% See also ident_rrc, rrc_output
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if ~exist('options','var')
     options='';
@@ -43,29 +54,6 @@ end
 optim_options = optimset('TolX',1e-5);
 [x,fval,exitflag,output] = fminsearch(monCaller,x0,optim_options);
 
-% if ~isnan(monCaller(x0))
-% 
-% A = [];
-% b = [];
-% Aeq = [];
-% beq = [];
-% 
-% 
-% lb=[Rmin Cmin];
-% ub=[Rmax Cmax];
-% optim_options = optimoptions('fmincon','Algorithm','interior-point','Display','off');
-% 
-% [x,fval,exitflag,output] = fmincon(monCaller,x0,A,b,Aeq,beq,lb,ub,[],optim_options);
-% 
-% else
-%     
-%     R = nan;
-%     C = nan;
-%     err = nan;
-% return
-% end
-
-
 
 if exitflag<1
     Rs = nan;
@@ -81,7 +69,7 @@ if ismember('c',options)%si deux parametres
     C = x(3);
 end
 
-Us = reponseRRC(tm,Im,Rs,R,C);
+Us = rrc_output(tm,Im,Rs,R,C);
 Is = Im;
 ts = tm;
 err = mean(erreurQuadratique(Um,Us));

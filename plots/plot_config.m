@@ -1,14 +1,27 @@
 function hf = plot_config(t,U,config,phases,title_str,options)
-%plot_config visualize configuration for dattes.
+%plot_config visualize configuration of a test
 %
-%hf = plot_config(t,U,config,phases,titre,options)
+% plot_config(t,U,config,phases,title_str,options)
+% Make a figure with two subplots: U vs. t et I vs. t. with identified
+% phases by split_phases function (CC, CV, rest, etc.). If more than 100
+% phases, only longer 100 phases will be ploted (color and number).
 %
-% Make a figure with three plots:
-% 1) t vs U  with detected moments of SoC100 / SoC0
-% 2) t vs U  with detected phases for capacity measurements
-% 3) t vs U  with detected phases for impedance identification
+% Usage:
+% hf = plot_config(t,U,config,phases,title_str,options)
+% Inputs:
+% - t [nx1 double]: time in seconds
+% - U [nx1 double]: voltage in V
+% - config [nx1 struct]: configuration structure
+% - phases [nx1 struct]] phases structure
+% - title: [string] title string
+% Output:
+% - hf [1x1 figure handler]: handler for created figure
 %
-% See also dattes, configurator
+% See also dattes, dattes_plot, configurator, extract_profiles
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 
 if ~exist('options','var')
@@ -35,8 +48,8 @@ I100 = ismember(t,config.soc.soc100_time);
 plot(tc(I100),U(I100),'ro','displayname','t100')
 % plot(t(Iinicv),U(Iinicv),'r+','tag','debutCV')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%figure2: capacites
-%phases de mesure de capacite en decharge
+%figure2: Capacity
+% Phases of capcity analysis
 tD = [];UD = [];tC = [];UC = [];tDV= [];UDV = [];tCV = [];UCV = [];
 for ind = 1:length(phases)
     Ip = t>=phases(ind).t_ini & t<=phases(ind).t_fin;
@@ -57,7 +70,6 @@ for ind = 1:length(phases)
         UCV = [UCV;U(Ip)];
     end
 end
-% figure('Name','configurator: calculCapa');
 subplot(312),title('calcul Capa');
 plot(tc,U,'k','displayname','test'),hold on
 plot(tD,UD,'r.','displayname','capaD')
@@ -65,7 +77,7 @@ plot(tC,UC,'b.','displayname','capaC')
 plot(tDV,UDV,'m.','displayname','capaDV')
 plot(tCV,UCV,'c.','displayname','capaCV'),xlabel(sprintf('time [%s]',tunit))
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%figure3: impedances
+%figure3: Impedances
 tR = [];UR = [];tW = [];UW = [];tRr = [];URr = [];tWr = [];UWr = [];
 
 %resistance (ident_r):config.pR
@@ -85,17 +97,7 @@ end
 
 %resistance and impedance (old method):
 for ind = 1:length(phases)
-    
-%     if config.pR(ind)
-%         Ip = t>=phases(ind).t_ini & t<=phases(ind).t_ini+config.tminR;
-%         Ir = t>=phases(ind-1).t_fin-config.tminRr & t<=phases(ind-1).t_fin;
-%         
-%         tR = [tR;tc(Ip)];
-%         UR = [UR;U(Ip)];
-%         tRr = [tRr;tc(Ir)];
-%         URr = [URr;U(Ir)];
-%         
-%     end
+
     if config.impedance.pZ(ind)
         Ip = t>=phases(ind).t_ini & t<=phases(ind).t_ini+config.impedance.pulse_min_duration;
         Ir = t>=phases(ind-1).t_fin-config.impedance.rest_min_duration & t<=phases(ind-1).t_fin;
@@ -106,10 +108,7 @@ for ind = 1:length(phases)
         
     end
 end
-% URr = U(ismember(t,config.tR));
-% UWr = U(ismember(t,config.tW));
 
-% figure('Name','configurator: calculZ');
 subplot(313),title('calcul Z');
 plot(tc,U,'k','displayname','test'),hold on
 plot(tW,UW,'go','displayname','diffusion')

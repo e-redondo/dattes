@@ -1,10 +1,32 @@
 function [dqdu,dudq,qf,uf] = calcul_ica(t,q,u,N,wn,options)
-%funcion calcul_ica2 - recoupe, filtre et derive
-% -N: no filter
-% -G: gaussian filter
-% -M: mean filter
-% -B: butter filter
-% -b: balanced, i.e. filter à l'endroit et à l'envers, puis moyenner
+% calcul_ica2 resample, filter et derivate data for ica
+%
+% Usage 
+% [dqdu,dudq,qf,uf] = calcul_ica(t,q,u,N,wn,options)
+% Inputs :
+% - t [nx1 double]: time in seconds
+% - q [nx1 double]: cell capacity in Ah
+% - u [nx1 double]: cell voltage in V
+% - N: [double] Filter order
+% - wn: [double] filter frequency cut
+% - options : 
+%   -N: Filter type : no filter
+%   -G: Filter type : gaussian filter
+%   -M: Filter type : mean filter
+%   -B: Filter type :  butter filter
+%   -b: Filter type : balanced, i.e. filter à l'endroit et à l'envers, puis moyenner
+%   -g : show figures
+% Outputs
+% - dqdu [nx1 double]: derivative of capacity over voltage in Ah/V
+% - dudq [nx1 double]: derivative of voltage over capacity in V/Ah
+% - q [nx1 double]: filtered cell capacity in Ah
+% - u [nx1 double]: filtered cell voltage in V
+%
+% See also moving_derivative, gauss_filter, moving_average, butter_filter
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if ~exist('options','var')
     options = '';%no filter

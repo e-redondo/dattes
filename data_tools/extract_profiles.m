@@ -1,27 +1,54 @@
-function [t,U,I,m,dod_ah,soc,T, eis, err] = extract_profiles(thisXML,options,config)
+function [t,U,I,m,dod_ah,soc,T, eis, err] = extract_profiles(xml_file,options,config)
 %extract_profiles extract important variables from a battery test bench file.
+%
+%[t,U,I,m,dod_ah,soc,T, eis, err] = extract_profiles(xml_file,options,config)
 % 1.- Read a .xml file (Biologic,Arbin, Bitrode...), if a dattes' results
 % file exists this latter will be read (faster)
 % 2.- Extract important vectors: t,U,I,m,DoDAh,SOC,T
 % 3.- Save the important vectors in a dattes' results file (if 's' in
 % options)
 %
-% [t,U,I,m,DoDAh,SOC,T, err] = extract_profiles(thisXML): normal operation,
-% error codes:
-% err = 0: OK
-% err = -1: thisXML file does not exist
-% err = -2: dattes' result file is wrong
-% err = -3: some vectors are missing (t,U,I,m)
+% Usage:
+%[t,U,I,m,dod_ah,soc,T, eis, err] = extract_profiles(xml_file,options,config)
+% Inputs : 
+% - xml_file:
+%     -   [1xn string]: pathame to the xml file
+%     -   [nx1 cell string]: xml filelist
+% - options:  [1xn string] string containing execution options:
+%     -   's' :  'save' the extracted vectors in a dattes'
+%     -   'v' :  'verbose', tell what you do
+%     -   'f' :  'force', read XML even if result file exists
+%     -   'u' :  'update', read XML if result file is older
+% - config:  [1x1 struct] function name used to configure the behavior (see configurator)
 %
-% extract_profiles(thisXML, 's') 'save' the extracted vecors in a dattes'
+% Outputs : 
+% - t [nx1 double]: time in seconds
+% - U [nx1 double]: cell voltage in V
+% - dod_ah [nx1 double]: depth of discharge in AmpHours
+% - m [nx1 double]: mode
+% - soc [nx1 double]: state of charge in %
+% - T [nx1 double] Temperature in °C
+% -  err [nx1 double] error codes
+%   - err = 0: OK
+%   - err = -1: xml_file file does not exist
+%   - err = -2: dattes' result file is wrong
+%   - err = -3: some vectors are missing (t,U,I,m)
+%
+% Examples:
+% extract_profiles(xml_file, 's') 'save' the extracted vecors in a dattes'
 % result file
-% extract_profiles(thisXML, 'g') 'graphic', show figures
-% extract_profiles(thisXML, 'v') 'verbose', tell what you do
-% extract_profiles(thisXML, 'f') 'force', read XML even if result file exists
-% extract_profiles(thisXML, 'u') 'update', read XML if result file is older
+% extract_profiles(xml_file, 'g') 'graphic', show figures
+% extract_profiles(xml_file, 'v') 'verbose', tell what you do
+% extract_profiles(xml_file, 'f') 'force', read XML even if result file exists
+% extract_profiles(xml_file, 'u') 'update', read XML if result file is older
 %
 % extract_profiles(this_result_file) works also
 % See also dattes, which_mode, split_phases
+%
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if ~exist('config','var')
     Uname = 'U';
@@ -45,12 +72,12 @@ if ~exist('options','var')
     options = '';
 end
 
-thisMAT = regexprep(thisXML,'xml$','mat');
+thisMAT = regexprep(xml_file,'xml$','mat');
 
 if ismember('f',options) || ~exist(thisMAT,'file')
     xml_read = true;
 elseif ismember('u',options)
-    xml_dir = dir(thisXML);
+    xml_dir = dir(xml_file);
     mat_dir = dir(thisMAT);
     if isempty(mat_dir)
         %xml_read true if thisMAT does not exist
@@ -65,27 +92,27 @@ else
 end
 
 if ismember('v',options)
-    fprintf('extract_profiles: %s ....',thisXML);
+    fprintf('extract_profiles: %s ....',xml_file);
 end
 if xml_read
-    if ~exist(thisXML,'file')
+    if ~exist(xml_file,'file')
         t = [];
         U = [];
         I = [];
         m = [];
         err = -1;
-        fprintf('File not found: %s\n',thisXML);
+        fprintf('File not found: %s\n',xml_file);
         return;
     end
-    %     [xmlD, xmlF] = fileparts(thisXML);
+    %     [xmlD, xmlF] = fileparts(xml_file);
     %     xmlF = sprintf('%s.xml',xmlF);
     if ismember('v',options) && ~ismember('s',options)
         fprintf('l''option ''s'' est fortement conseillee lecture du XML,...');
     end
-    [xml] = lectureXMLFile4Vehlib(thisXML);
+    [xml] = lectureXMLFile4Vehlib(xml_file);
     %     if err
     %         t = [];U = [];I = [];m = [];DoDAh = [];SOC = [];
-    %         fprintf('Bad XML file: %s\n',thisXML);
+    %         fprintf('Bad XML file: %s\n',xml_file);
     %         return;
     %     end
     %extraire les vecteurs
@@ -96,7 +123,7 @@ if xml_read
             any(cellfun(@(x) ~isfield(x,'mode'),xml.table))
         
         t = [];U = [];I = [];m = [];dod_ah = [];soc = [];err = -3;
-        fprintf('Bad XML file: %s\n',thisXML);
+        fprintf('Bad XML file: %s\n',xml_file);
         return;
     end
     
@@ -126,7 +153,7 @@ if xml_read
         T = [];
     end
     if isnan(max(t+I+U+m))%gestion d'erreurs
-        error('Oups! extract_profiles a trouve des nans: %s\n',thisXML);
+        error('Oups! extract_profiles a trouve des nans: %s\n',xml_file);
     end
     if ismember('s',options)
         saveMAT(t,U,I,m,T,thisMAT);
@@ -211,7 +238,7 @@ function [eis] = extract_eis(xml,options)
 % [t,U,I,m,ReZ, ImZ, f, err] = extract_eis(xml,thisMAT): utilisation normale, codes
 % d'erreur:
 % err = 0: tout est OK
-% err = -1: le fichier thisXML n'existe pas
+% err = -1: le fichier xml_file n'existe pas
 % err = 1: des NaNs sont presents dans les vecteurs (t,U,I,m)
 %
 

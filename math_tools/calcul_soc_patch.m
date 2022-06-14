@@ -1,8 +1,7 @@
-function [R,C,P,xml] = calcul_soc_patch(XML,options,cellName)
+function [result,config,phases,xml] = calcul_soc_patch(XML,options,cellName)
 % calcul_soc_patch - calculate SOC when calcul_soc has failed.
 %
-% [R,C,P] = calcul_soc_patch(XML,options,cellName)
-%
+% [result,config,phases,xml] = calcul_soc_patch(XML,options,cellName)
 % Inputs:
 % - XML [1xn cell string]: file List
 % - options [1xp char]:
@@ -12,32 +11,30 @@ function [R,C,P,xml] = calcul_soc_patch(XML,options,cellName)
 % -- 'u': unpatch (undo of previous calcul_soc_patch)
 % - cellName [1xm char]: regex to filter XML by a pattern 'cell name'
 %
-% Outputs:
-% - R,C,P as in dattes
+% Outputs : 
+% - result: [1x1 struct] structure containing analysis results 
+% - config:  [1x1 struct] function name used to configure the behavior (see configurator)
+% - phases: [1x1 struct] structure containing information about the different phases of the test
 % - xml [nx1 cell]: list of treated files
 %
-% Le principe est le suivant:
-% 1) on essaye une premiere fois avec dattes(XML,...,'Ss')
-% >>> les tests qui ne contiennet pas de charge CCCV n'ont pas de SOC.
-% 2) on cherche parmi les tests realises sur la meme cellule
-% l'immediatement anterieur (par defaut) ou posterieur.
-% 3) le DoDfin de ce test sera le DoDini de notre test (a l'envers si
-% recherche posterieur).
-% 4) on execute calcul_soc.
-% 5) on passe au fichier suivant.
 %
 %Exemple (1):
-% [R,C,P] = calcul_soc_patch(XML,'cell62','av');
+% [result,config,phases] = calcul_soc_patch(XML,'cell62','av');
 % calcule les SOCs manquants dans la liste XML avec le nom cell62 en
 % prenant les fichiers anterieurs ('a'), et en disant ce qu'il est fait ('v')
 %
 %Exemple (2):
-%2.1) [R,C,P] = dattes(XML,'cfg_file','cs');
+%2.1) [result,config,phases] = dattes(XML,'cfg_file','cs');
 %refait la configuration, les essais sans repere de SoC100 auront DoDini et DoDfin = [].
-%2.2) [R,C,P] = calcul_soc_patch(XML,'','u');
+%2.2) [result,config,phases] = calcul_soc_patch(XML,'','u');
 %les fichiers qui ont DoDini et DoDfin = [] seront recalcules (vecteur SOC = [])
 %
 % See also dattes, calcul_soc
+%
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if ~exist('options','var')
     options = '';
@@ -55,19 +52,19 @@ end
 
 
 %TODO: changer ca
-%essayer de mettre comme argument (R,C,P), pour ne pas charger tout a
+%essayer de mettre comme argument (result,config,phases), pour ne pas charger tout a
 %chaque fois.
-% XML = {R.test.file_in};
+% XML = {result.test.file_in};
 if ismember('u',options)%option 'unpatch', defaire ce que l'on a fait
-    [R,C,P] = load_result(XML);
+    [result,config,phases] = load_result(XML);
     %search files with imposed DoDIni or DoDFin:
-    Ie = ~arrayfun(@(x) isempty(x.soc.dod_ah_ini) && isempty(x.soc.dod_ah_fin),C);
+    Ie = ~arrayfun(@(x) isempty(x.soc.dod_ah_ini) && isempty(x.soc.dod_ah_fin),config);
     %List of files that will be treated
     xml = XML(Ie);
     %Filter results to this files:
-    r = R(Ie);
-    c = C(Ie);
-    p = P(Ie);
+    r = result(Ie);
+    c = config(Ie);
+    p = phases(Ie);
     
     for ind = 1:length(r)
         c(ind).soc.dod_ah_ini = [];
@@ -114,20 +111,20 @@ indApres = indEmptySOC+1;
 
 if ismember('b',options)%before: search for previous test
     for ind = 1:length(indEmptySOC)%direct for (start:1:end)
-        if indAvant(ind)>0 && ismember('b',options)%recherche de l'anterieur
+        if indAvant(ind)>0 && ismember('b',options)%look for the previous
             c(indEmptySOC(ind)).soc.dod_ah_ini = r(indAvant(ind)).test.dod_ah_fin;
             if verbose
                 fprintf('%s.DoDFin >>> %s.DoDIni\n',r(indAvant(ind)).test.file_in, r(indEmptySOC(ind)).test.file_in)
             end
         end
-        save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%sauvegarder la configuration
-        r(indEmptySOC(ind)) = dattes(xml{indEmptySOC(ind)},'Ss',c(indEmptySOC(ind)).test.cfg_file);%recalculer le SOC
+        save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%save configuration
+        r(indEmptySOC(ind)) = dattes(xml{indEmptySOC(ind)},'Ss',c(indEmptySOC(ind)).test.cfg_file);%recalculate SOC
         if isempty(r(indEmptySOC(ind)).test.soc_ini)
             fprintf('calcul_soc %s >>>>>>>>>>>>NOK\n',r(indEmptySOC(ind)).test.file_in);
         else
             fprintf('calcul_soc %s >>>>>>>>>>>>OK\n',r(indEmptySOC(ind)).test.file_in);
         end
-        save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%sauvegarder le resultat
+        save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%save result
     end
 elseif ismember('a',options)%after: search for following test
     for ind = length(indEmptySOC):-1:1%reverse for (end:-1:start)
@@ -137,18 +134,18 @@ elseif ismember('a',options)%after: search for following test
                 fprintf('%s.DoDFin <<< %s.DoDIni\n', r(indEmptySOC(ind)).test.file_in,r(indApres(ind)).test.file_in)
             end
         end
-        save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%sauvegarder la configuration
-        r(indEmptySOC(ind)) = dattes(xml{indEmptySOC(ind)},'Ss',c(indEmptySOC(ind)).test.cfg_file);%recalculer le SOC
+        save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%save configuration
+        r(indEmptySOC(ind)) = dattes(xml{indEmptySOC(ind)},'Ss',c(indEmptySOC(ind)).test.cfg_file);%recalculate SOC
         if isempty(r(indEmptySOC(ind)).test.soc_ini)
             fprintf('calcul_soc %s >>>>>>>>>>>>NOK\n',r(indEmptySOC(ind)).test.file_in);
         else
             fprintf('calcul_soc %s >>>>>>>>>>>>OK\n',r(indEmptySOC(ind)).test.file_in);
         end
-        save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%sauvegarder le resultat
+        save_result(r(indEmptySOC(ind)),c(indEmptySOC(ind)),p{indEmptySOC(ind)});%save resultat
     end
 end
 
-[R,C,P] = load_result(XML);
-xml = xml(Ie);%liste de fichiers qu'on a traite
+[result,config,phases] = load_result(XML);
+xml = xml(Ie);%list analysed files 
 
 end

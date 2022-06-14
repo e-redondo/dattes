@@ -32,6 +32,11 @@ function [phases, tcell, Icell, Ucell, modes] = split_phases(t,I,U,m,options)
 % split_phases(t,I,U,m,'v') % 'verbose', tell what it does.
 %
 % See also which_mode, extract_profiles, plot_phases
+%
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if ~exist('options','var')
     options = '';
@@ -64,8 +69,8 @@ for ind = 1:length(iniPhase)
     tcell{ind} = t(indices);
     Ucell{ind} = U(indices);
     Icell{ind} = I(indices);
-%     modes(ind) = unique(m(indices));
-     modes(ind) = mode(m(indices));%FIX: mode function returns always one unique value
+
+    modes(ind) = mode(m(indices));%FIX: mode function returns always one unique value
 end
 if ismember('v',options)
     fprintf('tcell,Ucell,Icell,modes OK\n');
@@ -78,9 +83,7 @@ for ind = 1:length(tcell)
     thist = tcell{ind};
     thisI = Icell{ind};
     thisU = Ucell{ind};
-%     if ind==22 %DEBUG (put ind value of concerning phase)
-%         fprintf('here\n');
-%     end
+
     phases(ind).t_ini = thist(1);
     phases(ind).t_fin = thist(end);
     phases(ind).duration = phases(ind).t_fin - phases(ind).t_ini;
@@ -110,26 +113,3 @@ if ismember('g',options)
 end
 end
 
-% function Capa = calculCapa(t,I)
-% %calculCapa calcul des amperes heure en integrant le courant versus le temps
-% % Capa = calculCapa(t,I)
-% % parameters d'entree: 
-% % t ([nx1] double): temps en secondes
-% % I ([nx1] double): courant en amperes
-% % sortie:
-% % Capa ([1x1] double): valeur de l'integration Ah
-% if iscell(t)
-%     fprintf('essaye: Q = cellfun(@calculCapa,t,I,''UniformOutput'' , false\n');
-%     error('il faut mettre a jour le typage, vecteurs au lieu de cellules');
-% end
-% if ~isequal(size(t),size(I))
-%     error('taille de vecteurs incompatible')
-% end
-% if isempty(t)
-%     Capa = [];return;
-% end
-% if length(t)==1
-%     Capa = 0;return;
-% end
-%     Capa = trapz(t,I)/3600;     %integration numerique du type trapeizoidal du courant par rapport au temps
-% end

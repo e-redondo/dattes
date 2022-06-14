@@ -16,10 +16,12 @@ function [DoDAh, SOC] = calcul_soc(t,I,config,options)
 % - SOC (nx1 double): SOC [%]
 %
 % See also calcul_amphour
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
-%--------------------------------------------------------------------------
-%       PRINCIPAL
-%--------------------------------------------------------------------------
+
 if ~exist('options','var')
     options = '';
 end
@@ -30,39 +32,36 @@ DoDAh = [];
 SOC = [];
 %gestion d'erreurs:
 if nargin<3 || nargin>4
-    fprintf('calcul_soc:nombre incorrect de parametres, trouves %d\n',nargin);
+    fprintf('calcul_soc: wrong number of parameters, found %d\n',nargin);
     return;
 end
 if ~isstruct(config) || ~isnumeric(t) || ~isnumeric(I) || ~ischar(options)
-    fprintf('calcul_soc:type de parametres, incorrect\n');
+    fprintf('calcul_soc: wrong type of parameters\n');
     return;
 end
 if ~isfield(config,'soc') || ~isfield(config,'test')
-    fprintf('calcul_soc:structure config incomplete\n');
+    fprintf('calcul_soc: incomplete structure config, redo configurator: dattes(''cs'')\n');
     return;
 end
 if ~isfield(config.soc,'soc100_time')
-    fprintf('calcul_soc:structure config incomplete\n');
+    fprintf('calcul_soc: incomplete structure config, redo configurator: dattes(''cs'')\n');
     return;
 end
 if ~isfield(config.test,'capacity')
-    fprintf('calcul_soc:structure config incomplete\n');
+    fprintf('calcul_soc: incomplete structure config, redo configurator: dattes(''cs'')\n');
     return;
 end
-Q = calcul_amphour(t,I); %calcule Q
-%vecteur logique qu'indique les instants au le SOC atteint 100%
+Q = calcul_amphour(t,I); %calcul capacity
+%Logical array indicate the instant where SoC reach 100%
 I100 = ismember(t,config.soc.soc100_time);
     
 if ~isempty(config.soc.soc100_time)
     
-    %pour chaque instant a SoC100 on enleve les Ah des points d'apres, si on
-    %est a SOC max on ne peut decharger plus que la capacite nominale de la
-    %batterie
+   
     for ind = 1:length(config.soc.soc100_time)
         Q(t>config.soc.soc100_time(ind)) = Q(t>config.soc.soc100_time(ind)) - Q(t==config.soc.soc100_time(ind));
     end
-    %on enleve aussi les Ah des points d'avant le premier instant (SoC initial
-    %inconnu)
+
     Q(t<=config.soc.soc100_time(1)) = Q(t<=config.soc.soc100_time(1))-Q(t==config.soc.soc100_time(1));
 else
     if ~isempty(config.soc.dod_ah_ini)
@@ -71,7 +70,7 @@ else
         Q = Q-Q(end)-config.soc.dod_ah_fin;
     else
         if ismember('v',options)
-            fprintf('calcul_soc:impossible de trouver une reference de SoC\n');
+            fprintf('calcul_soc: No SoC references, check config.Umin and config.Umax\n');
         end
         return;
     end

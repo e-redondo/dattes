@@ -1,18 +1,23 @@
 function xml = import_bitrode(filename,dirname,options)
 % import_bitrode Bitrode *.csv to VEHLIB XMLstruct converter
-% function xml = import_bitrode(filename,pathname)
-%
-% INPUTS:
+% 
+% Usage 
+% xml = import_bitrode(filename,pathname)
+% Inputs:
 % - filename (string): filename or full pathname
 % - dirname (string): path to the folder containing the file (empty if
 % filename is full pathname)
 % - options (string): containing the following characters
 %   - 'v': verbose, tells what it does
 %
-% OUTPUTS:
+% Outputs:
 % - xml (struct): structure with XML format 4 VEHLIB
 % 
 % See also bitrode_csv2xml, which_cycler
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if ~exist('options','var')
     options='';
@@ -30,7 +35,7 @@ file_in = fullfile(dirname,filename);
 [D, F, E] = fileparts(file_in);
 file_out = fullfile(D,sprintf('%s.veh2',F));
 if ~exist(file_in,'file')
-    fprintf('ERROR: file does not exist: %s\n',file_in);
+    fprintf('import_bitrode: file does not exist: %s\n',file_in);
     xml = [];
     return;
 end
@@ -97,17 +102,7 @@ end
     if isempty(testName)%if not found, test name is the filename
         testName = filename;
     end
-%     if isempty(testDate)%if not found, test date is now
-%         testDate = date;
-%     end
-%     if thisLine(1)=='"'
-%         % new format: "Total Time, S","Cycle","Loop Counter #1",...
-%         thisLine = regexprep(thisLine,'","','\t');
-%         thisLine = regexprep(thisLine,'"','');
-%     else
-%         % old format: Total Time,Cycle,Loop Counter #1,...
-%         thisLine = regexprep(thisLine,',','\t');
-%     end
+
     if thisLine(1)=='"'
         % new format: "Total Time, S","Cycle","Loop Counter #1",...
         thisLine = regexprep(thisLine,'\t ','_');

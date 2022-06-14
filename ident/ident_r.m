@@ -1,8 +1,10 @@
 function [resistance] = ident_r(t,U,I,dod_ah,config,phases,options)
-%ident_r resistance identification from a profile t,U,I,m
+%ident_r resistance identification 
 %
 % Usage:
 % [resistance] = ident_r(t,U,I,dod_ah,config,phases,options)
+% Read the config and phases structure and performe several calculations
+% regarding resistance.  Results are returned in the structure resistance 
 %
 % Inputs:
 % - t, U, I, dod_ah [(nx1) double]: from extract_profiles
@@ -11,6 +13,7 @@ function [resistance] = ident_r(t,U,I,dod_ah,config,phases,options)
 % - options [(1xp) string] execution options:
 %     - 'v': verbose
 %     - 'g': graphics
+%
 % Outputs:
 % - resistance [(1x1) struct] with fields:
 %     - R [(qx1) double]: resistance value (Ohms)
@@ -19,7 +22,12 @@ function [resistance] = ident_r(t,U,I,dod_ah,config,phases,options)
 %     - time [(qx1) double]: time of measurement (s)
 %     - delta_time [(qx1) double]: time from pulse start (s)
 %
-%See also dattes, calcul_r
+% See also dattes, calcul_r
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
+
 if ~exist('options','var')
     options = '';
 end
@@ -31,23 +39,24 @@ dod = [];
 crate = [];
 time = [];
 delta_time = [];
+
 %%
 %gestion d'erreurs:
 if nargin<6 || nargin>7
-    fprintf('ident_r:nombre incorrect de parametres, trouves %d\n',nargin);
+    fprintf('ident_r: wrong number of parameters, found %d\n',nargin);
     return;
 end
 if ~isstruct(config) || ~ischar(options) || ~isnumeric(t) ...
         || ~isnumeric(U) || ~isnumeric(I) || ~isnumeric(dod_ah)
-    fprintf('ident_r:type de parametres, incorrect\n');
+    fprintf('ident_r: wrong type of parameters\n');
     return;
 end
 if ~isfield(config,'resistance')
-    fprintf('ident_r:structure config incomplete\n');
+    fprintf('ident_r: incomplete structure config, redo configurator: dattes(''cs'')\n');
     return;
 end
 if ~isfield(config.resistance,'pR') || ~isfield(config.resistance,'rest_min_duration') || ~isfield(config.resistance,'pulse_min_duration') || ~isfield(config.resistance,'delta_time') || ~isfield(config.resistance,'instant_end_rest')
-    fprintf('ident_r:structure config incomplete\n');
+    fprintf('ident_r: incomplete structure config, redo configurator: dattes(''cs'')\n');
     return;
 end
 
@@ -56,8 +65,6 @@ rest_min_duration = config.resistance.rest_min_duration;
 delta_time_cfg = config.resistance.delta_time;
 
 %%
-% tIniPulses = config.tR-config.tminRr-1;%FIX (BRICOLE) je met une seconde de plus (sinon warning dans calculR ligne69)
-% tFinPulses = config.tR+config.tminR+1;%FIX (BRICOLE) je met une seconde de plus (sinon warning dans calculR ligne72)
 indices_phases_r = find(config.resistance.pR);
 time_before_after_phase = [rest_min_duration 0];
 
@@ -71,10 +78,6 @@ delta_time = [];
 
 
 for ind = 1:length(indices_phases_r)
-%     Ipulse = t>=tIniPulses(ind) & t<=tFinPulses(ind);
-%     tp = t(Ipulse);
-%     Up = U(Ipulse);
-%     Ip = I(Ipulse);
 
 
     [tp,Up,Ip,DoDp] = extract_phase2(phases(indices_phases_r(ind)),time_before_after_phase,t,U,I,dod_ah);%FIX (BRICOLE) la même mais avec getPhases 2
@@ -115,21 +118,19 @@ function showResult(t,U,I,dod_ah,R,dod,crate,time)
 
 hf = figure('name','ident_r');
 subplot(221),plot(t,U,'b'),hold on,xlabel('time (s)'),ylabel('voltage (V)')
-% subplot(222),plot(t,I,'b'),hold on,xlabel('time (s)'),ylabel('current (A)')
-% subplot(223),plot(t,dod_ah,'b'),hold on,xlabel('time (s)'),ylabel('DoD (Ah)')
+
 
 Ip = ismember(t,time);
 subplot(221),plot(t(Ip),U(Ip),'ro')
 Ip = ismember(t,time(isnan(R)));
 subplot(221),plot(t(Ip),U(Ip),'rx')
 
-% subplot(222),plot(t(Ip),I(Ip),'ro')
-% subplot(223),plot(t(Ip),dod_ah(Ip),'ro')
+
 subplot(223),plot(time,R,'ro'),xlabel('time (s)'),ylabel('resistance (Ohm)')
 subplot(222),plot(dod,R,'ro'),xlabel('DoD(Ah)'),ylabel('resistance (Ohm)')
 subplot(224),plot(crate,R,'ro'),xlabel('Current(C)'),ylabel('resistance (Ohm)')
 
-%cherche tout les handles du type axe et ignore les legendes
+%Look for all axis handles and ignore legends
 ha = findobj(hf,'type','axes','tag','');
 % printLegTag(ha,'eastoutside');
 prettyAxes(ha);

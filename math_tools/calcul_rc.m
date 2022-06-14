@@ -1,19 +1,30 @@
  function [R, C, err] = calcul_rc(tm,Um,Im,options,R0,C0,Rmin,Rmax,Cmin,Cmax)
-% function [R, C, err] = calcul_rc(tm,Um,Im,options,R0,C0,Rmin,Rmax,Cmin,Cmax)
+% 
 %
-%identificationRC Calcul des parametres d'un circuit RC à partir des
-%mesures (temps,tension, courant)
-% Cette fonction utilise reponseRC
-% tm [nx1 double]: vecteur temps mesure
-% Um [nx1 double]: vecteur tension mesuree
-% Im [nx1 double]: vecteur courant mesure
-% options [string]: options d'execution:
-%       si options contient 'g': mode graphique, montre les resultats
-%       si options contient 'c': 'C fixe', on fixe C a C0
-% R0 [1x1 double]: valeur initiale de R
-% C0 [1x1 double]: valeur initiale de C
+%calcul_rc Calculate parameters of a RC circuit from profiles t,U,I 
 %
+% Usage :
+% [R, C, err] = calcul_rc(tm,Um,Im,options,R0,C0,Rmin,Rmax,Cmin,Cmax)
+% Inputs :
+% - tm [nx1 double]: time measure vector
+% - Um [nx1 double]: voltage measure vector
+% - Im [nx1 double]: current measure vector
+% - options [string]: options d'execution:
+%      - 'g': show results
+%      - 'c': 'C fixed', C is fixed and C=C0
+% - R0 [1x1 double]: R initial value
+% - C0 [1x1 double]: C initial value
+%
+% Outputs :
+% - R : Identified R value
+% - C : Identified C value
+% - err : Quadratic error 
 % See also  reponseRC
+%
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if ~exist('options','var')
     options='';
@@ -74,7 +85,7 @@ if ismember('c',options)%si deux parametres
     C = x(2);
 end
 
-Us = reponseRC(tm,Im,R,C);
+Us = rc_output(tm,Im,R,C);
 Is = Im;
 ts = tm;
 err = mean(erreurQuadratique(Um,Us));
@@ -111,7 +122,7 @@ if ~isequal(size(tm),size(Um)) || ~isequal(size(tm),size(Im)) || size(tm,1)~=len
 end
 
 
-U = reponseRC(tm,Im,R,C);
+U = rc_output(tm,Im,R,C);
 U = U(:);
 Um = Um(:);
 

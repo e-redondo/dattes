@@ -1,14 +1,27 @@
 function xml = import_arbin_res(file_in)
-% import_arbin_res Arbin *.RES to VEHLIB XMLstruct converter (unix)
-%   xml = import_arbin_res(file_in) read filename (*.res file) and converts
-%   to xml (VEHLIB XMLstruct)
-%   Requirements: mdb-tools and mdb_export scripts (voir avec Eduardo)
+% import_arbin_res Arbin *.RES to VEHLIB XMLstruct converter
 %
+% Usage
+%   xml = import_arbin_res(file_in) 
+% Read filename (*.res file) and converts   to xml (VEHLIB XMLstruct)
+% Inputs:
+% - file_in (string): filename or full pathname
+%
+% Outputs:
+% - xml (struct): structure with XML format 4 VEHLIB
+% 
 %   See also importArbinTxt, importArbinXls, importBiologic, importBitrode,
 %   arbin_res2xml, import_arbin_xls
 %
-%   IFSTTAR/LTE  - E. REDONDO
-%   $Revision: 0.1 $  $Created: 2015/08/12, Modified: 2015/08/12$
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
+
+if ~exist(file_in,'file')
+    fprintf('import_arbin_res: file does not exist: %s\n',file_in);
+    xml = [];
+    return;
+end
 
 if nargin==0
     print_usage
@@ -18,11 +31,7 @@ verveh = 2.0;
 
 [D, F, E] = fileparts(file_in);
 
-if ~exist(file_in,'file')
-    fprintf('ERROR: file does not exist: %s\n',file_in);
-    xml = [];
-    return;
-end
+
 
 if isunix
     [A, B] = dos('which mdb-tables');
@@ -38,20 +47,7 @@ end
 % chrono=tic;
 mdb_export_tables(file_in);
 % %0.-test si mdb_export_tables installe:
-% [A, B] = dos('which mdb_export_tables');
-% if isempty(B)
-%     fprintf('importArbinRes:ERRREUR: manque script mdb_export_tables\n');
-%     return;
-% end
-% %1.- export RES file to CSV
-% myCmd = sprintf('mdb_export_tables %s',file_in);
-% [A, B] = dos(myCmd);
-% %1.1.- verifier que tout s'est bien passe
-% if ~isempty(B)
-%     fprintf('ERROR: mdb_export_tables %s\n',file_in);
-%     xml = [];
-%     return;
-% end
+
 %2.- prendre Channel_Normal_Table, lire et trier par data_point
 
 %2.1- verifier son existence

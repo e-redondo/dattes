@@ -1,30 +1,48 @@
-function mdb_export_tables(resFile)
+function mdb_export_tables(res_file)
+%mdb_export_tables Convert .res file into .csv table
+%
+% mdb_export_tables(res_file)
+% Read the Arbin *.res file and converts it into .csv table
+%
+% Usage:
+% mdb_export_tables(res_file)
+% Inputs : 
+% - res_file: .res file from Arbin cycler
+%
+%   See also importArbinTxt, importArbinXls,  arbin_res2xml, import_arbin_res if iscell(res_file)
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
-if iscell(resFile)
-    cellfun(@mdb_export_tables,resFile);
+if iscell(res_file)
+    cellfun(@mdb_export_tables,res_file);
     return;
 end
-if isdir(resFile)
-    RES = lsFiles(resFile,'.res');
-    mdb_export_tables(RES);
-    return;
-end
-if ~exist(resFile,'file')
-    fprintf('File not found: %s\n',resFile);
-    return;
-end
-[A, B] = dos(sprintf('mdb-tables "%s"',resFile));
-tablelist = B;
-tablelist = regexp(tablelist,'\s','split');
-Ie = cellfun(@isempty,tablelist);
-tablelist = tablelist(~Ie);
 
-[D, F, E] = fileparts(resFile);
+if isdir(res_file)
+    res = lsFiles(res_file,'.res');
+    mdb_export_tables(res);
+    return;
+end
+
+if ~exist(res_file,'file')
+    fprintf('File not found: %s\n',res_file);
+    return;
+end
+
+[A, B] = dos(sprintf('mdb-tables "%s"',res_file));
+table_list = B;
+table_list = regexp(table_list,'\s','split');
+Ie = cellfun(@isempty,table_list);
+table_list = table_list(~Ie);
+
+[D, F, E] = fileparts(res_file);
 dirOut = fullfile(D,F);
 mkdir(dirOut);
-for ind = 1:length(tablelist)
-    fileOut = fullfile(dirOut,sprintf('%s.csv',tablelist{ind}));
-    cmd = sprintf('mdb-export -d " " "%s" %s > "%s"',resFile,tablelist{ind},fileOut);
+for ind = 1:length(table_list)
+    file_out = fullfile(dirOut,sprintf('%s.csv',table_list{ind}));
+    cmd = sprintf('mdb-export -d " " "%s" %s > "%s"',res_file,table_list{ind},file_out);
     [A, B] = dos(cmd);
 end
 end

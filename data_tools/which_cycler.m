@@ -18,6 +18,12 @@ function [cycler, line1, line2] = which_cycler(fid)
 %   - 'bitrode_csv_with_header': Bitrode csv file with header
 % - line1 [string]: file's first line (if file is text type)
 % - line2 [string]: file's second line (if file is text type)
+%
+% See also: dattes, which_mode
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 cycler = '';
 line1 = '';

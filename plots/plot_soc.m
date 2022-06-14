@@ -1,9 +1,37 @@
 function hf = plot_soc(t, I, DoDAh, SOC, config,title_str,options)
+% plot_soc plot state of charge graphs
+%
+% Use t, I, DoDAh and SOC to plot state of charge graphs
+%
+% Usage:
+% hf = plot_soc(t, I, DoDAh, SOC, config,title_str,options)
+% Inputs:
+% - t [nx1 double]: time in seconds
+% - I [nx1 double]: current in A
+% - DoDAh [nx1 double]: depth of discharge in AmpHours
+% - SOC [nx1 double]: state of charge in %
+% - config [1x1 struct]: config struct from configurator
+% - title [string]: phases struct from decompose_phases
+% - options [string] containing:
+%   - 'v': verbose, tell what you do
+%   - 'g' : show figures
+% Output:
+% - hf [1x1 figure handler]: handler for created figure
+%
+%See also dattes, dattes_plot, configurator, extract_profiles
+%
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
+
+
 
 if ~exist('options','var')
     options = '';
 end
-%abcise: tc au lieu de tabs,en heures ou en jours si options 'h' ou 'd':
+
+%x-axis: tc instead of tabs,in hours od days if options 'h' or 'd':
 tc = t-t(1);
 if ismember('h',options)
     tc = tc/3600;

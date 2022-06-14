@@ -2,18 +2,24 @@ function [tp,varargout] = extract_phase(phase,t,varargin)
 % extract_phase extract vectors for given phase
 %
 % Usage:
-% [tp,Up,Ip,mp...] = extract_phase(phase,t,U,I,m...) 
+% [tp,varargout] = extract_phase(phase,t,varargin)
 %
 % Inputs:
 % - phase (1x1 struct): phase struct from split_phases
-% - t, U, I, m ... (nx1 double): vectors from extract_profiles
+% - t (nx1 double): time vector from extract_profiles
+% - varargin (nx1 doubles): other vectors (U, I, m, ...)
 %
 % Outputs:
-% - tp, Up, Ip, mp ... (px1 double): subvectors corresponding to phase
+% - tp (px1 double): subvector corresponding to time at the specific phase
+% - varargout (px1 doubles): other subvectors (Up, Ip, mp, ...)
 %
 % See also extract_phase2, split_phases, extract_profiles 
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
-%0.- gestion d'erreurs:
+%% 0.- check inputs:
 %0.1.- initialisation des sorties
 tp = [];
 varargout = cell(1,nargout);
