@@ -39,27 +39,28 @@ success = logical([]);
 for ind =  1:length(xml_list)
     this_file = xml_list{ind};
     fprintf('\ndattes on file %s...\n',this_file);
-%     try
+     try
         m_file = lsFiles(fileparts(this_file),'.m');
         if length(m_file)==1 %reconfigure
             [D,F,E] = fileparts(m_file{1});
             addpath(D);
             [r,c,p] = dattes(this_file,'cSIPs',F);
             rmpath(D);
-        else%do not reconfigure
-            [r,c,p] = dattes(this_file,'SIPs');
+          if ~exist(result_filename(r.test.file_in),'file')
+              success(end+1) = false;
+              ME = MException('dattes:no mat file created','error in dattes');
+          else
+              success(end+1) = true;
+              wrote_files = wrote_files+1;
+          end
+        elseif isempty(m_file)
+            fprintf('no config M-File found for %s\n',this_file);
         end
-        if ~exist(result_filename(r.test.file_in),'file')
-            success(end+1) = false;
-            ME = MException('dattes:no mat file created','error in dattes');
-        else
-            success(end+1) = true;
-            wrote_files = wrote_files+1;
-        end
-%     catch e
-%         fprintf('\n%s FAILED\n',this_file);
-%         import_errors = import_errors+1;
-%     end
+        
+     catch e
+         fprintf('\n%s FAILED\n',this_file);
+         import_errors = import_errors+1;
+     end
 
 end
 

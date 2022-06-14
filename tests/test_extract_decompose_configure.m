@@ -15,7 +15,7 @@ end
 folder_list = lsDirs(srcdir);
 
 %2. filtering criteria:
-filter_strs_must_be = {'BAROM','ICA','ELLISUP'};%include all folders containing this
+filter_strs_must_be = {'ICA','OCV','BAROM','ELLISUP'};%include all folders containing this
 filter_strs_must_be = {'ELLISUP'};%include all folders containing this
 filter_strs_do_not_must_be = {};%exclude this folders because big files
 
