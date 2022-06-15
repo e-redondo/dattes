@@ -1,11 +1,11 @@
-function [result, config, phases] = load_result(XMLfile,options)
+function [result] = load_result(XMLfile,options)
 % load_result load the results of DATTES
 %
-%[result, config, phases] = load_result(XMLfile,options)
+%[result] = load_result(XMLfile,options)
 % load the results of DATTES
 %
 % Usage:
-% [result, config, phases] = dattes(xml_file,options,cfg_file)
+% [result] = load_result(XMLfile,options)
 % Inputs : 
 % - xml_file:
 %     -   [1xn string]: pathame to the xml file
@@ -28,9 +28,9 @@ if ~exist('options','var')
     options = '';
 end
 if iscell(XMLfile)
-    [result, config, phases] = cellfun(@load_result,XMLfile,'UniformOutput',false);
-    %mise en forme (cell 2 struct):
-    [result, config, phases] = compil_result(result, config, phases);
+    [result] = cellfun(@load_result,XMLfile,'UniformOutput',false);
+%     %mise en forme (cell 2 struct):
+%     [result] = compil_result(result, config, phases);
     return;
 end
 %get file name
@@ -38,24 +38,24 @@ fileOut = result_filename(XMLfile);
 %check if file exists
 if exist(fileOut,'file')
     if ismember('v',options)
-        fprintf('load_result:load results and config %s...',XMLfile);
+        fprintf('load_result:load results %s...',XMLfile);
     end
     %list variables in MAT file
     S = who('-file',fileOut);
-    if ismember('config',S)
-        %load config if it is in the MAT file
-        load(fileOut,'config');
-        %convert strings back to function handlers (see save1result in save_result):
-        config.impedance.ident_fcn = str2func(config.impedance.ident_fcn);
-    end
+%     if ismember('config',S)
+%         %load config if it is in the MAT file
+%         load(fileOut,'config');
+%         %convert strings back to function handlers (see save1result in save_result):
+%         config.impedance.ident_fcn = str2func(config.impedance.ident_fcn);
+%     end
     if ismember('result',S)
         %load resultat if it is in the MAT file
         load(fileOut,'result');
     end
-    if ismember('phases',S)
-        %load resultat if it is in the MAT file
-        load(fileOut,'phases');
-    end
+%     if ismember('phases',S)
+%         %load resultat if it is in the MAT file
+%         load(fileOut,'phases');
+%     end
     if ismember('v',options)
         fprintf('OK\n');
     end
@@ -64,20 +64,20 @@ else
         fprintf('load_result: the file %s did not exist yet, variables initialized\n',fileOut);
     end
 end
-if ~exist('config','var')
-    %if config was not in the file (or the file was not found)
-    %create this variable
-    config = struct;
-end
+% if ~exist('config','var')
+%     %if config was not in the file (or the file was not found)
+%     %create this variable
+%     config = struct;
+% end
 if ~exist('result','var')
     %if resultat was not in the file (or the file was not found)
     %create this variable
     result = struct;
 end
-if ~exist('phases','var')
-    %if resultat was not in the file (or the file was not found)
-    %create this variable
-    phases = struct;
-end
+% if ~exist('phases','var')
+%     %if resultat was not in the file (or the file was not found)
+%     %create this variable
+%     phases = struct;
+% end
 
 end

@@ -27,9 +27,9 @@ function [result, config, phases] = dattes_plot(xml_file,options)
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if iscell(xml_file)
-    [result, config, phases] = cellfun(@(x) dattes_plot(x,options),xml_file,'UniformOutput',false);
+    [result] = cellfun(@(x) dattes_plot(x,options),xml_file,'UniformOutput',false);
     %mise en forme (cell 2 struct):
-    [result, config, phases] = compil_result(result, config, phases);
+%     [result, config, phases] = compil_result(result, config, phases);
     return;
 end
 %% 0.1.- check inputs:
@@ -49,18 +49,29 @@ end
 
 
 %1.load results
-[result, config, phases] = load_result(xml_file,options);
+[result] = load_result(xml_file,options);
 if isempty(fieldnames(result))
     fprintf('dattes_plot: Nothing to plot in %s\n',xml_file);
     return;
 end
 %2.load profiles
-[t,U,I,m,DoDAh,SOC,T] = extract_profiles(xml_file,options,config);
+% [t,U,I,m,DoDAh,SOC,T] = extract_profiles(xml_file,options,config);
+t = result.profiles.t;
+U = result.profiles.U;
+I = result.profiles.I;
+m = result.profiles.m;
+T = result.profiles.T;
+DoDAh = result.profiles.dod_ah;
+SOC = result.profiles.soc;
+%3. get config and phases
+config = result.configuration;
+phases = result.phases;
 
 %title for figures
 [~, title_str, ~] = fileparts(result.test.file_in);
 InherOptions = options(ismember(options,'hdD'));
 
+%4. go for each action:
 if ismember('x',options)
     %show result of 'x', i.e. profiles
     plot_profiles(t,U,I,m,title_str,InherOptions);

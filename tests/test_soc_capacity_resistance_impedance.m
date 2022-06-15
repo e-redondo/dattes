@@ -16,7 +16,7 @@ xml_list = lsFiles(srcdir,'.xml');
 
 %2. filtering criteria:
 filter_strs_must_be = {'BAROM','ELLISUP'};%include all files containing this
-filter_strs_must_be = {'ELLISUP'};%include all files containing this
+filter_strs_must_be = {'BAROM'};%include all files containing this
 filter_strs_do_not_must_be = {};%exclude this folders because big files
 
 %3. filter the folder_list
@@ -45,10 +45,8 @@ for ind =  1:length(xml_list)
         if length(m_file)==1 %reconfigure
             [D,F,E] = fileparts(m_file{1});
             addpath(D);
-            [r,c,p] = dattes(this_file,'cSCROZs',F);
+            r = dattes(this_file,'cSCROZs',F);
             rmpath(D);
-        else%do not reconfigure
-            [r,c,p] = dattes(this_file,'SCROZs');
         end
         if ~exist(result_filename(r.test.file_in),'file')
             success(end+1) = false;

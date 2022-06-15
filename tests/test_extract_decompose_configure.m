@@ -95,7 +95,7 @@ for ind =  1:length(folder_list)
             [D cfg_file E] = fileparts(m_list{ind2});
             
             addpath(D);%add path where cfg_file is
-            [r,c,p] = dattes(xml_list1{ind2},'cvs',cfg_file);
+            r = dattes(xml_list1{ind2},'cvs',cfg_file);
             rmpath(D);%rm path where cfg_file is
             if ~exist(result_filename(r.test.file_in),'file')
                 success(end+1) = false;

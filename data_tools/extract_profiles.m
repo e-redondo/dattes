@@ -1,4 +1,4 @@
-function [t,U,I,m,dod_ah,soc,T, eis, err] = extract_profiles(xml_file,options,config)
+function [profiles, eis, err] = extract_profiles(xml_file,options,config)
 %extract_profiles extract important variables from a battery test bench file.
 %
 %[t,U,I,m,dod_ah,soc,T, eis, err] = extract_profiles(xml_file,options,config)
@@ -74,140 +74,147 @@ end
 
 thisMAT = regexprep(xml_file,'xml$','mat');
 
-if ismember('f',options) || ~exist(thisMAT,'file')
-    xml_read = true;
-elseif ismember('u',options)
-    xml_dir = dir(xml_file);
-    mat_dir = dir(thisMAT);
-    if isempty(mat_dir)
-        %xml_read true if thisMAT does not exist
-        xml_read = true;
-    else
-        %xml_read true if mat older than xml
-        %xml_read false if mat newer than xml
-        xml_read = mat_dir.datenum<xml_dir.datenum;
-    end
-else
-    xml_read = false;
-end
+% if ismember('f',options) || ~exist(thisMAT,'file')
+%     xml_read = true;
+% elseif ismember('u',options)
+%     xml_dir = dir(xml_file);
+%     mat_dir = dir(thisMAT);
+%     if isempty(mat_dir)
+%         %xml_read true if thisMAT does not exist
+%         xml_read = true;
+%     else
+%         %xml_read true if mat older than xml
+%         %xml_read false if mat newer than xml
+%         xml_read = mat_dir.datenum<xml_dir.datenum;
+%     end
+% else
+%     xml_read = false;
+% end
 
 if ismember('v',options)
     fprintf('extract_profiles: %s ....',xml_file);
 end
-if xml_read
-    if ~exist(xml_file,'file')
-        t = [];
-        U = [];
-        I = [];
-        m = [];
-        err = -1;
-        fprintf('File not found: %s\n',xml_file);
-        return;
-    end
-    %     [xmlD, xmlF] = fileparts(xml_file);
-    %     xmlF = sprintf('%s.xml',xmlF);
-    if ismember('v',options) && ~ismember('s',options)
-        fprintf('l''option ''s'' est fortement conseillee lecture du XML,...');
-    end
-    [xml] = lectureXMLFile4Vehlib(xml_file);
-    %     if err
-    %         t = [];U = [];I = [];m = [];DoDAh = [];SOC = [];
-    %         fprintf('Bad XML file: %s\n',xml_file);
-    %         return;
-    %     end
-    %extraire les vecteurs
-    %verifier si les champs existent (tabs,U,I,mode)
-    if any(cellfun(@(x) ~isfield(x,'tabs'),xml.table)) ||...
-            any(cellfun(@(x) ~isfield(x,Uname),xml.table)) ||...
-            any(cellfun(@(x) ~isfield(x,'I'),xml.table)) ||...
-            any(cellfun(@(x) ~isfield(x,'mode'),xml.table))
-        
-        t = [];U = [];I = [];m = [];dod_ah = [];soc = [];err = -3;
-        fprintf('Bad XML file: %s\n',xml_file);
-        return;
-    end
-    
-    t = cellfun(@(x) x.tabs.vector,xml.table,'uniformoutput',false);
-    U = cellfun(@(x) x.(Uname).vector,xml.table,'uniformoutput',false);
-    I = cellfun(@(x) x.I.vector,xml.table,'uniformoutput',false);
-    m = cellfun(@(x) x.mode.vector,xml.table,'uniformoutput',false);
-    %decapsuler les cellules
-    t = vertcat(t{:});
-    U = vertcat(U{:});
-    I = vertcat(I{:});
-    m = vertcat(m{:});
-    %doublons
-    [t, Iu] = unique(t);
-    U = U(Iu);
-    I = I(Iu);
-    m = m(Iu);
-    
-    if all(cellfun(@(x) isfield(x,Tname),xml.table))
-        %extraire
-        T = cellfun(@(x) x.(Tname).vector,xml.table,'uniformoutput',false);
-        %decapsuler les cellules
-        T = vertcat(T{:});
-        %doublons
-        T = T(Iu);
-    else
-        T = [];
-    end
-    if isnan(max(t+I+U+m))%gestion d'erreurs
-        error('Oups! extract_profiles a trouve des nans: %s\n',xml_file);
-    end
-    if ismember('s',options)
-        saveMAT(t,U,I,m,T,thisMAT);
-    end
-    if ismember('v',options)
-        fprintf('OK (XML file)\n');
-    end
-    
-    %read EIS
-    eis = extract_eis(xml,options);
-    
-else
-    %list variables in MAT file
-    S = who('-file',thisMAT);
-    if ~ismember('t',S) || ~ismember('U',S) || ~ismember('I',S) || ~ismember('m',S)
-        err = -2;
-        t = [];U = [];I = [];m = [];dod_ah = [];soc = [];
-        fprintf('Bad MAT file: %s\n',thisMAT);
-        return;
-    end
-    % read profiles
-    load(thisMAT);
-    if ismember('v',options)
-        fprintf('OK (MAT file)\n');
-    end
-    %read EIS
-    thisMAT_result = result_filename(thisMAT);
-    
-    if exist(thisMAT_result,'file')
-        load(thisMAT_result);
-        if isfield(result,'eis')
-            eis = result.eis;
-        else
-            eis = [];
-        end
-    else
-        eis = [];
-    end
+
+profiles = struct([]);
+eis = ([]);
+
+% if xml_read
+if ~exist(xml_file,'file')
+    err = -1;
+    fprintf('File not found: %s\n',xml_file);
+    return;
 end
+%     [xmlD, xmlF] = fileparts(xml_file);
+%     xmlF = sprintf('%s.xml',xmlF);
+if ismember('v',options) && ~ismember('s',options)
+    fprintf('l''option ''s'' est fortement conseillee lecture du XML,...');
+end
+[xml] = lectureXMLFile4Vehlib(xml_file);
+%     if err
+%         t = [];U = [];I = [];m = [];DoDAh = [];SOC = [];
+%         fprintf('Bad XML file: %s\n',xml_file);
+%         return;
+%     end
+%extraire les vecteurs
+%verifier si les champs existent (tabs,U,I,mode)
+if any(cellfun(@(x) ~isfield(x,'tabs'),xml.table)) ||...
+        any(cellfun(@(x) ~isfield(x,Uname),xml.table)) ||...
+        any(cellfun(@(x) ~isfield(x,'I'),xml.table)) ||...
+        any(cellfun(@(x) ~isfield(x,'mode'),xml.table))
+    
+    err = -3;
+    fprintf('Bad XML file: %s\n',xml_file);
+    return;
+end
+
+t = cellfun(@(x) x.tabs.vector,xml.table,'uniformoutput',false);
+U = cellfun(@(x) x.(Uname).vector,xml.table,'uniformoutput',false);
+I = cellfun(@(x) x.I.vector,xml.table,'uniformoutput',false);
+m = cellfun(@(x) x.mode.vector,xml.table,'uniformoutput',false);
+%decapsuler les cellules
+t = vertcat(t{:});
+U = vertcat(U{:});
+I = vertcat(I{:});
+m = vertcat(m{:});
+%doublons
+[t, Iu] = unique(t);
+U = U(Iu);
+I = I(Iu);
+m = m(Iu);
+
+if all(cellfun(@(x) isfield(x,Tname),xml.table))
+    %extraire
+    T = cellfun(@(x) x.(Tname).vector,xml.table,'uniformoutput',false);
+    %decapsuler les cellules
+    T = vertcat(T{:});
+    %doublons
+    T = T(Iu);
+else
+    T = [];
+end
+if isnan(max(t+I+U+m))%gestion d'erreurs
+    error('Oups! extract_profiles a trouve des nans: %s\n',xml_file);
+end
+%     if ismember('s',options)
+%         saveMAT(t,U,I,m,T,thisMAT);
+%     end
+if ismember('v',options)
+    fprintf('OK (XML file)\n');
+end
+% compile profiles
+profiles(1).t = t;
+profiles.U = U;
+profiles.I = I;
+profiles.m = m;
+profiles.T = T;
+profiles.dod_ah = [];
+profiles.soc = [];
+
+%read EIS
+eis = extract_eis(xml,options);
+
+% else
+%     %list variables in MAT file
+%     S = who('-file',thisMAT);
+%     if ~ismember('t',S) || ~ismember('U',S) || ~ismember('I',S) || ~ismember('m',S)
+%         err = -2;
+%         fprintf('Bad MAT file: %s\n',thisMAT);
+%         return;
+%     end
+%     % read profiles
+% %     load(thisMAT);
+%     if ismember('v',options)
+%         fprintf('OK (MAT file)\n');
+%     end
+%     %read EIS
+%     thisMAT_result = result_filename(thisMAT);
+%     
+%     if exist(thisMAT_result,'file')
+%         load(thisMAT_result);
+%         if isfield(result,'eis')
+%             eis = result.eis;
+%         else
+%             eis = [];
+%         end
+%     else
+%         eis = [];
+%     end
+% end
 
 if ismember('g',options)
     showResult(t,U,I,m,thisMAT,options);
 end
 
 err=0;
-if ~exist('dod_ah','var')
-    dod_ah = [];
-end
-if ~exist('soc','var')
-    soc = [];
-end
-if ~exist('T','var')
-    T = [];
-end
+% if ~exist('dod_ah','var')
+%     dod_ah = [];
+% end
+% if ~exist('soc','var')
+%     soc = [];
+% end
+% if ~exist('T','var')
+%     T = [];
+% end
 end
 
 function saveMAT(t,U,I,m,T,thisMAT)
@@ -241,6 +248,8 @@ function [eis] = extract_eis(xml,options)
 % err = -1: le fichier xml_file n'existe pas
 % err = 1: des NaNs sont presents dans les vecteurs (t,U,I,m)
 %
+
+eis = struct([]);
 
 if ~exist('config','var')
     Uname = 'U';
@@ -297,10 +306,7 @@ ReZ = ReZ(Is);
 ImZ = ImZ(Is);
 f = f(Is);
 
-if isempty(t)
-    eis = [];
-else
-    
+if ~isempty(t)
     if isnan(max(t+I+U+m))%gestion d'erreurs
         error('Oups! extract_eis found some nans\n');
     end

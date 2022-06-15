@@ -1,14 +1,14 @@
-function [result, config, phases] = dattes(xml_file,options,cfg_file)
+function [result] = dattes(xml_file,options,cfg_file)
 %DATTES Data Analysis Tools for Tests on Energy Storage
 %
-% [result, config, phases] = dattes(xml_file,options,cfg_file):
+% [result] = dattes(xml_file,options,cfg_file):
 % Read the *.xml file of a battery test and performe several calculations
 % (Capacity, SoC, OCV, impedance identification, ICA/DVA, etc.).
 % Results are returned as output variables and (optionally) stored in a file
 % named 'xml_file_result.mat'.
 %
 % Usage:
-% [result, config, phases] = dattes(xml_file,options,cfg_file)
+% [result] = dattes(xml_file,options,cfg_file)
 % Inputs : 
 % - xml_file:
 %     -   [1xn string]: pathame to the xml file
@@ -46,9 +46,10 @@ function [result, config, phases] = dattes(xml_file,options,cfg_file)
 % - cfg_file:  [1x1 struct] function name to configure the behavior (see configurator)
 %
 % Outputs : 
-% - result: [1x1 struct] structure containing analysis results 
-% - config:  [1x1 struct] function name used to configure the behavior (see configurator)
-% - phases: [1x1 struct] structure containing information about the different phases of the test
+% - result: [1x1 struct] structure containing the following fields:
+%     - configuration [1x1 struct] configuration parameters
+%     - test [1x1 struct] general information about the test
+%     - phases [px1 struct] structure array with basic information about the different phases of the test
 %
 % Examples:
 % dattes(xml_file,'s',cfg_file): Load the profiles (t,U,I,m) in .xml file and save them in a xml_file_result.mat.
@@ -58,7 +59,7 @@ function [result, config, phases] = dattes(xml_file,options,cfg_file)
 % dattes(xml_file,'ps',cfg_file), split the test in phases and save
 % dattes(xml_file,'cs',cfg_file), configure the test and save
 %
-% [result, config, phases] = dattes(xml_file,'l'), load the results
+% [result] = dattes(xml_file), load the results
 %
 % dattes(xml_file,'C'), make capacity analysis.
 %
@@ -127,22 +128,22 @@ inher_options = options(ismember(options,'gfuvse'));
 
 %% Graphics mode 
 if ismember('G',options)
-    [result, config, phases] = dattes_plot(xml_file,options);
+    [result] = dattes_plot(xml_file,options);
     %If figures are plotted ('G') none analysis is done then
     return;
 end
 
 %% Bulk mode (XML is a cellstring)
 if iscell(xml_file)
-    [result, config, phases] = cellfun(@(x) dattes(x,options,cfg_file),xml_file,'UniformOutput',false);
+    [result] = cellfun(@(x) dattes(x,options,cfg_file),xml_file,'UniformOutput',false);
     %formatting (cell 2 struct):
-    [result, config, phases] = compil_result(result, config, phases);
+%     [result] = compil_result(result);
     return;
 end
 
 %% 1. LOAD
 %1.0.- load previous results (if they exist)
-[result, config, phases] = load_result(xml_file,inher_options);
+[result] = load_result(xml_file,inher_options);
 
 %1.1.-take some basic config parameters in config0 struct
 % (e.g. Uname and Tname needed in extract_profiles)
@@ -154,21 +155,39 @@ elseif ~isempty(which(cfg_file))
     config0 = eval(cfg_file);
 else
     %cfg_file is empty, e.g. dattes(xml,'','cdvs'), take config from load_result
-    config0 = config;
+    config0 = result.configuration;
 end
     
 %1.2.- load data in XML
-[t,U,I,m,dod_ah,soc,temperature, eis] = extract_profiles(xml_file,inher_options,config0);
+if ismember('x',options) || ~isfield(result,'profiles')
+    [profiles, eis, err] = extract_profiles(xml_file,inher_options,config0);
+    result.profiles = profiles;
+    if ~isempty(eis)
+        result.eis = eis;
+    end
+end
+
+t = result.profiles.t;
+U = result.profiles.U;
+I = result.profiles.I;
+m = result.profiles.m;
+T = result.profiles.T;
+if isfield(result.profiles,'dod_ah')
+    dod_ah = result.profiles.dod_ah;
+    soc = result.profiles.soc;
+else
+    dod_ah = [];
+    soc = [];
+end
+
 %1.3.- update result
 result.test.file_in = xml_file;
-result.test.t_ini = t(1);
-result.test.t_fin = t(end);
-if ~isempty(eis)
-    result.eis = eis;
-end
+result.test.t_ini = result.profiles.t(1);
+result.test.t_fin = result.profiles.t(end);
+
 %1.4. DECOMPOSE IN PHASES
 [phases] = split_phases(t,I,U,m,inher_options);
-
+result.phases = phases;
 
 %% 2. CONFIGURE
 if ismember('c',options)
@@ -180,7 +199,9 @@ if ismember('c',options)
     elseif ~isfield(config.test,'cfg_file')
         config.test.cfg_file = '';
     end
+    result.configuration = config;
 end
+config = result.configuration;
 
 %% 3. Capacity measurements at different C-rates 1C, C/2, C/5....
 if ismember('C',options)
@@ -191,19 +212,21 @@ end
 %% 5. soc
 if ismember('S',options)
     [dod_ah, soc] = calcul_soc(t,I,config,inher_options);
-    if isempty(dod_ah)
-        result.test.dod_ah_ini = [];
-        result.test.soc_ini = [];
-        result.test.dod_ah_fin = [];
-        result.test.soc_fin = [];
-    else
-        result.test.dod_ah_ini = dod_ah(1);
-        result.test.soc_ini = soc(1);
-        result.test.dod_ah_fin = dod_ah(end);
-        result.test.soc_fin = soc(end);
-    end
+    result.profiles.dod_ah = dod_ah;
+    result.profiles.soc = soc;
 end
-
+% update test soc_ini and soc_fin: 
+if isempty(dod_ah)
+    result.test.dod_ah_ini = [];
+    result.test.soc_ini = [];
+    result.test.dod_ah_fin = [];
+    result.test.soc_fin = [];
+else
+    result.test.dod_ah_ini = dod_ah(1);
+    result.test.soc_ini = soc(1);
+    result.test.dod_ah_fin = dod_ah(end);
+    result.test.soc_fin = soc(end);
+end
 %% 6. Profile processing (t,U,I,m,dod_ah) >>> R, CPE, ICA, OCV, etc.
 
 if any(ismember('PORZI',options))
@@ -254,9 +277,9 @@ if any(ismember('PORZI',options))
 end
 
 %% 7. Test temperature
-if ~isfield(result,'temperature')
-    result.temperature = 25;
-end
+% if ~isfield(result,'temperature')
+%     result.temperature = 25;
+% end
 
 
 %% 8. Save results
@@ -265,12 +288,12 @@ if ismember('s',options)
         fprintf('dattes: save result...');
     end
     %save outputs result,config and phases in a xml_file_result.mat
-    save_result(result,config,phases);
-    if ismember('S',options)
-        %save dod_ah and soc in the xml_file.mat
-        mat_file = regexprep(xml_file,'xml$','mat');
-        save(mat_file,'-v7','-append','dod_ah', 'soc');
-    end
+    save_result(result);
+%     if ismember('S',options)
+%         %save dod_ah and soc in the xml_file.mat
+%         mat_file = regexprep(xml_file,'xml$','mat');
+%         save(mat_file,'-v7','-append','dod_ah', 'soc');
+%     end
     if ismember('v',options)
         fprintf('OK\n');
     end

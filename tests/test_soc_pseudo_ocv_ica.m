@@ -44,7 +44,7 @@ for ind =  1:length(xml_list)
         if length(m_file)==1 %reconfigure
             [D,F,E] = fileparts(m_file{1});
             addpath(D);
-            [r,c,p] = dattes(this_file,'cSIPs',F);
+            r = dattes(this_file,'cSIPs',F);
             rmpath(D);
           if ~exist(result_filename(r.test.file_in),'file')
               success(end+1) = false;

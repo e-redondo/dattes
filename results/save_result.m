@@ -1,15 +1,13 @@
-function err = save_result(result,config,phases)
+function err = save_result(result)
 %save_result save the result,config and phases of in a XMLfile_result.mat
 %
-% err = save_result(result,config,phases)
+% err = save_result(result)
 % save the results of DATTES analysis
 %
 % Usage:
-% err = save_result(result,config,phases)
+% err = save_result(result)
 % Inputs : 
 % - result: [1x1 struct] structure containing analysis results 
-% - config:  [1x1 struct] function name used to configure the behavior (see configurator)
-% - phases: [1x1 struct] structure containing information about the different phases of the test
 %
 % Outputs : 
 % - err [1x1 double] 
@@ -26,26 +24,21 @@ function err = save_result(result,config,phases)
 %% 0.1.- check inputs:
 err = 0;
 
-if length(result)==1
-%     XMLfile = {XMLfile};
-    phases = {phases};
+if iscell(result)
+    err = cellfun(@save_result,result);
+    return
 end
-if ~isstruct(result) || ~isstruct(config) || ~iscell(phases)
+if ~isstruct(result)
     error('save_result: wrong type of parameters\n');
 end
 
-if ~isequal(size(result),size(config))
-    fprintf('save_result:ERROR, inputs'' sizes must be coherent\n');
-    err = -1;
-    return
-end
 
 for ind = 1:length(result)
-    err(ind) = save1result(result(ind),config(ind),phases{ind});
+    err(ind) = save1result(result(ind));
 end
 end
 
-function err = save1result(result,config,phases)
+function err = save1result(result)
 % save a result file
 err = 0;
 %get file name
@@ -63,8 +56,9 @@ else
     return
 end
 %convert all function handlers into strings:
-config.impedance.ident_fcn = func2str(config.impedance.ident_fcn);
-
+if isa(result.configuration.impedance.ident_fcn,'function_handle')
+    result.configuration.impedance.ident_fcn = func2str(result.configuration.impedance.ident_fcn);
+end
 %save these variables in this file
-save(fileOut,'-v7','result','config','phases');
+save(fileOut,'-v7','result');
 end
