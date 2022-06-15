@@ -57,7 +57,9 @@ end
 subplot(311),title(title_str,'interpreter','none')
 ha = findobj( hf, 'type', 'axes', 'tag', '' );
 prettyAxes(ha);
-linkaxes(ha, 'x' );
+if length(ha)>1
+  linkaxes(ha, 'x' );
+end
 changeLine(ha,2,15);
 
 end
