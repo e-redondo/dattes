@@ -74,6 +74,10 @@ if ~exist('result','var')
     %create this variable
     result = struct;
 end
+
+        %convert strings back to function handlers (see save1result in save_result):
+        result.configuration.impedance.ident_fcn = str2func(result.configuration.impedance.ident_fcn);
+
 % if ~exist('phases','var')
 %     %if resultat was not in the file (or the file was not found)
 %     %create this variable
