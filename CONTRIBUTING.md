@@ -9,7 +9,7 @@ If you're already familiar with our workflow, maybe have a quick look at the [pr
 Before you commit any code, please perform the following checks:
 
 - [No code issues](#coding-style-guidelines): `checkcode('your_new_code_functions.m')`
-- [All tests pass](#testing): `  ` (GNU/Linux and MacOS), ` ` (Windows)
+- [All tests pass](#testing): run all scripts in [tests folder](tests)
 
 
 ## Workflow
@@ -39,24 +39,31 @@ You now have everything you need to start making changes!
 11. DATTES has online documentation at https://dattes.gitlab.io/. To make sure any new methods or classes you added show up there, please read the [documentation](#documentation) section.
 12. If you added a major new feature, perhaps it should be showcased in an [example notebook](#example-notebooks).
 13. When you feel your code is finished, or at least warrants serious discussion, run the [pre-commit checks](#pre-commit-checks) and then [push your improvement](https://docs.gitlab.com/ee/user/project/push_options.html)  on [DATTE's Gitlab page](https://gitlab.com/dattes/dattes).
-14. Once a push request has been created, it will be reviewed by any member of the community. Changes might be suggested which you can make by simply adding new commits to the branch. When everything's finished, someone with the right Gitlab permissions will merge your changes into DATTES main repository.
 
 
+### D. General acceptance criteria
+Once a push request has been created, it will be reviewed by any member of the community. Changes might be suggested which you can make by simply adding new commits to the branch. When everything's finished, someone with the right Gitlab permissions will merge your changes into DATTES main repository.
+Nevertheless, you merge request should respect some critera (exceptions can be made):
+1. **not very big**: Your contributions should not exceed in general 5 changed files
+2. **one thing a time**: All changes in one merge request must be related (one new feature or fix at a time).
+3. **do not create any regression**: New features must not make the code to regress or limit other features 
 
 
 ## Coding guidelines
 
 DATTES follows the [Matlab coding recommendations](https://www.mathworks.com/matlabcentral/fileexchange/22943-guidelines-for-writing-clean-and-fast-code-in-matlab) for coding style. These are very common guidelines, and community tools have been developed to check how well projects implement them.
-
-### Naming
+Beside these recommendations, some other should be respected:
+## Naming
 In DATTES, naming is aimed to be as descriptive and short as possible. 
 [Snake case](https://en.wikipedia.org/wiki/Snake_case) is used to name the variables, arrays, structures and functions. Using abbreviations is avoided when possible without making names overly long.
 
+Please avoid using single letter variable names.
+A typical example is using **i** or **j** as for loop counter.
+This will overwrite the complex number!
 
 ## Dependencies and reusing code
 
 While it's a bad idea for developers to "reinvent the wheel", it's important for users to get a _reasonably sized download and a free and easy install_. External libraries can sometimes be not free or cease to be supported. For these reasons, all dependencies in DATTES should be thought about carefully, and discussed on Gitlab.
-
 
 ## Testing
 
@@ -180,12 +187,6 @@ First and foremost, every method and every class should have a [help](https://ww
 
 
  [The documentation site](https://dattes.gitlab.io/) describes in details the role, the methodology and the hypothesis used for each main functions.
-
-
-### Example notebooks
-
-Major DATTES features are showcased in [Jupyter notebooks](https://jupyter.org/) stored in the [examples directory](examples/notebooks). 
-
 
 
 ## Acknowledgements
