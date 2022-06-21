@@ -128,6 +128,10 @@ if any(cellfun(@(x) ~isfield(x,'tabs'),xml.table)) ||...
 end
 
 t = cellfun(@(x) x.tabs.vector,xml.table,'uniformoutput',false);
+if any(cellfun(@(x) isnan(max(x)),t))
+    t = cellfun(@(x) x.tc.vector,xml.table,'uniformoutput',false);
+end
+
 U = cellfun(@(x) x.(Uname).vector,xml.table,'uniformoutput',false);
 I = cellfun(@(x) x.I.vector,xml.table,'uniformoutput',false);
 m = cellfun(@(x) x.mode.vector,xml.table,'uniformoutput',false);

@@ -62,7 +62,7 @@ if isempty(header)
      xml = [];
     return
 end
-header = header{1};
+header = header{1}(1,:);
 data = vertcat(data{:});
 
 Dp = data(:,1);%datapoint column

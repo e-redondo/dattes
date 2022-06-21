@@ -200,6 +200,8 @@ if ismember('c',options)
         config.test.cfg_file = '';
     end
     result.configuration = config;
+else
+    result.configuration = config0;
 end
 config = result.configuration;
 

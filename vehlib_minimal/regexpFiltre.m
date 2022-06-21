@@ -49,7 +49,7 @@ function [S, Sn, Is, Ins] = regexpFiltre(C, expression,options)
 %
 %   See also regexp, regexpi, lsFiles
 
-if ~exist('options')
+if ~exist('options','var')
     options = '';
 end
 if ismember('i',options)
