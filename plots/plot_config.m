@@ -45,7 +45,11 @@ subplot(311),title('calcul SOC');
 plot(tc,U,'k','displayname','test'),hold on
 
 I100 = ismember(t,config.soc.soc100_time);
+I0 = ismember(t,config.soc.soc0_time);
+
 plot(tc(I100),U(I100),'ro','displayname','t100')
+plot(tc(I0),U(I0),'rd','displayname','t0')
+
 % plot(t(Iinicv),U(Iinicv),'r+','tag','debutCV')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %figure2: Capacity
