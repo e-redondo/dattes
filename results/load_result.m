@@ -75,8 +75,14 @@ if ~exist('result','var')
     result = struct;
 end
 
-        %convert strings back to function handlers (see save1result in save_result):
-        result.configuration.impedance.ident_fcn = str2func(result.configuration.impedance.ident_fcn);
+%convert strings back to function handlers (see save1result in save_result):
+if isfield(result,'configuration')
+    if isfield(result.configuration,'impedance')
+        if isfield(result.configuration.impedance,'ident_fcn')
+            result.configuration.impedance.ident_fcn = str2func(result.configuration.impedance.ident_fcn);
+        end
+    end
+end
 
 % if ~exist('phases','var')
 %     %if resultat was not in the file (or the file was not found)
