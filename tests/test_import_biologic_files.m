@@ -23,7 +23,11 @@ end
 
 %4. eliminate subfolders
 %4.1 cut pathnames into parts:
+if isunix
 folder_list_parts = regexp(folder_list,filesep,'split');
+else
+folder_list_parts = regexp(folder_list,[filesep filesep],'split');
+end
 
 %4.2
 issubfolder = false(length(folder_list_parts),length(folder_list_parts)); %nxn logical matrix

@@ -2,7 +2,7 @@ function hf = plot_profiles(t,U,I,m,title_str,options)
 %plot_profiles visualize profiles of a test
 %
 % plot_profiles(t,U,I,m,title,options)
-% Make a figure with two subplots: U vs. t et I vs. t. 
+% Make a figure with two subplots: U vs. t et I vs. t.
 %
 % Usage:
 % hf = plot_profiles(t,U,I,m,title,options)
@@ -18,7 +18,7 @@ function hf = plot_profiles(t,U,I,m,title_str,options)
 % See also dattes, dattes_plot, configurator, extract_profiles
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
-% For more information, see the <a href="matlab: 
+% For more information, see the <a href="matlab:
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 
@@ -53,14 +53,14 @@ c = 'rgcmk';
 tags = {'CC','CV','rest','EIS','profile'};
 for ind = 1:5
     indices = m==ind;
-    
+
     subplot(211),plot(t1(indices),U(indices),[c(ind) '.'],'displayname',tags{ind})
     subplot(212),plot(t1(indices),I(indices),[c(ind) '.'],'displayname',tags{ind})
 end
 
 %Look for all axis handles and ignore legends
 ha = findobj(hf, 'type', 'axes', 'tag', '' );
-arrayfun(@(x) legend(x,'show','location','eastoutside'),ha);
+arrayfun(@(x) legend(x,'location','eastoutside'),ha);
 % printLegTag(ha,'eastoutside');
 linkaxes(ha, 'x' );
 prettyAxes(ha);

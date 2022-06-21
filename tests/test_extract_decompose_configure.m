@@ -30,7 +30,11 @@ end
 
 %4. eliminate subfolders
 %4.1 cut pathnames into parts:
+if isunix
 folder_list_parts = regexp(folder_list,filesep,'split');
+else
+folder_list_parts = regexp(folder_list,[filesep filesep],'split');
+end
 
 %4.2
 issubfolder = false(length(folder_list_parts),length(folder_list_parts)); %nxn logical matrix
@@ -79,21 +83,21 @@ for ind =  1:length(folder_list)
     xml_list1 = lsFiles(this_folder,'.xml');%xml_list for this folder
     %search cfg_file for each xml
     m_list = cellfun(@(x) lsFiles(fileparts(x),'.m'),xml_list1,'UniformOutput',false);
-    
+
     %remove empty M-files (cfg_file not found)
     Is = ~cellfun(@isempty ,m_list);
     xml_list1 = xml_list1(Is);
     m_list = m_list(Is);
     %keep just first m file found in folder
     m_list = cellfun(@(x) x{1},m_list,'UniformOutput',false);
-    
+
     xml_list = [xml_list(:); xml_list1(:)];%xml_list for all folders
     for ind2 = 1:length(xml_list1)
         %do one csv file to better manage wrote_files and import_errors
         %count
         try
             [D cfg_file E] = fileparts(m_list{ind2});
-            
+
             addpath(D);%add path where cfg_file is
             r = dattes(xml_list1{ind2},'cvs',cfg_file);
             rmpath(D);%rm path where cfg_file is

@@ -23,7 +23,11 @@ end
 
 %4. eliminate subfolders
 %4.1 cut pathnames into parts:
+if isunix
 folder_list_parts = regexp(folder_list,filesep,'split');
+else
+folder_list_parts = regexp(folder_list,[filesep filesep],'split');
+end
 
 %4.2
 issubfolder = false(length(folder_list_parts),length(folder_list_parts)); %nxn logical matrix
@@ -70,7 +74,7 @@ for ind =  1:length(folder_list)
     mpt_folder_list1 = lsFiles(this_folder,'.mpt');%mpt_list for this folder
     %keep just parent folders for mpr files
     mpt_folder_list1 = unique(cellfun(@fileparts,mpt_folder_list1,'UniformOutput',false));
-    
+
     mpt_folder_list = [mpt_folder_list(:); mpt_folder_list1(:)];%mpt_list for all folders
     for ind2 = 1:length(mpt_folder_list1)
         %do one mpt file to better manage wrote_files and import_errors

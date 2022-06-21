@@ -23,7 +23,11 @@ end
 
 %4. eliminate subfolders
 %4.1 cut pathnames into parts:
+if isunix
 folder_list_parts = regexp(folder_list,filesep,'split');
+else
+folder_list_parts = regexp(folder_list,[filesep filesep],'split');
+end
 
 %4.2
 issubfolder = false(length(folder_list_parts),length(folder_list_parts)); %nxn logical matrix
@@ -68,14 +72,14 @@ success = logical([]);
 for ind =  1:length(folder_list)
     this_folder = folder_list{ind};
     fprintf('bitrode_csv2xml on folder %s...',this_folder);
-    
+
     csv_list1 = lsFiles(this_folder,'.csv');%csv_list for this folder
-    
+
     %remove also all bitrode.log  files:
     log_list = lsFiles(this_folder,'.log');
     log_list = regexpFiltre(log_list,'bitrode.log$');
     cellfun(@delete,log_list);
-    
+
 
     %write bitrode log on each folder containing csv files:
     D = unique(cellfun(@fileparts,csv_list1,'UniformOutput',false));
