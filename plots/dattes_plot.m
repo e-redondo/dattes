@@ -107,7 +107,7 @@ if ismember('P',options)
     %show result of 'P', i.e pseudoOCV
     if isfield(result,'pseudo_ocv')
         if ~isempty(result.pseudo_ocv)
-            plot_pseudo_ocv(result.pseudo_ocv)
+            plot_pseudo_ocv(result.pseudo_ocv);
         else
             fprintf('no pseudo_ocv result found in %s\n',result.test.file_in);
         end
@@ -118,7 +118,7 @@ end
 if ismember('O',options)
     %show result of 'O', i.e. OCV by points
     if isfield(result,'ocv_by_points')
-        plot_ocv_by_points(t,U, DoDAh, result.ocv_by_points)
+        plot_ocv_by_points(t,U, DoDAh, result.ocv_by_points);
     else
         fprintf('no ocv_by_points result found in %s\n',result.test.file_in);
     end
