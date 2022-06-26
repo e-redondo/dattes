@@ -77,7 +77,7 @@ IfinRepos = m==3 & [m(2:end);0]~=3;
 % Imin = Ur==config.test.min_voltage;%FIX: sinon: Imin = Ur>=config.test.min_voltage+.02;
 
 %ca marche avec  Bitrode LYP, verifier avec Mobicus
-Imin = U<=(config.test.min_voltage+0.02);
+Imin = U<=(config.test.min_voltage+0.049);
 Imax = U>=config.test.max_voltage-0.02;%BRICOLE essai 20171211_1609 HONORAT
 %instants a SoC100 (ou presque I100cc: fin de charge CC)
 I100cc = Ifincc & Imax;%ca marche pas pour LYP
@@ -86,7 +86,7 @@ Ic20 = Regime<=0.05*1.1; % typiquement 0.05
 % I100 = Ifincv & Imax;
 I100 = (Ifincv & Imax) | (I100cc & Ic20);
 %instants a SoC0 (ou presque I0cc: fin de decharge CC)
-I0 = Ifincv & Imin;
+I0 = (Ifincv & Imin) | (I100cc & Ic20);
 %fin de decharge et touche Umin ou suivi de floating a Umin:
 I0cc = Ifincc & (Imin | [Imin(2:end);0]);
 %Note: normalement il aurait suffit (IfinccD & Imin), mais de fois les fins de

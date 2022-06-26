@@ -30,4 +30,5 @@ ylabel('Capacity (Ah)','interpreter','tex')
 ha = findobj(hf,'type','axes','tag','');
 prettyAxes(ha);
 changeLine(ha,2,15);
+
 end
