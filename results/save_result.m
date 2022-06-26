@@ -56,9 +56,16 @@ else
     return
 end
 %convert all function handlers into strings:
-if isa(result.configuration.impedance.ident_fcn,'function_handle')
-    result.configuration.impedance.ident_fcn = func2str(result.configuration.impedance.ident_fcn);
+if isfield(result,'configuration')
+    if isfield(result.configuration,'impedance')
+        if isfield(result.configuration.impedance,'ident_fcn')
+            if isa(result.configuration.impedance.ident_fcn,'function_handle')
+                result.configuration.impedance.ident_fcn = func2str(result.configuration.impedance.ident_fcn);
+            end
+        end
+    end
 end
+
 %save these variables in this file
 save(fileOut,'-v7','result');
 end

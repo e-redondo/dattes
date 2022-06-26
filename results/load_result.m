@@ -79,7 +79,9 @@ end
 if isfield(result,'configuration')
     if isfield(result.configuration,'impedance')
         if isfield(result.configuration.impedance,'ident_fcn')
-            result.configuration.impedance.ident_fcn = str2func(result.configuration.impedance.ident_fcn);
+            if ischar(result.configuration.impedance.ident_fcn)
+                result.configuration.impedance.ident_fcn = str2func(result.configuration.impedance.ident_fcn);
+            end
         end
     end
 end

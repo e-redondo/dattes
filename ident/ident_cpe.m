@@ -72,6 +72,7 @@ alpha = [];
 resistance = [];
 dod = [];
 crate = [];
+time = [];
 
 %% 2- Determine the phases for which a CPE identification is relevant
 indices_cpe = find(config.impedance.pZ);
