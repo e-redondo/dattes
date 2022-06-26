@@ -19,8 +19,10 @@ function [phases, tcell, Icell, Ucell, modes] = split_phases(t,I,U,m,options)
 %    - duration [(1x1) double]: phase duration (seconds)
 %    - Uini [(1x1) double]: phase initial voltage
 %    - Ufin [(1x1) double]: phase final voltage
-%    - Iavg [(1x1) double]: phase average current
+%    - Iini [(1x1) double]: phase initial current
+%    - Ifin [(1x1) double]: phase final current
 %    - Uavg [(1x1) double]:  phase average voltage
+%    - Iavg [(1x1) double]: phase average current
 %    - capacity [(1x1) double]: phase capacity (Ah)
 %    - mode [(1x1) double]: phase mode (rest, CC, CV, EIS, profile)
 % - tcell Icell, Ucell [(mx1) cell]: cell arrays, each 'k' element
@@ -89,15 +91,17 @@ for ind = 1:length(tcell)
     phases(ind).duration = phases(ind).t_fin - phases(ind).t_ini;
     phases(ind).Uini = thisU(1);
     phases(ind).Ufin = thisU(end);
+    phases(ind).Iini = thisI(1);
+    phases(ind).Ifin = thisI(end);
     if phases(ind).duration==0
         %TODO better error detectio, if length thist==1, try to merge into
         %preceding or posponing phase
-        phases(ind).Iavg = thisI(1);
         phases(ind).Uavg = thisU(1);
+        phases(ind).Iavg = thisI(1);
         phases(ind).capacity = 0;
     else
-        phases(ind).Iavg = trapz(thist,thisI)/phases(ind).duration;
         phases(ind).Uavg = trapz(thist,thisU)/phases(ind).duration;
+        phases(ind).Iavg = trapz(thist,thisI)/phases(ind).duration;
         phases(ind).capacity = phases(ind).Iavg*phases(ind).duration/3600;
     end
 
