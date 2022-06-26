@@ -113,7 +113,8 @@ if sum(modes)==0
     %     error('mode non trouve')
     %je ne sais pas ce que c'est, ca doit etre un profil
     %     return;
-    indCCCV = findCCCV(t,I);
+%     indCCCV = findCCCV(t,I);
+    indCCCV = split_cccv(t,I);
     m = ones(size(I));%CC = 1
     m(indCCCV:end) = 2;%CV = 2
     return;
