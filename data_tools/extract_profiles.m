@@ -358,7 +358,7 @@ if ~isempty(t)
     
     
     
-    eis.t = tc;
+    eis(1).t = tc;
     eis.U = Uc;
     eis.I = Ic;
     eis.m = mc;
