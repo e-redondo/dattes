@@ -94,7 +94,18 @@ elseif ~isempty(regexp(line1,'^Test Name','match'))
     fseek(fid,0,-1);
     return
 end
+if ~isempty(regexp(line1,'Data_Point,Test_Time\(s\),Date_Time','match'))
+    cycler = 'arbin_csv_v1';
+    frewind(fid);
+    return
+end
+if ~isempty(regexp(line1,'Data Point,Date Time,Test Time','match'))
+    cycler = 'arbin_csv_v2';
+    frewind(fid);
+    return
+end
 %unknown type: return first line
 cycler = line1;
+frewind(fid);
 return
 end
