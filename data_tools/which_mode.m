@@ -126,22 +126,25 @@ end
 function showResult(t,U,I,m)
 
 h = figure('name','which_mode');
-subplot(211),plot(t,U,'b','tag','essai'),hold on,xlabel('time'),ylabel('voltage')
-subplot(212),plot(t,I,'b','tag','essai'),hold on,xlabel('time'),ylabel('current')
+subplot(211),plot(t,U,'b','displayname','test'),hold on,xlabel('time'),ylabel('voltage')
+subplot(212),plot(t,I,'b','displayname','test'),hold on,xlabel('time'),ylabel('current')
 
 c = 'rmgck';
-tags = {'CC','CV','repos','EIS','profil'};
+tags = {'CC','CV','rest','EIS','profile'};
 for ind = 1:5
     indices = m==ind;
     
-    subplot(211),plot(t(indices),U(indices),[c(ind) 'o'],'tag',tags{ind})
-    subplot(212),plot(t(indices),I(indices),[c(ind) 'o'],'tag',tags{ind})
+    subplot(211),plot(t(indices),U(indices),[c(ind) 'o'],'displayname',tags{ind})
+    subplot(212),plot(t(indices),I(indices),[c(ind) 'o'],'displayname',tags{ind})
 end
 
 
 %cherche tout les handles du type axe et ignore les legendes
 ha = findobj(h, 'type', 'axes', 'tag', '' );   
-printLegTag(ha,'eastoutside');
+% printLegTag(ha,'eastoutside');
+legend(subplot(211),'show','location','eastoutside')
+legend(subplot(212),'show','location','eastoutside')
+
 linkaxes(ha, 'x' );
 prettyAxes(ha);
 end
