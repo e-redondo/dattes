@@ -32,7 +32,7 @@ meta_list = vertcat(meta_list{:});
 %remove extensions
 meta_filenames = regexprep(meta_list,'.meta$','');
 % filter meta_files in right 'branch', that is:
-ind_filter = cellfun(@(x) contains(filename,x),meta_filenames);
+ind_filter = cellfun(@(x) ~isempty(regexp(filename,x)),meta_filenames);
 meta_list = meta_list(ind_filter);
 %sort by length (folder depth):
 meta_path_lengths = cellfun(@length,meta_list);
@@ -48,6 +48,7 @@ for ind = 1:length(meta_list)
         try
             fid = fopen(this_meta);
             json_txt = fread(fid,inf, 'uint8=>char')';
+            fclose(fid);
             this_metadata = jsondecode(json_txt);
         catch e
             errors(ind) = -1;
