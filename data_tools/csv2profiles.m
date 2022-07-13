@@ -6,10 +6,9 @@ function [profiles, other_cols] = csv2profiles(file_in,col_names,params)
 %
 % Inputs:
 % - file_in [1xp string]: pathname to .csv file
-% - col_names [1x9 cell string]: {'datetime','t','U','I','Step','T', 'Ah', 'Ah_dis', 'Ah_cha'}
+% - col_names [1x9 cell string]: {'datetime','t','U','I','Step', 'Ah', 'Ah_dis', 'Ah_cha'}
 %    - e.g. for Arbin: col_names = {'Date Time','Test Time (s)','Voltage (V)',
-%                               'Current (A)', 'Step Index',
-%                               'Aux_Temperature_1 (C)','',
+%                               'Current (A)', 'Step Index','',
 %                               'Discharge Capacity (Ah)','Charge Capacity (Ah)'};
 % - params [(optional) 1x1 struct], with (optional fields:
 %    - I_thres [1x1 double]: Current (A) threshold for which_mode 
@@ -92,7 +91,7 @@ if length(header_line)<=1
 end
 %read data
 data_lines = cell(0);
-while ~feof(fid)  %&& length(data_lines)<10000 %DEBUG (limit number of lines)
+while ~feof(fid) % && length(data_lines)<1000 %DEBUG (limit number of lines)
     data_lines{end+1} = fgetl(fid);
 end
 
@@ -122,14 +121,14 @@ ind_col_U = find_col_index(header_line,col_names{3});
 ind_col_I = find_col_index(header_line,col_names{4});
 %Step: 'Step index'
 ind_col_step = find_col_index(header_line,col_names{5});
-%T: 'Temperature'
-ind_col_temp = find_col_index(header_line,col_names{6});
+% %T: 'Temperature'
+% ind_col_temp = find_col_index(header_line,col_names{6});
 %'Ah'
-ind_col_ah = find_col_index(header_line,col_names{7});
+ind_col_ah = find_col_index(header_line,col_names{6});
 %'Ah_dis'
-ind_col_ahdis = find_col_index(header_line,col_names{8});
+ind_col_ahdis = find_col_index(header_line,col_names{7});
 %'Ah_cha'
-ind_col_ahcha = find_col_index(header_line,col_names{9});
+ind_col_ahcha = find_col_index(header_line,col_names{8});
     
 %buffering: process 'buf_size' lines each time'
 ind_start = 1:params.buf_size:size(data_lines,1);
@@ -146,7 +145,7 @@ for ind = 1:length(ind_start)
     U = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_U));
     I = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_I));
     Step = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_step));
-    T = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_temp));
+%     T = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_temp));
     Ah = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_ah));
     Ah_dis = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_ahdis));
     Ah_cha = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_ahcha));
@@ -171,9 +170,9 @@ for ind = 1:length(ind_start)
             Ah = Ah_cha+Ah_dis;
         end
     end
-    if isempty(T)
-        T = nan(size(t));
-    end
+%     if isempty(T)
+%         T = nan(size(t));
+%     end
     
     %set thresholds if they are set to zero:
     if params.I_thres==0
@@ -182,7 +181,7 @@ for ind = 1:length(ind_start)
         % - max abs value divided by 2^12 (12bits)
         params.I_thres = max(2*min(diff(unique(I))),max(abs(I))/2^12);
     end
-    if params.I_thres==0
+    if params.U_thres==0
         params.U_thres = max(2*min(diff(unique(U))),max(abs(U))/2^12);
     end
     
@@ -197,7 +196,7 @@ for ind = 1:length(ind_start)
     profiles(ind).U = U;
     profiles(ind).I = I;
     profiles(ind).m = m;
-    profiles(ind).T = T;
+%     profiles(ind).T = T;
     profiles(ind).Ah = Ah;
     
     %other_cols:
@@ -225,17 +224,18 @@ for ind = 1:length(ind_start)
         this_col_name = regexprep(this_col_name,'\(','');
         this_col_name = regexprep(this_col_name,'\)','');
         %remove 'units' at end of variable names
-        this_col_name = regexprep(this_col_name,'_s$','');
-        this_col_name = regexprep(this_col_name,'_A$','');
-        this_col_name = regexprep(this_col_name,'_V$','');
-        this_col_name = regexprep(this_col_name,'_Ah$','');
-        this_col_name = regexprep(this_col_name,'_W$','');
-        this_col_name = regexprep(this_col_name,'_Wh$','');
-        this_col_name = regexprep(this_col_name,'_Ohm$','');
-        this_col_name = regexprep(this_col_name,'_AhV$','');
-        this_col_name = regexprep(this_col_name,'_VAh$','');
-        this_col_name = regexprep(this_col_name,'_Vs$','');
-        this_col_name = regexprep(this_col_name,'_Cs$','');
+        this_col_name = regexprep(this_col_name,'_s$','');%s
+        this_col_name = regexprep(this_col_name,'_A$','');%A
+        this_col_name = regexprep(this_col_name,'_V$','');%V
+        this_col_name = regexprep(this_col_name,'_Ah$','');%Ah
+        this_col_name = regexprep(this_col_name,'_W$','');%W
+        this_col_name = regexprep(this_col_name,'_Wh$','');% Wh
+        this_col_name = regexprep(this_col_name,'_Ohm$','');% Ohm
+        this_col_name = regexprep(this_col_name,'_AhV$','');% Ah/V
+        this_col_name = regexprep(this_col_name,'_VAh$','');% V/Ah
+        this_col_name = regexprep(this_col_name,'_Vs$','');% V/s
+        this_col_name = regexprep(this_col_name,'_Cs$',''); %deg Celsius/s
+        this_col_name = regexprep(this_col_name,'_C$',''); %deg Celsius
         
         %DEBUG
         %     fprintf('%s\n',this_col_name);
@@ -320,6 +320,6 @@ I = ~cellfun(@isempty,strfind(header,'dV/dt'));
 I = ~cellfun(@isempty,strfind(header,'Temperature'));%TODO search in Aux_Global_Table
 [units{I}] = deal('C');
 %change fractions to underscores:
-units = regexprep(units,'/','_');
+% units = regexprep(units,'/','_');
 
 end
