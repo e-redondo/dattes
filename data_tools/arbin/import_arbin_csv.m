@@ -45,18 +45,18 @@ end
 
 %1.- reading file
 params = struct;  % see csv2profiles if some params are needed
-
+params.U_thres = 0.01;
 if strcmp(cycler,'arbin_csv_v1')
     col_names = {'Date_Time','Test_Time(s)','Voltage(V)','Current(A)',...
-        'Step_Index','Aux_Temperature_1 (C)','',...
+        'Step_Index','',...
         'Discharge_Capacity(Ah)','Charge_Capacity(Ah)'};
 elseif strcmp(cycler,'arbin_csv_v2')
     col_names = {'Date Time','Test Time (s)','Voltage (V)','Current (A)',...
-        'Step Index','Aux_Temperature_1 (C)','',...
+        'Step Index','',...
         'Discharge Capacity (Ah)','Charge Capacity (Ah)'};
 end
 [profiles, other_cols] = csv2profiles(file_in,col_names,params);
-profiles_units = {'s','s','V','A','','degC','Ah'};
+profiles_units = {'s','V','A','','Ah','s'};
 
 %3.- creer XML
 %3.1.- introduire entete:
@@ -67,11 +67,15 @@ profiles_units = {'s','s','V','A','','degC','Ah'};
 
 %3.3.- profiles variables
 variables = fieldnames(profiles);
+%change some variable names: (see doc/structure specification)
+variables_names = variables;variables_names = variables;
+variables_names(ismember(variables,{'datetime'})) = {'tabs'};
+variables_names(ismember(variables,{'m'})) = {'mode'};
 
 XMLVars = cell(size(variables));
 for ind = 1:length(variables)
     [XMLVars{ind}, errorcode] = ...
-        makeXMLVariable((variables{ind}), (profiles_units{ind}), '%f', (variables{ind}), profiles.(variables{ind}));
+        makeXMLVariable((variables_names{ind}), (profiles_units{ind}), '%f', (variables_names{ind}), profiles.(variables{ind}));
 end
 
 %3.4 other_cols
@@ -89,11 +93,11 @@ new_variables = regexprep(new_variables,'Cycle_Index' , 'Cycle');
 %     'Current' , 'I'
 new_variables = regexprep(new_variables,'Current' , 'I');
 %     'Voltage' , 'U'
-new_variables = regexprep(new_variables,'Voltage' , 'U');
+% new_variables = regexprep(new_variables,'Voltage' , 'U');
 %
-new_variables = regexprep(new_variables,'Aux_Voltage' , 'V');
+new_variables = regexprep(new_variables,'Aux_Voltage_' , 'U');
 %
-new_variables = regexprep(new_variables,'Aux_Temperature' , 'T');
+new_variables = regexprep(new_variables,'Aux_Temperature_' , 'T');
 
 
 XMLVars_other = cell(size(variables));
@@ -101,7 +105,7 @@ for ind = 1:length(variables)
     if isnumeric(other_cols.(variables{ind}))
         %TODO convert cells to double, see csv2profile (try-catch)
         [XMLVars_other{ind}, errorcode] = ...
-        makeXMLVariable((variables{ind}), other_cols.(units{ind}), '%f', (new_variables{ind}), other_cols.(variables{ind}));
+        makeXMLVariable((new_variables{ind}), other_cols.(units{ind}), '%f', (new_variables{ind}), other_cols.(variables{ind}));
     end
 end
 % remove 'empty' vars:

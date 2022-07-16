@@ -161,6 +161,10 @@ end
 %1.2.- load data in XML
 if ismember('x',options) || ~isfield(result,'profiles')
     [profiles, eis, err] = extract_profiles(xml_file,inher_options,config0);
+    if isempty(profiles)
+        % no data found in xml_file
+        return
+    end
     result.profiles = profiles;
     if ~isempty(eis)
         result.eis = eis;
