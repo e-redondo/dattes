@@ -33,7 +33,7 @@ plot(capacity.cc_crate(capacity.cc_crate>0),capacity.cc_capacity(capacity.cc_cra
     '^ b','MarkerSize',8, 'DisplayName','CC charge')
 
 title(title_str,'interpreter','none')
-xlabel('C-rate(-)','interpreter','tex')
+xlabel('C-rate(p.u.)','interpreter','tex')
 ylabel('Capacity (Ah)','interpreter','tex')
 legend('location','best')
 grid on;
