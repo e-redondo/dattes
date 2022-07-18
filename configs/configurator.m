@@ -77,7 +77,7 @@ IfinRepos = m==3 & [m(2:end);0]~=3;
 % Imin = Ur==config.test.min_voltage;%FIX: sinon: Imin = Ur>=config.test.min_voltage+.02;
 
 %ca marche avec  Bitrode LYP, verifier avec Mobicus
-Imin = U<=(config.test.min_voltage+0.049);
+Imin = U<=(config.test.min_voltage+0.02);
 Imax = U>=config.test.max_voltage-0.02;%BRICOLE essai 20171211_1609 HONORAT
 %instants a SoC100 (ou presque I100cc: fin de charge CC)
 I100cc = Ifincc & Imax;%ca marche pas pour LYP

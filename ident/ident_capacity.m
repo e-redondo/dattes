@@ -22,13 +22,13 @@ function [capacity] = ident_capacity(config,phases,options)
 %     - cc_duration (1xj) double: duration of each CC phase
 %     - cv_capacity (1xj) double: residual capacity of each CV phase
 %     - cv_voltage (1xj) double: voltage of each CV phase
-%     - cv_time (1xj) double: initial time of each CV phase
+%     - cv_time (1xj) double: final time of each CV phase
 %     - cv_duration (1xj) double: duration of each CV phase
-%     - cc_cv_time (1xn) double: final time of each CC-CV capacity measurement
+%     - cc_cv_time (1xn) double: final time of cc part of each CC-CV capacity measurement
 %     - cc_cv_capacity (1xn) double: sum of CC and CV capacity measurements
 %     - cc_cv_duration(1xn) double: sum of CC and CV capacity durations
-%     - ratio_ah (nx2) double : [
-%     - ratio_duration=ratio_duration;
+%     - ratio_ah (nx2) double : CC / CV part of capacity measurements (AmpHours) 
+%     - ratio_duration (nx2) double : duration of  CC / CV part of capacity measurements 
 %
 % See also dattes, split_phases, configurator, plot_capacity
 %
