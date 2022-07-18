@@ -96,7 +96,7 @@ end
 if ismember('C',options)
     %show result of 'C', i.e. Capacity
     if isfield(result,'capacity')
-        plot_capacity(result.capacity);
+        plot_capacity(result.capacity,title_str);
         title(title_str,'interpreter','none')
     else
         fprintf('no capacity result found in %s\n',result.test.file_in);

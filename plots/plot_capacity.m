@@ -1,4 +1,4 @@
-function hf = plot_capacity(capacity)
+function hf = plot_capacity(capacity,title_str)
 % plot_capacity plot capacity graphs
 %
 % plot_capacity(cc_capacity, cc_crate)
@@ -19,60 +19,82 @@ function hf = plot_capacity(capacity)
 % For more information, see the <a href="matlab: 
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
-hf = figure('name','ident capacity');hold on
-plot(capacity.cc_crate,capacity.cc_capacity,'o')
-xlabel('Current Rate (C)','interpreter','tex')
-ylabel('Capacity (Ah)','interpreter','tex')
 
-
-%Look for all axis handles and ignore legends
-ha = findobj(hf,'type','axes','tag','');
-prettyAxes(ha);
-changeLine(ha,2,15);
-
-
-
-figure;
-subplot(211)
-title("CC-CV capacity in charge")
-plot(capacity.cc_cv_time(capacity.cc_cv_capacity>0),capacity.cc_cv_capacity(capacity.cc_cv_capacity>0),'o','MarkerSize',10)
-ylim([min(capacity.cc_cv_capacity(capacity.cc_cv_capacity>0))*0.99 max(capacity.cc_cv_capacity(capacity.cc_cv_capacity>0))*1.01])
-xlabel('Time(s)','interpreter','tex')
-ylabel('Capacity (Ah)','interpreter','tex')
-legend('CC-CV capacity in charge (Ah)')
-    grid on;
-
-subplot(212)
-title("CC-CV capacity in discharge")
-plot(capacity.cc_cv_time(capacity.cc_cv_capacity<0),capacity.cc_cv_capacity(capacity.cc_cv_capacity<0),'o','MarkerSize',10)
-ylim([max(capacity.cc_cv_capacity(capacity.cc_cv_capacity<0))*1.01 min(capacity.cc_cv_capacity(capacity.cc_cv_capacity<0))*0.99])
-xlabel('Time(s)','interpreter','tex')
-ylabel('Capacity (Ah)','interpreter','tex')
-legend('CC-CV capacity in discharge (Ah)')
-
-    grid on;
-
-figure;
-    bar(capacity.ratio_ah,'stacked')
-    title('Ratio Ah in CC and CV')
-    legend('CC Ah','CV Ah')
-    ylabel('Capacity (Ah)')
-        grid on;
-
-    
 hf=figure;
+subplot(221)
+plot(capacity.cc_cv_crate(capacity.cc_cv_crate<0),capacity.cc_cv_capacity(capacity.cc_cv_crate<0),'v r','MarkerSize',8)
+hold on
+plot(capacity.cc_crate(capacity.cc_crate<0),capacity.cc_capacity(capacity.cc_crate<0),'v b','MarkerSize',8)
+plot(capacity.cc_cv_crate(capacity.cc_cv_crate>0),capacity.cc_cv_capacity(capacity.cc_cv_crate>0),'^ r','MarkerSize',8)
+plot(capacity.cc_crate(capacity.cc_crate>0),capacity.cc_capacity(capacity.cc_crate>0),'^ b','MarkerSize',8)
+
+title(title_str,'interpreter','none')
+xlabel('C-rate(-)','interpreter','tex')
+ylabel('Capacity (Ah)','interpreter','tex')
+legend('CC-CV discharge','CC discharge','CC-CV charge','CC charge')
+    grid on;
     
-    bar(capacity.ratio_duration,'stacked')
-        title('Ratio duration in CC and CV')
-    legend('CC duration','CV duration')
-    ylabel('Duration (s)')
+ah_ratio_cc=capacity.ratio_ah(:,1);
+ah_ratio_cv=capacity.ratio_ah(:,2);
+duration_ratio_cc=capacity.ratio_duration(:,1);
+duration_ratio_cv=capacity.ratio_duration(:,2);
+
+
+subplot(222)
+plot(capacity.cc_cv_time(capacity.cc_cv_crate<0),ah_ratio_cc(capacity.cc_cv_crate<0),'v b','MarkerSize',8)
+hold on
+plot(capacity.cc_cv_time(capacity.cc_cv_crate<0),ah_ratio_cv(capacity.cc_cv_crate<0),'v r','MarkerSize',8)
+plot(capacity.cc_cv_time(capacity.cc_cv_crate>0),ah_ratio_cv(capacity.cc_cv_crate>0),'^ r','MarkerSize',8)
+plot(capacity.cc_cv_time(capacity.cc_cv_crate>0),ah_ratio_cc(capacity.cc_cv_crate>0),'^ b','MarkerSize',8)
+
+
+title(title_str,'interpreter','none')
+xlabel('Time (s)','interpreter','tex')
+ylabel('Ah ratio (Ah)','interpreter','tex')
+legend('CC discharge','CV discharge','CC charge','CV charge')
+
+grid on;
+
+
+subplot(223)
+plot(capacity.cc_cv_time(capacity.cc_cv_crate<0),capacity.cc_cv_capacity(capacity.cc_cv_crate<0),'v r','MarkerSize',8)
+hold on
+plot(capacity.cc_cv_time(capacity.cc_cv_crate<0),capacity.cc_capacity(capacity.cc_cv_crate<0),'v b','MarkerSize',8)
+plot(capacity.cc_cv_time(capacity.cc_cv_crate>0),capacity.cc_cv_capacity(capacity.cc_cv_crate>0),'^ r','MarkerSize',8)
+plot(capacity.cc_cv_time(capacity.cc_cv_crate>0),capacity.cc_capacity(capacity.cc_cv_crate>0),'^ b','MarkerSize',8)
+
+title(title_str,'interpreter','none')
+xlabel('Time(s)','interpreter','tex')
+ylabel('Capacity (Ah)','interpreter','tex')
+legend('CC-CV discharge','CC discharge','CC-CV charge','CV charge')
+
     grid on;
 
+
+
+subplot(224)
+plot(capacity.cc_cv_time(capacity.cc_cv_crate<0),duration_ratio_cc(capacity.cc_cv_crate<0),'v b','MarkerSize',8)
+hold on
+plot(capacity.cc_cv_time(capacity.cc_cv_crate<0),duration_ratio_cv(capacity.cc_cv_crate<0),'v r','MarkerSize',8)
+plot(capacity.cc_cv_time(capacity.cc_cv_crate>0),duration_ratio_cv(capacity.cc_cv_crate>0),'^ r','MarkerSize',8)
+plot(capacity.cc_cv_time(capacity.cc_cv_crate>0),duration_ratio_cc(capacity.cc_cv_crate>0),'^ b','MarkerSize',8)
+
+
+title(title_str,'interpreter','none')
+xlabel('Time (s)','interpreter','tex')
+ylabel('Duration ratio (s)','interpreter','tex')
+legend('CC discharge','CV discharge','CC charge','CV charge')
+
+grid on;
 
 
 %Look for all axis handles and ignore legends
 ha = findobj(hf,'type','axes','tag','');
 prettyAxes(ha);
 changeLine(ha,2,15);
+
+
+
+
 
 end

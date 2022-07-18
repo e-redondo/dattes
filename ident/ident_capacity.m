@@ -81,12 +81,12 @@ cc_duration = [phases_cc.duration];
 phases_cv = phases(config.capacity.pCapaDV | config.capacity.pCapaCV);
 cv_capacity = abs([phases_cv.capacity]);
 cv_voltage = [phases_cv.Uavg];
-cv_time = [phases_cv.t_ini];
+cv_time = [phases_cv.t_fin];
 cv_duration = [phases_cv.duration];
 
 %CC+CV
 
-[cc_cv_time,cc_cv_capacity,cc_cv_duration,ratio_ah,ratio_duration]=append_cc_and_cv(config,phases);
+[cc_cv_time,cc_cv_capacity,cc_cv_duration,cc_cv_crate,ratio_ah,ratio_duration]=append_cc_and_cv(config,phases);
 
 %put into output structure:
 
@@ -103,6 +103,7 @@ capacity.cv_duration = cv_duration;
 capacity.cc_cv_time=cc_cv_time;
 capacity.cc_cv_capacity=cc_cv_capacity;
 capacity.cc_cv_duration=cc_cv_duration;
+capacity.cc_cv_crate=cc_cv_crate;
 
 capacity.ratio_ah=ratio_ah;
 capacity.ratio_duration=ratio_duration;
@@ -114,7 +115,7 @@ end
 end
 
 
-function [cc_cv_time,cc_cv_capacity,cc_cv_duration,ratio_ah,ratio_duration]=append_cc_and_cv(config,phases)
+function [cc_cv_time,cc_cv_capacity,cc_cv_duration, cc_cv_crate,ratio_ah,ratio_duration]=append_cc_and_cv(config,phases)
 
 
 
@@ -131,6 +132,7 @@ Index_cc_cv=strfind(phases_cc_cv, sequence);
 capacities=[phases.capacity];
 durations=[phases.duration];
 times=[phases.t_fin];
+crates = [phases.Iavg]./config.test.capacity;
 
 %Store the (dis)charged Ah and duration in arrays for each CC-CV phases
 
@@ -141,12 +143,14 @@ ah_cc_in_cc_cv=nan(1,length(Index_cc_cv));
 ah_cv_in_cc_cv=nan(1,length(Index_cc_cv));
 duration_cc_in_cc_cv=nan(1,length(Index_cc_cv));
 duration_cv_in_cc_cv=nan(1,length(Index_cc_cv));
+cc_cv_crate=nan(1,length(Index_cc_cv));
 
 for indice=1:length(Index_cc_cv)
     cc_cv_time(indice)=times(Index_cc_cv(1,indice));
     cc_cv_capacity(indice)= capacities(Index_cc_cv(1,indice))+capacities(Index_cc_cv(1,indice)+1);
     
     cc_cv_duration(indice)=durations(Index_cc_cv(1,indice))+durations(Index_cc_cv(1,indice)+1);
+    cc_cv_crate(indice)=crates(Index_cc_cv(1,indice));
 end
 
 
