@@ -53,7 +53,11 @@ if line1 == -1
     empty_mpt = true;
 end
 if ~just_head
-    if ~isempty(strfind(line1,'XXX'))%v10.40
+%classic reading not working sometimes:
+% - 2022-07-11, EC-LAB 11.36, modulo bat technique: empty line in the
+% middle of the mpt file (body part)
+% new readgin (As1 then A1, etc.) always working (slower?)
+%     if ~isempty(strfind(line1,'XXX'))%v10.40
         %il faut remplacer les 'XXX' par 'NaN'
         As1 = strrep(line1,'XXX','NaN');
         As = fread(fid,inf, 'uint8=>char')';
@@ -61,11 +65,11 @@ if ~just_head
         A1 = sscanf(As1,'%f\t');
         A = sscanf(As,'%f\t');
         A = [A1(:); A(:)];
-    else%Classic reading
-        A1 = sscanf(line1,'%f\t');
-        A = fscanf(fid,'%f\t');
-        A = [A1(:); A(:)];
-    end
+%     else%Classic reading
+%         A1 = sscanf(line1,'%f\t');
+%         A = fscanf(fid,'%f\t');
+%         A = [A1(:); A(:)];
+%     end
     body = reshape(A,length(A1),[])';
 end
 end

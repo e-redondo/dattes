@@ -42,6 +42,8 @@ line = strrep(line,'|Energy|/W.h','Energy{Wh}');%MB et autres?
 line = strrep(line,'<Ewe>/V','U{V}');%GEIS
 line = regexprep(line,'Ewe-Ece/V','EweEceDiff{V}');%IFPen dans SIMCAL
 line = regexprep(line,'Ece/V','Ece{V}');%IFPen dans SIMCAL
+line = regexprep(line,'<Ece>/V','Ece{V}');%MB GEIS, 2022-07
+
 line = regexprep(line,'z cycle','z_cycle');%202101 v1.31 MB et autres?
 line(line==65533)='u';%v10.40 'micro' par 'u'
 %BT-Lab
