@@ -81,7 +81,15 @@ for ind = 1:length(CSV)
         Datem = datenum(Date,'yyyy/mm/dd HH:MM');%format MATLAB
     else
         Date = xml.table{end}.metatable.date;%from Bitrode metadata
-        Datem = datenum(Date,'dd/mm/yyyy HH:MM');%format MATLAB
+%         Datem = datenum(Date,'dd/mm/yyyy HH:MM');%format MATLAB
+
+       %format MATLAB
+       % TODO problem in datetime > guessformat if format is ambiguous
+       % TODO: add param to this funciton, e.g.:
+       % param.input_date_format = 'yyyy/MM/dd HH:mm'
+       % Datem = datenum(Date,param.input_date_format)
+       % 
+        Datem = datenum(Date);
     end
     Datee = m2edate(Datem);%format 'Eduardo'
     %ajouter la date
