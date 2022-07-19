@@ -1,4 +1,4 @@
-function hf = plot_eis(eis,title,options)
+function hf = plot_eis(eis,title_str,options)
 % plot_eis plot eis graphs
 %
 % plot_eis(eis,titre,options)
@@ -28,6 +28,6 @@ hf = figure;
 for ind = 1:length(eis.ReZ)
     plot(eis.ReZ{ind},eis.ImZ{ind},'.-'),hold on
 end
-title(title,'interpreter','none')
+title(title_str,'interpreter','none')
 
 end
