@@ -347,10 +347,10 @@ if ~isempty(t)
     ImZc = cell(size(Istart));
     fc = cell(size(Istart));
     for ind = 1:length(Istart)
-        tc{ind} = ReZ(Istart(ind):Iend(ind));
-        Uc{ind} = ReZ(Istart(ind):Iend(ind));
-        Ic{ind} = ReZ(Istart(ind):Iend(ind));
-        mc{ind} = ReZ(Istart(ind):Iend(ind));
+        tc{ind} = t(Istart(ind):Iend(ind));
+        Uc{ind} = U(Istart(ind):Iend(ind));
+        Ic{ind} = I(Istart(ind):Iend(ind));
+        mc{ind} = m(Istart(ind):Iend(ind));
         ReZc{ind} = ReZ(Istart(ind):Iend(ind));
         ImZc{ind} = ImZ(Istart(ind):Iend(ind));
         fc{ind} = f(Istart(ind):Iend(ind));
