@@ -112,6 +112,6 @@ config.test.Tname = '';%default (no probe)
 % etc.
 
 %Graphics:
-config.visualization.GdDureeMin=300;%duree min pour afficher la phase dans dattes(XML,'','Gd')
+config.visualization.GdDureeMin=300;%duree min pour afficher la phase dans dattes(XML,'','Gp')
 config.visualization.GdmaxPhases=100;%nombre de phases à partir duquel on doit appliquer GdDureeMin
 end

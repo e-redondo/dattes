@@ -1,14 +1,14 @@
 function [result] = dattes(xml_file,options,cfg_file)
 %DATTES Data Analysis Tools for Tests on Energy Storage
 %
-% [result] = dattes(xml_file,options,cfg_file):
 % Read the *.xml file of a battery test and performe several calculations
 % (Capacity, SoC, OCV, impedance identification, ICA/DVA, etc.).
 % Results are returned as output variables and (optionally) stored in a file
-% named 'xml_file_result.mat'.
+% named 'xml_file_dattes.mat'.
 %
 % Usage:
-% [result] = dattes(xml_file,options,cfg_file)
+% [result] = DATTES(xml_file,options,cfg_file)
+%
 % Inputs : 
 % - xml_file:
 %     -   [1xn string]: pathame to the xml file
@@ -45,27 +45,64 @@ function [result] = dattes(xml_file,options,cfg_file)
 %     - 'G*D': time as date/time (* = x,p,c,S,C,R,W,P,O,I)
 % - cfg_file:  [1x1 struct] function name to configure the behavior (see configurator)
 %
-% Outputs : 
-% - result: [1x1 struct] structure containing the following fields:
-%     - configuration [1x1 struct] configuration parameters
-%     - test [1x1 struct] general information about the test
-%     - phases [px1 struct] structure array with basic information about the different phases of the test
+% Output : 
+% - result [1x1 struct] with fields:
+%     - profiles [1x1 struct]:
+%         - created by <a href="matlab: help('extract_profiles')">extract_profiles</a>
+%         - modified by calcul_soc and calcul_soc_patch
+%         - contains (mx1) vectors with main cell variables (t,U,I,m,soc,dod_ah)
+%     - eis [1x1 struct]:
+%         - created by <a href="matlab: help('extract_profiles')">extract_profiles</a>
+%         - contains (px1) cells with EIS measurements, each 'p' contains (nx1) vectors (t,U,I,m,ReZ,ImZ,f)
+%     - test [1x1 struct]:
+%         - created by DATTES
+%         - modified by calcul_soc and calcul_soc_patch
+%         - contains filename
+%         - contains general values of the test initial/final values
+%     - phases [1xq struct]:
+%         - created by <a href="matlab: help('split_phases')">split_phases</a>
+%         - each phase contains general values like initial/final/average values (time, voltage, current...)
+%     - configuration [1x1 struct]:
+%         - created by config scripts
+%         - modified by cfg_default, configurator
+%     - capacity [1x1 struct]:
+%         - created by <a href="matlab: help('ident_capacity')">ident_capacity</a>
+%         - contains (1xk) vectors for CC capacity measurements
+%         - contains (1xi) vectors for CV phases
+%         - contains (1xj) vectors for CCCV capacity measurements
+%     - pseudo_ocv [1xr struct]:
+%         - created by <a href="matlab: help('ident_pseudo_ocv')">ident_pseudo_ocv</a>
+%         - each pseudo_ocv contains (sx1) vectors for each pseudo_ocv measurement (charge/discharge half cycles)
+%         - each pseudo_ocv contains (1x1) values (crate and time of measurement)
+%     - ocv_points [1x1 struct]:
+%         - created by <a href="matlab: help('ident_ocv_by_points')">ident_ocv_by_points</a>
+%         - contains (tx1) vectors for each ocv points
+%     - resistance [1x1 struct]:
+%         - created by <a href="matlab: help('ident_r')">ident_r</a>
+%         - contains (1xv) vectors for resistance measurements
+%     - impedance [1x1 struct]:
+%         - created by <a href="matlab: help('ident_cpe')">ident_cpe</a> or <a href="matlab: help('ident_rrc')">ident_rrc</a>
+%         - contains (1xg) string with chosen topology (R+CPE or R+RC+RC)
+%         - contains (1xw) vectors for impedance identifications (circuit parameters)
+%     - ica [1xy struct]:
+%         - created by <a href="matlab: help('ident_ica')">ident_ica</a>
+%         - each ica contains (zx1) vectors for each ICA measurement
 %
 % Examples:
-% dattes(xml_file,'s',cfg_file): Load the profiles (t,U,I,m) in .xml file and save them in a xml_file_result.mat.
-% dattes(xml_file,'gs',cfg_file): idem and plot profiles graphs
-% dattes(xml_file,'gsv',cfg_file): idem and describe ongoing analysis (verbose)
+% DATTES(xml_file,'s',cfg_file): Load the profiles (t,U,I,m) in .xml file and save them in a xml_file_result.mat.
+% DATTES(xml_file,'gs',cfg_file): idem and plot profiles graphs
+% DATTES(xml_file,'gsv',cfg_file): idem and describe ongoing analysis (verbose)
 %
-% dattes(xml_file,'ps',cfg_file), split the test in phases and save
-% dattes(xml_file,'cs',cfg_file), configure the test and save
+% DATTES(xml_file,'ps',cfg_file), split the test in phases and save
+% DATTES(xml_file,'cs',cfg_file), configure the test and save
 %
-% [result] = dattes(xml_file), load the results
+% [result] = DATTES(xml_file), load the results
 %
-% dattes(xml_file,'C'), make capacity analysis.
+% DATTES(xml_file,'C'), make capacity analysis.
 %
-% dattes(xml_file,'Cs'), idem and save results in a xml_file_results.mat.
+% DATTES(xml_file,'Cs'), idem and save results in a xml_file_results.mat.
 %
-% dattes(xml_file,'As'), Do all analysis : load, configuration all
+% DATTES(xml_file,'As'), Do all analysis : load, configuration all
 % analysis and save results in a xml_file_results.mat.
 %
 %
