@@ -180,9 +180,18 @@ for ind = 1:length(ind_start)
         % - min difference (resolution)
         % - max abs value divided by 2^12 (12bits)
         params.I_thres = max(2*min(diff(unique(I))),max(abs(I))/2^12);
+        
+        if isempty(params.I_thres)
+            % constant value in all I
+            params.I_thres = 1;
+        end
     end
     if params.U_thres==0
         params.U_thres = max(2*min(diff(unique(U))),max(abs(U))/2^12);
+        if isempty(params.U_thres)
+            % constant value in all U
+            params.U_thres = 1;
+        end
     end
     
     

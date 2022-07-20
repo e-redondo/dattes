@@ -1,6 +1,9 @@
 function [xml_list] = arbin_csv2xml_files(dirname,options)
 % arbin_csv2xml_files convert all arbin *.csv(x) files in dirname to VEHLIB's xml format
 %
+% This function search for csv files, read these files and convert each csv
+% files in xml files.
+%
 % Usage:
 % [xml_list] = arbin_csv2xml_files(dirname,options)
 % Inputs:
