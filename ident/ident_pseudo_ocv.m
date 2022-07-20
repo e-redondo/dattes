@@ -30,6 +30,8 @@ function [pseudo_ocv] = ident_pseudo_ocv(t,U,DoDAh,config,phases,options)
 
 
 %% check inputs:
+pseudo_ocv = struct([]);
+
 if nargin<6 || nargin>7
     fprintf('ident_pseudo_ocv: wrong number of parameters, found %d\n',nargin);
     return;
@@ -58,7 +60,6 @@ phases_ocv_charge = phases(config.pseudo_ocv.pOCVpC);
 phases_ocv_discharge = phases(config.pseudo_ocv.pOCVpD);
 
 %default values: empty arrays
-pseudo_ocv = struct([]);
 ocv = [];
 dod = [];
 polarization = [];

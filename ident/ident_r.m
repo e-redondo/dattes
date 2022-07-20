@@ -34,11 +34,7 @@ end
 if ismember('v',options)
     fprintf('ident_r:...');
 end
-R = [];
-dod = [];
-crate = [];
-time = [];
-delta_time = [];
+resistance = struct([]);
 
 %%
 %gestion d'erreurs:
@@ -68,7 +64,7 @@ delta_time_cfg = config.resistance.delta_time;
 indices_phases_r = find(config.resistance.pR);
 time_before_after_phase = [rest_min_duration 0];
 
-resistance = struct([]);
+
 R = [];
 crate = [];
 time = [];

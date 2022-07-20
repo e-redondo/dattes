@@ -35,7 +35,7 @@ function [ica] = ident_ica(t,U,dod_ah,config,phases,options)
 if ~exist('options','var')
     options = '';
 end
-
+ica = struct([]);
 
 %% check inputs:
 if nargin<5 || nargin>6
@@ -62,8 +62,6 @@ end
 
 %both charge and discharge phases:
 phases_ica = phases(config.ica.pICA);
-%charge
-ica = struct([]);
 
 %filter parameters:
 N = config.ica.filter_order;%30

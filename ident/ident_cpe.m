@@ -43,6 +43,7 @@ if ismember('v',options)
 end
 
 %% check inputs:
+impedance=struct([]);
 
 if nargin<6 || nargin>8
     fprintf('ident_cpe: wrong number of parameters, found %d\n',nargin);
@@ -66,7 +67,6 @@ if ~isfield(config.impedance,'pulse_min_duration') || ...
 end
 
 %% 1- Initialization
-impedance=struct([]);
 q = [];
 alpha = [];
 resistance = [];

@@ -45,6 +45,8 @@ if ismember('v',options)
     fprintf('ident_rrc:...');
 end
 
+impedance=struct([]);
+
 if nargin<6 || nargin>8
     fprintf('ident_rrc : wrong number of parameters, found %d\n',nargin);
     return;
@@ -63,8 +65,6 @@ if ~isfield(config.impedance,'initial_params') || ~isfield(config.impedance,'pul
 end
 
 %% 1- Initialization
-impedance=struct([]);
-
 r0=[];
 r1=[];
 c1=[];
