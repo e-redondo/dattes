@@ -179,8 +179,12 @@ if iscell(xml_file)
 end
 
 %% 1. LOAD
+% if ismember('l',options)
 %1.0.- load previous results (if they exist)
 [result] = load_result(xml_file,inher_options);
+% else
+%     result = struct;
+% end
 
 %1.1.-take some basic config parameters in config0 struct
 % (e.g. Uname and Tname needed in extract_profiles)
@@ -190,6 +194,8 @@ if isstruct(cfg_file)
 elseif ~isempty(which(cfg_file))
     %cfg_file is given as script, e.g. dattes(xml,'cvs','cfg_battery_script')
     config0 = eval(cfg_file);
+    % traceability: if a script for config is given
+    config.test.cfg_file = cfg_file;
 elseif isfield(result, 'configuration')
     %cfg_file is empty, e.g. dattes(xml,'cvs')
     % take config from load_result, if result contains any configuration
@@ -201,7 +207,7 @@ end
     
 %1.2.- load data in XML
 if ismember('x',options) || ~isfield(result,'profiles')
-    [profiles, eis, metadata, err] = extract_profiles(xml_file,inher_options,config0);
+    [profiles, eis, metadata, config0, err] = extract_profiles(xml_file,inher_options,config0);
     if isempty(profiles)
         % no data found in xml_file
         return
@@ -239,14 +245,8 @@ result.phases = phases;
 
 %% 2. CONFIGURE
 if ismember('c',options)
-
     [config] = configurator(t,U,I,m,config0,phases,inher_options);
-    % traceability: if a script for config is given
-    if ischar(cfg_file)
-        config.test.cfg_file = cfg_file;
-    elseif ~isfield(config.test,'cfg_file')
-        config.test.cfg_file = '';
-    end
+    
     result.configuration = config;
 else
     result.configuration = config0;
