@@ -27,6 +27,38 @@ function config = configurator(t,U,I,m,config,phases,options)
 %
 % See also dattes, extract_profiles, split_phases, cfg_default, plot_config
 
+% check inputs:
+%t,U,I,m: double vectors of same length
+if ~isnumeric(t) || ~isnumeric(U) ||~isnumeric(I) ||~isnumeric(m)
+    error('t,U,I,m must be numeric');
+end
+if ~isvector(t) || ~isvector(U) ||~isvector(I) ||~isvector(m)
+   error('t,U,I,m must be vectors');
+end
+if length(t)<2 
+   error('t must have at least to elements');
+end
+if length(t)~=length(U) ||  length(t)~=length(U) || length(t)~=length(U)
+   error('t,U,I,m must have same length');
+end
+% config: 1x1 struct with fields:
+if ~isstruct(config) || numel(config)~=1
+    error('config must 1x1 struct');
+end
+if ~isfield(config,'test') || ~isfield(config,'resistance') || ...
+        ~isfield(config,'impedance') || ~isfield(config,'ocv_points') || ...
+        ~isfield(config,'pseudo_ocv') || ~isfield(config,'ica')
+    error('not a valid config struct');
+end
+% phases: 1xp struct with fields:
+if ~isstruct(phases) || ~isvector(phases)
+    error('phases must 1xp struct');
+end
+if ~isfield(phases,'t_ini') || ~isfield(phases,'t_fin') || ...
+        ~isfield(phases,'duration') || ~isfield(phases,'Iavg') 
+    error('not a valid phases struct');
+end
+
 if ~exist('options','var')
     options = '';
 end
