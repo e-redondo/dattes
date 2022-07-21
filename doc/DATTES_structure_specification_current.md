@@ -93,13 +93,26 @@ This document describe data structure for current version of DATTES:
         - min_voltage (1x1 double): min cell voltage
         - capacity (1x1 double): cell nominal capacity (base for SoC %)
         - cfg_file (string): config script name
+        - Uname (string): name of voltage variable (default = 'U')
+        - Tname (string): name of temperature variable (default = '', no probe)
     - soc [1×1 struct]: configuration for soc calculation
         - crate_cv_end (1x1 double): C-rate limit in CV phase (default = 1/20)
+        - soc100_time (nx1 double): time where SoC is set to 100 (crate_cv_end)
+        - soc0_time (nx1 double): time where SoC is set to 0 (crate_cv_end), unused
+        - dod_ah_ini (1x1 double): initial dod (Ah) if set by calcul_soc_patch
+        - dod_ah_fin (1x1 double): final dod (Ah) if set by calcul_soc_patch
+    - capacity [1×1 struct]: configuration for capacity calculation
+        - pCapaD (1xq logical): true for discharging capacity CC phases
+        - pCapaC (1xq logical): true for charging capacity CC phases
+        - pCapaDV (1xq logical): true for discharging capacity CV phases
+        - pCapaCV (1xq logical): true for charging capacity CV phases
     - resistance [1×1 struct]: configuration for resistance calculation
         - delta_time (1xb double): delta time  in seconds for resistance calculation
         - pulse_min_duration (1x1 double): minimum pulse duration in seconds (default = 9)
         - pulse_max_duration (1x1 double): maximum pulse duration in seconds (default = 599)
         - rest_min_duration (1x1 double): minimum rest duration before pulse in seconds (default = 9)
+        - pR (1xq logical): true for resistance phases
+        - instant_end_rest (nx1 double): start times for resistance pulses (to be removed in future)
     - impedance [1×1 struct]: configuration for impedance calculation
         - ident_fcn (fcn_handle): function used for impedance identificaiton (default = ident_cpe)
         - pulse_min_duration (1x1 double): minimum pulse duration in seconds (default = 299)
@@ -107,10 +120,13 @@ This document describe data structure for current version of DATTES:
         - rest_min_duration (1x1 double): minimum rest duration before pulse in seconds (default = 9)
         - fixed_params (1x1 bool): if true, fix some parameters in identification (default = false)
         - initial_params (1xc double): initial parameter values
+        - pZ (1xq logical): true for impedance phases
+        - instant_end_rest (nx1 double): start times for resistance pulses (to be removed in future)
     - ocv_points [1×1 struct]: configuration for ocv_points calculation
         - rest_min_duration (1x1 double): minimum rest duration (s) after ocv pulse (default = 35)
         - max_delta_dod_ah (1x1 double): maximum delta DoD (Ah) for ocv pulse (default = 0.3), unused
         - min_delta_dod_ah (1x1 double): minimum delta DoD (Ah) for ocv pulse (default = 0.01), unused
+        - pOCVr (1xq logical): true for ocv_points phases
     - ica [1×1 struct]: configuration for ica calculation
         - capacity_resolution (1x1 double): delta dod in ica calculation (Ah) (default = capacity/100)
         - voltage_resolution (1x1 double): delta dod in ica calculation (Ah) (default = (voltage cell range)/100)
@@ -118,13 +134,13 @@ This document describe data structure for current version of DATTES:
         - filter_type (1x1 char): filter type (default 'G' = gaussian)
         - filter_order (1x1 double): filter order (default 30)
         - filter_cut (1x1 double): filter cut frequency (default 5)
+        - pICA (1xq logical): true for ica phases
     - pseudo_ocv [1×1 struct]: configuration for pseudo_ocv calculation
         - max_crate (1x1 double): maximum allowed C-rate to consider a phase for pseudo_ocv (default = 1)
         - min_crate (1x1 double): minimum allowed C-rate to consider a phase for pseudo_ocv (default = 0)
         - capacity_resolution (1x1 double): delta dod in pseud_ocv calculation (Ah) (default = capacity/100)
-    - test [1×1 struct]: configuration for data extraction
-        - Uname (string): name of voltage variable (default = 'U')
-        - Tname (string): name of temperature variable (default = '', no probe)
+        - pOCVpC (1xq logical): true for pseudo_ocv charging half cycles
+        - pOCVpD (1xq logical): true for pseudo_ocv discharging half cycles
     - visualization [1×1 struct]: configuration for plots (unused)
         - GdDureeMin: minimum phase duration (s) for plot_phases (default = 300)
         - GdmaxPhases: minimum phase number to apply GdDureeMin in plot_phases (default = 100)
