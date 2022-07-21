@@ -62,14 +62,13 @@ metadata = struct;
 % metadata.cell.cathode = 'NMC'; %
 % metadata.cell.anode = 'graphite'; %
 
-%% 2. equipement information
-% cycler and climatic chamber
+%% 2. equipement information: cycler and climatic chamber
 % metadata.cycler.brand = 'Bitrode';
 % metadata.cycler.model = 'FTV60-250';
 % metadata.cycler.voltage_resolution = 0.001;
 % metadata.cycler.current_resolution = 0.01;
-% metadata.cycler.aux_voltage_number = 1;%aux voltage measurement
-% metadata.cycler.aux_temperature_number = 1;%cell temperature sensor
+% metadata.cycler.cell_voltage_name = 'U1';%aux voltage measurement
+% metadata.cycler.cell_temperature_name = 'T1';%cell temperature sensor
 % metadata.chamber.brand = 'Friocell';
 % metadata.chamber.model = 'Friocell 707';
 

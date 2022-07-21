@@ -8,15 +8,13 @@ function [result] = load_result(XMLfile,options)
 % [result] = load_result(XMLfile,options)
 % Inputs : 
 % - xml_file:
-%     -   [1xn string]: pathame to the xml file
+%     -   [1xn string]: pathname to the xml file
 %     -   [nx1 cell string]: xml filelist
 % - options  [string, optional]:
 %    - 'v': verbose
 %
 % Outputs : 
 % - result: [1x1 struct] structure containing analysis results 
-% - config:  [1x1 struct] function name used to configure the behavior (see configurator)
-% - phases: [1x1 struct] structure containing information about the different phases of the test
 %
 % See also dattes, save_result, edit_result
 %

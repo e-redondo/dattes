@@ -185,19 +185,23 @@ end
 %1.1.-take some basic config parameters in config0 struct
 % (e.g. Uname and Tname needed in extract_profiles)
 if isstruct(cfg_file)
-    %cfg_file is given as struct, e.g. dattes(xml,cfg_battery,'cdvs')
+    %cfg_file is given as struct, e.g. dattes(xml,'cvs',cfg_battery)
     config0 = cfg_file;
 elseif ~isempty(which(cfg_file))
-    %cfg_file is given as script, e.g. dattes(xml,'cfg_battery','cdvs')
+    %cfg_file is given as script, e.g. dattes(xml,'cvs','cfg_battery_script')
     config0 = eval(cfg_file);
-else
-    %cfg_file is empty, e.g. dattes(xml,'','cdvs'), take config from load_result
+elseif isfield(result, 'configuration')
+    %cfg_file is empty, e.g. dattes(xml,'cvs')
+    % take config from load_result, if result contains any configuration
     config0 = result.configuration;
+else
+    %no configuration, empty struct
+    config0 = struct([]);
 end
     
 %1.2.- load data in XML
 if ismember('x',options) || ~isfield(result,'profiles')
-    [profiles, eis, err] = extract_profiles(xml_file,inher_options,config0);
+    [profiles, eis, metadata, err] = extract_profiles(xml_file,inher_options,config0);
     if isempty(profiles)
         % no data found in xml_file
         return
@@ -205,6 +209,9 @@ if ismember('x',options) || ~isfield(result,'profiles')
     result.profiles = profiles;
     if ~isempty(eis)
         result.eis = eis;
+    end
+    if ~isempty(metadata)
+        result.metadata = metadata;
     end
 end
 

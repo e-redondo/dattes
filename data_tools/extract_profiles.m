@@ -1,7 +1,8 @@
-function [profiles, eis, err] = extract_profiles(xml_file,options,config)
+function [profiles, eis, metadata, err] = extract_profiles(xml_file,options,config)
 %extract_profiles extract important variables from a battery test bench file.
+% Also read metadata in '.meta' files
 %
-%[t,U,I,m,dod_ah,soc,T, eis, err] = extract_profiles(xml_file,options,config)
+%[profiles, eis, metadata, err] = extract_profiles(xml_file,options,config)
 % 1.- Read a .xml file (Biologic,Arbin, Bitrode...), if a dattes' results
 % file exists this latter will be read (faster)
 % 2.- Extract important vectors: t,U,I,m,DoDAh,SOC,T
@@ -22,13 +23,24 @@ function [profiles, eis, err] = extract_profiles(xml_file,options,config)
 % - config:  [1x1 struct] function name used to configure the behavior (see configurator)
 %
 % Outputs : 
-% - t [nx1 double]: time in seconds
-% - U [nx1 double]: cell voltage in V
-% - dod_ah [nx1 double]: depth of discharge in AmpHours
-% - m [nx1 double]: mode
-% - soc [nx1 double]: state of charge in %
-% - T [nx1 double] Temperature in °C
-% -  err [nx1 double] error codes
+% - profiles [1x1 struct] with fields:
+%     - t [mx1 double]: time in seconds from 1/1/2000 00:00
+%     - U [mx1 double]: cell voltage in V
+%     - I [mx1 double]: cell current in A
+%     - m [mx1 double]: mode
+%     - dod_ah [mx1 double]: depth of discharge in AmpHours
+%     - soc [mx1 double]: state of charge in %
+%     - T [mx1 double] Temperature in °C (empty if no probe)
+% - eis [1x1 struct] with fields: (empty if no EIS found in test)
+%     - t [nx1 cell of [px1 double]]: time in seconds from 1/1/2000 00:00
+%     - U [nx1 cell of [px1 double]]: cell voltage in V
+%     - I [nx1 cell of [px1 double]]: cell current in A
+%     - m [nx1 cell of [px1 double]]: mode
+%     - ReZ [nx1 cell of [px1 double]]: real part of impedance (Ohm)
+%     - ImZ [nx1 cell of [px1 double]]: imaginary part of impedance (Ohm)
+%     - f [nx1 cell of [px1 double]]: frequency (Hz)
+% - metadata [1x1 struct] with metadata from metadata_collector
+% -  err [1x1 double] error codes
 %   - err = 0: OK
 %   - err = -1: xml_file file does not exist
 %   - err = -2: dattes' result file is wrong
@@ -43,53 +55,72 @@ function [profiles, eis, err] = extract_profiles(xml_file,options,config)
 % extract_profiles(xml_file, 'u') 'update', read XML if result file is older
 %
 % extract_profiles(this_result_file) works also
-% See also dattes, which_mode, split_phases
+% See also dattes, metadata_collector
 %
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab: 
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
-if ~exist('config','var')
-    Uname = 'U';
-    Tname = '';
-elseif isfield(config,'test')
-    if ~isfield(config.test,'Uname')
-        Uname = 'U';
-    else
-        Uname = config.test.Uname;
+% Read metadata files (if they exist)
+[metadata, meta_list,errors] = metadata_collector(xml_file);
+
+% Some values initialization:
+max_voltage = [];
+min_voltage = [];
+capacity = [];
+Uname = 'U';
+Tname = '';
+ 
+% Get values from metadata:
+if isfield(metadata,'cell')
+    % U_min, U_max, capacity for calcul_soc
+    if isfield(metadata.cell,'max_voltage')
+        max_voltage = metadata.cell.max_voltage;
     end
-    if ~isfield(config.test,'Tname')
-        Tname = '';
-    else
-        Tname = config.test.Tname;
+    if isfield(metadata.cell,'min_voltage')
+        min_voltage = metadata.cell.min_voltage;
     end
-else
-    Uname = 'U';
-    Tname = '';
+    if isfield(metadata.cell,'nom_capacity')
+        capacity = metadata.cell.nom_capacity;
+    end
 end
+if isfield(metadata,'cycler')
+    % names for columns contaning cell voltage and temperature
+    if isfield(metadata.cycler,'cell_voltage_name')
+        Uname = metadata.cycler.cell_voltage_name;
+    end
+    if isfield(metadata.cycler,'cell_temperature_name')
+        Tname = metadata.cycler.cell_temperature_name;
+    end
+end
+
+% Overwrite values if they are in config:
+if exist('config','var')
+    if isfield(config,'test')
+        if isfield(config.test,'max_voltage')
+            max_voltage = config.test.max_voltage;
+        end
+        if isfield(config.test,'min_voltage')
+            min_voltage = config.test.min_voltage;
+        end
+        if isfield(config.test,'capacity')
+            capacity = config.test.capacity;
+        end
+        if isfield(config.test,'Uname')
+            Uname = config.test.Uname;
+        end
+        if isfield(config.test,'Tname')
+            Tname = config.test.Tname;
+        end
+    end
+end
+
 if ~exist('options','var')
     options = '';
 end
 
-thisMAT = regexprep(xml_file,'xml$','mat');
-
-% if ismember('f',options) || ~exist(thisMAT,'file')
-%     xml_read = true;
-% elseif ismember('u',options)
-%     xml_dir = dir(xml_file);
-%     mat_dir = dir(thisMAT);
-%     if isempty(mat_dir)
-%         %xml_read true if thisMAT does not exist
-%         xml_read = true;
-%     else
-%         %xml_read true if mat older than xml
-%         %xml_read false if mat newer than xml
-%         xml_read = mat_dir.datenum<xml_dir.datenum;
-%     end
-% else
-%     xml_read = false;
-% end
+% thisMAT = regexprep(xml_file,'xml$','mat');
 
 if ismember('v',options)
     fprintf('extract_profiles: %s ....',xml_file);
@@ -104,17 +135,12 @@ if ~exist(xml_file,'file')
     fprintf('File not found: %s\n',xml_file);
     return;
 end
-%     [xmlD, xmlF] = fileparts(xml_file);
-%     xmlF = sprintf('%s.xml',xmlF);
+
 if ismember('v',options) && ~ismember('s',options)
     fprintf('l''option ''s'' est fortement conseillee lecture du XML,...');
 end
 [xml] = lectureXMLFile4Vehlib(xml_file);
-%     if err
-%         t = [];U = [];I = [];m = [];DoDAh = [];SOC = [];
-%         fprintf('Bad XML file: %s\n',xml_file);
-%         return;
-%     end
+
 %extraire les vecteurs
 %verifier si les champs existent (tabs,U,I,mode)
 if any(cellfun(@(x) ~isfield(x,'tabs'),xml.table)) ||...
@@ -165,6 +191,15 @@ end
 if ismember('v',options)
     fprintf('OK (XML file)\n');
 end
+
+%TODO need for soc100_time:
+
+%TODO calcul_soc:
+% [dod_ah, soc] = calcul_soc(t,I,config,inher_options);
+% need: 
+% config.soc.soc100_time
+% config.test.capacity
+
 % compile profiles
 profiles(1).t = t;
 profiles.U = U;
@@ -177,66 +212,31 @@ profiles.soc = [];
 %read EIS
 eis = extract_eis(xml,options);
 
-% else
-%     %list variables in MAT file
-%     S = who('-file',thisMAT);
-%     if ~ismember('t',S) || ~ismember('U',S) || ~ismember('I',S) || ~ismember('m',S)
-%         err = -2;
-%         fprintf('Bad MAT file: %s\n',thisMAT);
-%         return;
-%     end
-%     % read profiles
-% %     load(thisMAT);
-%     if ismember('v',options)
-%         fprintf('OK (MAT file)\n');
-%     end
-%     %read EIS
-%     thisMAT_result = result_filename(thisMAT);
-%     
-%     if exist(thisMAT_result,'file')
-%         load(thisMAT_result);
-%         if isfield(result,'eis')
-%             eis = result.eis;
-%         else
-%             eis = [];
-%         end
-%     else
-%         eis = [];
-%     end
-% end
-
 if ismember('g',options)
-    showResult(t,U,I,m,thisMAT,options);
+    showResult(t,U,I,m,xml_file,options);
 end
 
 err=0;
-% if ~exist('dod_ah','var')
-%     dod_ah = [];
-% end
-% if ~exist('soc','var')
-%     soc = [];
-% end
-% if ~exist('T','var')
-%     T = [];
-% end
+
 end
 
-function saveMAT(t,U,I,m,T,thisMAT)
-save(thisMAT,'-v7','t','U','I','m','T');
-end
+% function saveMAT(t,U,I,m,T,thisMAT)
+% save(thisMAT,'-v7','t','U','I','m','T');
+% end
 
-function showResult(t,U,I,m,thisMAT,options)
+function showResult(t,U,I,m,xml_file,options)
 
-[~, titre, ~] = fileparts(thisMAT);
+[~, title_str, ~] = fileparts(xml_file);
 InherOptions = options(ismember(options,'hj'));
-h = plot_profiles(t,U,I,m,titre,InherOptions);
+h = plot_profiles(t,U,I,m,title_str,InherOptions);
 set(h,'name','extract_profiles');
 
 end
 
-function showResulteis(eis)
+function showResulteis(eis,xml_file)
 
-h = plot_eis(eis,'extract_eis');
+[~, title_str, ~] = fileparts(xml_file);
+h = plot_eis(eis,title_str);
 set(h,'name','extract_eis');
 
 end
@@ -246,7 +246,7 @@ function [eis] = extract_eis(xml,options)
 % 1.- Detecte s'il y a ReZ, ImZ, f dans la structure xml
 % 2.- Extrait les vecteurs importants: t,U,I,m,ReZ, ImZ, f
 %
-% [t,U,I,m,ReZ, ImZ, f, err] = extract_eis(xml,thisMAT): utilisation normale, codes
+% [t,U,I,m,ReZ, ImZ, f, err] = extract_eis(xml): utilisation normale, codes
 % d'erreur:
 % err = 0: tout est OK
 % err = -1: le fichier xml_file n'existe pas

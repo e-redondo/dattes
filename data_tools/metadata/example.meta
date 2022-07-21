@@ -33,8 +33,8 @@
     "model": "FTV60-250",
     "voltage_resolution": 0.001,
     "current_resolution": 0.01,
-    "aux_voltage_number": 1,
-    "aux_temperature_number": 1
+    "cell_voltage_name": "U1",
+    "cell_temperature_name": "T1"
   },
   "chamber": {
     "brand": "Friocell",
