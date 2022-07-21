@@ -25,6 +25,7 @@ if ismember('e',options)%enable = addpath
     addpath(fullfile(srcdir,'data_tools','arbin'));
     addpath(fullfile(srcdir,'data_tools','bitrode'));
     addpath(fullfile(srcdir,'data_tools','biologic'));
+    addpath(fullfile(srcdir,'data_tools','metadata'));
     addpath(fullfile(srcdir,'ident'));
     addpath(fullfile(srcdir,'math_tools'));
     if isempty(which('butter'))

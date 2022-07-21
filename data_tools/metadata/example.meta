@@ -1,0 +1,47 @@
+{
+  "test": {
+    "institution": "Univ. Eiffel",
+    "laboratory": "LICIT-ECO7",
+    "experimenter": "Eduardo",
+    "datetime": "2022/06/22 08:30",
+    "temperature": 25,
+    "purpose": "capacity, HPPC, EIS"
+  },
+  "cell": {
+    "id": "BUGE187",
+    "brand": "Samsung",
+    "model": "INR18650_20R",
+    "max_voltage": 4.2,
+    "min_voltage": 2.5,
+    "nom_voltage": 3.7,
+    "nom_capacity": 2,
+    "max_dis_current_cont": 22,
+    "max_cha_current_cont": 4,
+    "min_temperature": -20,
+    "max_temperature": 60,
+    "geometry": "cylindrical",
+    "dimensions": [
+      18,
+      65
+    ],
+    "weight": 45,
+    "cathode": "NMC",
+    "anode": "graphite"
+  },
+  "cycler": {
+    "brand": "Bitrode",
+    "model": "FTV60-250",
+    "voltage_resolution": 0.001,
+    "current_resolution": 0.01,
+    "aux_voltage_number": 1,
+    "aux_temperature_number": 1
+  },
+  "chamber": {
+    "brand": "Friocell",
+    "model": "Friocell 707"
+  },
+  "regional": {
+    "date_format": "yyyy/mm/dd",
+    "time_format": "HH:MM:SS.SSS"
+  }
+}

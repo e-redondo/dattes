@@ -1,6 +1,34 @@
 function [metadata, meta_list,errors] = metadata_collector(filename,max_depth)
 % metadata_collector Collects metadata in folder tree
 %
+% Each .meta file placed beside a folder with same name applies to all test
+% files in this folder. Each .meta file placed beside a test file apply to
+% this test file. E.g.:
+% ├── [drwx------]  inr18650
+% │   ├── [drwx------]  checkup_tests
+% │   │   ├── [drwx------]  cell1
+% │   │   │   ├── [-rwx------]  20190102_1230_initial_checkup.csv
+% │   │   │   ├── [-rwx------]  20190102_1230_initial_checkup.meta
+% │   │   │   ├── [-rwx------]  20190202_1230_intermediary.csv
+% │   │   │   ├── [-rwx------]  20190202_1230_intermediary.meta
+% │   │   │   ├── [-rwx------]  20190302_1230_intermediary.csv
+% │   │   │   ├── [-rwx------]  20190302_1230_intermediary.meta
+% │   │   │   ├── [-rwx------]  20190402_1230_final.csv
+% │   │   │   └── [-rwx------]  20190402_1230_final.meta
+% │   │   ├── [-rwx------]  cell1.meta
+% │   │   ├── [drwx------]  cell2
+% │   │   ├── [-rwx------]  cell2.meta
+% │   │   ├── [drwx------]  cell3
+% │   │   └── [-rwx------]  cell3.meta
+% │   ├── [-rwx------]  checkup_tests.meta
+%
+% In example above, checkup_tests.meta applies to all files under
+% checkup_tests folder, then cell1.meta, cell2.meta, cell3.meta apply
+% respectively to files under cell1, cell2, cell3 subfolders. Thas is,
+% existing fields in preceding metadata will be overwritten by these ones.
+% Finally, 20190102_1230_initial_checkup.meta applies only to csv file with
+% same name.
+%
 % Usage:
 % metadata = metadata_collector(filename)
 %
