@@ -13,6 +13,8 @@ This document describe data structure for current version of DATTES:
     - eis [1x1 struct]:
         - created by extract_profiles
         - contains (px1) cells with EIS measurements, each 'p' contains (nx1) vectors (t,U,I,m,ReZ,ImZ,f)
+    - metadata: [1×1 struct]:
+        - created by metadata_collector (extract_profiles) if any '.meta' file found
     - test [1x1 struct]:
         - created by dattes
         - modified by calcul_soc and calcul_soc_patch
@@ -64,6 +66,45 @@ This document describe data structure for current version of DATTES:
     - ReZ [px1 cell of [nx1 double]]:  Real part of impedance (Ohm)
     - ImZ [px1 cell of [nx1 double]]:  Imaginary part of impedance (Ohm)
     - f [px1 cell of [nx1 double]]: frecuency (Hz)
+### metadata substructure
+- metadata [1x1 struct] with fields:
+    - test: [1×1 struct] with fields:
+        - institution [string]: name of institution (e.g. university)
+        - laboratory [string]: name of laboratory / department
+        - experimenter [string]: person who made this test
+        - datetime [string]: date and time of the test
+        - temperature [1x1 double]: ambient (chamber) temperature
+        - purpose [string]: brief desccription of the test
+    - cell: [1×1 struct] with fields:
+        - id [string]: cell unique identifier
+        - brand [string]: cell manufacturer
+        - model [string]: cell model
+        - max_voltage [1x1 double]: cell max voltage (V)
+        - min_voltage [1x1 double]: cell min voltage (V)
+        - nom_voltage [1x1 double]: cell nominal voltage (V)
+        - nom_capacity [1x1 double]: cell nominal capacity (Ah)
+        - max_dis_current_cont [1x1 double]: max continuous discharge current (A)
+        - max_cha_current_cont [1x1 double]: max continuous charge current (A)
+        - min_temperature [1x1 double]: min temperature (degC)
+        - max_temperature [1x1 double]: max temperature (degC)
+        - geometry [string]: shape (e.g. 'cylindrical', 'prismatic')
+        - dimensions [1x2 or 1x3 double]: diameter x length or l x w x h in mm
+        - weight [1x1 double]: weight in g
+        - cathode [string]: e.g. 'NMC'
+        - anode [string]: e.g. 'graphite'
+    - cycler: [1×1 struct] with fields:
+        - brand [string]: e.g 'Bitrode'
+        - model [string]: e.g 'FTV60-250'
+        - voltage_resolution: voltage resolution in V
+        - current_resolution: currant resolution in A
+        - cell_voltage_name [string]: variable name for cell voltage measurement (e.g. 'U1')
+        - cell_temperature_name [string]: variable name for cell temperature measurement (e.g. 'U1')
+    - chamber: [1×1 struct] with fields:
+        - brand [string]: e.g 'Friocell'
+        - model [string]: e.g 'Friocell 707'
+    - regional: [1×1 struct] with fields:
+        - date_format [string]: e.g 'yyyy/mm/dd'
+        - time_format [string]: e.g 'HH:MM:SS.SSS'
 ### test substructure
 - test [1x1 struct] with fields:
     - file_in [1xf char]: pathname of XML input file
