@@ -74,10 +74,7 @@ for ind = 1:length(meta_list)
     this_meta = meta_list{ind};
     if exist(this_meta,'file')
         try
-            fid = fopen(this_meta);
-            json_txt = fread(fid,inf, 'uint8=>char')';
-            fclose(fid);
-            this_metadata = jsondecode(json_txt);
+            [this_metadata, err] = metadata_json_import(this_meta);
         catch e
             errors(ind) = -1;
             this_metadata = struct;
