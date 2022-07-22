@@ -24,19 +24,15 @@ metadata = struct([]);
 %0.- check inputs
 if ~ischar(filename)
     err = -1;
-    fprintf('ERROR in metadata_json_export: filename must be string\n')
+    fprintf('ERROR in metadata_json_import: filename must be string\n')
     return
 end
-if ~isstruct(metadata)
-    err = -1;
-    fprintf('ERROR in metadata_json_export: metadata must be struct\n')
-    return
-end
+
 %1.- read file
 fid = fopen(filename,'r');
 if fid<0
     err = -2;
-    fprintf('ERROR in metadata_json_export: invalid filename or no write permission\n')
+    fprintf('ERROR in metadata_json_import: invalid filename or no write permission\n')
     return
 end
 

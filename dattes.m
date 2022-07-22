@@ -313,6 +313,10 @@ if any(ismember('PORZI',options))
         %6.3.2. Impedance
         if ismember('Z',options)
             ident_z = config.impedance.ident_fcn;
+            if ischar(ident_z)
+               % function handle saved as string in octave and in json:
+               ident_z = str2func(ident_z);
+            end
             [impedance] = ident_z(t,U,I,dod_ah,config,phases,inher_options);
             result.impedance= impedance;
         end
