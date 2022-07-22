@@ -7,6 +7,12 @@
 *.ods
 *.xml
 *.mdb
+*.csv
+*.json
+*.toml
+*.h5
+*.hdf
+*.hdf5
 
 # exluce dthese folders:
 configs/*
