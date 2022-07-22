@@ -54,6 +54,9 @@ default_params.buf_size = 1000;% buffer size (number of lines)
 if ~exist('params','var')
     params = struct;
 end
+if ~exist('col_names','var')
+    col_names = {'datetime','t','U','I','m','T','dod_ah','soc'};
+end
 if ~isfield(params,'I_thres')
     params.I_thres = default_params.I_thres;
 end
@@ -195,10 +198,12 @@ for ind = 1:length(ind_start)
     end
     
     
-    
-    %m: 'mode'(CC,CV,rest,EIS,profile)
-    m = which_mode(t,I,U,Step,params.I_thres,params.U_thres);
-    
+    if ~isempty(t)
+        %m: 'mode'(CC,CV,rest,EIS,profile)
+        m = which_mode(t,I,U,Step,params.I_thres,params.U_thres);
+    else
+        m=[];
+    end
     %pack data:
 %     profiles(ind).datetime = m2edate(datetime);
     profiles(ind).t = t;
@@ -210,49 +215,51 @@ for ind = 1:length(ind_start)
     
     %other_cols:
     ind_other_cols = find(~ismember(header_line,col_names));
-    other_cols(ind).t = t;
-    for ind_col = 1:length(ind_other_cols)
-        try % try to conver to number
-            % TODO: replace empty strings by nans and try to convert to number
-            data_this_col = data_lines(:,ind_other_cols(ind_col));
-            data_spaces = num2cell(char(' '*ones(size(data_this_col))));
-            %     data_this_col = reshape([data_this_col';data_spaces'],[],1);
+    if ~isempty(ind_other_cols)
+        other_cols(ind).t = t;
+        for ind_col = 1:length(ind_other_cols)
+            try % try to conver to number
+                % TODO: replace empty strings by nans and try to convert to number
+                data_this_col = data_lines(:,ind_other_cols(ind_col));
+                data_spaces = num2cell(char(' '*ones(size(data_this_col))));
+                %     data_this_col = reshape([data_this_col';data_spaces'],[],1);
+                
+                data_this_col = strcat(data_this_col,data_spaces);
+                this_col_string = [data_this_col{:}];
+                this_col =  sscanf(this_col_string,'%f ');
+                %     this_col = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_other_cols(ind_col)));
+            catch% if not possible keep as cell str
+                this_col = data_lines(:,ind_other_cols(ind_col));
+            end
+            %TODO:put this part in function (clean_col_name).
+            this_col_name = regexprep(header_line{ind_other_cols(ind_col)},'^[^a-zA-Z]','');
+            this_col_name = regexprep(this_col_name,'\s','_');
+            this_col_name = regexprep(this_col_name,'/','');
+            this_col_name = regexprep(this_col_name,'\\','');
+            this_col_name = regexprep(this_col_name,'\(','');
+            this_col_name = regexprep(this_col_name,'\)','');
+            %remove 'units' at end of variable names
+            this_col_name = regexprep(this_col_name,'_s$','');%s
+            this_col_name = regexprep(this_col_name,'_A$','');%A
+            this_col_name = regexprep(this_col_name,'_V$','');%V
+            this_col_name = regexprep(this_col_name,'_Ah$','');%Ah
+            this_col_name = regexprep(this_col_name,'_W$','');%W
+            this_col_name = regexprep(this_col_name,'_Wh$','');% Wh
+            this_col_name = regexprep(this_col_name,'_Ohm$','');% Ohm
+            this_col_name = regexprep(this_col_name,'_AhV$','');% Ah/V
+            this_col_name = regexprep(this_col_name,'_VAh$','');% V/Ah
+            this_col_name = regexprep(this_col_name,'_Vs$','');% V/s
+            this_col_name = regexprep(this_col_name,'_Cs$',''); %deg Celsius/s
+            this_col_name = regexprep(this_col_name,'_C$',''); %deg Celsius
             
-            data_this_col = strcat(data_this_col,data_spaces);
-            this_col_string = [data_this_col{:}];
-            this_col =  sscanf(this_col_string,'%f ');
-            %     this_col = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_other_cols(ind_col)));
-        catch% if not possible keep as cell str
-            this_col = data_lines(:,ind_other_cols(ind_col));
+            %DEBUG
+            %     fprintf('%s\n',this_col_name);
+            %     fprintf('%s\n',genvarname(this_col_name));
+            
+            other_cols(ind).(this_col_name) = this_col;
+            other_cols(ind).([this_col_name '_units']) = units{ind_other_cols(ind_col)};
+            
         end
-        %TODO:put this part in function (clean_col_name).
-        this_col_name = regexprep(header_line{ind_other_cols(ind_col)},'^[^a-zA-Z]','');
-        this_col_name = regexprep(this_col_name,'\s','_');
-        this_col_name = regexprep(this_col_name,'/','');
-        this_col_name = regexprep(this_col_name,'\\','');
-        this_col_name = regexprep(this_col_name,'\(','');
-        this_col_name = regexprep(this_col_name,'\)','');
-        %remove 'units' at end of variable names
-        this_col_name = regexprep(this_col_name,'_s$','');%s
-        this_col_name = regexprep(this_col_name,'_A$','');%A
-        this_col_name = regexprep(this_col_name,'_V$','');%V
-        this_col_name = regexprep(this_col_name,'_Ah$','');%Ah
-        this_col_name = regexprep(this_col_name,'_W$','');%W
-        this_col_name = regexprep(this_col_name,'_Wh$','');% Wh
-        this_col_name = regexprep(this_col_name,'_Ohm$','');% Ohm
-        this_col_name = regexprep(this_col_name,'_AhV$','');% Ah/V
-        this_col_name = regexprep(this_col_name,'_VAh$','');% V/Ah
-        this_col_name = regexprep(this_col_name,'_Vs$','');% V/s
-        this_col_name = regexprep(this_col_name,'_Cs$',''); %deg Celsius/s
-        this_col_name = regexprep(this_col_name,'_C$',''); %deg Celsius
-        
-        %DEBUG
-        %     fprintf('%s\n',this_col_name);
-        %     fprintf('%s\n',genvarname(this_col_name));
-        
-        other_cols(ind).(this_col_name) = this_col;
-        other_cols(ind).([this_col_name '_units']) = units{ind_other_cols(ind_col)};
-        
     end
 end
 
@@ -262,14 +269,17 @@ for ind = 1:length(fieldlist)
     profiles_all.(fieldlist{ind}) = vertcat(profiles(:).(fieldlist{ind}));
 end
 
-
-fieldlist = fieldnames(other_cols);
-[units, variables] = regexpFiltre(fieldlist,'_units$');
-for ind = 1:length(variables)
-    other_cols_all.(variables{ind}) = vertcat(other_cols(:).(variables{ind}));
-end
-for ind = 1:length(units)
-    other_cols_all.(units{ind}) = other_cols(1).(units{ind});
+if ~isempty(other_cols)
+    fieldlist = fieldnames(other_cols);
+    [units, variables] = regexpFiltre(fieldlist,'_units$');
+    for ind = 1:length(variables)
+        other_cols_all.(variables{ind}) = vertcat(other_cols(:).(variables{ind}));
+    end
+    for ind = 1:length(units)
+        other_cols_all.(units{ind}) = other_cols(1).(units{ind});
+    end
+else
+    other_cols_all = other_cols;
 end
 
 profiles = profiles_all;
@@ -279,12 +289,17 @@ other_cols = other_cols_all;
 %FIX: get datetime just at each ind_start, then convert to seconds
 % and finally calculate datetime from first value + t
 if isempty(params.date_fmt)
-    datetime = cellfun(@datenum,data_lines_all(ind_start,ind_col_dt));
+    date_time = cellfun(@(x) datenum(datetime(x)),data_lines_all(ind_start,ind_col_dt));
 else
-    datetime = cellfun(@(x) datenum(x,params.date_fmt),data_lines_all(ind_start,ind_col_dt));
+    date_time = cellfun(@(x) datenum(datetime(x),params.date_fmt),data_lines_all(ind_start,ind_col_dt));
 end
-datetime = m2edate(datetime);
-profiles.datetime = datetime(1) + profiles.t;
+if isempty(date_time)
+    %no column datetime found
+    profiles.datetime = date_time;
+else
+    date_time = m2edate(date_time);
+    profiles.datetime = date_time(1) + profiles.t;
+end
 
 % TODO mode: on all data, not in buffer, last buffer can give identification
 % problems if too short
@@ -299,11 +314,15 @@ if isempty(col_name)
 end
 ind_col = cellfun(@(x) strncmp(x,col_name,length(col_name)),header_line);
 
-if length(find(ind_col))~=1
+if length(find(ind_col))>1
     fprintf('ERROR: several columns for %s\n',col_name);
+    return;
+elseif isempty(find(ind_col))
+    fprintf('ERROR: no column found for %s\n',col_name);
     return;
 end
 end
+
 
 function units = find_units(header)
 
