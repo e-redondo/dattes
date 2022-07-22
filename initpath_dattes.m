@@ -22,9 +22,11 @@ if ismember('e',options)%enable = addpath
     %subfolders
     addpath(fullfile(srcdir,'configs'));
     addpath(fullfile(srcdir,'data_tools'));
-    addpath(fullfile(srcdir,'data_tools','arbin'));
-    addpath(fullfile(srcdir,'data_tools','bitrode'));
-    addpath(fullfile(srcdir,'data_tools','biologic'));
+    addpath(fullfile(srcdir,'data_tools','import'));
+    addpath(fullfile(srcdir,'data_tools','import','arbin'));
+    addpath(fullfile(srcdir,'data_tools','import','bitrode'));
+    addpath(fullfile(srcdir,'data_tools','import','biologic'));
+    addpath(fullfile(srcdir,'data_tools','export'));
     addpath(fullfile(srcdir,'data_tools','metadata'));
     addpath(fullfile(srcdir,'ident'));
     addpath(fullfile(srcdir,'math_tools'));
@@ -53,9 +55,12 @@ if ismember('d',options)%disable = rmpath
     rmpath(srcdir);
     rmpath(fullfile(srcdir,'configs'));
     rmpath(fullfile(srcdir,'data_tools'));
-    rmpath(fullfile(srcdir,'data_tools','arbin'));
-    rmpath(fullfile(srcdir,'data_tools','bitrode'));
-    rmpath(fullfile(srcdir,'data_tools','biologic'));
+    rmpath(fullfile(srcdir,'data_tools','import'));
+    rmpath(fullfile(srcdir,'data_tools','import','arbin'));
+    rmpath(fullfile(srcdir,'data_tools','import','bitrode'));
+    rmpath(fullfile(srcdir,'data_tools','import','biologic'));
+    rmpath(fullfile(srcdir,'data_tools','export'));
+    rmpath(fullfile(srcdir,'data_tools','metadata'));
     rmpath(fullfile(srcdir,'ident'));
     rmpath(fullfile(srcdir,'math_tools'));
     rmpath(fullfile(srcdir,'plots'));
