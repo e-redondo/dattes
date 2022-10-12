@@ -51,6 +51,7 @@ else
 % polarité
 ms = m.*sign(I);
 ms(sign(I)==0 | ms==-3) = 3;
+ms(ms==-4) = 4;
 end
 
 
