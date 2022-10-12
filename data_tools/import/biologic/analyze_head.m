@@ -1,4 +1,4 @@
-function [variable_names, unit_names, date_test, type_test, source_file] = analyze_head(file_name)
+function [variable_names, unit_names, date_test, type_test, source_file,test_params] = analyze_head(file_name)
 % analyze_head Analyse header and variables of biologic files
 %
 % [variable_names, unit_names, date_test, type_test, source_file] = analyze_head(file_name)
@@ -21,7 +21,7 @@ function [variable_names, unit_names, date_test, type_test, source_file] = analy
 % For more information, see the <a href="matlab: 
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
-[head, date_test, type_test, source_file] = biologic_head(file_name);
+[head, date_test, type_test, source_file, empty_file,test_params] = biologic_head(file_name);
 
 [variable_names, unit_names] = analyseVariables(head{end}, type_test);
 

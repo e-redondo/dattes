@@ -145,7 +145,7 @@ for indF = 1:length(corps)
     if ~isempty(donnees)
         % 2.- make Table
         
-        [variableNames, unitNames, tableDate, typeEssai, sourcefile] = analyze_head(fileList{indF});
+        [variableNames, unitNames, tableDate, typeEssai, sourcefile,test_params] = analyze_head(fileList{indF});
         % 2.1.- make metaTable
         tableName = sprintf('%s_%02i',typeEssai,indF);
         tableComments = '';
@@ -182,6 +182,17 @@ for indF = 1:length(corps)
             %error
             Error = zeros(size(XMLVars.tc.vector));
             XMLVars.error = makeXMLVariable('error', '', '%i', 'error', Error);
+            
+            %Iavg (Is in mpt files: constant average current):
+            if isfield(test_params,'Is')
+               Iavg =  test_params.Is*ones(size(XMLVars.tc.vector));
+               XMLVars.Iavg = makeXMLVariable('Iavg', 'A', '%f', 'Iavg', Iavg);
+            end
+            %Iamp (Ia in mpt files: current amplitude):
+            if isfield(test_params,'Ia')
+                Iamp =  test_params.Ia*ones(size(XMLVars.tc.vector));
+                XMLVars.Iamp = makeXMLVariable('Iamp', 'A', '%f', 'Iamp', Iamp);
+            end
             
         elseif  strcmp(typeEssai, 'GPI')  
             %mode 5

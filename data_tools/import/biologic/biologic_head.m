@@ -1,4 +1,4 @@
-function [head, date_test, type_test, source_file, empty_file] = biologic_head(file_name)
+function [head, date_test, type_test, source_file, empty_file,test_params] = biologic_head(file_name)
 % biologic_head Read and analyse .mpt Biologic files header
 % 
 % Usage :
@@ -59,7 +59,7 @@ else%try to deduct date time from file_name
     %try on file_name
     ligneDate = regexp(F,'^[0-9]{8,8}_[0-9]{4,4}','match','once');
     if isempty(ligneDate) %try on last level folder name
-        [~, D1] = fileparts(D)
+        [~, D1] = fileparts(D);
         ligneDate = regexp(D1,'^[0-9]{8,8}_[0-9]{4,4}','match','once');
     end
     if ~isempty(ligneDate)
@@ -114,4 +114,40 @@ if length(indices)~=1%not found, mpt filename is considered
 else
     source_file = s{indices};
 end
+%5.- extra params
+test_params = struct;
+if strcmp(type_test,'GEIS')
+    %average current
+    Is_line = regexpFiltre(head,'^Is');
+    if ~isempty(Is_line)
+        %search for line containing Is setting:
+        Is_line = regexp(Is_line{1},'\s+','split');
+        Is_units = regexpFiltre(head,'unit Is');
+        Is_units = regexp(Is_units{1},'\s+','split');
+        
+        Is = sscanf(Is_line{2},'%f');
+        scale = 1;
+        if strcmp(Is_units{3},'mA')
+            scale = 0.001;%TODO other possible scales? µA?
+        end
+        test_params.Is = scale*Is;%convert to A
+    end
+    %current amplitude
+    Ia_line = regexpFiltre(head,'^Ia\s+');
+    if ~isempty(Is_line)
+        %search for line containing Is setting:
+        Ia_line = regexp(Ia_line{1},'\s+','split');
+        Ia_units = regexpFiltre(head,'unit\s+Ia');
+        Ia_units = regexp(Ia_units{1},'\s+','split');
+        
+        Ia = sscanf(Ia_line{2},'%f');
+        scale = 1;
+        if strcmp(Ia_units{3},'mA')
+            scale = 0.001;%TODO other possible scales? µA?
+        end
+        test_params.Ia = scale*Ia;%convert to A
+    end
+    %TODO do the same for other test types, e.g. PEIS (Is?,Va, etc.)
+end
+
 end
