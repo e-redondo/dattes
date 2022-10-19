@@ -117,7 +117,7 @@ if ismember('b',options)%before: search for previous test
             end
         end
         save_result(r{indEmptySOC(ind)});%save configuration
-        r{indEmptySOC(ind)} = dattes(xml{indEmptySOC(ind)},'Ss',r{indEmptySOC(ind)}.configuration.test.cfg_file);%recalculate SOC
+        r{indEmptySOC(ind)} = dattes(xml{indEmptySOC(ind)},'Ss');%recalculate SOC
         if isempty(r{indEmptySOC(ind)}.test.soc_ini)
             fprintf('calcul_soc %s >>>>>>>>>>>>NOK\n',r{indEmptySOC(ind)}.test.file_in);
         else
