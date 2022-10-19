@@ -148,6 +148,49 @@ if strcmp(type_test,'GEIS')
         test_params.Ia = scale*Ia;%convert to A
     end
     %TODO do the same for other test types, e.g. PEIS (Is?,Va, etc.)
+elseif strcmp(type_test,'MB')
+    fprintf('here\n');
+    %Ns line: Sequence numbers
+    Ns_line = regexpFiltre(head,'^Ns\s+0');
+    Ns = regexp(Ns_line{1},'\s+','split');
+    [Ns,~,Is] = regexpFiltre(Ns,'[0-9]+');
+    Ns = cellfun(@str2num,Ns);
+    %get control type in line
+    control_type_line = regexpFiltre(head,'^ctrl_type');
+    control_types = regexp(control_type_line{1},'\s+','split');
+    control_types = control_types(Is);%remove first and last column as in Ns
+    [~,~,geis_sequences] = regexpFiltre(control_types,'GEIS');
+    
+    %get control val in line
+    control_val1_line = regexpFiltre(head,'^ctrl1_val\s+');
+    %get control unit in line
+    control_unit1_line = regexpFiltre(head,'^ctrl1_val_unit\s+');
+    
+    %TODO: find Iavg in settings file. (control_val4?, ApplyI/C?)
+    
+    start_cuts = [1 regexp(Ns_line{1},'\s[0-9]')+1];
+    end_cuts = [start_cuts(2:end)-1 length(control_val1_line{1})];
+    for ind = 1:length(start_cuts)
+        control_vals1{ind} = control_val1_line{1}(start_cuts(ind):end_cuts(ind));
+        control_units1{ind} = control_unit1_line{1}(start_cuts(ind):end_cuts(ind));
+    end
+    control_vals1 = control_vals1(Is);%remove first and last column as in Ns
+    control_units1 = control_units1(Is);%remove first and last column as in Ns
+    %convert string to numbers, fill empty values with nans
+    control_vals1 = cellfun(@str2num,control_vals1,'UniformOutput',false);
+    Ie = cellfun(@isempty,control_vals1);
+    control_vals1(Ie) = {nan};
+    %convert cell to array
+    control_vals1 = cell2mat(control_vals1);
+    
+    scale = ones(size(Ns));
+    [~,~,Ism] = regexpFiltre(control_units1,'mA');%TODO same for mV?
+    scale(Ism) = 0.001;
+    %TODO, put values to avoid errors:
+    test_params.Is = nan(size(Ns));%TODO
+    test_params.Ia = control_vals1.*scale;
+    test_params.Ia(~geis_sequences) = nan;%TODO add PEIS when done
+    
 end
 
 end

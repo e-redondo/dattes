@@ -193,7 +193,35 @@ for indF = 1:length(corps)
                 Iamp =  test_params.Ia*ones(size(XMLVars.tc.vector));
                 XMLVars.Iamp = makeXMLVariable('Iamp', 'A', '%f', 'Iamp', Iamp);
             end
+        elseif  strcmp(typeEssai, 'MB')  
             
+            %Found EIS in MB:
+            %Iavg (Is in mpt files: constant average current):
+            if isfield(test_params,'Is')
+                Iavg =  nan(size(XMLVars.tc.vector));
+                if ~all(isnan(test_params.Is))
+                    Ns = XMLVars.Ns.vector;
+                    for ind = 1:length(test_params.Is)
+                        if ~isnan(test_params.Is(ind))
+                            Iavg(Ns+1==ind) = test_params.Is(ind);
+                        end
+                    end
+                end
+                XMLVars.Iavg = makeXMLVariable('Iavg', 'A', '%f', 'Iavg', Iavg);
+            end
+            %Iamp (Ia in mpt files: current amplitude):
+            if isfield(test_params,'Ia')
+                Iamp =  nan(size(XMLVars.tc.vector));
+                if ~all(isnan(test_params.Ia))
+                    Ns = XMLVars.Ns.vector;
+                    for ind = 1:length(test_params.Ia)
+                        if ~isnan(test_params.Ia(ind))
+                            Iamp(Ns+1==ind) = test_params.Ia(ind);
+                        end
+                    end
+                end
+                 XMLVars.Iamp = makeXMLVariable('Iamp', 'A', '%f', 'Iamp', Iamp);
+            end
         elseif  strcmp(typeEssai, 'GPI')  
             %mode 5
             mode =  5*ones(size(XMLVars.tc.vector));
