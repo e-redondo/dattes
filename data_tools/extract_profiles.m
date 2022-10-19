@@ -182,9 +182,11 @@ if all(cellfun(@(x) isfield(x,Tname),xml.table))
     T = vertcat(T{:});
     %doublons
     T = T(Iu);
-elseif isfield(metadata.test,'temperature')
-    %TODO metadata struct and data types validation (new function)
-    T = metadata.test.temperature*ones(size(t));
+elseif isfield(metadata,'test')
+    if isfield(metadata.test,'temperature')
+        %TODO metadata struct and data types validation (new function)
+        T = metadata.test.temperature*ones(size(t));
+    end
 else
     T = [];
 end
