@@ -29,7 +29,7 @@ if ~exist('options','var')
 end
 
 %check fileout name
-if ~exist('fileout','var')
+if ~exist('file_out','var')
     file_suffix = '_dattes_profiles.csv';
     file_out = regexprep(dattes_struct.test.file_in,'.[a-zA-Z0-9]*$',file_suffix);
 end
