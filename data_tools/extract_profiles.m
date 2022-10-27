@@ -175,6 +175,8 @@ U = U(Iu);
 I = I(Iu);
 m = m(Iu);
 
+T = [];
+
 if all(cellfun(@(x) isfield(x,Tname),xml.table))
     %extraire
     T = cellfun(@(x) x.(Tname).vector,xml.table,'uniformoutput',false);
@@ -187,8 +189,6 @@ elseif isfield(metadata,'test')
         %TODO metadata struct and data types validation (new function)
         T = metadata.test.temperature*ones(size(t));
     end
-else
-    T = [];
 end
 if isnan(max(t+I+U+m))%gestion d'erreurs
     error('Oups! extract_profiles a trouve des nans: %s\n',xml_file);
