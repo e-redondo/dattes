@@ -3,7 +3,7 @@
 % All fields are optionnal.
 % You can use this example to create metadata files:
 % 1. uncomment/edit some lines
-% 2. run metadata_json_export('your_filename.meta'), metadata)
+% 2. run write_json_struct('your_filename.meta'), metadata)
 % 3. place your metadata file properly:
 % Each .meta file placed beside a folder with same name applies to all test
 % files in this folder. Each .meta file placed beside a test file apply to
@@ -71,6 +71,8 @@ metadata = struct;
 % metadata.cycler.cell_temperature_name = 'T1';%cell temperature sensor
 % metadata.chamber.brand = 'Friocell';
 % metadata.chamber.model = 'Friocell 707';
+% metadata.chamber.min_temperature = -30;%min temperature (degC)
+% metadata.chamber.max_temperature = 100;%min temperature (degC)
 
 %% 3. other info
 % metadata.regional.date_format = 'yyyy/mm/dd';

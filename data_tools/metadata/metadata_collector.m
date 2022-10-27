@@ -74,7 +74,7 @@ for ind = 1:length(meta_list)
     this_meta = meta_list{ind};
     if exist(this_meta,'file')
         try
-            [this_metadata, err] = metadata_json_import(this_meta);
+            [this_metadata, err] = read_json_struct(this_meta);
         catch e
             errors(ind) = -1;
             this_metadata = struct;
