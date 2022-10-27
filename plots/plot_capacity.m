@@ -38,10 +38,10 @@ ylabel('Capacity (Ah)','interpreter','tex')
 legend('location','best')
 grid on;
 
-ah_ratio_cc=capacity.ratio_ah(:,1);
-ah_ratio_cv=capacity.ratio_ah(:,2);
-duration_ratio_cc=capacity.ratio_duration(:,1);
-duration_ratio_cv=capacity.ratio_duration(:,2);
+ah_ratio_cc=capacity.cccv_ratio_cc_ah(:,1);
+ah_ratio_cv=capacity.cccv_ratio_cc_ah(:,2);
+duration_ratio_cc=capacity.cccv_ratio_cc_duration(:,1);
+duration_ratio_cv=capacity.cccv_ratio_cc_duration(:,2);
 
 
 subplot(222)
@@ -114,3 +114,4 @@ changeLine(ha,2,15);
 
 
 end
+

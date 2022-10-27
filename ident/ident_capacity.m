@@ -27,8 +27,8 @@ function [capacity] = ident_capacity(config,phases,options)
 %     - cc_cv_time (1xn) double: final time of cc part of each CC-CV capacity measurement
 %     - cc_cv_capacity (1xn) double: sum of CC and CV capacity measurements
 %     - cc_cv_duration(1xn) double: sum of CC and CV capacity durations
-%     - ratio_ah (nx2) double : CC / CV part of capacity measurements (AmpHours) 
-%     - ratio_duration (nx2) double : duration of  CC / CV part of capacity measurements 
+%     - cccv_ratio_cc_ah (nx2) double : CC / CV part of capacity measurements (AmpHours) 
+%     - cccv_ratio_cc_duration (nx2) double : duration of  CC / CV part of capacity measurements 
 %
 % See also dattes, split_phases, configurator, plot_capacity
 %
@@ -86,7 +86,7 @@ cv_duration = [phases_cv.duration];
 
 %CC+CV
 
-[cc_cv_time,cc_cv_capacity,cc_cv_duration,cc_cv_crate,ratio_ah,ratio_duration]=append_cc_and_cv(config,phases);
+[cc_cv_time,cc_cv_capacity,cc_cv_duration,cc_cv_crate,cccv_ratio_cc_ah,cccv_ratio_cc_duration]=append_cc_and_cv(config,phases);
 
 %put into output structure:
 
@@ -105,8 +105,8 @@ capacity.cc_cv_capacity=cc_cv_capacity;
 capacity.cc_cv_duration=cc_cv_duration;
 capacity.cc_cv_crate=cc_cv_crate;
 
-capacity.ratio_ah=ratio_ah;
-capacity.ratio_duration=ratio_duration;
+capacity.cccv_ratio_cc_ah=cccv_ratio_cc_ah;
+capacity.cccv_ratio_cc_duration=cccv_ratio_cc_duration;
 
 
 if ismember('v',options)
@@ -115,7 +115,7 @@ end
 end
 
 
-function [cc_cv_time,cc_cv_capacity,cc_cv_duration, cc_cv_crate,ratio_ah,ratio_duration]=append_cc_and_cv(config,phases)
+function [cc_cv_time,cc_cv_capacity,cc_cv_duration, cc_cv_crate,cccv_ratio_cc_ah,cccv_ratio_cc_duration]=append_cc_and_cv(config,phases)
 
 
 
@@ -168,8 +168,8 @@ for indice=1:length(Index_cc_cv)
 end
 
 
-ratio_ah=[ah_cc_in_cc_cv; ah_cv_in_cc_cv]';
-ratio_duration=[duration_cc_in_cc_cv; duration_cv_in_cc_cv]';
+cccv_ratio_cc_ah=[ah_cc_in_cc_cv; ah_cv_in_cc_cv]';
+cccv_ratio_cc_duration=[duration_cc_in_cc_cv; duration_cv_in_cc_cv]';
 
 
 
