@@ -93,7 +93,7 @@ end
 if strcmp(export_mode,'phases')
     fprintf('DATTES export phases to %s\n',export_format)
     if strcmp(export_format,'csv')
-        fprintf('export_phases_csv (TODO)\n')
+        export_phases_csv(dattes_struct, inher_options)% file_out (optional)
     elseif strcmp(export_format,'json')
         export_phases_json(dattes_struct, inher_options)% file_out (optional)
     end
