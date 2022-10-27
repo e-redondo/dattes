@@ -22,6 +22,7 @@ if ismember('e',options)%enable = addpath
     %subfolders
     addpath(fullfile(srcdir,'configs'));
     addpath(fullfile(srcdir,'data_tools'));
+    addpath(fullfile(srcdir,'data_tools','io'));
     addpath(fullfile(srcdir,'data_tools','import'));
     addpath(fullfile(srcdir,'data_tools','import','arbin'));
     addpath(fullfile(srcdir,'data_tools','import','bitrode'));
