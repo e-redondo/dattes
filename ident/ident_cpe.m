@@ -76,32 +76,51 @@ time = [];
 
 %% 2- Determine the phases for which a CPE identification is relevant
 indices_cpe = find(config.impedance.pZ);
-time_before_after_phase = [config.impedance.rest_min_duration 0];
-
+rest_duration_before_pulse=config.impedance.rest_min_duration;
+rest_before_after_phase = [rest_duration_before_pulse 0];
+phases_identify_cpe=phases(config.impedance.pZ);
 
 %% 3-q and alpha are identified for each of these phases
 for phase_k = 1:length(indices_cpe)
-    [time_phase,voltage_phase,current_phase,dod_phase] = extract_phase2(phases(indices_cpe(phase_k)),time_before_after_phase,t,U,I,dod_ah);
+    [time_phase,voltage_phase,current_phase,dod_phase] = extract_phase2(phases(indices_cpe(phase_k)),rest_before_after_phase,t,U,I,dod_ah);
 
+        % Step time is reduced to maximize the identification accuracy
+    time_step = 0.1;
+    tmi = (time_phase(1):time_step:time_phase(end))';
+    voltage_phase = interp1(time_phase,voltage_phase,tmi);
+    current_phase = interp1(time_phase,current_phase,tmi);
+    time_phase = tmi;
+    
+    
     
     %Ohmic polarization is extracted
-    [R, crate] = calcul_r(time_phase,voltage_phase,current_phase,dod_phase,phases(indices_cpe(phase_k)).t_ini,9,config.impedance.rest_min_duration,0);
+    [resistance_phase, crate_phase] = calcul_r(time_phase,voltage_phase,current_phase,dod_phase,phases(indices_cpe(phase_k)).t_ini,9,config.impedance.rest_min_duration,0);
     polarization_resistance = zeros(size(voltage_phase));
-    polarization_resistance = current_phase*R(1);
+    polarization_resistance = current_phase*resistance_phase(1);
     voltage_phase = voltage_phase-polarization_resistance;
+    
+    
     
        %Relaxation voltage is extracted
     open_circuit_voltage = voltage_phase(1);
     voltage_phase  = voltage_phase-open_circuit_voltage; 
 
+    
+    
+    
     if ~config.impedance.fixed_params
-        [q(phase_k), alpha(phase_k), ~, crate(phase_k)] = calcul_cpe_pulse(time_phase,voltage_phase,current_phase);
+        [q_phase, alpha_phase ~, crate_phase] = calcul_cpe_pulse(time_phase,voltage_phase,current_phase);
     else
-        [q(phase_k), alpha(phase_k), ~, crate(phase_k)] = calcul_cpe_pulse(time_phase,voltage_phase,current_phase,'a',config.impedance.fixed_params);
+        [q_phase, alpha_phase, ~, crate_phase] = calcul_cpe_pulse(time_phase,voltage_phase,current_phase,'a',config.impedance.fixed_params);
     end
-    time(phase_k) = t(t==config.impedance.instant_end_rest(phase_k));
-    dod(phase_k) = dod_ah(t==config.impedance.instant_end_rest(phase_k));
-    resistance(phase_k) = R(1);
+    
+    q=[q q_phase];
+    alpha=[alpha alpha_phase];
+    crate=[crate crate_phase];
+
+    time = [time time_phase(1)];
+    dod = [dod dod_phase(1)];
+    resistance=[resistance resistance_phase(1)];
 end
 crate = crate/config.test.capacity;
 
