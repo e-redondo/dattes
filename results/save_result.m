@@ -43,7 +43,9 @@ function err = save1result(result)
 err = 0;
 %get file name
 if isfield(result,'test')
-    if isfield(result.test,'file_in')
+    if isfield(result.test,'file_out')
+        fileOut = result.test.file_out;
+    elseif isfield(result.test,'file_in')
         fileOut = result_filename(result.test.file_in);
     else
         fprintf('save_result:ERROR, result.test structure is not valid (no field ''file_in'')\n');
@@ -56,15 +58,7 @@ else
     return
 end
 %convert all function handlers into strings:
-if isfield(result,'configuration')
-    if isfield(result.configuration,'impedance')
-        if isfield(result.configuration.impedance,'ident_fcn')
-            if isa(result.configuration.impedance.ident_fcn,'function_handle')
-                result.configuration.impedance.ident_fcn = func2str(result.configuration.impedance.ident_fcn);
-            end
-        end
-    end
-end
+result = func2str_struct(result);
 
 %save these variables in this file
 save(fileOut,'-v7','result');

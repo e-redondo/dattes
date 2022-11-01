@@ -74,15 +74,7 @@ if ~exist('result','var')
 end
 
 %convert strings back to function handlers (see save1result in save_result):
-if isfield(result,'configuration')
-    if isfield(result.configuration,'impedance')
-        if isfield(result.configuration.impedance,'ident_fcn')
-            if ischar(result.configuration.impedance.ident_fcn)
-                result.configuration.impedance.ident_fcn = str2func(result.configuration.impedance.ident_fcn);
-            end
-        end
-    end
-end
+result = str2func_struct(result);
 
 % if ~exist('phases','var')
 %     %if resultat was not in the file (or the file was not found)
