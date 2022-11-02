@@ -40,7 +40,7 @@ function [info, err] = check_result_struct(result)
 %% first level: result
 err = 0;
 
-if ~isstruct(profiles)
+if ~isstruct(result)
     err = -4;
     return;
 end
