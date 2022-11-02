@@ -22,6 +22,7 @@ if ismember('e',options)%enable = addpath
     %subfolders
     addpath(fullfile(srcdir,'configs'));
     addpath(fullfile(srcdir,'data_tools'));
+    addpath(fullfile(srcdir,'data_tools','check_struct'));
     addpath(fullfile(srcdir,'data_tools','io'));
     addpath(fullfile(srcdir,'data_tools','import'));
     addpath(fullfile(srcdir,'data_tools','import','arbin'));
@@ -56,6 +57,8 @@ if ismember('d',options)%disable = rmpath
     rmpath(srcdir);
     rmpath(fullfile(srcdir,'configs'));
     rmpath(fullfile(srcdir,'data_tools'));
+    rmpath(fullfile(srcdir,'data_tools','check_struct'));
+    rmpath(fullfile(srcdir,'data_tools','io'));
     rmpath(fullfile(srcdir,'data_tools','import'));
     rmpath(fullfile(srcdir,'data_tools','import','arbin'));
     rmpath(fullfile(srcdir,'data_tools','import','bitrode'));
