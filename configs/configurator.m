@@ -1,11 +1,11 @@
-function config = configurator(t,U,I,m,config,phases,options)
+function config = configurator(t,I,U,m,config,phases,options)
 %configurator configuration for dattes
 %
 % Usage:
 % config = configurator(t,U,I,m,config,phases,options)
 %
 % Inputs:
-% - t,U,I,m [(nx1) double] from extract_profiles
+% - t,I,U,m [(nx1) double] from extract_profiles
 % - config [(1x1) struct] containing minimal info (see cfg_default)
 % - phases [(mx1) struct] from split_phases
 % - options [(1xp) string] some options ('v', 'g').

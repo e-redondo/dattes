@@ -139,9 +139,9 @@ if ~exist(xml_file,'file')
     return;
 end
 
-if ismember('v',options) && ~ismember('s',options)
-    fprintf('l''option ''s'' est fortement conseillee lecture du XML,...');
-end
+% if ismember('v',options) && ~ismember('s',options)
+%     fprintf('l''option ''s'' est fortement conseillee lecture du XML,...');
+% end
 [xml] = lectureXMLFile4Vehlib(xml_file);
 
 %extraire les vecteurs

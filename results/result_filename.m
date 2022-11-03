@@ -32,6 +32,9 @@ function file_out = result_filename(xml_file, dst_folder,suffix)
 if ~exist('suffix','var')
     suffix = 'dattes';
 end
+if ~exist('dst_folder','var')
+    dst_folder = '';
+end
 
 %separate folder (D), file (F) and extension (E)
 [src_folder, F, E] = fileparts(xml_file);

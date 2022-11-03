@@ -60,6 +60,9 @@ end
 %convert all function handlers into strings:
 result = func2str_struct(result);
 
+%make folder if it does not exist
+folder_out = fileparts(fileOut);
+[status, msg, msgID] = mkdir(folder_out);
 %save these variables in this file
 save(fileOut,'-v7','result');
 end
