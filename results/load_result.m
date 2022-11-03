@@ -1,15 +1,17 @@
-function [result] = load_result(XMLfile,options)
+function [result] = load_result(file_in,options)
 % load_result load the results of DATTES
 %
-%[result] = load_result(XMLfile,options)
-% load the results of DATTES
+% This function loads a mat file and make some checks for validation.
+% If input file is not a mat file, the function uses result_filename to
+% guess the corresponding mat file:
+% e.g. file_in.xml >>> file_in_dattes.mat
 %
 % Usage:
-% [result] = load_result(XMLfile,options)
+% [result] = load_result(file_in,options)
 % Inputs : 
-% - xml_file:
-%     -   [1xn string]: pathname to the xml file
-%     -   [nx1 cell string]: xml filelist
+% - file_in:
+%     -   [1xn string]: input file
+%     -   [nx1 cell string]: filelist
 % - options  [string, optional]:
 %    - 'v': verbose
 %
@@ -25,21 +27,29 @@ function [result] = load_result(XMLfile,options)
 if ~exist('options','var')
     options = '';
 end
-if iscell(XMLfile)
-    [result] = cellfun(@load_result,XMLfile,'UniformOutput',false);
+if iscell(file_in)
+    [result] = cellfun(@load_result,file_in,'UniformOutput',false);
 %     %mise en forme (cell 2 struct):
 %     [result] = compil_result(result, config, phases);
     return;
 end
-%get file name
-fileOut = result_filename(XMLfile);
+
+%get mat file name
+[D,F,E] = fileparts(file_in);
+if strcmp(E,'.mat')
+    %if input file is mat, keep it
+    file_mat = file_in;
+else
+    %if input file is not mat, try to find a logical name for it
+    file_mat = result_filename(file_in);
+end
 %check if file exists
-if exist(fileOut,'file')
+if exist(file_mat,'file')
     if ismember('v',options)
-        fprintf('load_result:load results %s...',XMLfile);
+        fprintf('load_result:load results %s...',file_in);
     end
     %list variables in MAT file
-    S = who('-file',fileOut);
+    S = who('-file',file_mat);
 %     if ismember('config',S)
 %         %load config if it is in the MAT file
 %         load(fileOut,'config');
@@ -48,7 +58,7 @@ if exist(fileOut,'file')
 %     end
     if ismember('result',S)
         %load resultat if it is in the MAT file
-        load(fileOut,'result');
+        load(file_mat,'result');
     end
 %     if ismember('phases',S)
 %         %load resultat if it is in the MAT file
@@ -59,7 +69,7 @@ if exist(fileOut,'file')
     end
 else
     if ismember('v',options)
-        fprintf('load_result: the file %s did not exist yet, variables initialized\n',fileOut);
+        fprintf('load_result: the file %s did not exist yet, variables initialized\n',file_mat);
     end
 end
 % if ~exist('config','var')
