@@ -49,7 +49,7 @@ fields = fieldnames(metadata.(sections{ind_s}));
 
 for ind_f = 1:length(fields)
     name = sprintf('metadata.%s.%s',sections{ind_s},fields{ind_f});
-    value = metadata.(sections{ind_s}).(fieldlist{ind_f});
+    value = metadata.(sections{ind_s}).(fields{ind_f});
     if ischar(value)
         print_string(fid,name,value);
     elseif isnumeric(value)

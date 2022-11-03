@@ -136,7 +136,7 @@ end
 %'metadata'
 if strcmp(export_mode,'metadata')
     fprintf('DATTES export metadata to %s\n',export_format)
-    if strcmp(export_format,'m')
+    if strcmp(export_format,'script')
         export_metadata_script(dattes_struct, inher_options,dst_folder,file_out);
     elseif strcmp(export_format,'json')
         export_metadata_json(dattes_struct, inher_options,dst_folder,file_out);
@@ -145,7 +145,7 @@ end
 %'configuration'
 if strcmp(export_mode,'configuration')
     fprintf('DATTES export configuration to %s\n',export_format)
-    if strcmp(export_format,'m')
+    if strcmp(export_format,'script')
         export_configuration_script(dattes_struct, inher_options,dst_folder,file_out);
     elseif strcmp(export_format,'json')
         export_configuration_json(dattes_struct, inher_options,dst_folder,file_out);

@@ -1,4 +1,4 @@
-function export_configuration_script(dattes_struct, dst_folder, file_out)
+function export_configuration_script(dattes_struct, options, dst_folder, file_out)
 % export_configuration_script export configuration from DATTES struct to json file
 %
 % 
@@ -7,6 +7,7 @@ function export_configuration_script(dattes_struct, dst_folder, file_out)
 %
 % Input:
 % - dattes_struct [1x1 struct] DATTES result structure
+% - options [1xp string]: (optional) not yet used
 % - dst_folder [1xp string]: (optional) 
 % - file_out [1xp string]: (optional) 
 %
@@ -32,11 +33,15 @@ end
 
 %check fileout name
 if isempty(file_out)
-    file_suffix = 'configuration';
+    file_preffix = 'configuration_';
+    file_suffix = '';
     file_ext = '.m';
     file_out = result_filename(dattes_struct.test.file_out, dst_folder,file_suffix, file_ext);
+    [folder_out, file_out] = fileparts(file_out);
+    file_out = fullfile(folder_out,[file_preffix file_out '.m']);
 end
 
+[status, msg, msgID] = mkdir(folder_out);
 write_config_script(file_out, dattes_struct.configuration);
 
 end
