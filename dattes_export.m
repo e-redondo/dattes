@@ -3,7 +3,10 @@ function dattes_export(dattes_struct,options,dst_folder,file_out)
 %
 % 
 % Usage:
-% dattes_export(dattes_struct,options,output_pathname)
+% (1) dattes_export(dattes_struct,options,dst_folder,file_out)
+% (2) dattes_export(file_in,options,dst_folder,file_out)
+% (3) dattes_export(file_list,options,dst_folder,file_out)
+% (4) dattes_export(src_folder,options,dst_folder,file_out)
 %
 % Input:
 % - dattes_struct [1x1 struct] DATTES result structure
@@ -62,12 +65,36 @@ if ~exist('dst_folder','var')
 end
 
 [export_mode, export_format, include_metadata] = check_options_string(options);
+if isempty(export_mode)
+    %not valid options
+    return;
+end
 
 if include_metadata
     inher_options = 'm';
 else
     inher_options = '';
 end
+
+if iscellstr(dattes_struct)
+    %filelist
+    filelist = dattes_struct;
+    %TODO find_common_ancestor
+    cellfun(@(x) dattes_export(x,options,dst_folder,file_out),filelist,'UniformOutput',false);
+    return;
+elseif ischar(dattes_struct)
+    %file_in or src_folder
+    if isfolder(dattes_struct)
+        mat_list = lsFiles(dattes_struct,'.mat');
+        dattes_export(mat_list,options,dst_folder,file_out);
+        return;
+    end
+    if exist(dattes_struct,'file')
+        file_in = dattes_struct;
+        dattes_struct = load_result(file_in);
+    end
+end
+
 
 %'all'
 if strcmp(export_mode,'all')

@@ -43,6 +43,9 @@ if isempty(file_out)
 end
 
 %1. open fileout
+folder_out = fileparts(file_out);
+[status, msg, msgID] = mkdir(folder_out);
+
 fid_out = fopen(file_out,'w+');
 if fid_out<1
     fprintf('ERROR export_profiles_csv:Unable to open %s\n',file_out);
