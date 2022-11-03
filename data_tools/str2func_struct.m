@@ -5,6 +5,7 @@ fieldlist = fieldnames(struct_in);
 if isempty(fieldlist)
     %struct with no fields
     struct_out = struct_in;
+    return
 end
 for ind = 1:length(struct_in)
     for ind_f = 1:length(fieldlist)
