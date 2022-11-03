@@ -142,48 +142,63 @@ file_out = result_filename(file_in,destination_folder);
 %1. read file
 %1.1 json mode (import_json + metadata_collector)
 %1.2 csv mode (import_csv + metadata_collector)
+if strcmp(file_ext,'.csv')
+   [profiles, eis, metadata, configuration, err] = extract_profiles_csv(file_in,inher_options);
+   %TODO: error management
+   if err
+       result = [];
+       return
+   end
+end
+%1.3 xml mode (extract_profiles)
 if strcmp(file_ext,'.xml')
-    %1.3 xml mode (extract_profiles)
+    
     %TODO: options 'f','u'and 's' now in dattes_import, just inherit 'v':
     [profiles, eis, metadata, configuration, err] = extract_profiles(file_in,inher_options);
-    if isempty(profiles)
-        % no data found in xml_file
+    %TODO error management
+    if err
+        result = [];
         return
     end
-    result.profiles = profiles;
-    if ~isempty(eis)
-        result.eis = eis;
-    end
-    if ~isempty(metadata)
-        result.metadata = metadata;
-    end
-    result.configuration = configuration;
 end
-
-if ~isfield(profiles, 'm')
+%2. compile results
+if isempty(profiles)
+    % no data found in xml_file
+    return
+end
+result.profiles = profiles;
+if ~isempty(eis)
+    result.eis = eis;
+end
+if ~isempty(metadata)
+    result.metadata = metadata;
+end
+result.configuration = configuration;
+    
+if ~isfield(result.profiles, 'm')
     options = [options, 'm'];
 end
 
-%2. which mode (if mode not in file_in or if 'm' in options)
+%3. which mode (if mode not in file_in or if 'm' in options)
 if ismember('m',options)
     m = which_mode(result.profiles.t,result.profiles.I,result.profiles.U,...
                    Step,I_threshold,U_threshold,inher_options);
     result.profiles.m = m;
 end
 
-%3. split phases (if mode not in file_in or if 'm' in options)
+%4. split phases (if mode not in file_in or if 'm' in options)
 if ~isfield(result, 'phases') || ismember('m', options)
     result.phases = split_phases(result.profiles.t,result.profiles.I,...
                                  result.profiles.U,result.profiles.m);
 end
 
-%4. calcul_soc (if soc not in file_in or if 'S' in options)
-if isempty(profiles.soc) || ismember('S',options)
-    %4.1 config_soc (detect soc100)
+%5. calcul_soc (if soc not in file_in or if 'S' in options)
+if isempty(result.profiles.soc) || ismember('S',options)
+    %5.1 config_soc (detect soc100)
     result.configuration = config_soc(result.profiles.t,result.profiles.I,...
                                       result.profiles.U,result.profiles.m,...
                                       result.configuration,inher_options);
-    %4.2 calcul_soc
+    %5.2 calcul_soc
     [dod_ah, soc] = calcul_soc(result.profiles.t,result.profiles.I,...
         result.configuration,inher_options);
     result.profiles.dod_ah = dod_ah;
@@ -192,33 +207,33 @@ if isempty(profiles.soc) || ismember('S',options)
     % TODO: calcul_soc_patch
 end
     
-%5.- result.test
+%6.- result.test
 result.test.file_in = file_in;
 result.test.file_out = file_out;
 result.test.t_ini = result.profiles.t(1);
 result.test.t_fin = result.profiles.t(end);
 % update test soc_ini and soc_fin: 
-if isempty(dod_ah)
+if isempty(result.profiles.dod_ah)
     result.test.dod_ah_ini = [];
     result.test.soc_ini = [];
     result.test.dod_ah_fin = [];
     result.test.soc_fin = [];
 else
-    result.test.dod_ah_ini = dod_ah(1);
-    result.test.soc_ini = soc(1);
-    result.test.dod_ah_fin = dod_ah(end);
-    result.test.soc_fin = soc(end);
+    result.test.dod_ah_ini = result.profiles.dod_ah(1);
+    result.test.soc_ini = result.profiles.soc(1);
+    result.test.dod_ah_fin = result.profiles.dod_ah(end);
+    result.test.soc_fin = result.profiles.soc(end);
 end
 
-%6. check result structure:
+%7. check result structure:
 [info, err] = check_result_struct(result);
 if err<0
     fprintf('ERROR dattes_import: not valid result structure error code: %d (see check_result_struct)\n',err);
     return
 end
 
-%7. save mat file (if 's' in options)
+%8. save mat file (if 's' in options)
 if ismember('s',options)
-    save_result(result)
+    save_result(result);
 end
 end

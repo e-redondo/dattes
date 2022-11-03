@@ -1,15 +1,16 @@
-function dattes_struct = read_csv_struct(file_in)
+function [profiles, metadata, err] = read_csv_struct(file_in)
 % read_csv_struct profiles/eis from csv file to DATTES struct
 %
 % 
 % Usage:
-% read_csv_struct(dattes_struct, options, file_out)
+% [profiles, metadata] = read_csv_struct(dattes_struct, options, file_out)
 %
 % Input:
 % - file_in [1xp string]: pathname
 %
 % Output:
-% - dattes_struct [1x1 struct] DATTES profiles/eis structure
+% - profiles [1x1 struct] DATTES profiles/eis structure
+% - metadata [1x1 struct] DATTES metadata structure
 %
 % See also dattes_import, export_profiles_csv, export_eis_csv,
 %
@@ -19,6 +20,10 @@ function dattes_struct = read_csv_struct(file_in)
 
 %TODO: customize col_sep
 
+%TODO: error management
+err = 0;
+profiles = struct;
+metadata = struct;
 %0. check inputs
 
 
@@ -26,6 +31,7 @@ function dattes_struct = read_csv_struct(file_in)
 fid_in = fopen(file_in,'r');
 if fid_in<1
     fprintf('ERROR read_csv_struct:Unable to open %s\n',file_in);
+    
     return
 end
 
@@ -42,7 +48,6 @@ if ~isempty(header)
     jsonlines = regexprep(header,'^#','');
     jsontxt = [jsonlines{:}];
     metadata = jsondecode(jsontxt);
-    dattes_struct.metadata = metadata;
 end
 %3. read data
 data = cell(0);
@@ -61,10 +66,5 @@ for ind = 1:length(var_names)
 end
 
 %TODO: check if it is profiles or eis struct
-if ismember('f',fieldnames(profiles))
-    dattes_struct.eis = profiles;
-else
-    dattes_struct.profiles = profiles;
-end
 
 end
