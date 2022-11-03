@@ -1,17 +1,18 @@
-function file_out = result_filename(xml_file, dst_folder,suffix)
-%result_filename Create result file named xml_file_suffix.mat
+function file_out = result_filename(file_in, dst_folder,suffix, file_out_ext)
+%result_filename Create result file named file_in_suffix.mat
 %
-% Create result file named xml_file_suffix.mat
+% Create result file named file_in_suffix.mat
 %
 % Usage:
 % [result, config] = edit_result(result, config,Field,Values,options)
 % Inputs : 
-% - xml_file [1xn string]: pathame to the xml file
+% - file_in [1xn string]: input filename
 % - dst_folder [1xp string]: (optional) destinaiton folder (default= src_folder)
 % - suffix [1xq string]: (optional) filename suffix (default= 'dattes')
+% - file_out_ext [string]: (optional) output extension (default= '.mat')
 %
 % Outputs : 
-% - xml_file: [string] full file name of the result file
+% - file_out: [string] full file name of the result file
 %
 % Examples:
 % (1) file_out = result_filename(raw_data/test.xml)
@@ -35,15 +36,18 @@ end
 if ~exist('dst_folder','var')
     dst_folder = '';
 end
+if ~exist('file_out_ext','var')
+    file_out_ext = '.mat';
+end
 
 %separate folder (D), file (F) and extension (E)
-[src_folder, F, E] = fileparts(xml_file);
+[src_folder, F, E] = fileparts(file_in);
 
 %print suffix: filename_result.mat
 if isempty(suffix)
-    file_out = sprintf('%s.mat',F);
+    file_out = sprintf('%s%s',F, file_out_ext);
 else
-    file_out = sprintf('%s_%s.mat',F,suffix);
+    file_out = sprintf('%s_%s%s',F,suffix, file_out_ext);
 end
 %build the full pathname (folder + filename)
 if isempty(dst_folder)

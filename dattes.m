@@ -236,6 +236,7 @@ end
 
 %1.3.- update result
 result.test.file_in = xml_file;
+result.test.file_out = result_filename(result.test.file_in);
 result.test.t_ini = result.profiles.t(1);
 result.test.t_fin = result.profiles.t(end);
 
