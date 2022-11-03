@@ -42,7 +42,12 @@ elseif ismember('d',options)
 else
     tunit = 's';
 end
-I100 = ismember(t,config.soc.soc100_time);
+
+I100 = [];
+if isfield(config.soc,'soc100_time')
+    I100 = ismember(t,config.soc.soc100_time);
+end
+
 hf = figure('name','plot_soc');
 
 subplot(311),plot(tc,I),hold on,ylabel('current [A]'),xlabel(sprintf('time [%s]',tunit)),grid on
