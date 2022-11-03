@@ -78,5 +78,8 @@ fclose(fid_out);
 
 %data:
 % dlmwrite(fileout,A,'-append');%not recommended: limited precision
+folder_out = fileparts(file_out);
+[status, msg, msgID] = mkdir(folder_out);
+
 writematrix(data_array,file_out,'Writemode','append');
 end

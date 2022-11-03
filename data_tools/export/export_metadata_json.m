@@ -1,4 +1,4 @@
-function export_metadata_json(dattes_struct, dst_folder, file_out)
+function export_metadata_json(dattes_struct, options, dst_folder, file_out)
 % export_metadata_json export metadata from DATTES struct to json file
 %
 % 
@@ -7,6 +7,7 @@ function export_metadata_json(dattes_struct, dst_folder, file_out)
 %
 % Input:
 % - dattes_struct [1x1 struct] DATTES result structure
+% - options [1xp string]: (optional) not yet used
 % - dst_folder [1xp string]: (optional) 
 % - file_out [1xp string]: (optional) 
 %
@@ -38,6 +39,9 @@ if isempty(file_out)
 end
 
 struct_out.metadata = dattes_struct.metadata;
+
+
+[status, msg, msgID] = mkdir(folder_out);
 write_json_struct(file_out, struct_out);
 
 end

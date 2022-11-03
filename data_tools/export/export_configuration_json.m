@@ -1,4 +1,4 @@
-function export_configuration_json(dattes_struct, dst_folder, file_out)
+function export_configuration_json(dattes_struct, options, dst_folder, file_out)
 % export_configuration_json export configuration from DATTES struct to json file
 %
 % 
@@ -7,6 +7,7 @@ function export_configuration_json(dattes_struct, dst_folder, file_out)
 %
 % Input:
 % - dattes_struct [1x1 struct] DATTES result structure
+% - options [1xp string]: (optional) not yet used
 % - dst_folder [1xp string]: (optional) 
 % - file_out [1xp string]: (optional) 
 %
@@ -31,13 +32,16 @@ if ~isfield(dattes_struct,'configuration')
 end
 
 %check fileout name
-if ~exist('file_out','var')
+if isempty(file_out)
     file_suffix = 'configuration';
     file_ext = '.json';
     file_out = result_filename(dattes_struct.test.file_out, dst_folder,file_suffix, file_ext);
 end
 
 struct_out.configuration = dattes_struct.configuration;
+
+folder_out = fileparts(file_out);
+[status, msg, msgID] = mkdir(folder_out);
 write_json_struct(file_out, struct_out);
 
 end

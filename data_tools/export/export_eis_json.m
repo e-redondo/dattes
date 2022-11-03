@@ -48,6 +48,9 @@ if ismember('m',options') && isfield(dattes_struct,'metadata')
 struct_out.metadata = dattes_struct.metadata;
 end
 struct_out.eis = dattes_struct.eis;
+
+folder_out = fileparts(file_out);
+[status, msg, msgID] = mkdir(folder_out);
 write_json_struct(file_out, struct_out);
 
 end
