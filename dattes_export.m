@@ -102,7 +102,7 @@ if strcmp(export_mode,'all')
     if strcmp(export_format,'csv')
         fprintf('export_result_csv (TODO)\n')
     elseif strcmp(export_format,'json')
-        export_result_json(dattes_struct,dst_folder,file_out);
+        export_result_json(dattes_struct, inher_options,dst_folder,file_out);
     end
 end
 %'profiles'
