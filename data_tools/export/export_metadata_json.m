@@ -1,12 +1,13 @@
-function export_metadata_json(dattes_struct, file_out)
+function export_metadata_json(dattes_struct, dst_folder, file_out)
 % export_metadata_json export metadata from DATTES struct to json file
 %
 % 
 % Usage:
-% export_metadata_json(dattes_struct, file_out)
+% export_metadata_json(dattes_struct, dst_folder, file_out)
 %
 % Input:
 % - dattes_struct [1x1 struct] DATTES result structure
+% - dst_folder [1xp string]: (optional) 
 % - file_out [1xp string]: (optional) 
 %
 %
@@ -17,6 +18,12 @@ function export_metadata_json(dattes_struct, file_out)
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 %0. check inputs
+if ~exist('file_out','var')
+    file_out = '';%empty string = default = generate file_out
+end
+if ~exist('dst_folder','var')
+    dst_folder = '';%empty string = default = keep src_folder
+end
 %check dattes_struct
 if ~isfield(dattes_struct,'metadata')
      fprintf('ERROR export_metadata_json:No metadata found in DATTES struct\n');
@@ -24,9 +31,10 @@ if ~isfield(dattes_struct,'metadata')
 end
 
 %check fileout name
-if ~exist('fileout','var')
-    file_suffix = '_dattes_metadata.json';
-    file_out = regexprep(dattes_struct.test.file_in,'.[a-zA-Z0-9]*$',file_suffix);
+if isempty(file_out)
+    file_suffix = 'metadata';
+    file_ext = '.json';
+    file_out = result_filename(dattes_struct.test.file_out, dst_folder,file_suffix, file_ext);
 end
 
 struct_out.metadata = dattes_struct.metadata;

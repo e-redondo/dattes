@@ -1,14 +1,15 @@
-function export_eis_csv(dattes_struct, options, file_out)
+function export_eis_csv(dattes_struct, options, dst_folder, file_out)
 % export_eis_csv export EIS from DATTES struct to csv file
 %
 % 
 % Usage:
-% export_eis_csv(dattes_struct, options, file_out)
+% export_eis_csv(dattes_struct, options, dst_folder, file_out)
 %
 % Input:
 % - dattes_struct [1x1 struct] DATTES result structure
 % - options [1xp string]: (optional)
 %   - 'm': include metadata in header in json format commented lines (starting with '#')
+% - dst_folder [1xp string]: (optional) 
 % - file_out [1xp string]: (optional) 
 %
 %
@@ -19,6 +20,12 @@ function export_eis_csv(dattes_struct, options, file_out)
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 %0. check inputs
+if ~exist('file_out','var')
+    file_out = '';%empty string = default = generate file_out
+end
+if ~exist('dst_folder','var')
+    dst_folder = '';%empty string = default = keep src_folder
+end
 %check dattes_struct
 if ~isfield(dattes_struct,'eis')
      fprintf('ERROR export_eis_csv:No EIS found in DATTES struct\n');
@@ -30,9 +37,10 @@ if ~exist('options','var')
 end
 
 %check fileout name
-if ~exist('fileout','var')
-    file_suffix = '_dattes_eis.csv';
-    file_out = regexprep(dattes_struct.test.file_in,'.[a-zA-Z0-9]*$',file_suffix);
+if isempty(file_out)
+    file_suffix = 'eis';
+    file_ext = '.csv';
+    file_out = result_filename(dattes_struct.test.file_out, dst_folder,file_suffix, file_ext);
 end
 
 %1. open fileout

@@ -1,4 +1,4 @@
-function dattes_export(dattes_struct,options,file_out)
+function dattes_export(dattes_struct,options,dst_folder,file_out)
 % dattes_export - DATTES Export function
 %
 % 
@@ -18,6 +18,7 @@ function dattes_export(dattes_struct,options,file_out)
 %    - 'c': csv
 %    - 's': M-File script (for configuration or metadata)
 %    - 'm': include metadata in csv files
+% - dst_folder [1xp string]: (optional) 
 % - file_out [1xp string]: (optional) 
 %
 %
@@ -53,6 +54,13 @@ end
 %6.1. 'Cj':export configuration to a json file
 %6.2. 'Cs':export configuration to a M-file script
 
+if ~exist('file_out','var')
+    file_out = '';%empty string = default = generate file_out
+end
+if ~exist('dst_folder','var')
+    dst_folder = '';%empty string = default = keep src_folder
+end
+
 [export_mode, export_format, include_metadata] = check_options_string(options);
 
 if include_metadata
@@ -67,16 +75,16 @@ if strcmp(export_mode,'all')
     if strcmp(export_format,'csv')
         fprintf('export_result_csv (TODO)\n')
     elseif strcmp(export_format,'json')
-        export_result_json(dattes_struct)% file_out (optional)
+        export_result_json(dattes_struct,dst_folder,file_out);
     end
 end
 %'profiles'
 if strcmp(export_mode,'profiles')
     fprintf('DATTES export profiles to %s\n',export_format)
     if strcmp(export_format,'csv')
-        export_profiles_csv(dattes_struct, inher_options)% file_out (optional)
+        export_profiles_csv(dattes_struct, inher_options,dst_folder,file_out);
     elseif strcmp(export_format,'json')
-        export_profiles_json(dattes_struct, inher_options)% file_out (optional)
+        export_profiles_json(dattes_struct, inher_options,dst_folder,file_out);
     end
         
 end
@@ -84,36 +92,36 @@ end
 if strcmp(export_mode,'eis')
     fprintf('DATTES export eis to %s\n',export_format)
     if strcmp(export_format,'csv')
-        export_eis_csv(dattes_struct, inher_options)% file_out (optional)
+        export_eis_csv(dattes_struct, inher_options,dst_folder,file_out);
     elseif strcmp(export_format,'json')
-        export_eis_json(dattes_struct, inher_options)% file_out (optional)
+        export_eis_json(dattes_struct, inher_options,dst_folder,file_out);
     end
 end
 %'phases'
 if strcmp(export_mode,'phases')
     fprintf('DATTES export phases to %s\n',export_format)
     if strcmp(export_format,'csv')
-        export_phases_csv(dattes_struct, inher_options)% file_out (optional)
+        export_phases_csv(dattes_struct, inher_options,dst_folder,file_out);
     elseif strcmp(export_format,'json')
-        export_phases_json(dattes_struct, inher_options)% file_out (optional)
+        export_phases_json(dattes_struct, inher_options,dst_folder,file_out);
     end
 end
 %'metadata'
 if strcmp(export_mode,'metadata')
     fprintf('DATTES export metadata to %s\n',export_format)
     if strcmp(export_format,'m')
-        export_metadata_script(dattes_struct, inher_options)% file_out (optional)
+        export_metadata_script(dattes_struct, inher_options,dst_folder,file_out);
     elseif strcmp(export_format,'json')
-        export_metadata_json(dattes_struct, inher_options)% file_out (optional)
+        export_metadata_json(dattes_struct, inher_options,dst_folder,file_out);
     end
 end
 %'configuration'
 if strcmp(export_mode,'configuration')
     fprintf('DATTES export configuration to %s\n',export_format)
     if strcmp(export_format,'m')
-        export_configuration_script(dattes_struct, inher_options)% file_out (optional)
+        export_configuration_script(dattes_struct, inher_options,dst_folder,file_out);
     elseif strcmp(export_format,'json')
-        export_configuration_json(dattes_struct, inher_options)% file_out (optional)
+        export_configuration_json(dattes_struct, inher_options,dst_folder,file_out);
     end
 end
 

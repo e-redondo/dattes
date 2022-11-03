@@ -1,15 +1,16 @@
-function export_phases_csv(dattes_struct,options,phase_start,phase_end,file_out)
+function export_phases_csv(dattes_struct,options,dst_folder,phase_start,phase_end,file_out)
 
 % export_phases_csv export phases from DATTES struct to csv file
 %
 % 
 % Usage:
-% export_phases_csv(dattes_struct,options,phase_start,phase_end,file_out)
+% export_phases_csv(dattes_struct,options,dst_folder,phase_start,phase_end,file_out)
 %
 % Input:
 % - dattes_struct [1x1 struct] DATTES result structure
 % - options [1xp string]: (optional)
 %   - 'm': include metadata in header in json format commented lines (starting with '#')
+% - dst_folder [1xp string]: (optional) 
 % - phase_start[double] (optional) Number of the first phase to export
 % - phase_end[double] (optional) Number of the last phase to export
 % (default = export all phases)
@@ -23,6 +24,12 @@ function export_phases_csv(dattes_struct,options,phase_start,phase_end,file_out)
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 %0. check inputs
+if ~exist('file_out','var')
+    file_out = '';%empty string = default = generate file_out
+end
+if ~exist('dst_folder','var')
+    dst_folder = '';%empty string = default = keep src_folder
+end
 %check dattes_struct
 if ~isfield(dattes_struct,'profiles')
      fprintf('ERROR export_profiles_csv:No profiles found in DATTES struct\n');
@@ -59,11 +66,11 @@ if ~isnumeric(phase_start) || ~isnumeric(phase_end)
 end
 
 %check fileout name
-if ~exist('file_out','var')
-    file_suffix = '_dattes_phases.csv';
-    file_out = regexprep(dattes_struct.test.file_in,'.[a-zA-Z0-9]*$',file_suffix);
+if isempty(file_out)
+    file_suffix = 'phases';
+    file_ext = '.csv';
+    file_out = result_filename(dattes_struct.test.file_out, dst_folder,file_suffix, file_ext);
 end
-
 
 
 %1. export phases
