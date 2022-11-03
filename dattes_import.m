@@ -140,45 +140,54 @@ end
 file_out = result_filename(file_in,destination_folder);
 
 %1. read file
-%1.1 json mode (import_json + metadata_collector)
-%1.2 csv mode (import_csv + metadata_collector)
-if strcmp(file_ext,'.csv')
-   [profiles, eis, metadata, configuration, err] = extract_profiles_csv(file_in,inher_options);
-   %TODO: error management
-   if err
-       result = [];
-       return
-   end
-end
-%1.3 xml mode (extract_profiles)
-if strcmp(file_ext,'.xml')
+%1.1 json mode (import_json)
+if strcmp(file_ext,'.json')
+    [result, err] = read_json_struct(file_in);
     
-    %TODO: options 'f','u'and 's' now in dattes_import, just inherit 'v':
-    [profiles, eis, metadata, configuration, err] = extract_profiles(file_in,inher_options);
-    %TODO error management
+    %TODO: error management
     if err
         result = [];
         return
     end
-end
-%2. compile results
-if isempty(profiles)
-    % no data found in xml_file
-    return
-end
-result.profiles = profiles;
-if ~isempty(eis)
-    result.eis = eis;
-end
-if ~isempty(metadata)
-    result.metadata = metadata;
-end
-result.configuration = configuration;
+else
+    %1.2 csv mode (import_csv + metadata_collector)
+    if strcmp(file_ext,'.csv')
+        [profiles, eis, metadata, configuration, err] = extract_profiles_csv(file_in,inher_options);
+        %TODO: error management
+        if err
+            result = [];
+            return
+        end
+    end
+    %1.3 xml mode (extract_profiles)
+    if strcmp(file_ext,'.xml')
+        
+        %TODO: options 'f','u'and 's' now in dattes_import, just inherit 'v':
+        [profiles, eis, metadata, configuration, err] = extract_profiles(file_in,inher_options);
+        %TODO error management
+        if err
+            result = [];
+            return
+        end
+    end
+    %2. compile results
+    if isempty(profiles)
+        % no data found in xml_file
+        return
+    end
+    result.profiles = profiles;
+    if ~isempty(eis)
+        result.eis = eis;
+    end
+    if ~isempty(metadata)
+        result.metadata = metadata;
+    end
+    result.configuration = configuration;
     
-if ~isfield(result.profiles, 'm')
-    options = [options, 'm'];
+    if ~isfield(result.profiles, 'm')
+        options = [options, 'm'];
+    end
 end
-
 %3. which mode (if mode not in file_in or if 'm' in options)
 if ismember('m',options)
     m = which_mode(result.profiles.t,result.profiles.I,result.profiles.U,...

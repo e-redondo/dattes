@@ -3,7 +3,7 @@ function [struct_out, err] = read_json_struct(filename)
 %
 % 
 % Usage:
-% err = read_json_struct(filename)
+% [struct_out, err] = read_json_struct(filename)
 %
 % Input:
 % - filename [1xp string] pathname for json file
