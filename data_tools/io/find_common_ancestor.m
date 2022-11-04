@@ -15,7 +15,7 @@ source_folders = unique(fileparts(filelist));
 source_folders_parts = regexp(source_folders,['\' filesep],'split');
 min_source_depth = min(cellfun(@length,source_folders_parts));
 for ind = 1:min_source_depth
-    first_elements = cellfun(@(x) x{1},source_folders_parts,'UniformOutput',false);
+    first_elements = cellfun(@(x) x{ind},source_folders_parts,'UniformOutput',false);
     if length(unique(first_elements))>1
         ind = ind-1;
         break;

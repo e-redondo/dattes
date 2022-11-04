@@ -41,6 +41,7 @@ function [info, err] = check_result_struct(result)
 err = 0;
 
 if ~isstruct(result)
+    info = struct;
     err = -4;
     return;
 end
