@@ -26,6 +26,10 @@ function config = configurator(t,I,U,m,config,phases,options)
 %
 %
 % See also dattes, extract_profiles, split_phases, cfg_default, plot_config
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab:
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 % check inputs:
 %t,U,I,m: double vectors of same length

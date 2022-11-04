@@ -5,6 +5,10 @@ function source_folder = find_common_ancestor(filelist)
 %
 % - filelist [nx1 cellstring]: file list
 % - source_folder [string]: common ancestor
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab:
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 
 source_folders = unique(fileparts(filelist));
