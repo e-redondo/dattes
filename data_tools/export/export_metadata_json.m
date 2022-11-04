@@ -40,7 +40,7 @@ end
 
 struct_out.metadata = dattes_struct.metadata;
 
-
+folder_out = fileparts(file_out);
 [status, msg, msgID] = mkdir(folder_out);
 write_json_struct(file_out, struct_out);
 

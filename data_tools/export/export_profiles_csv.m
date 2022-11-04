@@ -13,7 +13,7 @@ function export_profiles_csv(dattes_struct, options, dst_folder, file_out)
 % - file_out [1xp string]: (optional) 
 %
 %
-% See also dattes_export, export_eis_csv
+% See also dattes_export, export_result_csv, export_eis_csv, export_phases_csv
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab: 

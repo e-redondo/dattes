@@ -25,7 +25,7 @@ function dattes_export(dattes_struct,options,dst_folder,file_out)
 % - file_out [1xp string]: (optional) 
 %
 %
-% See also export_profiles_csv, export_eis_csv
+% See also dattes_import, export_result_csv, export_result_json
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab: 
@@ -100,7 +100,7 @@ end
 if strcmp(export_mode,'all')
     fprintf('DATTES export all to %s\n',export_format)
     if strcmp(export_format,'csv')
-        fprintf('export_result_csv (TODO)\n')
+        export_result_csv(dattes_struct, inher_options, dst_folder, file_out)
     elseif strcmp(export_format,'json')
         export_result_json(dattes_struct, inher_options,dst_folder,file_out);
     end
