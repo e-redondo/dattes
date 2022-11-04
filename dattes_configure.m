@@ -1,0 +1,148 @@
+function result = dattes_configure(result,options,custom_cfg_script)
+% dattes_configure - DATTES Configuration function
+%
+% 
+% Usage:
+% (1) dattes_configure(dattes_struct,options,custom_cfg_script)
+% (2) dattes_configure(file_in,options,custom_cfg_script)
+% (3) dattes_configure(file_list,options,custom_cfg_script)
+% (4) dattes_configure(src_folder,options,custom_cfg_script)
+%
+% Input:
+% - file_in [1xp string] DATTES mat file pathname
+% - dattes_struct [1x1 struct] DATTES result structure
+% - file_list [nx1 cellstr] DATTES mat file list of pathnames
+% - src_folder [1xp string] folder to search DATTES mat files in
+% - options [1xn string]:
+%    - 's': save result
+%    - 'v': verbose
+% - custom_cfg_script [1xp string]: (optional) 
+%
+%
+% See also dattes_import, dattes_analyse
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
+
+%% 0 check inputs:
+
+%0.1 1st paramater is mandatory
+if ~exist('result','var')
+    fprintf('ERROR dattes_configure: result input struct is mandatory\n');
+    result = [];
+    return
+end
+%0.2 if 2nd not given, set defaults:
+if ~exist('options','var')
+    options = '';
+elseif ~ischar(options)
+    fprintf('ERROR dattes_configure: options must be string\n');
+    result = [];
+    return
+end
+%0.3 if 3rd not given, set defaults:
+if ~exist('custom_cfg_script','var')
+    custom_cfg_script = '';
+end
+
+%0.4 1st paramater may be result/file_in/file_list/src_folder
+if ischar(result)
+    if isfolder(result)
+        %input is src_folder > get mat files in cellstr
+        mat_list = lsFiles(result,'.mat');
+        %call dattes_configure with file_list
+        result = dattes_configure(mat_list,options,custom_cfg_script);
+        % stop after
+        return
+    elseif exist(result,'file')
+        %file_in mode
+        result = load_result(result);
+    end
+end
+
+if iscellstr(result)
+    %file_list mode
+    result = cellfun(@(x) dattes_configure(x,options,custom_cfg_script),result,'Uniformoutput',false);
+    % stop after
+    return
+end
+
+%0.5 check result struct
+[info,err] = check_result_struct(result);
+if err<0
+    fprintf('ERROR dattes_configure: input result is not a valid DATTES struct\n');
+    result = [];
+    return
+end
+
+%% 1 load cfg_script
+%1.1 load config0
+if isempty(custom_cfg_script)
+    config0 = struct;
+elseif ischar(custom_cfg_script)
+    if  ~isempty(which(custom_cfg_script))
+        config0 = eval(custom_cfg_script);
+        config0.test.cfg_file = custom_cfg_script;
+    else
+        error('dattes_configure: custom_cfg_script not a valid script name');
+    end
+elseif isstruct(custom_cfg_script)
+    config0 = custom_cfg_script;
+    config0.test.cfg_file = 'custom configuration in dattes_configure';
+else
+    error('dattes_configure: custom_cfg_script must be a string (pathname to custom_cfg_script) or a struct (configuration struct)');
+end
+%1.2 merge config0 with result.configuration
+% configs must be two level structs (config/sections/fields)
+config = result.configuration;
+section_names = fieldnames(config0);
+for ind_s = 1:length(section_names)
+    this_section = config0.(section_names{ind_s});
+    if isstruct(this_section)
+        field_names = fieldnames(this_section);
+        for ind_f = 1:length(field_names)
+            this_field = config0.(section_names{ind_s}).(field_names{ind_f});
+            config.(section_names{ind_s}).(field_names{ind_f}) = this_field;
+        end
+    end
+end
+%1.3 check config struct
+[info,err] = check_configuration_struct(config);
+if err<0
+    fprintf('ERROR dattes_configure: configuration struct is not valid (before configurator)\n');
+    result = [];
+    return
+end
+
+
+%% 2 configurator
+%2.1 run configurator
+t = result.profiles.t;
+I = result.profiles.I;
+U = result.profiles.U;
+m = result.profiles.m;
+phases = result.phases;
+[config] = configurator(t,I,U,m,config,phases,options);
+%2.2 check config struct
+[info,err] = check_configuration_struct(config);
+if err<0
+    fprintf('ERROR dattes_configure: configuration struct is not valid (after configurator)\n');
+    result = [];
+    return
+end
+
+%% 3 put config back into result.configuration
+result.configuration = config;
+
+%% 4 save option
+if ismember('s',options)
+    if ismember('v',options)
+        fprintf('dattes_configure: save result...');
+    end
+    save_result(result);
+    if ismember('v',options)
+        fprintf('OK\n');
+    end
+end
+end
