@@ -1,10 +1,11 @@
-function export_phases_csv(dattes_struct,options,dst_folder,phase_start,phase_end,file_out)
-
-% export_phases_csv export phases from DATTES struct to csv file
+function export_selected_phases_csv(dattes_struct,options,dst_folder,phase_start,phase_end,file_out)
+% export_selected_phases_csv export selected phases from DATTES struct to csv file
 %
+% This function performs as extract_profiles_csv, but the user can export
+% just between two phases providing the starting and the ending phase.
 % 
 % Usage:
-% export_phases_csv(dattes_struct,options,dst_folder,phase_start,phase_end,file_out)
+% export_selected_phases_csv(dattes_struct,options,dst_folder,phase_start,phase_end,file_out)
 %
 % Input:
 % - dattes_struct [1x1 struct] DATTES result structure
@@ -80,6 +81,6 @@ end
 
 dattes_struct.profiles=profiles;
 
-export_profiles_csv(dattes_struct,options,file_out);
+export_profiles_csv(dattes_struct, options, dst_folder, file_out);
 
 end
