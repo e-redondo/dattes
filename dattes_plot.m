@@ -11,6 +11,7 @@ function [result, config, phases] = dattes_plot(xml_file,options)
 % - xml_file:
 %     -   [1xn string]: pathame to the xml file
 %     -   [nx1 cell string]: xml filelist
+%     -   [1x1 struct]: DATTES result struct
 % - options [string] containing:
 %   - 'v': verbose, tell what you do
 %
@@ -33,8 +34,8 @@ if iscell(xml_file)
     return;
 end
 %% 0.1.- check inputs:
-if ~ischar(xml_file) && ~iscell(xml_file)
-    error('dattes_plot: xml_file must be a string (pathname) or a cell (filelist)');
+if ~ischar(xml_file) && ~isstruct(xml_file)
+    error('dattes_plot: xml_file must be a string (pathname) or a cell (filelist) or a struct (DATTES result)');
 end
 
 if ischar(xml_file)
@@ -49,7 +50,12 @@ end
 
 
 %1.load results
-[result] = load_result(xml_file,options);
+if isstruct(xml_file)
+    result = xml_file;
+else
+    [result] = load_result(xml_file,options);
+end
+
 if isempty(fieldnames(result))
     fprintf('dattes_plot: Nothing to plot in %s\n',xml_file);
     return;
