@@ -246,7 +246,8 @@ result.phases = phases;
 
 %% 2. CONFIGURE
 if ismember('c',options)
-    [config] = configurator(t,I,U,m,config0,phases,inher_options);
+    config = config_soc(t,I,U,m,config0,inher_options);
+    config = configurator(t,I,U,m,config,phases,inher_options);
     
     result.configuration = config;
 else

@@ -3,14 +3,14 @@ function result = dattes_configure(result,options,custom_cfg_script)
 %
 % 
 % Usage:
-% (1) dattes_configure(dattes_struct,options,custom_cfg_script)
-% (2) dattes_configure(file_in,options,custom_cfg_script)
-% (3) dattes_configure(file_list,options,custom_cfg_script)
-% (4) dattes_configure(src_folder,options,custom_cfg_script)
+% (1) result = dattes_configure(result,options,custom_cfg_script)
+% (2) result = dattes_configure(file_in,options,custom_cfg_script)
+% (3) result = dattes_configure(file_list,options,custom_cfg_script)
+% (4) result = dattes_configure(src_folder,options,custom_cfg_script)
 %
 % Input:
 % - file_in [1xp string] DATTES mat file pathname
-% - dattes_struct [1x1 struct] DATTES result structure
+% - result [1x1 struct] DATTES result structure
 % - file_list [nx1 cellstr] DATTES mat file list of pathnames
 % - src_folder [1xp string] folder to search DATTES mat files in
 % - options [1xn string]:
@@ -93,7 +93,12 @@ elseif isstruct(custom_cfg_script)
 else
     error('dattes_configure: custom_cfg_script must be a string (pathname to custom_cfg_script) or a struct (configuration struct)');
 end
-%1.2 merge config0 with result.configuration
+%1.2 check config0
+%TODO: check structure in two levels (sections / fields)
+%TODO: check every section/fields is allowed
+%TODO: check every fields is of correct type (numeric, char, etc.)
+
+%1.3 merge config0 with result.configuration
 % configs must be two level structs (config/sections/fields)
 config = result.configuration;
 section_names = fieldnames(config0);
@@ -107,7 +112,8 @@ for ind_s = 1:length(section_names)
         end
     end
 end
-%1.3 check config struct
+%1.4 check config struct
+%TODO: check_configuration_struct: mandatory/allowed/types
 [info,err] = check_configuration_struct(config);
 if err<0
     fprintf('ERROR dattes_configure: configuration struct is not valid (before configurator)\n');

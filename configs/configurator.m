@@ -154,7 +154,7 @@ pCapaD = [phases.Iavg]<0 & ismember(tFins,t(I0cc)) & [0 pRepos100(1:end-1)];
 %2.2.- finissent a SoC100 (I100cc)
 %2.3.- sont precedes par une phase de repos a SoC0 (I0r ou I0ccr)
 pCapaC = [phases.Iavg]>0 & ismember(tFins,t(I100cc)) & [0 pRepos0(1:end-1)];
-pCapaC = [phases.Iavg]>0 & [0 pRepos0(1:end-1)];%LYP, BRICOLE
+% pCapaC = [phases.Iavg]>0 & [0 pRepos0(1:end-1)];%LYP, BRICOLE
 %3) phases de decharge residuelle
 %1.1.- Iavg<0
 %1.2.- finissent a SoC0 (I0)
@@ -209,32 +209,7 @@ config.resistance.instant_end_rest = tFins(pRr);%temps de fins de repos immediat
 config.impedance.pZ = pZ;
 config.impedance.instant_end_rest = tFins(pZr);%temps de fins de repos immediatememnt anterieur
 
-% %ident_rrc
-% config.pRC=pRC;
-% config.instant_fin_repos_RC = tFins(pRCr);%temps de fins de repos immediatememnt anterieur
 
-
-
-%ident_cpe
-% config.pCPE=pCPE;
-% config.instant_fin_repos_CPE = tFins(pCPEr);%temps de fins de repos immediatememnt anterieur
-% config.tW = tFins(pWr);%temps de fins de repos immediatememnt anterieur
-% config.pW = pW;
-
-
-%calcul_soc
-config.soc.soc100_time = t(I100);%pour le calcul du SOC
-config.soc.soc0_time = t(I0);%pour le calcul du SOC
-%Note: retourne matrice vide s'il ne trouve pas de phase CCCV a Umax.
-%Dans ces cas il faut trouver le test immediatement anterieur (ou
-%posterieur), calculer le DoDAh et fixer DoDAhIni ou DoDAhFin pour pouvoir
-%faire calcul_soc
-if ~isfield(config.soc,'dod_ah_ini')
-    config.soc.dod_ah_ini = [];
-end
-if ~isfield(config.soc,'dod_ah_fin')
-    config.soc.dod_ah_fin = [];
-end
 %ident_ocv_by_points (par points)
 config.ocv_points.pOCVr = durees>=config.ocv_points.rest_min_duration & ismember(tInis,t(IiniRepos));
 config.ocv_points.pOCVr(1) = false; % repos initial jamais retenu pour OCV
