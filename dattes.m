@@ -1,7 +1,7 @@
 function [result] = dattes(xml_file,options,cfg_file)
 %DATTES Data Analysis Tools for Tests on Energy Storage
 %
-% Read the *.xml file of a battery test and performe several calculations
+% Read the *.xml file of a battery test and perform several calculations
 % (Capacity, SoC, OCV, impedance identification, ICA/DVA, etc.).
 % Results are returned as output variables and (optionally) stored in a file
 % named 'xml_file_dattes.mat'.
