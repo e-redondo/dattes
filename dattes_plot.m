@@ -133,7 +133,7 @@ if ismember('E',options)
     %show result of 'E', i.e. Efficiency
     if isfield(result,'pseudo_ocv')
         if ~isempty(result.pseudo_ocv)
-           plot_efficiency(result.pseudo_ocv.dod,result.pseudo_ocv.efficiency);
+           plot_efficiency(result.pseudo_ocv);
         else
             fprintf('no efficiency (pseudo_ocv) result found in %s\n',result.test.file_in);
         end

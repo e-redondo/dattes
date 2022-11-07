@@ -1,4 +1,4 @@
-function hf = plot_efficiency(pDoD, pEff)
+function hf = plot_efficiency(pseudo_ocv)
 % plot_efficiency plot efficiency graphs
 %
 % plot_ocv_by_points(t,U,DoDAh, ocv_by_points)
@@ -7,8 +7,16 @@ function hf = plot_efficiency(pDoD, pEff)
 % Usage:
 % hf = plot_efficiency(pDoD, pEff)
 % Inputs:
-% - pDoD [nx1 double]: Depth of discharge
-% - pEff [nx1 double]: Efficiency
+% - pseudo_ocv [(qx1) struct]: if found "q" pairs charge/discharge half
+% cycles of equal C-rate, with fields:
+%      - ocv [(kx1) double]: pseudo_ocv vector
+%      - dod [(kx1) double]: depth of discharge vector
+%      - polarization [(kx1) double]: difference between charge and discharge
+%      - efficiency [(kx1) double]: u_charge over u_discharge
+%      - u_charge [(kx1) double]: voltage during charging half cycle
+%      - u_discharge [(kx1) double]: voltage during discharging half cycle
+%      - crate [(1x1) double]: C-rate
+%      - time [(1x1) double]: time of measurement
 % Output:
 % - hf [1x1 figure handler]: handler for created figure
 %
@@ -20,8 +28,8 @@ function hf = plot_efficiency(pDoD, pEff)
 
 
 hf = figure('name','ident pOCV(Effi)');hold on
-for ind = 1:length(pEff)
-plot(pDoD,pEff,'k-','tag','efficiency')
+for ind = 1:length(pseudo_ocv)
+plot(pseudo_ocv(ind).dod,pseudo_ocv(ind).efficiency,'k-','tag','efficiency')
 end
 ylabel('efficiency [p.u.]'),xlabel('DoD [Ah]')
 
