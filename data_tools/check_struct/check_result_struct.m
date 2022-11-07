@@ -46,7 +46,8 @@ if ~isstruct(result)
     return;
 end
 % checkstruct:
-allowed_fields = {'profiles','eis','phases','metadata','test','configuration'};
+allowed_fields = {'profiles','eis','phases','metadata','test','configuration',...
+     'capacity','pseudo_ocv','ocv_by_points','resistance','ica'};
 mandatory_fields = {'profiles','phases','test'};
 field_types = {'struct','struct','struct','struct','struct','struct'};
 
@@ -129,7 +130,12 @@ if isfield(result,'configuration')
 end
 
 
-
+%TODO: check each substructure from dattes_analyse:
+%'capacity'
+%'pseudo_ocv'
+%'ocv_by_points'
+%'resistance'
+%'ica'
 
 
 
