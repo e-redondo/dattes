@@ -1,45 +1,69 @@
-function [result, config, phases] = dattes_plot(xml_file,options)
+function [result] = dattes_plot(file_in,options)
 % dattes_plot calls plot functions
 %
-% [result, config, phases] = dattes_plot(xml_file,options)
+% [result] = dattes_plot(file_in,options)
 % Read the *.xml file of a battery test and plot figures of
 % characteristics analysed
 %
 % Usage:
-% [result, config, phases] = dattes_plot(xml_file,options)
+% [result, config, phases] = dattes_plot(file_in,options)
 % Inputs:
-% - xml_file:
-%     -   [1xn string]: pathame to the xml file
-%     -   [nx1 cell string]: xml filelist
+% - file_in:
+%     -   [1xn string]: pathame to the mat file
+%     -   [nx1 cell string]: mat file list
 %     -   [1x1 struct]: DATTES result struct
+%     -   [nx1 cell of struct]: DATTES result struct cell
 % - options [string] containing:
 %   - 'v': verbose, tell what you do
+%   - 'x': plot extract_profiles result, i.e. t,U,I with colors depending
+%   on mode (CC, CV, rest, EIS, profile)
+%   - 'e': plot EIS, i.e. Nyquist plot of EIS results
+%   - 'p': plot result from split_phases, i.e. cut t,U,I into phases
+%   - 'c': plot result from dattes_configure, i.e. phase detection for
+%   dattes_analyse
+%   - 'S': plot result from calcul_soc
+%   - 'C': plot capacity result from dattes_analyse
+%   - 'O': plot ocv by points from dattes_analyse
+%   - 'P': plot pseudo ocv result from dattes_analyse
+%   - 'E': plot efficiency result from dattes_analyse (in pseudo_ocv tests)
+%   - 'R': plot resistance result from dattes_analyse
+%   - 'Z': plot impedance identification result from dattes_analyse
+%   - 'I': plot ICA/DVA result from dattes_analyse
 %
 % Outputs : 
 % - result: [1x1 struct] structure containing analysis results 
-% - config:  [1x1 struct] function name used to configure the behavior (see configurator)
-% - phases: [1x1 struct] structure containing information about the different phases of the test
+% - result: [nx1 struct] cell of structures containing analysis results 
 %
-%See also dattes, calcul_soc, configurator, extract_profiles
+% See also dattes_import, dattes_configure, dattes_analyse
 %
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab: 
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
-if iscell(xml_file)
-    [result] = cellfun(@(x) dattes_plot(x,options),xml_file,'UniformOutput',false);
+if iscell(file_in)
+    [result] = cellfun(@(x) dattes_plot(x,options),file_in,'UniformOutput',false);
     %mise en forme (cell 2 struct):
 %     [result, config, phases] = compil_result(result, config, phases);
     return;
 end
 %% 0.1.- check inputs:
-if ~ischar(xml_file) && ~isstruct(xml_file)
-    error('dattes_plot: xml_file must be a string (pathname) or a cell (filelist) or a struct (DATTES result)');
+if ~ischar(file_in) && ~isstruct(file_in)
+    error('dattes_plot: file_in must be a string (pathname) or a cell (filelist) or a struct (DATTES result)');
 end
 
-if ischar(xml_file)
-    if ~exist(xml_file,'file')
+if ischar(file_in)
+    if isfolder(file_in)
+        if ismember('v',options)
+            fprintf('dattes_plot: searching mat files in %s...\n',file_in);
+        end
+        %input is src_folder > get mat files in cellstr
+        mat_list = lsFiles(file_in,'.mat');
+        %call dattes_analyse with file_list
+        result = dattes_plot(mat_list,options);
+        % stop after
+        return
+    elseif ~exist(file_in,'file')
         error('dattes_plot: file not found');
     end
 end
@@ -50,18 +74,18 @@ end
 
 
 %1.load results
-if isstruct(xml_file)
-    result = xml_file;
+if isstruct(file_in)
+    result = file_in;
 else
-    [result] = load_result(xml_file,options);
+    [result] = load_result(file_in,options);
 end
 
 if isempty(fieldnames(result))
-    fprintf('dattes_plot: Nothing to plot in %s\n',xml_file);
+    fprintf('dattes_plot: Nothing to plot in %s\n',file_in);
     return;
 end
 %2.load profiles
-% [t,U,I,m,DoDAh,SOC,T] = extract_profiles(xml_file,options,config);
+% [t,U,I,m,DoDAh,SOC,T] = extract_profiles(file_in,options,config);
 t = result.profiles.t;
 U = result.profiles.U;
 I = result.profiles.I;
