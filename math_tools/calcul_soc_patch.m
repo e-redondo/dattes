@@ -90,7 +90,7 @@ end
 
 r = load_result(xml);
 %take start times
-tInis = cellfun(@(x) x.test.t_ini,r);
+tInis = cellfun(@(x) x.test.datetime_ini,r);
 
 %put in chronological order
 [~, Is] = sort(tInis);

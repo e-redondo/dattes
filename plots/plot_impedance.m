@@ -59,7 +59,7 @@ subplot(222),plot(impedance.crate,impedance.(parameters{ind}),'o')
 xlabel('C-rate (C)','interpreter','tex')
 ylabel(parameters{ind},'interpreter','tex')
 
-subplot(2,2,[3 4]),plot(impedance.time,impedance.(parameters{ind}),'o')
+subplot(2,2,[3 4]),plot(impedance.datetime,impedance.(parameters{ind}),'o')
 xlabel('time (s)','interpreter','tex')
 ylabel(parameters{ind},'interpreter','tex')
 

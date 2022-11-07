@@ -1,14 +1,14 @@
-function [impedance] = ident_cpe(t,U,I,dod_ah,config,phases,options)
+function [impedance] = ident_cpe(datetime,U,I,dod_ah,config,phases,options)
 % ident_cpe impedance analysis of a R+RC+CPE topology
 %
-% [impedance] = ident_cpe(t,U,I,dod_ah,config,phases,options)
+% [impedance] = ident_cpe(datetime,U,I,dod_ah,config,phases,options)
 % Read the config and phases structure and performe several calculations
 % regarding impedance analysis.  Results are returned in the structure impedance analysis 
 %
 % Usage:
-% [impedance] = ident_cpe(t,U,I,dod_ah,config,phases,options)
+% [impedance] = ident_cpe(datetime,U,I,dod_ah,config,phases,options)
 % Inputs:
-% - t [nx1 double]: time in seconds
+% - datetime [nx1 double]: datetime in seconds
 % - U [nx1 double]: cell voltage in V
 % - dod_ah [nx1 double]: depth of discharge in AmpHours
 % - config [1x1 struct]: config struct from configurator
@@ -25,7 +25,7 @@ function [impedance] = ident_cpe(t,U,I,dod_ah,config,phases,options)
 %     - alpha [kx1 double]: CPEalpha
 %     - crate [kx1 double]: C-Rate of each impedance measurement
 %     - dod [kx1 double]: Depth of discharge of each impedance measurement
-%     - time [kx1 double]: time of each impedance measurement
+%     - datetime [kx1 double]: datetime of each impedance measurement
 %
 %See also dattes, calcul_cpe_pulse, configurator, extract_profiles
 %
@@ -49,7 +49,7 @@ if nargin<6 || nargin>8
     fprintf('ident_cpe: wrong number of parameters, found %d\n',nargin);
     return;
 end
-if ~isstruct(config) || ~ischar(options) || ~isnumeric(t) || ~isstruct(phases)   || ~isnumeric(U) || ~isnumeric(I) || ~isnumeric(dod_ah)
+if ~isstruct(config) || ~ischar(options) || ~isnumeric(datetime) || ~isstruct(phases)   || ~isnumeric(U) || ~isnumeric(I) || ~isnumeric(dod_ah)
     fprintf('ident_cpe: wrong type of parametres\n');
     return;
 end
@@ -72,7 +72,7 @@ alpha = [];
 resistance = [];
 dod = [];
 crate = [];
-time = [];
+datetime_cpe = [];
 
 %% 2- Determine the phases for which a CPE identification is relevant
 indices_cpe = find(config.impedance.pZ);
@@ -82,19 +82,19 @@ phases_identify_cpe=phases(config.impedance.pZ);
 
 %% 3-q and alpha are identified for each of these phases
 for phase_k = 1:length(indices_cpe)
-    [time_phase,voltage_phase,current_phase,dod_phase] = extract_phase2(phases(indices_cpe(phase_k)),rest_before_after_phase,t,U,I,dod_ah);
+    [datetime_phase,voltage_phase,current_phase,dod_phase] = extract_phase2(phases(indices_cpe(phase_k)),rest_before_after_phase,datetime,U,I,dod_ah);
 
         % Step time is reduced to maximize the identification accuracy
     time_step = 0.1;
-    tmi = (time_phase(1):time_step:time_phase(end))';
-    voltage_phase = interp1(time_phase,voltage_phase,tmi);
-    current_phase = interp1(time_phase,current_phase,tmi);
-    time_phase = tmi;
+    tmi = (datetime_phase(1):time_step:datetime_phase(end))';
+    voltage_phase = interp1(datetime_phase,voltage_phase,tmi);
+    current_phase = interp1(datetime_phase,current_phase,tmi);
+    datetime_phase = tmi;
     
     
     
     %Ohmic polarization is extracted
-    [resistance_phase, crate_phase] = calcul_r(time_phase,voltage_phase,current_phase,dod_phase,phases(indices_cpe(phase_k)).t_ini,9,config.impedance.rest_min_duration,0);
+    [resistance_phase, crate_phase] = calcul_r(datetime_phase,voltage_phase,current_phase,dod_phase,phases(indices_cpe(phase_k)).datetime_ini,9,config.impedance.rest_min_duration,0);
     polarization_resistance = zeros(size(voltage_phase));
     polarization_resistance = current_phase*resistance_phase(1);
     voltage_phase = voltage_phase-polarization_resistance;
@@ -109,16 +109,16 @@ for phase_k = 1:length(indices_cpe)
     
     
     if ~config.impedance.fixed_params
-        [q_phase, alpha_phase ~, crate_phase] = calcul_cpe_pulse(time_phase,voltage_phase,current_phase);
+        [q_phase, alpha_phase ~, crate_phase] = calcul_cpe_pulse(datetime_phase,voltage_phase,current_phase);
     else
-        [q_phase, alpha_phase, ~, crate_phase] = calcul_cpe_pulse(time_phase,voltage_phase,current_phase,'a',config.impedance.fixed_params);
+        [q_phase, alpha_phase, ~, crate_phase] = calcul_cpe_pulse(datetime_phase,voltage_phase,current_phase,'a',config.impedance.fixed_params);
     end
     
     q=[q q_phase];
     alpha=[alpha alpha_phase];
     crate=[crate crate_phase];
 
-    time = [time time_phase(1)];
+    datetime_cpe = [datetime_cpe datetime_phase(1)];
     dod = [dod dod_phase(1)];
     resistance=[resistance resistance_phase(1)];
 end
@@ -130,7 +130,7 @@ end
 
 
 if ismember('g',options)
-    show_result(t,U,I,dod_ah,q, alpha, dod, crate,time);
+    show_result(datetime,U,I,dod_ah,q, alpha, dod, crate,datetime);
 end
 
     
@@ -140,7 +140,7 @@ impedance.alpha = alpha;
 impedance.r0 = resistance;
 impedance.dod = dod;
 impedance.crate = crate;
-impedance.time = time;
+impedance.datetime = datetime_cpe;
 
 end
 

@@ -1,15 +1,15 @@
-function [ocv_by_points] = ident_ocv_by_points(t,U,DoDAh,m,config,phases,options)
+function [ocv_by_points] = ident_ocv_by_points(datetime,U,DoDAh,m,config,phases,options)
 %ident_ocv_by_points OCV by points identification (rests after partial
 %charges/discharges)
 %
-% [ocv_by_points] = ident_ocv_by_points(t,U,DoDAh,m,config,phases,options)
+% [ocv_by_points] = ident_ocv_by_points(datetime,U,DoDAh,m,config,phases,options)
 % Read the config and phases structure and performe several calculations
 % regarding OCV by points .  Results are returned in the structure ocv_by_points
 %
 % Usage:
-%[ocv_by_points] = ident_ocv_by_points(t,U,DoDAh,m,config,phases,options)
+%[ocv_by_points] = ident_ocv_by_points(datetime,U,DoDAh,m,config,phases,options)
 % Inputs:
-% - t,U,DoDAh,m [(nx1) double]: vectors from extract_profiles
+% - datetime,U,DoDAh,m [(nx1) double]: vectors from extract_profiles
 % - config [(1x1) struct]: config struct from configurator
 % - phases [(mx1) struct] phases from split_phases
 % - options: [string] execution options
@@ -37,7 +37,7 @@ end
 
 ocv_by_points = struct([]);
 
-time =[];
+datetime_ocv =[];
 ocv =[];
 dod =[];
 
@@ -47,7 +47,7 @@ if nargin<6 || nargin>7
     return;
 end
 if ~isstruct(phases) || ~isstruct(config) || ~ischar(options)...
-        || ~isnumeric(t) || ~isnumeric(U)|| ~isnumeric(DoDAh) || ~isnumeric(m)
+        || ~isnumeric(datetime) || ~isnumeric(U)|| ~isnumeric(DoDAh) || ~isnumeric(m)
     fprintf('ident_ocv_by_points: wrong type of parameters\n');
     return;
 end
@@ -72,9 +72,9 @@ if length(phases_avant)<length(phases_ocv)
     fprintf('ident_ocv_by_points:error\n');
 end
 for ind = 1:length(phases_ocv)
-    [tp,Up,DoDAhp] = extract_phase(phases_ocv(ind),t,U,DoDAh);
+    [tp,Up,DoDAhp] = extract_phase(phases_ocv(ind),datetime,U,DoDAh);
     
-    time(ind) = tp(end);
+    datetime_ocv(ind) = tp(end);
     ocv(ind) = Up(end);%TODO: extrapolation, calcul de la relaxation, etc.
     dod(ind) = DoDAhp(end);
     signe(ind) = sign(phases_avant(ind).Iavg);
@@ -84,9 +84,9 @@ end
 %TODO: (bug) not working if phase(2) in phases_ocv, try filtering by DoDp? 
 % ddod = ([phases_avant.capacity] + [phases_avav.capacity])/config.test.capacity;
 % If = abs(ddod)<config.dodmaxOCVr & abs(ddod)>config.dodminOCVr;
-If = true(size(time));
+If = true(size(datetime_ocv));
 
-time = time(If);
+datetime_ocv = datetime_ocv(If);
 ocv = ocv(If);
 dod = dod(If);
 signe = signe(If);
@@ -94,13 +94,13 @@ signe = signe(If);
 ocv_by_points(1).ocv = ocv;
 ocv_by_points.dod = dod;
 ocv_by_points.sign = signe;
-ocv_by_points.time = time;
+ocv_by_points.datetime = datetime_ocv;
 
 if ismember('v',options)
     fprintf('OK\n');
 end
 if ismember('g',options)
-    plotOCVp(t,U,DoDAh, time, ocv, dod, signe);
+    plotOCVp(datetime,U,DoDAh, datetime_ocv, ocv, dod, signe);
 end
 
 end

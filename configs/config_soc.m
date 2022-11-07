@@ -1,20 +1,20 @@
-function config = config_soc(t,I,U,m,config,options)
+function config = config_soc(datetime,I,U,m,config,options)
 %config_soc configuration for DATTES calcul_soc
 %
 % Usage:
 % config = config_soc(t,U,I,m,config,phases,options)
 %
 % Inputs:
-% - t,U,I,m [(nx1) double] from profiles
+% - datetime,U,I,m [(nx1) double] from profiles
 % - config [(1x1) struct] containing minimal info (see cfg_default)
 % - phases [(mx1) struct] from split_phases
 % - options [(1xp) string] some options ('v', 'g').
 %
 % Outputs:
 % config [(1x1) struct] with fields:
-%     - t100: moments at SoC100 SOC calculation
-%     - DoDAhIni: initial DoD in Amphours
-%     - DoDAhFin: final DoD in Amphours
+%     - soc.soc100_datetime: datetime at SoC100
+%     - soc.dod_ah_ini: initial DoD in Amphours
+%     - soc.dod_ah_fin: final DoD in Amphours
 %
 %
 % See also dattes_import, calcul_soc, calcul_soc_patch, configurator
@@ -25,16 +25,16 @@ function config = config_soc(t,I,U,m,config,options)
 
 % check inputs:
 %t,U,I,m: double vectors of same length
-if ~isnumeric(t) || ~isnumeric(U) ||~isnumeric(I) ||~isnumeric(m)
+if ~isnumeric(datetime) || ~isnumeric(U) ||~isnumeric(I) ||~isnumeric(m)
     error('t,U,I,m must be numeric');
 end
-if ~isvector(t) || ~isvector(U) ||~isvector(I) ||~isvector(m)
+if ~isvector(datetime) || ~isvector(U) ||~isvector(I) ||~isvector(m)
    error('t,U,I,m must be vectors');
 end
-if length(t)<2 
+if length(datetime)<2 
    error('t must have at least to elements');
 end
-if length(t)~=length(U) ||  length(t)~=length(U) || length(t)~=length(U)
+if length(datetime)~=length(U) ||  length(datetime)~=length(U) || length(datetime)~=length(U)
    error('t,U,I,m must have same length');
 end
 % config: 1x1 struct with fields:
@@ -50,7 +50,7 @@ end
 % if ~isstruct(phases) || ~isvector(phases)
 %     error('phases must 1xp struct');
 % end
-% if ~isfield(phases,'t_ini') || ~isfield(phases,'t_fin') || ...
+% if ~isfield(phases,'datetime_ini') || ~isfield(phases,'datetime_fin') || ...
 %         ~isfield(phases,'duration') || ~isfield(phases,'Iavg') 
 %     error('not a valid phases struct');
 % end
@@ -82,8 +82,8 @@ I100 = (Ifincv & Imax) | (I100cc & Ic20);
 I0 = (Ifincv & Imin) | (I100cc & Ic20);
 
 %calcul_soc
-config.soc.soc100_time = t(I100);%pour le calcul du SOC
-config.soc.soc0_time = t(I0);%pour le calcul du SOC
+config.soc.soc100_datetime = datetime(I100);%pour le calcul du SOC
+config.soc.soc0_datetime = datetime(I0);%pour le calcul du SOC
 %Note: retourne matrice vide s'il ne trouve pas de phase CCCV a Umax.
 %Dans ces cas il faut trouver le test immediatement anterieur (ou
 %posterieur), calculer le DoDAh et fixer DoDAhIni ou DoDAhFin pour pouvoir

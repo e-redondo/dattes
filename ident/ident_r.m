@@ -1,13 +1,13 @@
-function [resistance] = ident_r(t,U,I,dod_ah,config,phases,options)
+function [resistance] = ident_r(datetime,U,I,dod_ah,config,phases,options)
 %ident_r resistance identification 
 %
 % Usage:
-% [resistance] = ident_r(t,U,I,dod_ah,config,phases,options)
+% [resistance] = ident_r(datetime,U,I,dod_ah,config,phases,options)
 % Read the config and phases structure and performe several calculations
 % regarding resistance.  Results are returned in the structure resistance 
 %
 % Inputs:
-% - t, U, I, dod_ah [(nx1) double]: from extract_profiles
+% - datetime, U, I, dod_ah [(nx1) double]: from extract_profiles
 % - config [(1x1) struct] from configurator
 % - phases [(mx1) struct] from split_phases
 % - options [(1xp) string] execution options:
@@ -19,7 +19,7 @@ function [resistance] = ident_r(t,U,I,dod_ah,config,phases,options)
 %     - R [(qx1) double]: resistance value (Ohms)
 %     - dod [(qx1) double]: depth of discharge (Ah)
 %     - crate [(qx1) double]: current rate (C)
-%     - time [(qx1) double]: time of measurement (s)
+%     - datetime [(qx1) double]: time of measurement (s)
 %     - delta_time [(qx1) double]: time from pulse start (s)
 %
 % See also dattes, calcul_r
@@ -42,7 +42,7 @@ if nargin<6 || nargin>7
     fprintf('ident_r: wrong number of parameters, found %d\n',nargin);
     return;
 end
-if ~isstruct(config) || ~ischar(options) || ~isnumeric(t) ...
+if ~isstruct(config) || ~ischar(options) || ~isnumeric(datetime) ...
         || ~isnumeric(U) || ~isnumeric(I) || ~isnumeric(dod_ah)
     fprintf('ident_r: wrong type of parameters\n');
     return;
@@ -67,7 +67,7 @@ time_before_after_phase = [rest_min_duration 0];
 
 R = [];
 crate = [];
-time = [];
+datetime_r = [];
 dod = [];
 delta_time = [];
 
@@ -76,7 +76,7 @@ delta_time = [];
 for ind = 1:length(indices_phases_r)
 
 
-    [tp,Up,Ip,DoDp] = extract_phase2(phases(indices_phases_r(ind)),time_before_after_phase,t,U,I,dod_ah);%FIX (BRICOLE) la même mais avec getPhases 2
+    [tp,Up,Ip,DoDp] = extract_phase2(phases(indices_phases_r(ind)),time_before_after_phase,datetime,U,I,dod_ah);%FIX (BRICOLE) la même mais avec getPhases 2
     Is = tp-tp(1)<rest_min_duration+pulse_min_duration+3;%FIX (BRICOLE) la même mais avec getPhases 2
     tp = tp(Is);
     Up = Up(Is);
@@ -86,7 +86,7 @@ for ind = 1:length(indices_phases_r)
    
     R = [R thisR];
     crate = [crate this_crate];
-    time = [time this_time];
+    datetime_r = [datetime_r this_time];
     dod = [dod this_dod];
     delta_time = [delta_time this_delta_time];
     
@@ -99,14 +99,14 @@ crate = crate/config.test.capacity;
 resistance(1).R = R;
 resistance.dod = dod;
 resistance.crate = crate;
-resistance.time = time;
+resistance.datetime = datetime_r;
 resistance.delta_time = delta_time;
 
 if ismember('v',options)
     fprintf('OK\n');
 end
 if ismember('g',options)
-    showResult(t,U,I,dod_ah,R,dod,crate,time);
+    showResult(datetime,U,I,dod_ah,R,dod,crate,datetime_r);
 end
 end
 

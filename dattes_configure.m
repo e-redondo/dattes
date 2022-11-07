@@ -124,12 +124,13 @@ end
 
 %% 2 configurator
 %2.1 run configurator
+datetime = result.profiles.datetime;
 t = result.profiles.t;
 I = result.profiles.I;
 U = result.profiles.U;
 m = result.profiles.m;
 phases = result.phases;
-[config] = configurator(t,I,U,m,config,phases,options);
+[config] = configurator(datetime,I,U,m,config,phases,options);
 %2.2 check config struct
 [info,err] = check_configuration_struct(config);
 if err<0

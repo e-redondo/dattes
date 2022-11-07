@@ -74,33 +74,33 @@ end
 phases_cc = phases(config.capacity.pCapaD | config.capacity.pCapaC);
 cc_capacity = abs([phases_cc.capacity]);
 cc_crate = [phases_cc.Iavg]./config.test.capacity;
-cc_time = [phases_cc.t_fin];
+cc_datetime = [phases_cc.datetime_fin];
 cc_duration = [phases_cc.duration];
 
 %CV part
 phases_cv = phases(config.capacity.pCapaDV | config.capacity.pCapaCV);
 cv_capacity = abs([phases_cv.capacity]);
 cv_voltage = [phases_cv.Uavg];
-cv_time = [phases_cv.t_fin];
+cv_datetime = [phases_cv.datetime_fin];
 cv_duration = [phases_cv.duration];
 
 %CC+CV
 
-[cccv_time,cccv_capacity,cccv_duration,cccv_crate,cccv_ratio_cc_ah,cccv_ratio_cc_duration]=append_cc_and_cv(config,phases);
+[cccv_datetime,cccv_capacity,cccv_duration,cccv_crate,cccv_ratio_cc_ah,cccv_ratio_cc_duration]=append_cc_and_cv(config,phases);
 
 %put into output structure:
 
 capacity(1).cc_capacity = cc_capacity;
 % capacity.cc_capacity = cc_capacity;
 capacity.cc_crate = cc_crate;
-capacity.cc_time = cc_time;
+capacity.cc_datetime = cc_datetime;
 capacity.cc_duration = cc_duration;
 capacity.cv_capacity = cv_capacity;
 capacity.cv_voltage = cv_voltage;
-capacity.cv_time = cv_time;
+capacity.cv_datetime = cv_datetime;
 capacity.cv_duration = cv_duration;
 
-capacity.cccv_time=cccv_time;
+capacity.cccv_datetime=cccv_datetime;
 capacity.cccv_capacity=cccv_capacity;
 capacity.cccv_duration=cccv_duration;
 capacity.cccv_crate=cccv_crate;
@@ -115,7 +115,7 @@ end
 end
 
 
-function [cccv_time,cccv_capacity,cccv_duration, cccv_crate,cccv_ratio_cc_ah,cccv_ratio_cc_duration]=append_cc_and_cv(config,phases)
+function [cccv_datetime,cccv_capacity,cccv_duration, cccv_crate,cccv_ratio_cc_ah,cccv_ratio_cc_duration]=append_cc_and_cv(config,phases)
 
 
 
@@ -131,14 +131,14 @@ Index_cccv=strfind(phases_cccv, sequence);
 %Calculate full capacity at these positions 
 capacities=[phases.capacity];
 durations=[phases.duration];
-times=[phases.t_fin];
+datetimes=[phases.datetime_fin];
 crates = [phases.Iavg]./config.test.capacity;
 
 %Store the (dis)charged Ah and duration in arrays for each CC-CV phases
 
 cccv_capacity=nan(1,length(Index_cccv));
 cccv_duration=nan(1,length(Index_cccv));
-cccv_time=nan(1,length(Index_cccv));
+cccv_datetime=nan(1,length(Index_cccv));
 ah_cc_in_cccv=nan(1,length(Index_cccv));
 ah_cv_in_cccv=nan(1,length(Index_cccv));
 duration_cc_in_cccv=nan(1,length(Index_cccv));
@@ -146,7 +146,7 @@ duration_cv_in_cccv=nan(1,length(Index_cccv));
 cccv_crate=nan(1,length(Index_cccv));
 
 for indice=1:length(Index_cccv)
-    cccv_time(indice)=times(Index_cccv(1,indice));
+    cccv_datetime(indice)=datetimes(Index_cccv(1,indice));
     cccv_capacity(indice)= capacities(Index_cccv(1,indice))+capacities(Index_cccv(1,indice)+1);
     
     cccv_duration(indice)=durations(Index_cccv(1,indice))+durations(Index_cccv(1,indice)+1);

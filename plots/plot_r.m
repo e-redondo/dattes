@@ -50,8 +50,8 @@ for ind = 1:length(dt)
     ylabel('R (Ohm)','interpreter','tex')
     
     subplot(2,2,[3 4]),hold on
-    plot(resistance.time(Idis & Is),resistance.R(Idis & Is),'v','color',c(ind,:),'DisplayName',tagD)
-    plot(resistance.time(Icha & Is),resistance.R(Icha & Is),'^','color',c(ind,:),'DisplayName',tagC)
+    plot(resistance.datetime(Idis & Is),resistance.R(Idis & Is),'v','color',c(ind,:),'DisplayName',tagD)
+    plot(resistance.datetime(Icha & Is),resistance.R(Icha & Is),'^','color',c(ind,:),'DisplayName',tagC)
     xlabel('time (s)','interpreter','tex')
     ylabel('R (Ohm)','interpreter','tex')
     

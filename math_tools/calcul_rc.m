@@ -153,7 +153,7 @@ function [Um2,Im,tm,DoDm,Urelax,Instant_rest]=remove_spikes(Um2,Im,tm,DoDm,p_RC,
 
 
 %imprecision in rest part
-Instant_rest = tm-p_RC(phase_RC).t_ini<0;% negative = rest
+Instant_rest = tm-p_RC(phase_RC).datetime_ini<0;% negative = rest
 Urelax = mean(Um2(Instant_rest));
 Um2_polarization = Um2-Urelax; %
 
@@ -193,7 +193,7 @@ diff_Im=diff(Im);
 diff_tm=diff(tm);
 diff_DoDm=diff(DoDm);
 
-Instant_rest = tm-p_RC(phase_RC).t_ini<0;% negative = rest
+Instant_rest = tm-p_RC(phase_RC).datetime_ini<0;% negative = rest
 
 
 end

@@ -1,11 +1,11 @@
-function [pseudo_ocv] = ident_pseudo_ocv(t,U,DoDAh,config,phases,options)
+function [pseudo_ocv] = ident_pseudo_ocv(datetime,U,DoDAh,config,phases,options)
 %ident_pseudo_ocv pseudoOCV identification
 %
 % Usage:
-% [pseudo_ocv] = ident_pseudo_ocv(t,U,DoDAh,config,phases,options)
+% [pseudo_ocv] = ident_pseudo_ocv(datetime,U,DoDAh,config,phases,options)
 %
 % Inputs:
-% - t,U,DoDAh [(nx1) double]: from extract_profiles and calcul_soc
+% - datetime,U,DoDAh [(nx1) double]: from extract_profiles and calcul_soc
 % - config [(1x1) struct]: from configurator
 % - phases [(mx1) struct]: from split_phases
 % - options [(1xp) string]: execution options
@@ -20,7 +20,7 @@ function [pseudo_ocv] = ident_pseudo_ocv(t,U,DoDAh,config,phases,options)
 %      - u_charge [(kx1) double]: voltage during charging half cycle
 %      - u_discharge [(kx1) double]: voltage during discharging half cycle
 %      - crate [(1x1) double]: C-rate
-%      - time [(1x1) double]: time of measurement
+%      - datetime [(1x1) double]: datetime of measurement
 %
 % See also dattes, configurator
 %
@@ -76,7 +76,7 @@ if isempty(phases_ocv_charge) || isempty(phases_ocv_discharge)
 end
 
 current_rate_charge = [phases_ocv_charge.Iavg]/config.test.capacity;
-timeC = [phases_ocv_charge.t_fin];
+timeC = [phases_ocv_charge.datetime_fin];
 [current_rate_charge sorting_index_current_rate_charge] = sort(current_rate_charge);%on met dans l'ordre
 phases_ocv_charge = phases_ocv_charge(sorting_index_current_rate_charge);
 timeC = timeC(sorting_index_current_rate_charge);
@@ -88,7 +88,7 @@ phases_ocv_charge = phases_ocv_charge(filter_index_current_rate_charge);
 timeC = timeC(filter_index_current_rate_charge);
 
 current_rate_discharge = -[phases_ocv_discharge.Iavg]/config.test.capacity;
-timeD = [phases_ocv_discharge.t_fin];
+timeD = [phases_ocv_discharge.datetime_fin];
 [current_rate_discharge sorting_index_current_rate_discharge] = sort(current_rate_discharge);%on met dans l'ordre
 phases_ocv_discharge = phases_ocv_discharge(sorting_index_current_rate_discharge);
 timeD = timeD(sorting_index_current_rate_discharge);
@@ -124,12 +124,12 @@ dod_ah_discharge = cell(size(phases_ocv_discharge));
 
 for ind =1:length(phases_ocv_charge)
     %extraire les phases
-    [~,voltage_charge{ind},dod_ah_charge{ind}] = extract_phase(phases_ocv_charge(ind),t,U,DoDAh);
+    [~,voltage_charge{ind},dod_ah_charge{ind}] = extract_phase(phases_ocv_charge(ind),datetime,U,DoDAh);
 end
 
 for ind =1:length(phases_ocv_discharge)
 %extraire les phases
-[~,voltage_discharge{ind},dod_ah_discharge{ind}] = extract_phase(phases_ocv_discharge(ind),t,U,DoDAh);
+[~,voltage_discharge{ind},dod_ah_discharge{ind}] = extract_phase(phases_ocv_discharge(ind),datetime,U,DoDAh);
 end
 
 %mettre dans l'ordre (et enleve doublons) TODO: ameliorer
@@ -176,7 +176,7 @@ for ind = 1:length(ocv)
     pseudo_ocv(ind).u_charge = u_charge{ind};
     pseudo_ocv(ind).u_discharge = u_discharge{ind};
     pseudo_ocv(ind).crate = crate(ind);
-    pseudo_ocv(ind).time = pTime(ind);
+    pseudo_ocv(ind).datetime = pTime(ind);
 end
 end
 

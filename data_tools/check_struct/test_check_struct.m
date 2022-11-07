@@ -21,7 +21,7 @@ struct3.dod_ah = 'hello';
 % err = -3
 struct4 = struct2;
 struct4.capacity = 5;
-struct4.t_ini = 70000000;
+struct4.datetime_ini = 70000000;
 %struct5 is like struct2 with some missing fields
 % err=-1 (NOTE: err=-1 priority over err=-3)
 struct5 = rmfield(struct4,'U');

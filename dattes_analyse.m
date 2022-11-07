@@ -96,6 +96,7 @@ end
 
 %0.6 from now we have 1x1 DATTES result struct:
 %vectors:
+datetime = result.profiles.datetime;
 t = result.profiles.t;
 U = result.profiles.U;
 I = result.profiles.I;
@@ -112,7 +113,7 @@ if ismember('C',options)
     result.capacity = capacity;
 end
 
-%% 2. Profile processing (t,U,I,m,dod_ah) >>> R, CPE, ICA, OCV, etc.
+%% 2. Profile processing (datetime,U,I,m,dod_ah) >>> R, CPE, ICA, OCV, etc.
 if any(ismember('PORZI',options))
     if isempty(dod_ah)
         %If  calcul_soc have not been processed correctly, none analysis is processed (and neither saved)
@@ -124,7 +125,7 @@ if any(ismember('PORZI',options))
         
         %6.1. pseudo ocv
         if ismember('P',options)
-            [pseudo_ocv] = ident_pseudo_ocv(t,U,dod_ah,config,phases,inher_options);
+            [pseudo_ocv] = ident_pseudo_ocv(datetime,U,dod_ah,config,phases,inher_options);
             %save the results
             result.pseudo_ocv = pseudo_ocv;
             
@@ -132,7 +133,7 @@ if any(ismember('PORZI',options))
         
         %6.2. ocv by points
         if ismember('O',options)
-            [ocv_by_points] = ident_ocv_by_points(t,U,dod_ah,m,config,phases,inher_options);
+            [ocv_by_points] = ident_ocv_by_points(datetime,U,dod_ah,m,config,phases,inher_options);
             %save the results
             result.ocv_by_points = ocv_by_points;
         end
@@ -140,7 +141,7 @@ if any(ismember('PORZI',options))
         %6.3. impedances
         %6.3.1. resistance
         if ismember('R',options)
-            [resistance] = ident_r(t,U,I,dod_ah,config,phases,inher_options);
+            [resistance] = ident_r(datetime,U,I,dod_ah,config,phases,inher_options);
             %save the results
             result.resistance = resistance;
         end
@@ -151,13 +152,13 @@ if any(ismember('PORZI',options))
                % function handle saved as string in octave and in json:
                ident_z = str2func(ident_z);
             end
-            [impedance] = ident_z(t,U,I,dod_ah,config,phases,inher_options);
+            [impedance] = ident_z(datetime,U,I,dod_ah,config,phases,inher_options);
             result.impedance= impedance;
         end
         
         %6.4. ICA/DVA
         if ismember('I',options)
-            ica = ident_ica(t,U,dod_ah,config,phases,inher_options);
+            ica = ident_ica(datetime,U,dod_ah,config,phases,inher_options);
             %sauvegarder les resultats
             result.ica = ica;
         end

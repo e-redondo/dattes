@@ -75,11 +75,26 @@ end
 
 
 %1. export phases
+datetime = dattes_struct.profiles.datetime;
+t = dattes_struct.profiles.t;
+U = dattes_struct.profiles.U;
+I = dattes_struct.profiles.I;
+soc = dattes_struct.profiles.soc;
+dod_ah = dattes_struct.profiles.dod_ah;
+m = dattes_struct.profiles.m;
 
-[profiles.t,profiles.U,profiles.I,profiles.SoC,profiles.DoDAh,profiles.m] = ...
-    extract_phase2(dattes_struct.phases([phase_start phase_end]),[0 0],dattes_struct.profiles.t,dattes_struct.profiles.U,dattes_struct.profiles.I,dattes_struct.profiles.soc,dattes_struct.profiles.dod_ah,dattes_struct.profiles.m);
+[datetime2,t2,U2,I2,soc2,dod_ah2,m2] = ...
+    extract_phase2(dattes_struct.phases([phase_start phase_end]),[0 0],datetime, t, U, I, soc, dod_ah, m);
 
-dattes_struct.profiles=profiles;
+
+dattes_struct.profiles.datetime = datetime2;
+dattes_struct.profiles.t = t2;
+dattes_struct.profiles.U = U2;
+dattes_struct.profiles.I = I2;
+dattes_struct.profiles.soc = soc2;
+dattes_struct.profiles.dod_ah = dod_ah2;
+dattes_struct.profiles.m = m2;
+
 
 export_profiles_csv(dattes_struct, options, dst_folder, file_out);
 

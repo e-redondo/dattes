@@ -1,11 +1,11 @@
-function config = configurator(t,I,U,m,config,phases,options)
-%configurator configuration for dattes
+function config = configurator(datetime,I,U,m,config,phases,options)
+%configurator configuration for DATTES
 %
 % Usage:
-% config = configurator(t,U,I,m,config,phases,options)
+% config = configurator(datetime,U,I,m,config,phases,options)
 %
 % Inputs:
-% - t,I,U,m [(nx1) double] from extract_profiles
+% - datetime,I,U,m [(nx1) double] from extract_profiles
 % - config [(1x1) struct] containing minimal info (see cfg_default)
 % - phases [(mx1) struct] from split_phases
 % - options [(1xp) string] some options ('v', 'g').
@@ -33,16 +33,16 @@ function config = configurator(t,I,U,m,config,phases,options)
 
 % check inputs:
 %t,U,I,m: double vectors of same length
-if ~isnumeric(t) || ~isnumeric(U) ||~isnumeric(I) ||~isnumeric(m)
+if ~isnumeric(datetime) || ~isnumeric(U) ||~isnumeric(I) ||~isnumeric(m)
     error('t,U,I,m must be numeric');
 end
-if ~isvector(t) || ~isvector(U) ||~isvector(I) ||~isvector(m)
+if ~isvector(datetime) || ~isvector(U) ||~isvector(I) ||~isvector(m)
    error('t,U,I,m must be vectors');
 end
-if length(t)<2 
+if length(datetime)<2 
    error('t must have at least to elements');
 end
-if length(t)~=length(U) ||  length(t)~=length(U) || length(t)~=length(U)
+if length(datetime)~=length(U) ||  length(datetime)~=length(U) || length(datetime)~=length(U)
    error('t,U,I,m must have same length');
 end
 % config: 1x1 struct with fields:
@@ -58,7 +58,7 @@ end
 if ~isstruct(phases) || ~isvector(phases)
     error('phases must 1xp struct');
 end
-if ~isfield(phases,'t_ini') || ~isfield(phases,'t_fin') || ...
+if ~isfield(phases,'datetime_ini') || ~isfield(phases,'datetime_fin') || ...
         ~isfield(phases,'duration') || ~isfield(phases,'Iavg') 
     error('not a valid phases struct');
 end
@@ -67,8 +67,8 @@ if ~exist('options','var')
     options = '';
 end
 
-tInis = [phases.t_ini];
-tFins = [phases.t_fin];
+tInis = [phases.datetime_ini];
+tFins = [phases.datetime_fin];
 durees = [phases.duration];
 
 if ismember('v',options)
@@ -140,38 +140,38 @@ I0ccr = [0; I0cc(1:end-1)] & m==3;
 
 
 %phases de repos a SOC100
-pRepos100 = ismember(tInis,t(I100r | I100ccr));
+pRepos100 = ismember(tInis,datetime(I100r | I100ccr));
 %phases de repos a SOC0
-pRepos0 = ismember(tInis,t(I0r | I0ccr));
+pRepos0 = ismember(tInis,datetime(I0r | I0ccr));
 
 %1) phases capa decharge (CC):
 %1.1. Iavg<0
 %1.2.- finissent a SoC0 (I0cc)
 %1.3.- sont precedes par une phase de repos a SoC100 (I100r ou I100ccr)
-pCapaD = [phases.Iavg]<0 & ismember(tFins,t(I0cc)) & [0 pRepos100(1:end-1)];
+pCapaD = [phases.Iavg]<0 & ismember(tFins,datetime(I0cc)) & [0 pRepos100(1:end-1)];
 %2) phases capa charge (CC):
 %2.1.- Iavg>0
 %2.2.- finissent a SoC100 (I100cc)
 %2.3.- sont precedes par une phase de repos a SoC0 (I0r ou I0ccr)
-pCapaC = [phases.Iavg]>0 & ismember(tFins,t(I100cc)) & [0 pRepos0(1:end-1)];
+pCapaC = [phases.Iavg]>0 & ismember(tFins,datetime(I100cc)) & [0 pRepos0(1:end-1)];
 % pCapaC = [phases.Iavg]>0 & [0 pRepos0(1:end-1)];%LYP, BRICOLE
 %3) phases de decharge residuelle
 %1.1.- Iavg<0
 %1.2.- finissent a SoC0 (I0)
 %1.3.- sont precedes par une phase pCapaD
-pCapaDV = [phases.Iavg]<0 & ismember(tFins,t(I0)) & [0 pCapaD(1:end-1)];
+pCapaDV = [phases.Iavg]<0 & ismember(tFins,datetime(I0)) & [0 pCapaD(1:end-1)];
 %4) phases de charge residuelle
 %1.1.- Iavg>0
 %1.2.- finissent a SoC100 (I100)
 %1.3.- sont precedes par une phase pCapaC
-pCapaCV = [phases.Iavg]>0 & ismember(tFins,t(I100)) & [0 pCapaC(1:end-1)];
+pCapaCV = [phases.Iavg]>0 & ismember(tFins,datetime(I100)) & [0 pCapaC(1:end-1)];
 
 %5) phases de mesure d'impedance
 %5.0- detection de pulses:
 Ipulse = m==1 & [0; m(1:end-1)]==3;
 
 %5.1.- mode CC et dernier point avant en repos (3)
-pR = ismember(tInis,t(Ipulse))& durees<=config.resistance.pulse_max_duration;
+pR = ismember(tInis,datetime(Ipulse))& durees<=config.resistance.pulse_max_duration;
 pZ =pR;
 
 %5.2.- duree minimale pour pR, tminR (10secondes); pour pW, tminW (300sec)
@@ -211,7 +211,7 @@ config.impedance.instant_end_rest = tFins(pZr);%temps de fins de repos immediate
 
 
 %ident_ocv_by_points (par points)
-config.ocv_points.pOCVr = durees>=config.ocv_points.rest_min_duration & ismember(tInis,t(IiniRepos));
+config.ocv_points.pOCVr = durees>=config.ocv_points.rest_min_duration & ismember(tInis,datetime(IiniRepos));
 config.ocv_points.pOCVr(1) = false; % repos initial jamais retenu pour OCV
 
 %ident_pseudo_ocv (pseudoOCV)
@@ -234,7 +234,7 @@ end
 if ismember('g',options)
 %     showResult(t,U,I100,Iinicv,config,phases);
     
-    hf = plot_config(t,U,config,phases,'','h');
+    hf = plot_config(datetime,U,config,phases,'','h');
     set(hf,'name','configurator');
 end
 end

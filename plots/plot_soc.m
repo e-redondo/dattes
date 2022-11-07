@@ -44,8 +44,8 @@ else
 end
 
 I100 = [];
-if isfield(config.soc,'soc100_time')
-    I100 = ismember(t,config.soc.soc100_time);
+if isfield(config.soc,'soc100_datetime')
+    I100 = ismember(t,config.soc.soc100_datetime);
 end
 
 hf = figure('name','plot_soc');

@@ -8,8 +8,8 @@ function [tp,varargout] = extract_phase2(phases,t_be_af,t,varargin)
 % Inputs:
 % - phases (mx1 struct): phase struct array from split_phases
 % - t_be_af (1x2 double): time before and after
-%     - t_be_af(1): seconds before phases(1).t_ini to add to outputs
-%     - t_be_af(2): seconds after phases(end).t_ini to add to outputs
+%     - t_be_af(1): seconds before phases(1).datetime_ini to add to outputs
+%     - t_be_af(2): seconds after phases(end).datetime_ini to add to outputs
 % - t, U, I, m ... (nx1 double): vectors from extract_profiles
 %
 % Outputs:
@@ -48,9 +48,9 @@ if ~isa(t_be_af,'double') && length(t_be_af)~=2
     fprintf('extract_phase2: ERREUR, t_be_af doit être double de taille deux\n');
     return;
 end
-%0.5.- phase doit avoir les champs 't_ini' et 't_fin'
-if ~isfield(phases,'t_ini') || ~isfield(phases,'t_fin')
-    fprintf('extract_phase2: ERREUR, phases doit avoir des champs t_ini et t_fin\n');
+%0.5.- phase doit avoir les champs 'datetime_ini' et 'datetime_fin'
+if ~isfield(phases,'datetime_ini') || ~isfield(phases,'datetime_fin')
+    fprintf('extract_phase2: ERREUR, phases doit avoir des champs datetime_ini et datetime_fin\n');
     return;
 end
 %0.6.- t doit etre vecteur double
@@ -66,7 +66,7 @@ for ind = 1:length(varargin)
     end
 end
 
-indices = t>=phases(1).t_ini-t_be_af(1) & t<=phases(end).t_fin+t_be_af(2);
+indices = t>=phases(1).datetime_ini-t_be_af(1) & t<=phases(end).datetime_fin+t_be_af(2);
 tp = t(indices);
 varargout = cellfun(@(x) x(indices),varargin,'uniformoutput',false);
 

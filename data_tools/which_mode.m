@@ -75,9 +75,9 @@ Ends = Ends(nbSteps>10);
 
 newStep = Step;
 for ind = 1:length(Starts)
-    tStart = phases(Starts(ind)).t_ini;%start of the first short phase 
-    t_fin = phases(Ends(ind)).t_fin;%end of the last short phase 
-    indices = t>=tStart & t<=t_fin;%FIX: effet de bord?
+    datetime_ini = phases(Starts(ind)).datetime_ini;%start of the first short phase 
+    datetime_fin = phases(Ends(ind)).datetime_fin;%end of the last short phase 
+    indices = t>=datetime_ini & t<=datetime_fin;%FIX: effet de bord?
     newStep(indices) = -1;%marquage profil
 end
 

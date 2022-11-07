@@ -24,7 +24,8 @@ function [profiles, eis, metadata, config, err] = extract_profiles(xml_file,opti
 %
 % Outputs : 
 % - profiles [1x1 struct] with fields:
-%     - t [mx1 double]: time in seconds from 1/1/2000 00:00
+%     - datetime [mx1 double]: time in seconds from 1/1/2000 00:00
+%     - t [mx1 double]: test time in seconds (0 to test duration)
 %     - U [mx1 double]: cell voltage in V
 %     - I [mx1 double]: cell current in A
 %     - m [mx1 double]: mode
@@ -156,21 +157,21 @@ if any(cellfun(@(x) ~isfield(x,'tabs'),xml.table)) ||...
     return;
 end
 
-t = cellfun(@(x) x.tabs.vector,xml.table,'uniformoutput',false);
-if any(cellfun(@(x) isnan(max(x)),t))
-    t = cellfun(@(x) x.tc.vector,xml.table,'uniformoutput',false);
+datetime = cellfun(@(x) x.tabs.vector,xml.table,'uniformoutput',false);
+if any(cellfun(@(x) isnan(max(x)),datetime))
+    datetime = cellfun(@(x) x.tc.vector,xml.table,'uniformoutput',false);
 end
 
 U = cellfun(@(x) x.(Uname).vector,xml.table,'uniformoutput',false);
 I = cellfun(@(x) x.I.vector,xml.table,'uniformoutput',false);
 m = cellfun(@(x) x.mode.vector,xml.table,'uniformoutput',false);
 %decapsuler les cellules
-t = vertcat(t{:});
+datetime = vertcat(datetime{:});
 U = vertcat(U{:});
 I = vertcat(I{:});
 m = vertcat(m{:});
 %doublons
-[t, Iu] = unique(t);
+[datetime, Iu] = unique(datetime);
 U = U(Iu);
 I = I(Iu);
 m = m(Iu);
@@ -187,10 +188,10 @@ if all(cellfun(@(x) isfield(x,Tname),xml.table))
 elseif isfield(metadata,'test')
     if isfield(metadata.test,'temperature')
         %TODO metadata struct and data types validation (new function)
-        T = metadata.test.temperature*ones(size(t));
+        T = metadata.test.temperature*ones(size(datetime));
     end
 end
-if isnan(max(t+I+U+m))%gestion d'erreurs
+if isnan(max(datetime+I+U+m))%gestion d'erreurs
     error('Oups! extract_profiles a trouve des nans: %s\n',xml_file);
 end
 %     if ismember('s',options)
@@ -200,16 +201,9 @@ if ismember('v',options)
     fprintf('OK (XML file)\n');
 end
 
-%TODO need for soc100_time:
-
-%TODO calcul_soc:
-% [dod_ah, soc] = calcul_soc(t,I,config,inher_options);
-% need: 
-% config.soc.soc100_time
-% config.test.capacity
-
 % compile profiles
-profiles(1).t = t;
+profiles(1).datetime = datetime;
+profiles.t = datetime-datetime(1);
 profiles.U = U;
 profiles.I = I;
 profiles.m = m;
@@ -221,7 +215,7 @@ profiles.soc = [];
 eis = extract_eis(xml,options);
 
 if ismember('g',options)
-    showResult(t,U,I,m,xml_file,options);
+    showResult(datetime,U,I,m,xml_file,options);
 end
 
 %AUTO generate config
@@ -232,7 +226,7 @@ if isempty(min_voltage)%not found in metadata:
     min_voltage = min(U);
 end
 if isempty(capacity)%not found in metadata:
-    amp_hours = calcul_amphour(t,I);
+    amp_hours = calcul_amphour(datetime,I);
     capacity = max(amp_hours)-min(amp_hours);
 end
 

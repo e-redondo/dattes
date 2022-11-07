@@ -1,9 +1,9 @@
-function [phases, tcell, Icell, Ucell, modes] = split_phases(t,I,U,m,options)
-%split_phases split profiles (t,U,I,m) into phases by m value.
+function [phases, tcell, Icell, Ucell, modes] = split_phases(datetime,I,U,m,options)
+%split_phases split profiles (datetime,U,I,m) into phases by m value.
 %
 % Usage:
-% [phases, tcell, Icell, Ucell, modes] = split_phases(t,I,U,m)
-% Search for changes in 'm' vector and cut the four vectors (t,U,I,m)
+% [phases, tcell, Icell, Ucell, modes] = split_phases(datetime,I,U,m)
+% Search for changes in 'm' vector and cut the four vectors (datetime,U,I,m)
 %
 % Inputs:
 % - t,I,U,m [(nx1) double]: vectors from extract_profiles
@@ -14,8 +14,8 @@ function [phases, tcell, Icell, Ucell, modes] = split_phases(t,I,U,m,options)
 %
 % Outputs:
 % - phases [(mx1) struct]: structure array with fields:
-%    - t_ini [(1x1) double]: phase start time (seconds)
-%    - t_fin [(1x1) double]: phase end time (seconds)
+%    - datetime_ini [(1x1) double]: phase start datetime (seconds)
+%    - datetime_fin [(1x1) double]: phase end datetime (seconds)
 %    - duration [(1x1) double]: phase duration (seconds)
 %    - Uini [(1x1) double]: phase initial voltage
 %    - Ufin [(1x1) double]: phase final voltage
@@ -58,7 +58,7 @@ end
 Icut = find(diff(ms));
 
 iniPhase = [1;Icut+1];
-finPhase = [Icut;length(t)];
+finPhase = [Icut;length(datetime)];
 
 tcell = cell(size(iniPhase));
 Icell = cell(size(iniPhase));
@@ -69,7 +69,7 @@ if ismember('v',options)
 end
 for ind = 1:length(iniPhase)
     indices = iniPhase(ind):finPhase(ind);
-    tcell{ind} = t(indices);
+    tcell{ind} = datetime(indices);
     Ucell{ind} = U(indices);
     Icell{ind} = I(indices);
 
@@ -87,9 +87,9 @@ for ind = 1:length(tcell)
     thisI = Icell{ind};
     thisU = Ucell{ind};
 
-    phases(ind).t_ini = thist(1);
-    phases(ind).t_fin = thist(end);
-    phases(ind).duration = phases(ind).t_fin - phases(ind).t_ini;
+    phases(ind).datetime_ini = thist(1);
+    phases(ind).datetime_fin = thist(end);
+    phases(ind).duration = phases(ind).datetime_fin - phases(ind).datetime_ini;
     phases(ind).Uini = thisU(1);
     phases(ind).Ufin = thisU(end);
     phases(ind).Iini = thisI(1);
@@ -113,7 +113,7 @@ if ismember('v',options)
 end
 
 if ismember('g',options)
-    hf = plot_phases(t,U,I,phases,'','h');
+    hf = plot_phases(datetime,U,I,phases,'','h');
     set(hf,'name','split_phases');
 end
 end

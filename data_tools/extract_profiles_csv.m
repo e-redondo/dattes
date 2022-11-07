@@ -19,7 +19,8 @@ function [profiles, eis, metadata, config, err] = extract_profiles_csv(csv_file,
 %
 % Outputs : 
 % - profiles [1x1 struct] with fields:
-%     - t [mx1 double]: time in seconds from 1/1/2000 00:00
+%     - datetime [mx1 double]: time in seconds from 1/1/2000 00:00
+%     - t [mx1 double]: test time in seconds (0 to test duration)
 %     - U [mx1 double]: cell voltage in V
 %     - I [mx1 double]: cell current in A
 %     - m [mx1 double]: mode

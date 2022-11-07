@@ -36,9 +36,9 @@ subplot(212),plot(DoDAh,U),hold on,ylabel('voltage [V]'),xlabel('DoDAh [Ah]')
 index_charge = ocv_by_points.sign>0;
 index_discharge = ocv_by_points.sign<0;
 
-subplot(211),plot(ocv_by_points.time(index_charge),ocv_by_points.ocv(index_charge),'r^')
+subplot(211),plot(ocv_by_points.datetime(index_charge),ocv_by_points.ocv(index_charge),'r^')
 subplot(212),plot(ocv_by_points.dod(index_charge),ocv_by_points.ocv(index_charge),'r^')
-subplot(211),plot(ocv_by_points.time(index_discharge),ocv_by_points.ocv(index_discharge),'rv')
+subplot(211),plot(ocv_by_points.datetime(index_discharge),ocv_by_points.ocv(index_discharge),'rv')
 subplot(212),plot(ocv_by_points.dod(index_discharge),ocv_by_points.ocv(index_discharge),'rv')
 
 %Look for all axis handles and ignore legends

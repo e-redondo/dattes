@@ -2,7 +2,7 @@ function export_phases_csv(dattes_struct, options, dst_folder, file_out)
 % export_phases_csv export phases from DATTES struct to csv file
 %
 % This function creates a csv file with values of phases substructure
-% (t_ini, t_fin, duration, Uini, Ufin, etc.).
+% (datetime_ini, datetime_fin, duration, Uini, Ufin, etc.).
 %
 % Usage:
 % export_eis_csv(dattes_struct, options, dst_folder, file_out)

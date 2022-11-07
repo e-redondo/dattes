@@ -1,14 +1,14 @@
- function [impedance]=ident_rrc(t,U,I,dod_ah,config,phases,options)
+ function [impedance]=ident_rrc(datetime,U,I,dod_ah,config,phases,options)
 % ident_rrc impedance analysis of a R+two RC topology
 %
-% [impedance]=ident_rrc(t,U,I,dod_ah,config,phases,options)
+% [impedance]=ident_rrc(datetime,U,I,dod_ah,config,phases,options)
 % Read the config and phases structure and performe several calculations
 % regarding impedance analysis.  Results are returned in the structure impedance analysis 
 %
 % Usage:
-% [impedance]=ident_rrc(t,U,I,dod_ah,config,phases,options)
+% [impedance]=ident_rrc(datetime,U,I,dod_ah,config,phases,options)
 % Inputs:
-% - t [nx1 double]: time in seconds
+% - datetime [nx1 double]: datetime in seconds
 % - U [nx1 double]: cell voltage
 % - dod_ah [nx1 double]: depth of discharge in AmpHours
 % - config [1x1 struct]: config struct from configurator
@@ -27,7 +27,7 @@
 %     - C2 [kx1 double]: C2 capacity
 %     - crate [kx1 double]: C-Rate of each impedance measurement
 %     - dod [kx1 double]: Depth of discharge of each impedance measurement
-%     - time [kx1 double]: time of each impedance measurement
+%     - datetime [kx1 double]: datetime of each impedance measurement
 %
 %See also dattes, calcul_soc, configurator, extract_profiles
 %
@@ -51,7 +51,7 @@ if nargin<6 || nargin>8
     fprintf('ident_rrc : wrong number of parameters, found %d\n',nargin);
     return;
 end
-if ~isstruct(config) || ~ischar(options) || ~isnumeric(t) || ~isstruct(phases)   || ~isnumeric(U) || ~isnumeric(I) || ~isnumeric(dod_ah)
+if ~isstruct(config) || ~ischar(options) || ~isnumeric(datetime) || ~isstruct(phases)   || ~isnumeric(U) || ~isnumeric(I) || ~isnumeric(dod_ah)
     fprintf('ident_rrc: wrong type of parameters\n');
     return;
 end
@@ -70,7 +70,7 @@ r1=[];
 c1=[];
 r2=[];
 c2=[];
-rrc_time = [];
+rrc_datetime = [];
 rrc_dod = [];
 rrc_crate = [];
 
@@ -85,35 +85,35 @@ phases_identify_rc=phases(config.impedance.pZ);
 %% 3 - r0,C0,r1,c1 and r2,c2 are computed for each of these phases
 for phase_k = 1:length(indice_r)
         %Time, voltage,current and DoD are extracted for the phase_k
-    [time_phase,voltage_phase,current_phase,dod_phase] = extract_phase2(phases_identify_rc(phase_k),rest_before_after_phase,t,U,I,dod_ah);
+    [datetime_phase,voltage_phase,current_phase,dod_phase] = extract_phase2(phases_identify_rc(phase_k),rest_before_after_phase,datetime,U,I,dod_ah);
     for i=1:length(dod_phase)
         if dod_phase(i)<0
             dod_phase(i)=abs(dod_phase(i));
         end
     end
  
-    rrc_time(phase_k) = time_phase(1);
+    rrc_datetime(phase_k) = datetime_phase(1);
     rrc_dod(phase_k) = dod_phase(1);
     rrc_crate(phase_k) = phases_identify_rc(phase_k).Iavg/config.test.capacity;   
-    [R10,C10,R20,C20,tau2]=define_RCini(time_phase,config);
+    [R10,C10,R20,C20,tau2]=define_RCini(datetime_phase,config);
 
     % Step time is reduced to maximize the identification accuracy
     time_step = 0.1;
-    tmi = (time_phase(1):time_step:time_phase(end))';
-    voltage_phase = interp1(time_phase,voltage_phase,tmi);
-    current_phase = interp1(time_phase,current_phase,tmi);
-    time_phase = tmi;
+    tmi = (datetime_phase(1):time_step:datetime_phase(end))';
+    voltage_phase = interp1(datetime_phase,voltage_phase,tmi);
+    current_phase = interp1(datetime_phase,current_phase,tmi);
+    datetime_phase = tmi;
 
 %Relaxation voltage is extracted
 ocv = voltage_phase(1);
 voltage_phase  = voltage_phase-ocv;
 
 %% Rs and first RC are identified as a whole
-time_phase = time_phase-time_phase(1);
+datetime_phase = datetime_phase-datetime_phase(1);
 
-tm1 = time_phase(time_phase<rest_duration_before_pulse+tau2);
-Im1 = current_phase(time_phase<rest_duration_before_pulse+tau2);
-Umrc1 = voltage_phase(time_phase<rest_duration_before_pulse+tau2);
+tm1 = datetime_phase(datetime_phase<rest_duration_before_pulse+tau2);
+Im1 = current_phase(datetime_phase<rest_duration_before_pulse+tau2);
+Umrc1 = voltage_phase(datetime_phase<rest_duration_before_pulse+tau2);
 
 [Rsid,R1id, C1id] = calcul_rrc(tm1,Umrc1,Im1,'c',R10,R10,C10);
 
@@ -123,7 +123,7 @@ c1=[c1 C1id];
 
 
 
-Us_rsr1c1 = rrc_output(time_phase,current_phase,Rsid,R1id,C1id);
+Us_rsr1c1 = rrc_output(datetime_phase,current_phase,Rsid,R1id,C1id);
 
 %residual voltage used for R2C2 identification
 Umrc2 = voltage_phase-Us_rsr1c1;
@@ -131,13 +131,13 @@ Umrc2 = voltage_phase-Us_rsr1c1;
 
 
 %% R2C2 is identified thanks to the residual voltage
-  [R2id, C2id] = calcul_rc(time_phase,Umrc2,current_phase,'c',R20,C20);
+  [R2id, C2id] = calcul_rc(datetime_phase,Umrc2,current_phase,'c',R20,C20);
 r2=[r2 R2id];
 c2=[c2 C2id];
 
 
 
-Usr2c2 = rc_output(time_phase,current_phase,R2id,C2id);
+Usr2c2 = rc_output(datetime_phase,current_phase,R2id,C2id);
  
  Usimu = Us_rsr1c1+Usr2c2;
 
@@ -152,15 +152,15 @@ Usr2c2 = rc_output(time_phase,current_phase,R2id,C2id);
 
             figure
             subplot(311),          
-            plot(time_phase,voltage_phase,'.-',time_phase,Usimu,'r.-'),ylabel('Voltage (V)')
+            plot(datetime_phase,voltage_phase,'.-',datetime_phase,Usimu,'r.-'),ylabel('Voltage (V)')
             legend('measure','simulation')
               title(['Simulation versus measurement for phase ',num2str(phase_number)])
 
-            subplot(312),plot(time_phase,err_qua,'g.'),ylabel('Quadratic error (mV²)')
+            subplot(312),plot(datetime_phase,err_qua,'g.'),ylabel('Quadratic error (mV²)')
             legend(sprintf('Mean value quadratic error: %e',mean(err_qua)),'location','best')
         title(['Quadratic error evolution for phase ',num2str(phase_number)])
 
-            subplot(313),plot(time_phase,err_abs,'g.'),ylabel('Absolute error (mV)')
+            subplot(313),plot(datetime_phase,err_abs,'g.'),ylabel('Absolute error (mV)')
             legend(sprintf('Mean value absolute error: %e',mean(err_abs)),'location','best')
               title(['Absolute error evolution for phase ',num2str(phase_number)])
 
@@ -179,7 +179,7 @@ end
   impedance.c1=c1;
   impedance.r2=r2;
   impedance.c2=c2;
-  impedance.time = rrc_time;
+  impedance.datetime = rrc_datetime;
   impedance.dod = rrc_dod;
   impedance.crate = rrc_crate;
 

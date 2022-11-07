@@ -1,14 +1,14 @@
-function [ica] = ident_ica(t,U,dod_ah,config,phases,options)
+function [ica] = ident_ica(datetime,U,dod_ah,config,phases,options)
 % ident_ica incremental capacity analysis
 %
-% [ica] = ident_ica(t,U,dod_ah,config,phases,options)
+% [ica] = ident_ica(datetime,U,dod_ah,config,phases,options)
 % Read the config and phases structure and performe several calculations
 % regarding incremental capacity analysis.  Results are returned in the structure incremental capacity analysis 
 %
 % Usage:
-% [ica] = ident_ica(t,U,dod_ah,config,phases,options)
+% [ica] = ident_ica(datetime,U,dod_ah,config,phases,options)
 % Inputs:
-% - t [nx1 double]: time in seconds
+% - datetime [nx1 double]: datetime in seconds
 % - U [nx1 double]: cell voltage in V
 % - dod_ah [nx1 double]: depth of discharge in AmpHours
 % - config [1x1 struct]: config struct from configurator
@@ -24,7 +24,7 @@ function [ica] = ident_ica(t,U,dod_ah,config,phases,options)
 %   - q [px1 double]: capacity vector for dudq
 %   - u [px1 double]: voltage vector for dqdu
 %   - crate [1x1 double]: charge or discharge C-rate
-%   - time [1x1 double]: time of measurement
+%   - datetime [1x1 double]: datetime of measurement
 %
 % See also dattes, calcul_ica, configurator
 %
@@ -43,7 +43,7 @@ if nargin<5 || nargin>6
     return;
 end
 
-if ~isstruct(config) || ~isstruct(phases) || ~ischar(options) || ~isnumeric(t) ...
+if ~isstruct(config) || ~isstruct(phases) || ~ischar(options) || ~isnumeric(datetime) ...
         || ~isnumeric(U) ||  ~isnumeric(dod_ah)
     fprintf('ident_ica: wrong type of parameters\n');
     return;
@@ -69,11 +69,11 @@ wn = config.ica.filter_cut;%0.1
 f_type = config.ica.filter_type;%'G'
 
 for ind = 1:length(phases_ica)
-    [tp,Up,dod_ah_phase] = extract_phase(phases_ica(ind),t,U,dod_ah);
+    [tp,Up,dod_ah_phase] = extract_phase(phases_ica(ind),datetime,U,dod_ah);
     
     [ica(ind).dqdu, ica(ind).dudq, ica(ind).q, ica(ind).u] = calcul_ica(tp,dod_ah_phase,Up,N,wn,f_type);
     ica(ind).crate = phases_ica(ind).Iavg/config.test.capacity;
-    ica(ind).time = phases_ica(ind).t_fin;
+    ica(ind).datetime = phases_ica(ind).datetime_fin;
 end
 
 end

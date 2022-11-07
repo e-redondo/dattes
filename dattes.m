@@ -30,7 +30,7 @@ function [result] = dattes(xml_file,options,cfg_file)
 %   -'I': ICA/DVA
 %   -'A': synonym for 'CSRWPOI' (do all)
 %   -'G': visualize the resuls obtained before (stored in 'xml_file_result.mat')
-%     - 'Gx': visualize extracted profiles (t,U,I)
+%     - 'Gx': visualize extracted profiles (datetime,U,I)
 %     - 'Gp': visualize phase decomposition
 %     - 'Gc': visualize configuration
 %     - 'GS': visualize soc
@@ -50,10 +50,10 @@ function [result] = dattes(xml_file,options,cfg_file)
 %     - profiles [1x1 struct]:
 %         - created by <a href="matlab: help('extract_profiles')">extract_profiles</a>
 %         - modified by calcul_soc and calcul_soc_patch
-%         - contains (mx1) vectors with main cell variables (t,U,I,m,soc,dod_ah)
+%         - contains (mx1) vectors with main cell variables (datetime,U,I,m,soc,dod_ah)
 %     - eis [1x1 struct]:
 %         - created by <a href="matlab: help('extract_profiles')">extract_profiles</a>
-%         - contains (px1) cells with EIS measurements, each 'p' contains (nx1) vectors (t,U,I,m,ReZ,ImZ,f)
+%         - contains (px1) cells with EIS measurements, each 'p' contains (nx1) vectors (datetime,U,I,m,ReZ,ImZ,f)
 %     - test [1x1 struct]:
 %         - created by DATTES
 %         - modified by calcul_soc and calcul_soc_patch
@@ -89,7 +89,7 @@ function [result] = dattes(xml_file,options,cfg_file)
 %         - each ica contains (zx1) vectors for each ICA measurement
 %
 % Examples:
-% DATTES(xml_file,'s',cfg_file): Load the profiles (t,U,I,m) in .xml file and save them in a xml_file_result.mat.
+% DATTES(xml_file,'s',cfg_file): Load the profiles (datetime,U,I,m) in .xml file and save them in a xml_file_result.mat.
 % DATTES(xml_file,'gs',cfg_file): idem and plot profiles graphs
 % DATTES(xml_file,'gsv',cfg_file): idem and describe ongoing analysis (verbose)
 %
@@ -221,6 +221,7 @@ if ismember('x',options) || ~isfield(result,'profiles')
     end
 end
 
+datetime = result.profiles.datetime;
 t = result.profiles.t;
 U = result.profiles.U;
 I = result.profiles.I;
@@ -237,17 +238,17 @@ end
 %1.3.- update result
 result.test.file_in = xml_file;
 result.test.file_out = result_filename(result.test.file_in);
-result.test.t_ini = result.profiles.t(1);
-result.test.t_fin = result.profiles.t(end);
+result.test.datetime_ini = result.profiles.datetime(1);
+result.test.datetime_fin = result.profiles.datetime(end);
 
 %1.4. DECOMPOSE IN PHASES
-[phases] = split_phases(t,I,U,m,inher_options);
+[phases] = split_phases(datetime,I,U,m,inher_options);
 result.phases = phases;
 
 %% 2. CONFIGURE
 if ismember('c',options)
-    config = config_soc(t,I,U,m,config0,inher_options);
-    config = configurator(t,I,U,m,config,phases,inher_options);
+    config = config_soc(datetime,I,U,m,config0,inher_options);
+    config = configurator(datetime,I,U,m,config,phases,inher_options);
     
     result.configuration = config;
 else
@@ -263,7 +264,7 @@ end
 
 %% 5. soc
 if ismember('S',options)
-    [dod_ah, soc] = calcul_soc(t,I,config,inher_options);
+    [dod_ah, soc] = calcul_soc(datetime,I,config,inher_options);
     result.profiles.dod_ah = dod_ah;
     result.profiles.soc = soc;
 end
@@ -279,7 +280,7 @@ else
     result.test.dod_ah_fin = dod_ah(end);
     result.test.soc_fin = soc(end);
 end
-%% 6. Profile processing (t,U,I,m,dod_ah) >>> R, CPE, ICA, OCV, etc.
+%% 6. Profile processing (datetime,U,I,m,dod_ah) >>> R, CPE, ICA, OCV, etc.
 
 if any(ismember('PORZI',options))
     if isempty(dod_ah)
@@ -292,7 +293,7 @@ if any(ismember('PORZI',options))
         
         %6.1. pseudo ocv
         if ismember('P',options)
-            [pseudo_ocv] = ident_pseudo_ocv(t,U,dod_ah,config,phases,inher_options);
+            [pseudo_ocv] = ident_pseudo_ocv(datetime,U,dod_ah,config,phases,inher_options);
             %save the results
             result.pseudo_ocv = pseudo_ocv;
             
@@ -300,7 +301,7 @@ if any(ismember('PORZI',options))
         
         %6.2. ocv by points
         if ismember('O',options)
-            [ocv_by_points] = ident_ocv_by_points(t,U,dod_ah,m,config,phases,inher_options);
+            [ocv_by_points] = ident_ocv_by_points(datetime,U,dod_ah,m,config,phases,inher_options);
             %save the results
             result.ocv_by_points = ocv_by_points;
         end
@@ -308,7 +309,7 @@ if any(ismember('PORZI',options))
         %6.3. impedances
         %6.3.1. resistance
         if ismember('R',options)
-            [resistance] = ident_r(t,U,I,dod_ah,config,phases,inher_options);
+            [resistance] = ident_r(datetime,U,I,dod_ah,config,phases,inher_options);
             %save the results
             result.resistance = resistance;
         end
@@ -319,13 +320,13 @@ if any(ismember('PORZI',options))
                % function handle saved as string in octave and in json:
                ident_z = str2func(ident_z);
             end
-            [impedance] = ident_z(t,U,I,dod_ah,config,phases,inher_options);
+            [impedance] = ident_z(datetime,U,I,dod_ah,config,phases,inher_options);
             result.impedance= impedance;
         end
         
         %6.4. ICA/DVA
         if ismember('I',options)
-            ica = ident_ica(t,U,dod_ah,config,phases,inher_options);
+            ica = ident_ica(datetime,U,dod_ah,config,phases,inher_options);
             %sauvegarder les resultats
             result.ica = ica;
         end
