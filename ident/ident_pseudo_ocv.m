@@ -168,7 +168,7 @@ if ismember('g',options)
 end
 
 %convert to pseudo_ocv struct:
-for ind = length(ocv)
+for ind = 1:length(ocv)
     pseudo_ocv(ind).ocv = ocv{ind};
     pseudo_ocv(ind).dod = dod;
     pseudo_ocv(ind).polarization = polarization{ind};
