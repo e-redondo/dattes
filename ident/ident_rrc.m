@@ -115,7 +115,15 @@ tm1 = datetime_phase(datetime_phase<rest_duration_before_pulse+tau2);
 Im1 = current_phase(datetime_phase<rest_duration_before_pulse+tau2);
 Umrc1 = voltage_phase(datetime_phase<rest_duration_before_pulse+tau2);
 
-[Rsid,R1id, C1id] = calcul_rrc(tm1,Umrc1,Im1,'c',R10,R10,C10);
+
+    if ~config.impedance.fixed_params
+        [Rsid,R1id, C1id] = calcul_rrc(tm1,Umrc1,Im1,'',R10,R10,C10);
+    else
+        [Rsid,R1id, C1id] = calcul_rrc(tm1,Umrc1,Im1,'c',R10,R10,C10);
+    end
+    
+
+
 
 r0=[r0 Rsid];
 r1=[r1 R1id];
