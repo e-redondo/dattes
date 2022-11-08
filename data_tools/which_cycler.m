@@ -104,6 +104,11 @@ if ~isempty(regexp(line1,'Data Point,Date Time,Test Time','match'))
     frewind(fid);
     return
 end
+if ~isempty(regexp(line1,'^Cycle ID','match')) && ~isempty(regexp(line2,'^,\s*Step ID','match'))
+    cycler = 'neware_csv';
+    return
+end
+
 %unknown type: return first line
 cycler = line1;
 frewind(fid);
