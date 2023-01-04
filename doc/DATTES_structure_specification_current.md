@@ -9,10 +9,10 @@ This document describe data structure for current version of DATTES:
     - profiles [1x1 struct]:
         - created by extract_profiles
         - modified by calcul_soc and calcul_soc_patch
-        - contains (mx1) vectors with main cell variables (t,U,I,m,soc,dod_ah)
+        - contains (mx1) vectors with main cell variables (datetime,t,U,I,mode,soc,dod_ah)
     - eis [1x1 struct]:
         - created by extract_profiles
-        - contains (px1) cells with EIS measurements, each 'p' contains (nx1) vectors (t,U,I,m,ReZ,ImZ,f)
+        - contains (px1) cells with EIS measurements, each 'p' contains (nx1) vectors (datetime,U,I,mode,ReZ,ImZ,f)
     - metadata: [1×1 struct]:
         - created by metadata_collector (extract_profiles) if any '.meta' file found
     - test [1x1 struct]:
@@ -50,19 +50,20 @@ This document describe data structure for current version of DATTES:
         - each ica contains (zx1) vectors for each ICA measurement
 ### profiles substructure
 - profiles [1x1 struct] with fields:
-    - t [mx1 double]: absolute time in seconds (seconds from 1/1/2000 00:00)
+    - datetime [mx1 double]: absolute time in seconds (seconds from 1/1/2000 00:00)
+    - t [mx1 double]: test time in seconds (seconds from test start time)
     - U [mx1 double]: cell voltage (V)
     - I [mx1 double]: current (A)
-    - m [mx1 double]: cycler mode (n.u.), 1=CC, 2=CV, 3=rest, 4=EIS, 5=profile
+    - mode [mx1 double]: cycler mode (n.u.), 1=CC, 2=CV, 3=rest, 4=EIS, 5=profile
     - T [mx1 double]: cell temperature (empty if no probe found)
     - dod_ah [mx1 double]:  Depth of Discharge in Ah (empty if no SoC calculation)
     - soc [mx1 double]:  State of Charge in % (empty if no SoC calculation)
 ### eis substructure
 - eis [1x1 struct] with fields:
-    - t [px1 cell of [nx1 double]]: absolute time in seconds (seconds from 1/1/2000 00:00)
+    - datetime [px1 cell of [nx1 double]]: absolute time in seconds (seconds from 1/1/2000 00:00)
     - U [px1 cell of [nx1 double]]: cell voltage (V)
     - I [px1 cell of [nx1 double]]: current (A)
-    - m [px1 cell of [nx1 double]]: cycler mode (n.u.), 1=CC, 2=CV, 3=rest, 4=EIS, 5=profile
+    - mode [px1 cell of [nx1 double]]: cycler mode (n.u.), 1=CC, 2=CV, 3=rest, 4=EIS, 5=profile
     - ReZ [px1 cell of [nx1 double]]:  Real part of impedance (Ohm)
     - ImZ [px1 cell of [nx1 double]]:  Imaginary part of impedance (Ohm)
     - f [px1 cell of [nx1 double]]: frecuency (Hz)
@@ -107,17 +108,18 @@ This document describe data structure for current version of DATTES:
         - time_format [string]: e.g 'HH:MM:SS.SSS'
 ### test substructure
 - test [1x1 struct] with fields:
-    - file_in [1xf char]: pathname of XML input file
-    - t_ini [1x1 double]: test start time in seconds from 1/1/2000 00:00
-    - t_fin [1x1 double]: test end time in seconds from 1/1/2000 00:00
+    - file_in [1xf char]: pathname of XML/CSV/JSON input file
+    - file_out [1xf char]: pathname of output file (MAT file)
+    - datetime_ini [1x1 double]: test start time in seconds from 1/1/2000 00:00
+    - datetime_fin [1x1 double]: test end time in seconds from 1/1/2000 00:00
     - dod_ah_ini [1x1 double]: initial DoD in Ah
     - soc_ini [1x1 double]: initial SoC in %
     - dod_ah_fin [1x1 double]: final DoD in Ah
     - soc_fin [1x1 double]: final SoC in %
 ### phases substructure
 - phases [1xq struct] with fields:
-    - t_ini [1x1 double]:phase start time in seconds from 1/1/2000 00:00
-    - t_fin [1x1 double]:phase end time in seconds from 1/1/2000 00:00
+    - datetime_ini [1x1 double]:phase start time in seconds from 1/1/2000 00:00
+    - datetime_fin [1x1 double]:phase end time in seconds from 1/1/2000 00:00
     - duration [1x1 double]: phase duration
     - Uini [1x1 double]: initial cell voltage
     - Ufin [1x1 double]: final cell voltage
@@ -189,18 +191,18 @@ This document describe data structure for current version of DATTES:
 - capacity [1x1 struct] with fields:
     - cc_capacity [1xk double]: CC capacity measurement
     - cc_crate [1xk double]: C-Rate of CC capacity measurement
-    - cc_time [1xk double]: time of CC capacity measurement
+    - cc_datetime [1xk double]: time of CC capacity measurement
     - cc_duration [1xk double]:duration CC capacity measurement
     - cv_capacity [1xi double]: CV capacity measurement
     - cv_voltage [1xi double]: voltage of CV capacity measurement
-    - cv_time [1xi double]: time of CV capacity measurement
+    - cv_datetime [1xi double]: time of CV capacity measurement
     - cv_duration [1xi double]: duration of CV capacity measurement
-    - cc_cv_time [1xj double]: time of CCCV capacity measurement
-    - cc_cv_capacity [1xj double]: CCCV capacity measurement
-    - cc_cv_duration [1xj double]: duration of CV capacity measurement
-    - cc_cv_crate [1xj double]:C-Rate of CC part of CCCV capacity measurement
-    - ratio_ah [2xj double]: Ah of CC part (1st row) and Ah of CV part (2nd row) of CCCV capacity measurement
-    - ratio_duration [2xj double]: duration of CC part (1st row) and duration of CV part (2nd row) of CV capacity measurement
+    - cccv_datetime [1xj double]: time of CCCV capacity measurement
+    - cccv_capacity [1xj double]: CCCV capacity measurement
+    - cccv_duration [1xj double]: duration of CV capacity measurement
+    - cccv_crate [1xj double]:C-Rate of CC part of CCCV capacity measurement
+    - cccv_ratio_cc_ah [1xj double]: Ah of CC part related to total CCCV capacity measurement
+    - cccv_ratio_cc_duration [1xj double]: duration of CC partrelated to total CV capacity measurement duration
 ### pseudo_ocv substructure
 - pseudo_ocv [1xr struct]:
     - ocv [sx1 double]: OCV vector
@@ -216,13 +218,13 @@ This document describe data structure for current version of DATTES:
     - ocv [tx1 double]: OCV vector
     - dod [tx1 double]: DoD vector (Ah)
     - sign [tx1 double]: +1 if rest after partial charge, -1 if rest after partial discharge
-    - time [tx1 double]: time of measuremament (rest final time in seconds from 1/1/2000 00:00)
+    - datetime [tx1 double]: time of measuremament (rest final time in seconds from 1/1/2000 00:00)
 ### resistance substructure
 - resistance [1x1 struct]:
     - R [1xv double]: resistance (Ohm)
     - dod [1xv double]: DoD (Ah)
     - crate [1xv double]: pulse C-Rate (p.u.)
-    - time [1xv double]: time of measuremament (pulse initial time in seconds from 1/1/2000 00:00)
+    - datetime [1xv double]: time of measuremament (pulse initial time in seconds from 1/1/2000 00:00)
     - delta_time [1xv double]: delta time from initial pulse to calculate resistance
 ### impedance substructure
 #### ident_cpe (R+CPE)
@@ -233,7 +235,7 @@ This document describe data structure for current version of DATTES:
     - r0 [1xw double]: resistance (Ohm)
     - dod [1xw double]: DoD (Ah)
     - crate [1xw double]: pulse C-Rate (p.u.)
-    - time [1xw double]: time of measuremament (pulse initial time in seconds from 1/1/2000 00:00)
+    - datetime [1xw double]: time of measuremament (pulse initial time in seconds from 1/1/2000 00:00)
 #### iden_rrc (R+RC+RC)
 - impedance [1x1 struct]:
     - topology [1xg char]:  'R0 + R1C1 + R2C2'
@@ -244,7 +246,7 @@ This document describe data structure for current version of DATTES:
     - c2 [1xw double]: second loop capacitance (F)
     - dod [1xw double]: DoD (Ah)
     - crate [1xw double]: pulse C-Rate (p.u.)
-    - time [1xw double]: time of measuremament (pulse initial time in seconds from 1/1/2000 00:00)
+    - datetime [1xw double]: time of measuremament (pulse initial time in seconds from 1/1/2000 00:00)
 ### ica substructure
 - ica [1xy struct]:
     - dqdu [zx1 double]: derivative of capacity over voltage (Ah/V)
@@ -252,7 +254,7 @@ This document describe data structure for current version of DATTES:
     - q [zx1 double]: filtered cell capacity vector (Ah)
     - u [zx1 double]: filtered cell voltage (V)
     - crate [1x1 double]:half cycle C-Rate (p.u.)
-    - time [1x1 double]: time of measuremament (final half cycle time in seconds from 1/1/2000 00:00)
+    - datetime [1x1 double]: time of measuremament (final half cycle time in seconds from 1/1/2000 00:00)
 
 
 ## XML structure specification for DATTES
@@ -270,4 +272,6 @@ Additionnaly for EIS measurments, the following variables must exist:
 - ReZ: real part of impedance (Ohm)
 - ImZ: imaginary part of impedance (Ohm)
 - freq: frequency (Hz)
+- Iavg: average current in GEIS (A)
+- Iamp: current amplitude in GEIS (A)
 
