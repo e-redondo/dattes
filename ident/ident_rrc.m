@@ -115,7 +115,15 @@ tm1 = datetime_phase(datetime_phase<rest_duration_before_pulse+tau2);
 Im1 = current_phase(datetime_phase<rest_duration_before_pulse+tau2);
 Umrc1 = voltage_phase(datetime_phase<rest_duration_before_pulse+tau2);
 
-[Rsid,R1id, C1id] = calcul_rrc(tm1,Umrc1,Im1,'c',R10,R10,C10);
+
+    if ~config.impedance.fixed_params
+        [Rsid,R1id, C1id] = calcul_rrc(tm1,Umrc1,Im1,'',R10,R10,C10);
+    else
+        [Rsid,R1id, C1id] = calcul_rrc(tm1,Umrc1,Im1,'c',R10,R10,C10);
+    end
+    
+
+
 
 r0=[r0 Rsid];
 r1=[r1 R1id];
@@ -186,92 +194,6 @@ end
 end
 
 
-function [R, C, err] = identificationRC(time_phase,voltage_phase,current_phase,options,r0,C0,Rmin,Rmax,Cmin,Cmax)
-% function [R, C, err] = identificationRC(time_phase,voltage_phase,current_phase,options,r0,C0)
-%
-%identificationRC determine the R and C parameters thanks to t,U and I
-%arrays
-% time_phase [nx1 double]: time measurement array
-% voltage_phase [nx1 double]: voltage measurement array
-% current_phase [nx1 double]: current measurement array
-% options [string]: options d'execution:
-%       if options contains 'g': grafic mode, show results
-%       if options contains 'c': 'C fixed', C is fixed as C=C0
-% r0 [1x1 double]: R initial value
-% C0 [1x1 double]: C initial value
-%
-% See also  reponseRC
-
-if ~exist('options','var')
-    options='';
-end
-if ~exist('r0','var')
-    r0=1e-3;
-end
-if ~exist('C0','var')
-    C0=100;
-end
-
-if ~contains(strfind(options, 'c'))
-    %identification des deux parametres (R et C)
-    monCaller = @(x) errorRC(x(1),x(2),time_phase,voltage_phase,current_phase);
-    x0 = [r0; C0];
-else
-    %identification d'un parametre (C fixe)
-    C = C0;%C fixe
-    monCaller = @(x) errorRC(x,C,time_phase,voltage_phase,current_phase);
-    x0 = [r0];
-end
-%recherche du minimum
-% [x,fval,exitflag,output] = fminsearch(monCaller,x0);
-
-if ~isnan(monCaller(x0))
-    
-    A = [];
-    b = [];
-    Aeq = [];
-    beq = [];
-    
-    
-    lb=[Rmin Cmin];
-    ub=[Rmax Cmax];
-    optim_options = optimoptions('fmincon','Algorithm','interior-point','Display','off');
-    
-    [x,fval,exitflag,output] = fmincon(monCaller,x0,A,b,Aeq,beq,lb,ub,[],optim_options);
-    
-else
-    
-    R = nan;
-    C = nan;
-    err = nan;
-    return
-end
-
-
-
-if exitflag<1
-    R = nan;
-    C = nan;
-    err = nan;
-    return
-end
-
-R = x(1);
-
-if isempty(strfind(options, 'a'))%si deux parametres
-    C = x(2);
-end
-
-Us = reponseRC(time_phase,current_phase,R,C);
-Is = current_phase;
-ts = time_phase;
-err = mean(Quadraticerror(voltage_phase,Us));
-
-if ~isempty(strfind(options, 'g'))
-    showResult(time_phase,current_phase,voltage_phase,ts,Is,Us,err);
-end
-
-end
 
 
 function erreur = errorRC(R,C,time_phase,voltage_phase,current_phase)
