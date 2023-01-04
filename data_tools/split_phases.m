@@ -89,7 +89,7 @@ for ind = 1:length(tcell)
 
     phases(ind).datetime_ini = thist(1);
     phases(ind).datetime_fin = thist(end);
-    phases(ind).duration = phases(ind).datetime_fin - phases(ind).datetime_ini;
+    
     phases(ind).Uini = thisU(1);
     phases(ind).Ufin = thisU(end);
     phases(ind).Iini = thisI(1);
@@ -108,6 +108,15 @@ for ind = 1:length(tcell)
 
     phases(ind).mode = modes(ind);
 end
+
+for ind = 1:(length(phases)-1)
+    %duration = t_ini of following phase - t_ini of current phase
+    phases(ind).duration = phases(ind+1).datetime_ini - phases(ind).datetime_ini;
+end
+% last phase is different, no following phase
+% duration = t_fin - t_ini
+phases(end).duration = phases(end).datetime_fin-phases(end).datetime_ini;
+
 if ismember('v',options)
     fprintf('OK\n');
 end
