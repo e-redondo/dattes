@@ -5,7 +5,7 @@ struct1 = struct;
 struct1.t = ones(10,1);
 struct1.U = ones(10,1);
 struct1.I = ones(10,1);
-struct1.m = ones(10,1);
+struct1.mode = ones(10,1);
 
 % struct2 is like struct1 with soc and dod_ah
 % err = 0
@@ -28,8 +28,8 @@ struct5 = rmfield(struct4,'U');
 struct5 = rmfield(struct5,'I');
 
 % checkstruct:
-allowed_fields = {'t','U','I','m','soc','dod_ah'};
-mandatory_fields = {'t','U','I','m'};
+allowed_fields = {'t','U','I','mode','soc','dod_ah'};
+mandatory_fields = {'t','U','I','mode'};
 field_types = {'double','double','double','double','double','double'};
 
 %check struct1

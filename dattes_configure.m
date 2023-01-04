@@ -128,7 +128,7 @@ datetime = result.profiles.datetime;
 t = result.profiles.t;
 I = result.profiles.I;
 U = result.profiles.U;
-m = result.profiles.m;
+m = result.profiles.mode;
 phases = result.phases;
 [config] = configurator(datetime,I,U,m,config,phases,options);
 %2.2 check config struct

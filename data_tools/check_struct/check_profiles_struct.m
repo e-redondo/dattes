@@ -18,8 +18,8 @@ if ~isstruct(profiles)
     return;
 end
 % checkstruct:
-allowed_fields = {'datetime','t','U','I','m','soc','dod_ah','T'};
-mandatory_fields = {'datetime','t','U','I','m'};
+allowed_fields = {'datetime','t','U','I','mode','soc','dod_ah','T'};
+mandatory_fields = {'datetime','t','U','I','mode'};
 field_types = {'double','double','double','double','double','double','double','double'};
 
 [info, err] = check_struct(profiles, allowed_fields, field_types, mandatory_fields);

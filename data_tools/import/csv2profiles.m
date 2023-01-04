@@ -209,7 +209,7 @@ for ind = 1:length(ind_start)
     profiles(ind).t = t;
     profiles(ind).U = U;
     profiles(ind).I = I;
-    profiles(ind).m = m;
+    profiles(ind).mode = m;
 %     profiles(ind).T = T;
     profiles(ind).Ah = Ah;
     

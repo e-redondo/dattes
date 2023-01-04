@@ -206,7 +206,7 @@ profiles(1).datetime = datetime;
 profiles.t = datetime-datetime(1);
 profiles.U = U;
 profiles.I = I;
-profiles.m = m;
+profiles.mode = m;
 profiles.T = T;
 profiles.dod_ah = [];
 profiles.soc = [];
@@ -402,10 +402,10 @@ if ~isempty(t)
     
     
     
-    eis(1).t = tc;
+    eis(1).datetime = tc;
     eis.U = Uc;
     eis.I = Ic;
-    eis.m = mc;
+    eis.mode = mc;
     eis.ReZ = ReZc;
     eis.ImZ = ImZc;
     eis.f = fc;

@@ -225,7 +225,7 @@ datetime = result.profiles.datetime;
 t = result.profiles.t;
 U = result.profiles.U;
 I = result.profiles.I;
-m = result.profiles.m;
+m = result.profiles.mode;
 T = result.profiles.T;
 if isfield(result.profiles,'dod_ah')
     dod_ah = result.profiles.dod_ah;

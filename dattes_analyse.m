@@ -100,7 +100,7 @@ datetime = result.profiles.datetime;
 t = result.profiles.t;
 U = result.profiles.U;
 I = result.profiles.I;
-m = result.profiles.m;
+m = result.profiles.mode;
 dod_ah = result.profiles.dod_ah;
 soc = result.profiles.soc;
 %phases and config:

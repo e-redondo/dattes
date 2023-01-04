@@ -81,7 +81,7 @@ U = dattes_struct.profiles.U;
 I = dattes_struct.profiles.I;
 soc = dattes_struct.profiles.soc;
 dod_ah = dattes_struct.profiles.dod_ah;
-m = dattes_struct.profiles.m;
+m = dattes_struct.profiles.mode;
 
 [datetime2,t2,U2,I2,soc2,dod_ah2,m2] = ...
     extract_phase2(dattes_struct.phases([phase_start phase_end]),[0 0],datetime, t, U, I, soc, dod_ah, m);
@@ -93,7 +93,7 @@ dattes_struct.profiles.U = U2;
 dattes_struct.profiles.I = I2;
 dattes_struct.profiles.soc = soc2;
 dattes_struct.profiles.dod_ah = dod_ah2;
-dattes_struct.profiles.m = m2;
+dattes_struct.profiles.mode = m2;
 
 
 export_profiles_csv(dattes_struct, options, dst_folder, file_out);

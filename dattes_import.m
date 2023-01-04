@@ -192,20 +192,20 @@ end
 if ismember('m',options)
     m = which_mode(result.profiles.t,result.profiles.I,result.profiles.U,...
                    Step,I_threshold,U_threshold,inher_options);
-    result.profiles.m = m;
+    result.profiles.mode = m;
 end
 
 %4. split phases (if mode not in file_in or if 'm' in options)
 if ~isfield(result, 'phases') || ismember('m', options)
     result.phases = split_phases(result.profiles.datetime,result.profiles.I,...
-                                 result.profiles.U,result.profiles.m);
+                                 result.profiles.U,result.profiles.mode);
 end
 
 %5. calcul_soc (if soc not in file_in or if 'S' in options)
 if isempty(result.profiles.soc) || ismember('S',options)
     %5.1 config_soc (detect soc100)
     result.configuration = config_soc(result.profiles.datetime,result.profiles.I,...
-                                      result.profiles.U,result.profiles.m,...
+                                      result.profiles.U,result.profiles.mode,...
                                       result.configuration,inher_options);
     %5.2 calcul_soc
     [dod_ah, soc] = calcul_soc(result.profiles.datetime,result.profiles.I,...
