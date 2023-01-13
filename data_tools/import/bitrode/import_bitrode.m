@@ -268,7 +268,7 @@ variables = regexprep(variables,'TemperatureA' , 'T');
 
 
 %nettoyer '_unit' à la fin:
-variables = regexprep(variables,'_[a-zA-Z°]*$' , '');
+variables = regexprep(variables,'_.*$' , '');
 %si besoin, 'plus hard'
 % variables = regexprep(variables,'_.*$' , '');
 end

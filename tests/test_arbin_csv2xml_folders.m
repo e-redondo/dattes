@@ -19,7 +19,7 @@ for ind = 1:length(filter_strs_do_not_must_be)
 end
 
 %4. get folder names containing these csv files
-csv_folders = fileparts(csv_list);
+csv_folders = cellfun(@fileparts,csv_list,'uniformoutput',false);
 csv_folders = unique(csv_folders);
 
 %5. launch arbin_csv2xml_files on selected folders

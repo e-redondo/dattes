@@ -11,8 +11,8 @@ function [profiles, other_cols] = csv2profiles(file_in,col_names,params)
 %                               'Current (A)', 'Step Index','',
 %                               'Discharge Capacity (Ah)','Charge Capacity (Ah)'};
 % - params [(optional) 1x1 struct], with (optional fields:
-%    - I_thres [1x1 double]: Current (A) threshold for which_mode 
-%    - U_thres [1x1 double]: Voltage (V) threshold for which_mode 
+%    - I_thres [1x1 double]: Current (A) threshold for which_mode
+%    - U_thres [1x1 double]: Voltage (V) threshold for which_mode
 %    - date_fmt: 'dd/mm/yyyy HH:MM:SS.SSS', 'mm/dd/yyyy HH:MM:SS.SSS', 'yyyy/mm/dd HH:MM:SS.SSS'
 %    - col_sep: ','
 %
@@ -23,10 +23,10 @@ function [profiles, other_cols] = csv2profiles(file_in,col_names,params)
 % See also which_mode
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
-% For more information, see the <a href="matlab: 
+% For more information, see the <a href="matlab:
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
-%profiling: 
+%profiling:
 % 100 lines: 0.4 sec.
 % 1000 lines: 1.15 sec.
 % 10000 lines: 9 sec.
@@ -110,6 +110,15 @@ if any(cellfun(@length,data_lines)~=length(header_line))
     return;
 end
 
+
+%PUT in temporal order (sometimes csv files ar enot in order):
+ind_col_t = find_col_index(header_line,col_names{2});
+if any(ind_col_t)
+    t = cellfun(@(x) sscanf(x{ind_col_t},'%f'),data_lines(:));
+    [~,index_sorted] = sort(t);
+    data_lines = data_lines(index_sorted);
+end
+
 % convert to nxm cell:
 data_lines_all = vertcat(data_lines{:});
 
@@ -132,7 +141,7 @@ ind_col_ah = find_col_index(header_line,col_names{6});
 ind_col_ahdis = find_col_index(header_line,col_names{7});
 %'Ah_cha'
 ind_col_ahcha = find_col_index(header_line,col_names{8});
-    
+
 %buffering: process 'buf_size' lines each time'
 ind_start = 1:params.buf_size:size(data_lines,1);
 ind_end = [ind_start(2:end)-1 size(data_lines,1)];
@@ -142,7 +151,7 @@ for ind = 1:length(ind_start)
     %fill emptys with nans:
     ind_nan = cellfun(@isempty,data_lines);
     data_lines(ind_nan) = {'nan'};
-    
+
     %% structure data
     t = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_t));
     U = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_U));
@@ -152,7 +161,7 @@ for ind = 1:length(ind_start)
     Ah = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_ah));
     Ah_dis = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_ahdis));
     Ah_cha = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_ahcha));
-    
+
 %     %FIX: get datetime from some points (first 1000), then convert to seconds
 %     % and finally calculate datetime from first value + t
 %     % In fact, doing datenum and all point can crash MATLAB in big files
@@ -164,8 +173,8 @@ for ind = 1:length(ind_start)
 %     end
 %     datetime = m2edate(datetime);
 %     datetime = datetime(1)+t;
-    
-    
+
+
     if isempty(Ah)
         if max(abs(Ah_dis))>0
             Ah = Ah_cha-Ah_dis;
@@ -176,14 +185,14 @@ for ind = 1:length(ind_start)
 %     if isempty(T)
 %         T = nan(size(t));
 %     end
-    
+
     %set thresholds if they are set to zero:
     if params.I_thres==0
         %here, threshold is maximum between:
         % - min difference (resolution)
         % - max abs value divided by 2^12 (12bits)
         params.I_thres = max(2*min(diff(unique(I))),max(abs(I))/2^12);
-        
+
         if isempty(params.I_thres)
             % constant value in all I
             params.I_thres = 1;
@@ -196,8 +205,8 @@ for ind = 1:length(ind_start)
             params.U_thres = 1;
         end
     end
-    
-    
+
+
     if ~isempty(t)
         %m: 'mode'(CC,CV,rest,EIS,profile)
         m = which_mode(t,I,U,Step,params.I_thres,params.U_thres);
@@ -212,7 +221,7 @@ for ind = 1:length(ind_start)
     profiles(ind).mode = m;
 %     profiles(ind).T = T;
     profiles(ind).Ah = Ah;
-    
+
     %other_cols:
     ind_other_cols = find(~ismember(header_line,col_names));
     if ~isempty(ind_other_cols)
@@ -223,7 +232,7 @@ for ind = 1:length(ind_start)
                 data_this_col = data_lines(:,ind_other_cols(ind_col));
                 data_spaces = num2cell(char(' '*ones(size(data_this_col))));
                 %     data_this_col = reshape([data_this_col';data_spaces'],[],1);
-                
+
                 data_this_col = strcat(data_this_col,data_spaces);
                 this_col_string = [data_this_col{:}];
                 this_col =  sscanf(this_col_string,'%f ');
@@ -251,14 +260,14 @@ for ind = 1:length(ind_start)
             this_col_name = regexprep(this_col_name,'_Vs$','');% V/s
             this_col_name = regexprep(this_col_name,'_Cs$',''); %deg Celsius/s
             this_col_name = regexprep(this_col_name,'_C$',''); %deg Celsius
-            
+
             %DEBUG
             %     fprintf('%s\n',this_col_name);
             %     fprintf('%s\n',genvarname(this_col_name));
-            
+
             other_cols(ind).(this_col_name) = this_col;
             other_cols(ind).([this_col_name '_units']) = units{ind_other_cols(ind_col)};
-            
+
         end
     end
 end
@@ -327,9 +336,9 @@ end
 function units = find_units(header)
 
 %2.1.- unites de mesure
-units = regexp(header,'\(.+)','match','once');
+units = regexp(header,'\(.+\)','match','once');
 units = regexprep(units,'\(','');
-units = regexprep(units,')','');
+units = regexprep(units,'\)','');
 %other units
 I = ~cellfun(@isempty,strfind(header,'Voltage'));
 [units{I}] = deal('V');
