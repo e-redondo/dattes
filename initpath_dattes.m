@@ -40,11 +40,11 @@ if ismember('e',options)%enable = addpath
     addpath(fullfile(srcdir,'math_tools'));
     if isempty(which('butter'))
         fprintf('DATTES (initpath_dattes): Adding butter function from Octave signal package.\n')
-        addpath(fullfile(srcdir,'math_tools','octave','signal'));
+        addpath(fullfile(srcdir,'external_tools','octave','signal'));
     end
     if isempty(which('x2mdate'))
         fprintf('DATTES (initpath_dattes): Adding x2mdate / m2xdate functions from Octave financial package.\n')
-        addpath(fullfile(srcdir,'math_tools','octave','financial'));
+        addpath(fullfile(srcdir,'external_tools','octave','financial'));
     end
     addpath(fullfile(srcdir,'plots'));
     addpath(fullfile(srcdir,'results'));
@@ -55,8 +55,8 @@ if ismember('e',options)%enable = addpath
         fprintf('Adding vehlib_minimal dependencies...\n');
         
         fprintf('If you are interested in energy management for electrified vehicles,\n')
-        fprintf('please consider getting VEHLIB at https:/framagit.org/eco7/vehlib\n')
-        addpath(fullfile(srcdir,'vehlib_minimal'));
+        fprintf('please consider getting VEHLIB at https://gitlab.univ-eiffel.fr/eco7/vehlib\n')
+        addpath(fullfile(srcdir,'external_tools','vehlib_minimal'));
     end
 end
 if ismember('d',options)%disable = rmpath
@@ -80,15 +80,15 @@ if ismember('d',options)%disable = rmpath
     
     %remove octave only if it was added before:
     P = path;
-    if ~isempty(strfind(P,fullfile(srcdir,'math_tools','octave','signal')))
-        rmpath(fullfile(srcdir,'math_tools','octave','signal'));
+    if ~isempty(strfind(P,fullfile(srcdir,'external_tools','octave','signal')))
+        rmpath(fullfile(srcdir,'external_tools','octave','signal'));
     end
-    if ~isempty(strfind(P,fullfile(srcdir,'math_tools','octave','financial')))
-        rmpath(fullfile(srcdir,'math_tools','octave','financial'));
+    if ~isempty(strfind(P,fullfile(srcdir,'external_tools','octave','financial')))
+        rmpath(fullfile(srcdir,'external_tools','octave','financial'));
     end
     %remove vehlib_minimal only if it was added before:
-    if ~isempty(strfind(P,fullfile(srcdir,'vehlib_minimal')))
-        rmpath(fullfile(srcdir,'vehlib_minimal'));
+    if ~isempty(strfind(P,fullfile(srcdir,'external_tools','vehlib_minimal')))
+        rmpath(fullfile(srcdir,'external_tools','vehlib_minimal'));
     end
     
 end
