@@ -1,63 +1,82 @@
-function [xml_list] = arbin_xls2xml(dirname,options)
-% arbin_xls2xml convert all arbin *.xls(x) files in dirname to VEHLIB's xml format
+function [xml_list] = arbin_xls2xml(srcdir,options)
+% arbin_xls2xml  mass import of *.xls(x) files (Arbin) to *.xml
+%
+% This function search on each subfolder for xls files, convert them to csv
+% and convert them to xml file.
 %
 % Usage:
-% [xml_list] = arbin_xls2xml(dirname,options)
+% [xml_list] = arbin_xls2xml(srcdir,options)
 % Inputs:
-% - dirname [string]: source directory path to search xls files in
-%           [nx1 cell string]: file list instead srcdir
+% - srcdir [string]: source directory path to search .csv files in.
 % - options :
 %    - 'f' : 'force', write *.xml if it already exists
+%    - 'v' : 'verbose', tells what it does
 % Output:
-% - xml_list [1x,cell] : xml files list
+% - xml_list [nx1 cell] : xml files list
 %
 % Examples
-% arbin_xls2xml(dirname) search all *.res in srcdir and write a *.xml for every *.res
-% arbin_xls2xml(dirname,'f') force: write *.xml even if it already exists
-% arbin_xls2xml(fileList) with fileList a cell string containing a list of *.res files
+% arbin_xls2xml(srcdir) search all folders containing *.xls(x) in srcdir and write
+% a *.xml for each *.xls(x) file
+% arbin_xls2xml(srcdir,'v') , verbose: tells what it does
+% arbin_xls2xml(srcdir,'f') , force: write *.xml even if it already exists
 %
-% See also import_arbin_xls, arbin_res2xml
+% See also import_arbin_csv, arbin_csv2xml_folders
 %
-% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% Copyright 2023 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab: 
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
-if ~exist('options','var')
-    options='';
-end
 if nargin==0
-    print_usage;
+    error('arbin_xls2xml: at least one input must be given')
 end
 
-if iscell(dirname)
-    %if dirname is a cell string, it is a filelist
-    XLS = dirname;
-else
-    %search for both *.xls and *.xlsx files
-    XLS = lsFiles(dirname,'.xls');
-    XLSX = lsFiles(dirname,'.xlsx');
-    XLS = [XLS(:); XLSX(:)];
-    
+if ~isdir(srcdir)
+    error('arbin_xls2xml: srcdir must be a folder path')
 end
+
+if ~exist('options','var')
+    options = '';
+end
+
+if ~ischar(options)
+    error('arbin_xls2xml: options must be a string')
+end
+
+%options d'execution
+force = ismember('f',options);
+verbose = ismember('v',options);
+
+%filelist
+XLS = lsFiles(srcdir,'.xls');
+XLSX = lsFiles(srcdir,'.xlsx');
+XLS = [XLS(:); XLSX(:)];
+
 XML = regexprep(XLS,'xls$','xml');
 XML = regexprep(XML,'xlsx$','xml');
 
-if ~ismember('f',options)
+if ~force %cf. options
     %ne pas refaire ceux qui sont deja faits
     I = ~cellfun(@(x) exist(x,'file'),XML);
     XLS = XLS(I);
     XML = XML(I);
 end
 
-
 %TODO: multicore
 xml_list = cell(0);
+
+%for each xls file:
 for ind = 1:length(XLS)
-    xml = import_arbin_xls(XLS{ind});
-    if ~isempty(xml)
-        ecritureXMLFile4Vehlib(xml,XML{ind});
-        xml_list{end+1} = XML{ind};
+    if ind==5
+        fprintf('here\n');
     end
-    fprintf('%d of %d OK\n',ind,length(XLS));
+    %convert to csv
+    csv_folder = xls2csv(XLS{ind});
+
+    [xml_list] = arbin_csv2xml_folders(csv_folder,options);
+    
+    %delete csv folder
+    delete(fullfile(csv_folder,'*.csv'));
+    rmdir(csv_folder)
+
 end
 end

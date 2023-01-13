@@ -1,0 +1,9 @@
+*.desktop
+*.log
+*.db
+*.sqlite
+app/tests/*
+*__pycache__*
+*.xls
+*.xlsx
+*.ods

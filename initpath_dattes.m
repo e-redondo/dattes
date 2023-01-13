@@ -35,6 +35,7 @@ if ismember('e',options)%enable = addpath
     addpath(fullfile(srcdir,'data_tools','import','neware'));
     addpath(fullfile(srcdir,'data_tools','export'));
     addpath(fullfile(srcdir,'data_tools','metadata'));
+    addpath(fullfile(srcdir,'external_tools'));
     addpath(fullfile(srcdir,'ident'));
     addpath(fullfile(srcdir,'math_tools'));
     if isempty(which('butter'))
@@ -71,6 +72,7 @@ if ismember('d',options)%disable = rmpath
     rmpath(fullfile(srcdir,'data_tools','import','neware'));
     rmpath(fullfile(srcdir,'data_tools','export'));
     rmpath(fullfile(srcdir,'data_tools','metadata'));
+    rmpath(fullfile(srcdir,'external_tools'));
     rmpath(fullfile(srcdir,'ident'));
     rmpath(fullfile(srcdir,'math_tools'));
     rmpath(fullfile(srcdir,'plots'));

@@ -1,0 +1,4 @@
+odfpy
+openpyxl
+pandas
+xlrd
