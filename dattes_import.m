@@ -184,7 +184,7 @@ else
     end
     result.configuration = configuration;
     
-    if ~isfield(result.profiles, 'm')
+    if ~isfield(result.profiles, 'mode')
         options = [options, 'm'];
     end
 end

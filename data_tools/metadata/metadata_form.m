@@ -260,7 +260,7 @@ if strcmpi(answer,'Y') || isempty(answer)
        outfile = uigetdir();
        if ischar(outfile)
            outfile = [outfile '.meta'];
-           metadata_json_export(outfile, metadata);
+           write_json_struct(outfile, metadata);
        end
    end
    if strcmpi(answer,'F')
