@@ -300,14 +300,14 @@ other_cols = other_cols_all;
 if isempty(params.date_fmt)
     date_time = cellfun(@(x) datenum(datetime(x)),data_lines_all(ind_start,ind_col_dt));
 else
-    date_time = cellfun(@(x) datenum(datetime(x),params.date_fmt),data_lines_all(ind_start,ind_col_dt));
+    date_time = cellfun(@(x) datenum(datetime(x,'InputFormat',params.date_fmt)),data_lines_all(ind_start,ind_col_dt));
 end
 if isempty(date_time)
     %no column datetime found
     profiles.datetime = date_time;
 else
     date_time = m2edate(date_time);
-    profiles.datetime = date_time(1) + profiles.t;
+    profiles.datetime = date_time(1)+profiles.t-profiles.t(1);
 end
 
 % TODO mode: on all data, not in buffer, last buffer can give identification
