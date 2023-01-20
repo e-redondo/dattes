@@ -82,19 +82,24 @@ if ismember('v',options)
     fprintf('split_phases: phases...');
 end
 
+
+datetime_inis = cellfun(@(x) x(1),tcell);
+datetime_fins = cellfun(@(x) x(end),tcell);
+durations = [datetime_inis(2:end) - datetime_inis(1:end-1); datetime_fins(end)-datetime_inis(end)];
+
 for ind = 1:length(tcell)
     thist = tcell{ind};
     thisI = Icell{ind};
     thisU = Ucell{ind};
 
-    phases(ind).datetime_ini = thist(1);
-    phases(ind).datetime_fin = thist(end);
-    
+    phases(ind).datetime_ini = datetime_inis(ind);
+    phases(ind).datetime_fin = datetime_fins(ind);
+    phases(ind).duration = durations(ind);
     phases(ind).Uini = thisU(1);
     phases(ind).Ufin = thisU(end);
     phases(ind).Iini = thisI(1);
     phases(ind).Ifin = thisI(end);
-    if phases(ind).duration==0
+    if length(thist)==1
         %TODO better error detectio, if length thist==1, try to merge into
         %preceding or posponing phase
         phases(ind).Uavg = thisU(1);
