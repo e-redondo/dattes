@@ -42,7 +42,7 @@ end
 if length(datetime)<2 
    error('t must have at least to elements');
 end
-if length(datetime)~=length(U) ||  length(datetime)~=length(U) || length(datetime)~=length(U)
+if length(datetime)~=length(U) ||  length(datetime)~=length(I) || length(datetime)~=length(m)
    error('t,U,I,m must have same length');
 end
 % config: 1x1 struct with fields:

@@ -1,16 +1,16 @@
-function [tp,varargout] = extract_phase(phase,t,varargin)
+function [date_time_p,varargout] = extract_phase(phase,date_time,varargin)
 % extract_phase extract vectors for given phase
 %
 % Usage:
-% [tp,varargout] = extract_phase(phase,t,varargin)
+% [date_time_p,varargout] = extract_phase(phase,date_time,varargin)
 %
 % Inputs:
 % - phase (1x1 struct): phase struct from split_phases
-% - t (nx1 double): time vector from extract_profiles
+% - date_time (nx1 double): datetime vector from extract_profiles
 % - varargin (nx1 doubles): other vectors (U, I, m, ...)
 %
 % Outputs:
-% - tp (px1 double): subvector corresponding to time at the specific phase
+% - date_time_p (px1 double): subvector corresponding to datetime at the specific phase
 % - varargout (px1 doubles): other subvectors (Up, Ip, mp, ...)
 %
 % See also extract_phase2, split_phases, extract_profiles 
@@ -21,7 +21,7 @@ function [tp,varargout] = extract_phase(phase,t,varargin)
 
 %% 0.- check inputs:
 %0.1.- initialisation des sorties
-tp = [];
+date_time_p = [];
 varargout = cell(1,nargout);
 %0.2.- entrees: nargin min 2, nargin doit etre egal a nargout+1
 if nargin<2
@@ -43,20 +43,20 @@ if ~isfield(phase,'datetime_ini') || ~isfield(phase,'datetime_fin')
     return;
 end
 %0.5.- t doit etre vecteur double
-if ~isa(t,'double')
+if ~isa(date_time,'double')
     fprintf('extract_phase: ERREUR, le vecteur temps doit etre un double\n');
     return;
 end
 %0.6.-varargin doivent etre des vecteurs de la meme taille que 't'
 for ind = 1:length(varargin)
-    if ~isequal(size(varargin{ind}),size(t))
+    if ~isequal(size(varargin{ind}),size(date_time))
         fprintf('extract_phase: ERREUR, dans les entrees tous les vecteurs n''ont pas a meme taille\n');
         return;
     end
 end
 
-indices = t>=phase.datetime_ini & t<=phase.datetime_fin;
-tp = t(indices);
+indices = date_time>=phase.datetime_ini & date_time<=phase.datetime_fin;
+date_time_p = date_time(indices);
 varargout = cellfun(@(x) x(indices),varargin,'uniformoutput',false);
 
 end

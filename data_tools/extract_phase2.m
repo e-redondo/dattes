@@ -1,19 +1,19 @@
-function [tp,varargout] = extract_phase2(phases,t_be_af,t,varargin)
+function [date_time_p,varargout] = extract_phase2(phases,t_be_af,date_time,varargin)
 % extract_phase2 extract vectors for given phases with additional
 % parameters
 %
 % Usage:
-% [tp,Up,Ip,mp...] = extract_phase2(phases,t_be_af,t,U,I,m...)
+% [date_time_p,Up,Ip,mp...] = extract_phase2(phases,t_be_af,date_time,U,I,m...)
 %
 % Inputs:
 % - phases (mx1 struct): phase struct array from split_phases
 % - t_be_af (1x2 double): time before and after
 %     - t_be_af(1): seconds before phases(1).datetime_ini to add to outputs
 %     - t_be_af(2): seconds after phases(end).datetime_ini to add to outputs
-% - t, U, I, m ... (nx1 double): vectors from extract_profiles
+% - date_time, U, I, m ... (nx1 double): vectors from extract_profiles
 %
 % Outputs:
-% - tp, Up, Ip, mp ... (px1 double): subvectors corresponding to phase
+% - date_time_p, Up, Ip, mp ... (px1 double): subvectors corresponding to phase
 %
 % Example: [tp,Up,Ip] = extract_phase2(phases(3:5),[30 45],t,U,I)
 % takes 30 seconds before beginning of phase(3) and 45 seconds after the
@@ -27,7 +27,7 @@ function [tp,varargout] = extract_phase2(phases,t_be_af,t,varargin)
 
 %0.- gestion d'erreurs:
 %0.1.- initialisation des sorties
-tp = [];
+date_time_p = [];
 varargout = cell(1,nargout);
 %0.2.- entrees: nargin min 2, nargin doit etre egal a nargout+1
 if nargin<3
@@ -54,20 +54,20 @@ if ~isfield(phases,'datetime_ini') || ~isfield(phases,'datetime_fin')
     return;
 end
 %0.6.- t doit etre vecteur double
-if ~isa(t,'double')
+if ~isa(date_time,'double')
     fprintf('extract_phase2: ERREUR, le vecteur temps doit etre un double\n');
     return;
 end
 %0.7.-varargin doivent etre des vecteurs de la meme taille que 't'
 for ind = 1:length(varargin)
-    if ~isequal(size(varargin{ind}),size(t))
+    if ~isequal(size(varargin{ind}),size(date_time))
         fprintf('extract_phase2: ERREUR, dans les entrees tous les vecteurs n''ont pas a meme taille\n');
         return;
     end
 end
 
-indices = t>=phases(1).datetime_ini-t_be_af(1) & t<=phases(end).datetime_fin+t_be_af(2);
-tp = t(indices);
+indices = date_time>=phases(1).datetime_ini-t_be_af(1) & date_time<=phases(end).datetime_fin+t_be_af(2);
+date_time_p = date_time(indices);
 varargout = cellfun(@(x) x(indices),varargin,'uniformoutput',false);
 
 end
