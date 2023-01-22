@@ -7,7 +7,8 @@ function [xml_list] = arbin_xls2xml(srcdir,options)
 % Usage:
 % [xml_list] = arbin_xls2xml(srcdir,options)
 % Inputs:
-% - srcdir [string]: source directory path to search .csv files in.
+% - srcdir [string]: source directory path to search .xls files in.
+% - srcdir [cell]: list of .xls(x) files
 % - options :
 %    - 'f' : 'force', write *.xml if it already exists
 %    - 'v' : 'verbose', tells what it does
@@ -30,8 +31,8 @@ if nargin==0
     error('arbin_xls2xml: at least one input must be given')
 end
 
-if ~isdir(srcdir)
-    error('arbin_xls2xml: srcdir must be a folder path')
+if ~isdir(srcdir) && ~iscell(srcdir)
+    error('arbin_xls2xml: srcdir must be a folder path (char) or a file list (cell)')
 end
 
 if ~exist('options','var')
@@ -47,16 +48,24 @@ force = ismember('f',options);
 verbose = ismember('v',options);
 
 %filelist
-XLS = lsFiles(srcdir,'.xls');
-XLSX = lsFiles(srcdir,'.xlsx');
-XLS = [XLS(:); XLSX(:)];
+if iscell(srcdir)
+    %filelist given in input, keep just xls(x) extensions:
+    XLS = regexpFiltre(srcdir,'\.xlsx*$');
+else
+    %srcdir given in input, search for xls(x) files:
+    XLS = lsFiles(srcdir,'.xls');
+    XLSX = lsFiles(srcdir,'.xlsx');
+    XLS = [XLS(:); XLSX(:)];
+end
 
 XML = regexprep(XLS,'xls$','xml');
 XML = regexprep(XML,'xlsx$','xml');
+xml_already_existing = cell(0);
 
 if ~force %cf. options
-    %ne pas refaire ceux qui sont deja faits
+    %do not convert xls(x) files when corresponding xml already existing
     I = ~cellfun(@(x) exist(x,'file'),XML);
+    xml_already_existing = XML(~I);
     XLS = XLS(I);
     XML = XML(I);
 end
@@ -66,9 +75,6 @@ xml_list = cell(0);
 
 %for each xls file:
 for ind = 1:length(XLS)
-    if ind==5
-        fprintf('here\n');
-    end
     %convert to csv
     csv_folder = xls2csv(XLS{ind});
 
@@ -79,4 +85,5 @@ for ind = 1:length(XLS)
     rmdir(csv_folder)
 
 end
+xml_list = [xml_list(:); xml_already_existing(:)];
 end

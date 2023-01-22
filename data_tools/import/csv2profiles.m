@@ -186,39 +186,12 @@ for ind = 1:length(ind_start)
 %         T = nan(size(t));
 %     end
 
-    %set thresholds if they are set to zero:
-    if params.I_thres==0
-        %here, threshold is maximum between:
-        % - min difference (resolution)
-        % - max abs value divided by 2^12 (12bits)
-        params.I_thres = max(2*min(diff(unique(I))),max(abs(I))/2^12);
-
-        if isempty(params.I_thres)
-            % constant value in all I
-            params.I_thres = 1;
-        end
-    end
-    if params.U_thres==0
-        params.U_thres = max(2*min(diff(unique(U))),max(abs(U))/2^12);
-        if isempty(params.U_thres)
-            % constant value in all U
-            params.U_thres = 1;
-        end
-    end
-
-
-    if ~isempty(t)
-        %m: 'mode'(CC,CV,rest,EIS,profile)
-        m = which_mode(t,I,U,Step,params.I_thres,params.U_thres);
-    else
-        m=[];
-    end
     %pack data:
 %     profiles(ind).datetime = m2edate(datetime);
     profiles(ind).t = t;
     profiles(ind).U = U;
     profiles(ind).I = I;
-    profiles(ind).mode = m;
+%     profiles(ind).mode = m;
 %     profiles(ind).T = T;
     profiles(ind).Ah = Ah;
 
@@ -226,6 +199,8 @@ for ind = 1:length(ind_start)
     ind_other_cols = find(~ismember(header_line,col_names));
     if ~isempty(ind_other_cols)
         other_cols(ind).t = t;
+        other_cols(ind).Step = Step;
+        other_cols(ind).Step_units = '';
         for ind_col = 1:length(ind_other_cols)
             try % try to conver to number
                 % TODO: replace empty strings by nans and try to convert to number
@@ -293,6 +268,40 @@ end
 
 profiles = profiles_all;
 other_cols = other_cols_all;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%calculate mode
+ %set thresholds if they are set to zero:
+    if params.I_thres==0
+        %here, threshold is maximum between:
+        % - min difference (resolution)
+        % - max abs value divided by 2^12 (12bits)
+        params.I_thres = max(4*min(diff(unique(profiles.I))),max(abs(profiles.I))/2^12);
+
+        if isempty(params.I_thres)
+            % constant value in all I
+            params.I_thres = 1;
+        end
+    end
+    if params.U_thres==0
+        params.U_thres = max(4*min(diff(unique(profiles.U))),max(abs(profiles.U))/2^12);
+        if isempty(params.U_thres)
+            % constant value in all U
+            params.U_thres = 1;
+        end
+    end
+
+
+    if ~isempty(t)
+        %m: 'mode'(CC,CV,rest,EIS,profile)
+        m = which_mode(profiles.t,profiles.I,profiles.U,other_cols.Step,params.I_thres,params.U_thres);
+    else
+        m=[];
+    end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+profiles.mode = m;
+
+
 
 %datetime
 %FIX: get datetime just at each ind_start, then convert to seconds

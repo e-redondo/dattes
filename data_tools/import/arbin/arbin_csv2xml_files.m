@@ -40,7 +40,8 @@ else
     CSV = lsFiles(dirname,'.CSV');
     
 end
-XML = regexprep(CSV,'CSV','xml');
+XML = regexprep(CSV,'.CSV$','.xml');
+XML = regexprep(XML,'.csv$','.xml');
 
 if ~ismember('f',options)
     %ne pas refaire ceux qui sont deja faits
