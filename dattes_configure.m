@@ -79,7 +79,7 @@ end
 %% 1 load cfg_script
 %1.1 load config0
 if isempty(custom_cfg_script)
-    config0 = struct;
+    config0 = cfg_default;
 elseif ischar(custom_cfg_script)
     if  ~isempty(which(custom_cfg_script))
         config0 = eval(custom_cfg_script);

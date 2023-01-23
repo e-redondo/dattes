@@ -53,7 +53,7 @@ plot(tc(I0),U(I0),'rd','displayname','t0')
 % plot(t(Iinicv),U(Iinicv),'r+','tag','debutCV')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %figure2: Capacity
-% Phases of capcity analysis
+% Phases of capacity analysis
 tD = [];UD = [];tC = [];UC = [];tDV= [];UDV = [];tCV = [];UCV = [];
 for ind = 1:length(phases)
     Ip = t>=phases(ind).datetime_ini & t<=phases(ind).datetime_fin;

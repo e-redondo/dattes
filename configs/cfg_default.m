@@ -20,27 +20,34 @@ function config = cfg_default(config)
 %
 % See also configurator
 
-%check inputs (minimal info from config):
-if ~isfield(config,'test')
-    err_msg = sprintf(['cfg_default: missing minimal info in config\n'...
-               'missing config.test.max_voltage, '...
-               'config.test.min_voltage, config.test.capacity']);
-elseif ~isfield(config.test,'max_voltage')
-    err_msg = sprintf(['cfg_default: missing minimal info in config\n'...
-               'missing config.test.max_voltage']);
-elseif ~isfield(config.test,'min_voltage')
-    err_msg = sprintf(['cfg_default: missing minimal info in config\n'...
-               'missing config.test.min_voltage']);   
-elseif ~isfield(config.test,'capacity')
-    err_msg = sprintf(['cfg_default: missing minimal info in config\n'...
-               'missing config.test.capacity']); 
-else
-    err_msg = '';
+if  ~exist('config','var')
+    config = struct;
 end
 
-if ~isempty(err_msg)
-    error(err_msg);
+if ~isstruct(config)
+    error('cfg_default: input parameter must be a struct');
 end
+%check inputs (minimal info from config):
+% if ~isfield(config,'test')
+%     err_msg = sprintf(['cfg_default: missing minimal info in config\n'...
+%                'missing config.test.max_voltage, '...
+%                'config.test.min_voltage, config.test.capacity']);
+% elseif ~isfield(config.test,'max_voltage')
+%     err_msg = sprintf(['cfg_default: missing minimal info in config\n'...
+%                'missing config.test.max_voltage']);
+% elseif ~isfield(config.test,'min_voltage')
+%     err_msg = sprintf(['cfg_default: missing minimal info in config\n'...
+%                'missing config.test.min_voltage']);   
+% elseif ~isfield(config.test,'capacity')
+%     err_msg = sprintf(['cfg_default: missing minimal info in config\n'...
+%                'missing config.test.capacity']); 
+% else
+%     err_msg = '';
+% end
+% 
+% if ~isempty(err_msg)
+%     error(err_msg);
+% end
  
 % soc ('S' action):
 config.soc.crate_cv_end = 1/20;
@@ -76,25 +83,37 @@ config.ocv_points.max_delta_dod_ah = 0.3;% (dodmaxOCVr) maximal dod variation to
 config.ocv_points.min_delta_dod_ah = 0.01;% (dodminOCVr) minimal dod variation to be taken into account for OCV measurement (p.u., 0.5 = 50% soc)
 
 %ICA
-config.ica.capacity_resolution = config.test.capacity/100;% (dQ) for ICA test
-config.ica.voltage_resolution = (config.test.max_voltage-config.test.min_voltage)/100;% (dU) for ICA test
-config.ica.max_crate = 0.25;% (regimeICAmax) maximal current rate for ICA
-config.ica.filter_type = 'G';%filter type (N: no filter,G: gaussian filter,M: mean filter,B: butter filter)
-config.ica.filter_order = 30;%for gaussian (see essaiICA2); change ident_ICA
-config.ica.filter_cut = 5;%for gaussian (see essaiICA2); change ident_ICA
+if isfield(config,'test')
+    if isfield(config.test,'capacity')
+        % (dQ) for ICA test
+        config.ica.capacity_resolution = config.test.capacity/100;
+    end
+    if isfield(config.test,'max_voltage') && isfield(config.test,'min_voltage')
+        % (dU) for ICA test
+        config.ica.voltage_resolution = (config.test.max_voltage-config.test.min_voltage)/100;
+    end
+end
+config.ica.max_crate = 0.2;% (regimeICAmax) maximal current rate for ICA
+config.ica.filter_type = 'A';%filter type (N: no filter,G: gaussian filter,A: mean filter,B: butter filter)
+config.ica.filter_order = 100;%for gaussian (see essaiICA2); change ident_ICA
+config.ica.filter_cut = 1;%for gaussian (see essaiICA2); change ident_ICA
 
-% config.dQ = config.test.capacity/100;%dQ pour essaiICA
-% config.dU = (config.test.max_voltage-config.test.min_voltage)/100;%dU pour essaiICA
-% config.regimeICAmax = 0.25;%regime max pour ICA
-% config.n_filter=3;%filter order
-% config.wn_filter=0.1;%filter cut frequency
-% config.filter_type='G';%filter type ('G' = gaussian)
+% These parameters work well sometimes:
+% config.ica.filter_type = 'G';%filter type (N: no filter,G: gaussian filter,A: mean filter,B: butter filter)
+% config.ica.filter_order = 30;%for gaussian (see essaiICA2); change ident_ICA
+% config.ica.filter_cut = 10;%for gaussian (see essaiICA2); change ident_ICA
+
+
 
 %pseudoOCV
 config.pseudo_ocv.max_crate = 1;% (regimeOCVmax) maximal current rate for pseudoOCV (C/5)
 config.pseudo_ocv.min_crate = 0;% (regimeOCVmin) minimal current rate forpseudoOCV (C/5)
-config.pseudo_ocv.capacity_resolution = config.test.capacity/100;% (dQOCV) for pseudoOCV
-
+if isfield(config,'test')
+    if isfield(config.test,'capacity')
+        % (dQOCV) for pseudoOCV
+        config.pseudo_ocv.capacity_resolution = config.test.capacity/100;
+    end
+end
 
 %bancs monovoies:
 config.test.Uname = 'U';% default
