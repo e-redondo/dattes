@@ -3,13 +3,13 @@ function [xm] = moving_average(t,x,T)
 %
 % [xm] = moving_average(t,x,T)
 % Filter x vector with a moving average filter
+% sample time is supposed to be constant
 %
 % Usage:
 % [xm] = moving_average(t,x,T)
 % Inputs:
 % - x [nx1 double]: Vector to filter
-% - N [double]: Filter order vector
-% - wn [double]: Filter cut frequency
+% - T [double]: Filter order (period for moving average in units of t)
 %
 % Output:
 % - xm [nx1 double]: Filtered vector
@@ -21,28 +21,31 @@ function [xm] = moving_average(t,x,T)
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 %ATTENTION, Ts du signal doit etre constant
-indDebut = find(t-t(1)>=T,1);
-indFin = find(t>=t(end)-T,1);
-t1 = t(indDebut+1:end);
-t0 = t(1:end-indDebut);
-x1 = x(indDebut+1:end);
-x0 = x(1:end-indDebut);
+index_start = find(t-t(1)>=T,1);
+index_end = find(t>=t(end)-T,1)-1;
+
+if isempty(index_start) || isempty(index_end) || index_start>index_end
+    xm = [];
+    return
+end
+
 %%espace en memoire
 xm = zeros(size(x));
 
 %partie milieu
 %moyenne = sum(x)/length(x): L = length(x) = 2*indDebut-1
-L1 = indDebut-1;
-for ind = indDebut:indFin
+L1 = index_start-1;
+for ind = index_start:index_end
 %         xm(ind) = mean(x(ind-indDebut+1:ind+indDebut-1));
     xm(ind) = sum(x(ind-L1:ind+L1));
 %     xm(ind) = sum(x(ind-indDebut+1:ind+indDebut-1));
 end
 %premiere partie
-xm(1:indDebut-1) = xm(indDebut);
+xm(1:index_start-1) = xm(index_start);
 %derniere partie
-xm(indFin+1:end) = xm(indFin);
+xm(index_end+1:end) = xm(index_end);
 %completion avec des zeros au debut
-L = 2*indDebut-1;
+L = 2*index_start-1;
 xm = xm/L;
+
 end

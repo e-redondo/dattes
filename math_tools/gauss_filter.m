@@ -29,6 +29,9 @@ function [xf] = gauss_filter(x,N,wn)
     %saturation to range of x:
     xf(xf<min(x))=min(x);
     xf(xf>max(x))=max(x);
-    
+
+%     figure;
+%     subplot(211), plot(x),hold on,plot(xf)
+%     subplot(212), plot(xf-x)
 
 end
