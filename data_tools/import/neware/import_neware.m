@@ -216,8 +216,8 @@ xml.table{end}.Step =  xml_step;
     I = xml.table{end}.I.vector;
     Step = xml.table{end}.Step.vector;
     
-    seuilI = 0.200;
-    seuilU = 0.010;
+    seuilI = 5*min(abs(diff(unique(I))));
+    seuilU = 5*min(abs(diff(unique(U))));
     m = which_mode(t,I,U,Step,seuilI,seuilU);
     %ajouter aux variables de xml
     mode = makeXMLVariable('mode','', '%f','mode', m);

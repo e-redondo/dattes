@@ -190,6 +190,9 @@ else
 end
 %3. which mode (if mode not in file_in or if 'm' in options)
 if ismember('m',options)
+    I_threshold = 5*min(diff(unique(result.profiles.I)));
+    U_threshold = 5*min(diff(unique(result.profiles.U)));
+    Step = result.profiles.mode;
     m = which_mode(result.profiles.t,result.profiles.I,result.profiles.U,...
                    Step,I_threshold,U_threshold,inher_options);
     result.profiles.mode = m;
