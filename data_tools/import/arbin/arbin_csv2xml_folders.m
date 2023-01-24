@@ -81,13 +81,17 @@ for ind = 1:length(D)
     % remove empty values (not compatible csv files):
     Ie = cellfun(@isempty,xml);
     xml = xml(~Ie);
-    %merge all elements into first one:
-    for ind2 = 2:length(xml)
-        xml{1} = XMLFusion(xml{1},xml{ind2});
+    
+    if length(xml)>1
+        %merge all elements into first one:
+        for ind2 = 2:length(xml)
+            xml{1} = XMLFusion(xml{1},xml{ind2});
+        end
+
     end
-    % keep just first (merged element):
-    xml =  xml{1};
     if ~isempty(xml)
+        % keep just first (merged element):
+        xml =  xml{1};
         ecritureXMLFile4Vehlib(xml,XML{ind});
         xml_list{end+1} = XML{ind};
     end
