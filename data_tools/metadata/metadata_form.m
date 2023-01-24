@@ -112,7 +112,6 @@ end
     answer = input(prompt,'s');
     answer = str2num(answer);
 if ~isempty(answer)
-%TODO convert to number
     metadata.cell.max_dis_current_cont = answer;
 end
 % metadata.cell.max_cha_current_cont = 4;
@@ -120,7 +119,6 @@ end
     answer = input(prompt,'s');
     answer = str2num(answer);
 if ~isempty(answer)
-%TODO convert to number
     metadata.cell.max_cha_current_cont = answer;
 end
 % metadata.cell.min_temperature = -20;%degC
@@ -128,7 +126,6 @@ end
     answer = input(prompt,'s');
     answer = str2num(answer);
 if ~isempty(answer)
-%TODO convert to number
     metadata.cell.min_temperature = answer;
 end
 % metadata.cell.max_temperature = 60;%degC
@@ -136,7 +133,6 @@ end
     answer = input(prompt,'s');
     answer = str2num(answer);
 if ~isempty(answer)
-%TODO convert to number
     metadata.cell.max_temperature = answer;
 end
 % metadata.cell.geometry = 'cylindrical';
@@ -158,7 +154,6 @@ end
     answer = input(prompt,'s');
     answer = str2num(answer);
 if ~isempty(answer)
-%TODO convert to number
     metadata.cell.weight = answer;
 end
 % metadata.cell.cathode = 'NMC'; %
@@ -176,8 +171,8 @@ end
 end
 
 
-%% 2. equipement information: cycler and climatic chamber
-prompt = 'Do you want to fill equipement details (cycler/climatic chamber)? Y/N [N]: ';
+%% 2. equipement information: cycler
+prompt = 'Do you want to fill cycler details? Y/N [N]: ';
 answer = input(prompt,'s');
 if strcmpi(answer,'Y')
 % metadata.cycler.brand = 'Bitrode';
@@ -231,8 +226,38 @@ if ~isempty(answer)
     metadata.cycler.model = answer;
 end
 end
-
-%% 3. other info
+%% 3. equipement information: climatic chamnber
+prompt = 'Do you want to fill climatic chamber details? Y/N [N]: ';
+answer = input(prompt,'s');
+if strcmpi(answer,'Y')
+% metadata.chamber.brand = 'Friocell';
+    prompt = 'chamber brand (e.g. Friocell, Vostch)? ';
+    answer = input(prompt,'s');
+if ~isempty(answer)
+    metadata.chamber.brand = answer;
+end
+% metadata.chamber.model = 'Friocell 707';
+    prompt = 'chamber model (e.g. Friocell 707)? ';
+    answer = input(prompt,'s');
+if ~isempty(answer)
+    metadata.chamber.model = answer;
+end
+% metadata.cell.min_temperature = -20;%degC
+    prompt = 'cell minimal operating temperature in degC (e.g. -20)? ';
+    answer = input(prompt,'s');
+    answer = str2num(answer);
+if ~isempty(answer)
+    metadata.cell.min_temperature = answer;
+end
+% metadata.cell.max_temperature = 60;%degC
+    prompt = 'cell maximal operating temperature in degC (e.g. 60)? ';
+    answer = input(prompt,'s');
+    answer = str2num(answer);
+if ~isempty(answer)
+    metadata.cell.max_temperature = answer;
+end
+end
+%% 4. other info
 prompt = 'Do you want to fill regional details (date_format/time_format)? Y/N [N]: ';
 answer = input(prompt,'s');
 if strcmpi(answer,'Y')
@@ -255,7 +280,7 @@ prompt = 'Save metadata in a file? Y/N [Y]: ';
 answer = input(prompt,'s');
 if strcmpi(answer,'Y') || isempty(answer)
    prompt = 'Does metada apply to a folder [D] or to a single file [F]? D/F [D]: ';
-   answer = input(prompt,'s'); 
+   answer = input(prompt,'s');
    if strcmpi(answer,'D') || isempty(answer)
        outfile = uigetdir();
        if ischar(outfile)
@@ -271,7 +296,7 @@ if strcmpi(answer,'Y') || isempty(answer)
            write_json_struct(outfile, metadata);
        end
    end
-   
+
 end
 
 end

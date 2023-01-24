@@ -99,10 +99,12 @@ This document describe data structure for current version of DATTES:
         - voltage_resolution: voltage resolution in V
         - current_resolution: currant resolution in A
         - cell_voltage_name [string]: variable name for cell voltage measurement (e.g. 'U1')
-        - cell_temperature_name [string]: variable name for cell temperature measurement (e.g. 'U1')
+        - cell_temperature_name [string]: variable name for cell temperature measurement (e.g. 'T1')
     - chamber: [1×1 struct] with fields:
         - brand [string]: e.g 'Friocell'
         - model [string]: e.g 'Friocell 707'
+        - min_temperature [1x1 double]: min temperature (degC)
+        - max_temperature [1x1 double]: max temperature (degC)
     - regional: [1×1 struct] with fields:
         - date_format [string]: e.g 'yyyy/mm/dd'
         - time_format [string]: e.g 'HH:MM:SS.SSS'
