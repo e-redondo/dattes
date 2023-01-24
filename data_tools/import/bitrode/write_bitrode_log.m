@@ -17,28 +17,30 @@ function write_bitrode_log(srcdir,options)
 
 
 if ~exist('options','var')
-    options = 'm';
+    options = 'n';
 end
-CSV = lsFiles(srcdir,'.csv');
-D = cellfun(@dir,CSV);
+
+csv_list = lsFiles(srcdir,'.csv');
+D = cellfun(@dir,csv_list);
 
 if ismember('m',options)
     Dates = cellfun(@(x) datestr(x,'yyyy/mm/dd HH:MM:SS'),{D.datenum},'uniformoutput',false);
     Dates = Dates';
 end
 if ismember('n',options)
-    Dates = regexp(CSV,'[0-9]{8}_[0-9]*','match','once');
-    %if only date is in name, put time = 00:00
-    Dates = regexprep(Dates,'_$','_0000');
-    Dates = cellfun(@(x) datestr(datenum(x,'yyyymmdd_HHMM'),'yyyy/mm/dd HH:MM'),Dates,'uniformoutput',false);
+    Dates = regexp(csv_list,'[0-9]{8}_[0-9]{4}','match','once');
+    Ie = cellfun(@isempty,Dates);
+    % apply just when Dates found in csv_list (not empty)
+    Dates = cellfun(@(x) datestr(datenum(x,'yyyymmdd_HHMM'),'yyyy/mm/dd HH:MM'),Dates(~Ie),'uniformoutput',false);
+    csv_list = csv_list(~Ie);
 end
 [Dates, Is] = sort(Dates);
-CSV = CSV(Is);
+csv_list = csv_list(Is);
 %windows compatibility issue: always write with / separator
-CSV = regexprep(CSV,'/|\\','/');
+csv_list = regexprep(csv_list,'/|\\','/');
 fid = fopen(fullfile(srcdir,'bitrode.log'),'w+');
-for ind = 1:length(CSV)
-    fprintf(fid,'%s\t%s\n',CSV{ind},Dates{ind});
+for ind = 1:length(csv_list)
+    fprintf(fid,'%s\t%s\n',csv_list{ind},Dates{ind});
 end
 fclose(fid);
 
