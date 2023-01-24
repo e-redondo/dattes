@@ -125,13 +125,13 @@ end
 
 %AUTO generate config
 if isempty(max_voltage)%not found in metadata:
-    max_voltage = max(U);
+    max_voltage = max(profiles.U);
 end
 if isempty(min_voltage)%not found in metadata:
-    min_voltage = min(U);
+    min_voltage = min(profiles.U);
 end
 if isempty(capacity)%not found in metadata:
-    amp_hours = calcul_amphour(t,I);
+    amp_hours = calcul_amphour(profiles.t,profiles.I);
     capacity = max(amp_hours)-min(amp_hours);
 end
 

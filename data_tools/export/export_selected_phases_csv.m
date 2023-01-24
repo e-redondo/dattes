@@ -33,20 +33,19 @@ if ~exist('dst_folder','var')
 end
 %check dattes_struct
 if ~isfield(dattes_struct,'profiles')
-     fprintf('ERROR export_profiles_csv:No profiles found in DATTES struct\n');
+     fprintf('ERROR export_selected_phases_csv:No profiles found in dattes struct\n');
      return
 end
 %check dattes_struct
 if ~isfield(dattes_struct,'phases')
-     fprintf('ERROR export_profiles_csv:No phases found in DATTES struct\n');
+     fprintf('ERROR export_selected_phases_csv:No phases found in dattes struct\n');
      return
 end
 
 % check if t,U,I,m,soc and dod fields exist in dattes_struct
-if ~isfield(dattes_struct.profiles,'t') || ~isfield(dattes_struct.profiles,'U') ||...
-        ~isfield(dattes_struct.profiles,'I') || ~isfield(dattes_struct.profiles,'m') ||...
-        ~isfield(dattes_struct.profiles,'soc') ||  ~isfield(dattes_struct.profiles,'dod_ah')
-         fprintf('ERROR export_phases_csv: dattes structure is incomplete please redo [result]=dattes(XML_file,cSpvs,cfg_file)\n');
+[info, err] = check_profiles_struct(dattes_struct.profiles);
+if err
+    fprintf('ERROR export_selected_phases_csv: dattes structure is incomplete please redo [result]=dattes(XML_file,cSpvs,cfg_file)\n');
 end
 
 %check options
@@ -85,15 +84,9 @@ m = dattes_struct.profiles.mode;
 
 [datetime2,t2,U2,I2,soc2,dod_ah2,m2] = ...
     extract_phase2(dattes_struct.phases([phase_start phase_end]),[0 0],datetime, t, U, I, soc, dod_ah, m);
+profiles_p = extract_phase2(dattes_struct.phases([phase_start phase_end]),[0 0],dattes_struct.profiles);
 
-
-dattes_struct.profiles.datetime = datetime2;
-dattes_struct.profiles.t = t2;
-dattes_struct.profiles.U = U2;
-dattes_struct.profiles.I = I2;
-dattes_struct.profiles.soc = soc2;
-dattes_struct.profiles.dod_ah = dod_ah2;
-dattes_struct.profiles.mode = m2;
+dattes_struct.profiles = profiles_p;
 
 
 export_profiles_csv(dattes_struct, options, dst_folder, file_out);
