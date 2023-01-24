@@ -116,6 +116,18 @@ dI =  max(I)-min(I);
 modes(2) = dU<=sU;%CV
 modes(1) = dI<=sI;%CC
 
+if sum(modes)==0
+    %try again with other sI/sU
+    % FIX: sometimes no CC phases are found because sI is lower than I
+    % resolution.
+    I_resolution = min(diff(unique(I)));
+    U_resolution = min(diff(unique(U)));
+    
+    %consider constant if all values oscillate +/- resolution (3*U_resolution)
+    modes(2) = dU<=3*U_resolution;%CV
+    modes(1) = dI<=3*I_resolution;%CC
+end
+
 if sum(modes)>1
     %si m2 et m3 au meme temps, arbitrer:
     if dU/sU < dI/sI
@@ -127,6 +139,7 @@ if sum(modes)>1
         error('arbitrage necessaire')
     end
 end
+
 if sum(modes)==0
     %     error('mode non trouve')
     %je ne sais pas ce que c'est, ca doit etre un profil

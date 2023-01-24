@@ -149,7 +149,17 @@ end
     Step = xml.table{end}.Step.vector;
     
     seuilI = 5*min(abs(diff(unique(I))));
+    if isempty(seuilI)
+        %if is empty, that means all values of I are equal (cst vector)
+        % random value to avoid error in which_mode: 10mA
+        seuilI = 0.01;
+    end
     seuilU = 5*min(abs(diff(unique(U))));
+    if isempty(seuilU)
+        %if is empty, that means all values of U are equal (cst vector)
+        % random value to avoid error in which_mode: 1mV
+        seuilU = 0.001;
+    end
     m = which_mode(t,I,U,Step,seuilI,seuilU);
     %ajouter aux variables de xml
     mode = makeXMLVariable('mode','', '%f','mode', m);

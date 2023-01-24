@@ -149,7 +149,7 @@ if strcmp(type_test,'GEIS')
     end
     %TODO do the same for other test types, e.g. PEIS (Is?,Va, etc.)
 elseif strcmp(type_test,'MB')
-    fprintf('here\n');
+%     fprintf('here\n');
     %Ns line: Sequence numbers
     Ns_line = regexpFiltre(head,'^Ns\s+0');
     Ns = regexp(Ns_line{1},'\s+','split');

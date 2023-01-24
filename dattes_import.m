@@ -91,6 +91,9 @@ if iscellstr(file_in)
     if length(file_in)==1
         %singular case returning errors, treat 1 element cell as char
         file_in = file_in{1};
+    elseif isempty(destination_folder)
+        result = cellfun(@(x) dattes_import(x, options, '', read_mode),file_in,'uniformoutput',false);
+        return
     else
         %0.2.1 guess common root folder to all files in list:
         source_folder = find_common_ancestor(file_in);
