@@ -77,7 +77,8 @@ for ind = 1:length(indices_phases_r)
 
 
     [tp,Up,Ip,DoDp] = extract_phase2(phases(indices_phases_r(ind)),time_before_after_phase,datetime,U,I,dod_ah);%FIX (BRICOLE) la même mais avec getPhases 2
-    Is = tp-tp(1)<rest_min_duration+pulse_min_duration+3;%FIX (BRICOLE) la même mais avec getPhases 2
+    %Is = tp-tp(1)<rest_min_duration+pulse_min_duration+3;%FIX (BRICOLE) la même mais avec getPhases 2
+    Is = tp-tp(1)<rest_min_duration+max(delta_time_cfg)+3;
     tp = tp(Is);
     Up = Up(Is);
     Ip = Ip(Is);

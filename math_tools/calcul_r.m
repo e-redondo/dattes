@@ -96,11 +96,15 @@ end
         
     for ind = 1:length(t_calcul_R)
         if max(tpulse)-min(tpulse)<t_calcul_R(ind)
+            %DEBUG
+            %fprintf('Pulse is not long enough, DoD: %.1f Ah, pulse length: %.1f s, R delta time: %.1f s.\n',DoDAh(1),max(tpulse)-min(tpulse), t_calcul_R(ind));
             continue
         else
-            w = abs(tpulse-tpulse(end));                               %poids d'interpolation polynominal pour le pulse, les points loin de l'impulse de courant ont un poids plus eleve
+%             w = abs(tpulse-tpulse(end));                               %poids d'interpolation polynominal pour le pulse, les points loin de l'impulse de courant ont un poids plus eleve
+            w = 1./(abs(instant_end_rest-tpulse)+1);
             Ural_pul = fitting_pol2(tpulse,Upulse,instant_end_rest+t_calcul_R(ind),w);%U ralonge pour le pulse, ont extrapole le point a l'instant de l'impulse
-            w = abs(trest-trest(1));
+%             w = abs(trest-trest(1));
+            w = 1./(abs(instant_end_rest-trest)+1);
             Ural_rep = fitting_pol2(trest,Urest,instant_end_rest+t_calcul_R(ind),w);%U ralonge pour le rest,ont extrapole le point a l'instant de l'impulse
             
             R_I(end+1) = mean(Ipulse);                                 %le courant d'estimation de la resistance est la moyenne du courant (filtrer le bruit)
@@ -114,18 +118,18 @@ end
     
        
 
-    if (any(Rp<0) || any(isnan(Rp)))                              
-        fprintf('calcul_r : Error R negative or NAN\n');                
+    if (any(Rp<0) || any(isnan(Rp)))
+        fprintf('calcul_r : Error R negative or NAN\n');
 
-    
+    end
     if exist('graph','var')
         if graph
             show_result(t,U,I,instant_end_rest,Ural_pul,Ural_rep,R_I,tpulse,Upulse,trest,Urest,t_calcul_R)
         end
     end
-end
-%DEBUG
-% show_result(t,U,I,instant_end_rest,Ural_pul,Ural_rep,R_I,tpulse,Upulse,trest,Urest,t_calcul_R)
+
+    %DEBUG
+    % show_result(t,U,I,instant_end_rest,Ural_pul,Ural_rep,R_I,tpulse,Upulse,trest,Urest,t_calcul_R)
 
 end
 

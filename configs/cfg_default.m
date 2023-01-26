@@ -53,9 +53,10 @@ end
 config.soc.crate_cv_end = 1/20;
 
 %ident_R
-config.resistance.delta_time = [0 4 9 29 59]; % config.instant_calcul_R %Instant du pulse auquel on mesure R (par défaut 0 secondes)
+% config.resistance.delta_time = [0 5 10 30 60]; % config.instant_calcul_R %Instant du pulse auquel on mesure R (par défaut 0 secondes)
+config.resistance.delta_time = [10]; % config.instant_calcul_R %Instant du pulse auquel on mesure R (par défaut 0 secondes)
 config.resistance.pulse_min_duration = 9; %config.minimal_duration_pulse = 9;%duree min d'un pulse pour resistance
-config.resistance.pulse_max_duration = 599;% maximal pulse 600sec
+config.resistance.pulse_max_duration = 3600;% maximal pulse 600sec
 config.resistance.rest_min_duration = 9; % config.minimal_duration_rest_before_pulse =9;%duree min repos avant
 
 % impedance ('Z' action):
