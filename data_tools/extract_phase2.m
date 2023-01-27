@@ -79,7 +79,12 @@ if isa(date_time,'struct')
     
     field_list = fieldnames(profiles);
     for ind = 1:length(field_list)
-        profiles_p.(field_list{ind}) = profiles.(field_list{ind})(indices);
+        if isempty(profiles.(field_list{ind}))
+            profiles_p.(field_list{ind}) = [];
+        else
+            profiles_p.(field_list{ind}) = profiles.(field_list{ind})(indices);
+        end
+
     end
     %put profiles_p as date_time_p to be returned as main funciton output
     date_time_p = profiles_p;
