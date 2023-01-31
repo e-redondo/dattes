@@ -16,6 +16,10 @@ function [cycler, line1, line2] = which_cycler(fid)
 %   - 'bitrode_csv': Bitrode csv file
 %   - 'bitrode_csv_v2': Bitrode csv file new version
 %   - 'bitrode_csv_with_header': Bitrode csv file with header
+%   - 'arbin_csv_v1': Arbin csv file first version
+%   - 'arbin_csv_v2': Arbin csv file second version
+%   - 'neware_csv': Neware csv file
+%   - 'digatron_csv': Digatron csv file
 % - line1 [string]: file's first line (if file is text type)
 % - line2 [string]: file's second line (if file is text type)
 %
@@ -29,8 +33,10 @@ cycler = '';
 line1 = '';
 line2 = '';
 
+header_lines = read_csv_header(fid);
 
 %read first line
+frewind(fid);
 line1 = fgetl(fid);
 line2 = fgetl(fid);
 if length(line2)<2
@@ -108,9 +114,15 @@ if ~isempty(regexp(line1,'^Cycle ID','match')) && ~isempty(regexp(line2,'^,\s*St
     cycler = 'neware_csv';
     return
 end
-
+if length(header_lines)>2
+    if ~isempty(regexp(header_lines{end-2},'^Time Stamp,Step,Status'))
+        cycler = 'digatron_csv';
+        return
+    end
+end
 %unknown type: return first line
 cycler = line1;
 frewind(fid);
 return
 end
+
