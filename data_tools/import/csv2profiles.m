@@ -50,6 +50,10 @@ default_params.U_thres = 0;% 0 = calculate before which_mode
 default_params.date_fmt = '';%empty = let MATLAB detect date format
 default_params.col_sep = ',';
 default_params.buf_size = 1000;% buffer size (number of lines)
+default_params.date_fmt = 'mm/dd/yyyy HH:MM:SS.FFF'; % e.g. mm/dd/yyyy HH:MM:SS.FFF
+default_params.date_fmt = 'mm/dd/yyyy HH:MM:SS AM'; % e.g. mm/dd/yyyy HH:MM:SS.FFF
+default_params.testtime_fmt = ''; %default test time format seconds
+% default_params.testtime_fmt = 'HH:MM:SS.FFF';% alternative format (seen in digatron)
 
 if ~exist('params','var')
     params = struct;
@@ -69,111 +73,111 @@ end
 if ~isfield(params,'date_fmt')
     params.date_fmt = default_params.date_fmt;
 end
-if ~isfield(params,'buf_size')
-    params.buf_size = default_params.buf_size;
+if ~isfield(params,'testtime_fmt')
+    params.testtime_fmt = default_params.testtime_fmt;
 end
 
 profiles = [];
 other_cols = [];
 
-%open file
-fid = fopen(file_in);
 
 %TODO: n_header_lines
-%read header line
-header_line = fgetl(fid);
-header_line = regexp(header_line,params.col_sep,'split');
-header_line = header_line';
 
+[header_lines, data_columns] = parse_mixed_data_csv(file_in);
+if isempty(header_lines)
+    error('csv2profiles: no header in csv file')
+end
+if length(header_lines)<2
+    variables_line = header_lines{1};
+    units_line = header_lines{1};
+else
+    %probably last two lines of header are for variable names and units:
+    variables_line = header_lines{end-1};
+    units_line = header_lines{end};
+end
+
+variables = regexp(variables_line,params.col_sep,'split');
+units = regexp(units_line,params.col_sep,'split');
+
+if length(units)<=1
+    fprintf('csv2profiles, ERROR: a problem maybe with column separator "%s"\n',params.col_sep);
+    fprintf('nefore last line of header: "%s"\n',variables_line);
+    fprintf('last line of header: "%s"\n',units_line);
+    return;
+end
+if length(variables)<length(units)
+    %probably the same last line of header is for variable names and units
+    variables = units;
+end
 %find units from header_line
-units = find_units(header_line);
+units = find_units(units);
 
-if length(header_line)<=1
-    fprintf('ERROR: a problem maybe with column separator "%s"\n',params.col_sep);
-    return;
+
+%PUT in temporal order (sometimes csv files are not in order):
+ind_col_t = find_col_index(variables,col_names{2});
+t = data_columns{ind_col_t};
+if ~isempty(t)
+    if iscell(t)
+        if all(cellfun(@ischar,t))
+            t = time_str_to_number(t);
+        elseif all(cellfun(@isnumeric,t))
+            t = vertcat(t{:});
+        else
+            %mised types in time = ERROR
+            error('csv2profiles: bad time column (mixed strings and numbers)')
+        end
+    end
+
+    %[t_sorted,index_sorted] = sort(t);
+    %using unique innstead sort prevents errors in data processing (e.g.
+    %which_mode)
+    [t_sorted,index_sorted] = unique(t);
+    if ~isequal(t_sorted,t)
+        %order columns if necessary (t_sorted different than t
+        data_columns = cellfun(@(x) x(index_sorted),data_columns,'UniformOutput',false);
+        t = t_sorted;
+    end
 end
-%read data
-data_lines = cell(0);
-while ~feof(fid) % && length(data_lines)<1000 %DEBUG (limit number of lines)
-    data_lines{end+1} = fgetl(fid);
-end
-
-%transpose to get size nx1:
-data_lines = data_lines';
-
-%each line should be 1xm, with m= length(header_line)
-data_lines = regexp(data_lines,params.col_sep,'split');
-
-% check if all rows same length:
-if any(cellfun(@length,data_lines)~=length(header_line))
-    fprintf('ERROR: not all lines with same number of columns %s\n',file_in);
-    return;
-end
-
-
-%PUT in temporal order (sometimes csv files ar enot in order):
-ind_col_t = find_col_index(header_line,col_names{2});
-if any(ind_col_t)
-    t = cellfun(@(x) sscanf(x{ind_col_t},'%f'),data_lines(:));
-    [~,index_sorted] = sort(t);
-    data_lines = data_lines(index_sorted);
-end
-
-% convert to nxm cell:
-data_lines_all = vertcat(data_lines{:});
 
 %% find column index of interesting variables:
 %datetime: 'datetime'
-ind_col_dt = find_col_index(header_line,col_names{1});
-%t: 'test_time'
-ind_col_t = find_col_index(header_line,col_names{2});
+ind_col_dt = find_col_index(variables,col_names{1});
 %U: 'cell_voltage'
-ind_col_U = find_col_index(header_line,col_names{3});
+ind_col_U = find_col_index(variables,col_names{3});
 %I: 'current'
-ind_col_I = find_col_index(header_line,col_names{4});
+ind_col_I = find_col_index(variables,col_names{4});
 %Step: 'Step index'
-ind_col_step = find_col_index(header_line,col_names{5});
+ind_col_step = find_col_index(variables,col_names{5});
 % %T: 'Temperature'
 % ind_col_temp = find_col_index(header_line,col_names{6});
 %'Ah'
-ind_col_ah = find_col_index(header_line,col_names{6});
+ind_col_ah = find_col_index(variables,col_names{6});
 %'Ah_dis'
-ind_col_ahdis = find_col_index(header_line,col_names{7});
+ind_col_ahdis = find_col_index(variables,col_names{7});
 %'Ah_cha'
-ind_col_ahcha = find_col_index(header_line,col_names{8});
+ind_col_ahcha = find_col_index(variables,col_names{8});
 
-%buffering: process 'buf_size' lines each time'
-ind_start = 1:params.buf_size:size(data_lines,1);
-ind_end = [ind_start(2:end)-1 size(data_lines,1)];
 
-for ind = 1:length(ind_start)
-    data_lines = data_lines_all(ind_start(ind):ind_end(ind),:);
-    %fill emptys with nans:
-    ind_nan = cellfun(@isempty,data_lines);
-    data_lines(ind_nan) = {'nan'};
+%fill emptys with nans:
+ind_nan = cellfun(@isempty,data_columns);
+data_columns(ind_nan) = {'nan'};
 
     %% structure data
-    t = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_t));
-    U = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_U));
-    I = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_I));
-    Step = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_step));
-%     T = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_temp));
-    Ah = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_ah));
-    Ah_dis = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_ahdis));
-    Ah_cha = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_col_ahcha));
+    U = data_columns(ind_col_U);
+    I = data_columns(ind_col_I);
+    Step = data_columns(ind_col_step);
+%     T = data_lines(ind_col_temp);
+    Ah = data_columns(ind_col_ah);
+    Ah_dis = data_columns(ind_col_ahdis);
+    Ah_cha = data_columns(ind_col_ahcha);
 
-%     %FIX: get datetime from some points (first 1000), then convert to seconds
-%     % and finally calculate datetime from first value + t
-%     % In fact, doing datenum and all point can crash MATLAB in big files
-%     end_dt = min(100,size(data_lines,1));
-%     if isempty(params.date_fmt)
-%         datetime = cellfun(@datenum,data_lines(1:end_dt,ind_col_dt));
-%     else
-%         datetime = cellfun(@(x) datenum(x,params.date_fmt),data_lines(1:end_dt,ind_col_dt));
-%     end
-%     datetime = m2edate(datetime);
-%     datetime = datetime(1)+t;
-
+    %% convert cells to numbers
+    U = vertcat(U{:});
+    I = vertcat(I{:});
+    Step = vertcat(Step{:});
+    Ah = vertcat(Ah{:});
+    Ah_dis = vertcat(Ah_dis{:});
+    Ah_cha = vertcat(Ah_cha{:});
 
     if isempty(Ah)
         if max(abs(Ah_dis))>0
@@ -187,41 +191,40 @@ for ind = 1:length(ind_start)
 %     end
 
     %pack data:
-%     profiles(ind).datetime = m2edate(datetime);
-    profiles(ind).t = t;
-    profiles(ind).U = U;
-    profiles(ind).I = I;
-%     profiles(ind).mode = m;
-%     profiles(ind).T = T;
-    profiles(ind).Ah = Ah;
+%     profiles.datetime = m2edate(datetime);
+    profiles.t = t;
+    profiles.U = U;
+    profiles.I = I;
+%     profiles.mode = m;
+%     profiles.T = T;
+    profiles.Ah = Ah;
 
     %other_cols:
-    ind_other_cols = find(~ismember(header_line,col_names));
+    ind_other_cols = find(~ismember(variables,col_names));
     if ~isempty(ind_other_cols)
-        other_cols(ind).t = t;
-        other_cols(ind).Step = Step;
-        other_cols(ind).Step_units = '';
+        other_cols.t = t;
+        other_cols.Step = Step;
+        other_cols.Step_units = '';
         for ind_col = 1:length(ind_other_cols)
-            try % try to conver to number
-                % TODO: replace empty strings by nans and try to convert to number
-                data_this_col = data_lines(:,ind_other_cols(ind_col));
-                data_spaces = num2cell(char(' '*ones(size(data_this_col))));
-                %     data_this_col = reshape([data_this_col';data_spaces'],[],1);
-
-                data_this_col = strcat(data_this_col,data_spaces);
-                this_col_string = [data_this_col{:}];
-                this_col =  sscanf(this_col_string,'%f ');
-                %     this_col = cellfun(@(x) sscanf(x,'%f'),data_lines(:,ind_other_cols(ind_col)));
-            catch% if not possible keep as cell str
-                this_col = data_lines(:,ind_other_cols(ind_col));
-            end
+                data_this_col = data_columns(ind_other_cols(ind_col));
+                if all(cellfun(@isnumeric,data_this_col))
+                    %convert to numeric array
+                    this_col = vertcat(data_this_col{:});
+                else
+                    %keep as cell
+                    this_col = data_this_col;
+                end
             %TODO:put this part in function (clean_col_name).
-            this_col_name = regexprep(header_line{ind_other_cols(ind_col)},'^[^a-zA-Z]','');
+            this_col_name = regexprep(variables{ind_other_cols(ind_col)},'^[^a-zA-Z]','');
             this_col_name = regexprep(this_col_name,'\s','_');
             this_col_name = regexprep(this_col_name,'/','');
             this_col_name = regexprep(this_col_name,'\\','');
             this_col_name = regexprep(this_col_name,'\(','');
             this_col_name = regexprep(this_col_name,'\)','');
+            this_col_name = regexprep(this_col_name,'\[','');
+            this_col_name = regexprep(this_col_name,'\]','');
+            this_col_name = regexprep(this_col_name,'\{','');
+            this_col_name = regexprep(this_col_name,'\}','');
             %remove 'units' at end of variable names
             this_col_name = regexprep(this_col_name,'_s$','');%s
             this_col_name = regexprep(this_col_name,'_A$','');%A
@@ -240,34 +243,13 @@ for ind = 1:length(ind_start)
             %     fprintf('%s\n',this_col_name);
             %     fprintf('%s\n',genvarname(this_col_name));
 
-            other_cols(ind).(this_col_name) = this_col;
-            other_cols(ind).([this_col_name '_units']) = units{ind_other_cols(ind_col)};
+            other_cols.(this_col_name) = this_col;
+            other_cols.([this_col_name '_units']) = units{ind_other_cols(ind_col)};
 
         end
     end
-end
 
-%merging buffer:
-fieldlist = fieldnames(profiles);
-for ind = 1:length(fieldlist)
-    profiles_all.(fieldlist{ind}) = vertcat(profiles(:).(fieldlist{ind}));
-end
 
-if ~isempty(other_cols)
-    fieldlist = fieldnames(other_cols);
-    [units, variables] = regexpFiltre(fieldlist,'_units$');
-    for ind = 1:length(variables)
-        other_cols_all.(variables{ind}) = vertcat(other_cols(:).(variables{ind}));
-    end
-    for ind = 1:length(units)
-        other_cols_all.(units{ind}) = other_cols(1).(units{ind});
-    end
-else
-    other_cols_all = other_cols;
-end
-
-profiles = profiles_all;
-other_cols = other_cols_all;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %calculate mode
  %set thresholds if they are set to zero:
@@ -306,10 +288,11 @@ profiles.mode = m;
 %datetime
 %FIX: get datetime just at each ind_start, then convert to seconds
 % and finally calculate datetime from first value + t
+date_time = data_columns{ind_col_dt};
 if isempty(params.date_fmt)
-    date_time = cellfun(@(x) datenum(datetime(x)),data_lines_all(ind_start,ind_col_dt));
+    date_time = datenum(date_time(1:10:end));
 else
-    date_time = cellfun(@(x) datenum(datetime(x,'InputFormat',params.date_fmt)),data_lines_all(ind_start,ind_col_dt));
+    date_time = datenum(date_time(1),params.date_fmt);
 end
 if isempty(date_time)
     %no column datetime found
@@ -318,9 +301,6 @@ else
     date_time = m2edate(date_time);
     profiles.datetime = date_time(1)+profiles.t-profiles.t(1);
 end
-
-% TODO mode: on all data, not in buffer, last buffer can give identification
-% problems if too short
 
 end
 
@@ -333,37 +313,49 @@ end
 ind_col = cellfun(@(x) strncmp(x,col_name,length(col_name)),header_line);
 
 if length(find(ind_col))>1
-    fprintf('ERROR: several columns for %s\n',col_name);
-    return;
+    %get candidates for this column
+    candidates = header_line(ind_col);
+    %select shortest one (e.g.: Step vs. Step Time, choose Step):
+    [~,ind_short_candidate] = min(cellfun(@length,candidates));
+
+    ind_col = cellfun(@(x) strcmp(x,candidates(ind_short_candidate)),header_line);
+
+    if length(find(ind_col))>1
+        fprintf('ERROR: several columns for %s\n',col_name);
+    end
 elseif isempty(find(ind_col))
     fprintf('ERROR: no column found for %s\n',col_name);
-    return;
 end
 end
 
 
-function units = find_units(header)
+function units = find_units(unit_line_words)
 
-%2.1.- unites de mesure
-units = regexp(header,'\(.+\)','match','once');
+%2.1.- measurement units:
+%anything enclosed into brackets [] or parentheses () or {}:
+unit_line_words = regexprep(unit_line_words,'\[','(');
+unit_line_words = regexprep(unit_line_words,'\{','(');
+unit_line_words = regexprep(unit_line_words,'\]',')');
+unit_line_words = regexprep(unit_line_words,'\}',')');
+units = regexp(unit_line_words,'\(.+\)','match','once');
 units = regexprep(units,'\(','');
 units = regexprep(units,'\)','');
 %other units
-I = ~cellfun(@isempty,strfind(header,'Voltage'));
+I = ~cellfun(@isempty,strfind(unit_line_words,'Voltage'));
 [units{I}] = deal('V');
-I = ~cellfun(@isempty,strfind(header,'Time'));
+I = ~cellfun(@isempty,strfind(unit_line_words,'Time'));
 [units{I}] = deal('s');
-I = ~cellfun(@isempty,strfind(header,'Current'));
+I = ~cellfun(@isempty,strfind(unit_line_words,'Current'));
 [units{I}] = deal('A');
-I = ~cellfun(@isempty,strfind(header,'Capacity'));
+I = ~cellfun(@isempty,strfind(unit_line_words,'Capacity'));
 [units{I}] = deal('Ah');
-I = ~cellfun(@isempty,strfind(header,'Energy'));
+I = ~cellfun(@isempty,strfind(unit_line_words,'Energy'));
 [units{I}] = deal('Wh');
-I = ~cellfun(@isempty,strfind(header,'Power'));
+I = ~cellfun(@isempty,strfind(unit_line_words,'Power'));
 [units{I}] = deal('W');
-I = ~cellfun(@isempty,strfind(header,'dV/dt'));
+I = ~cellfun(@isempty,strfind(unit_line_words,'dV/dt'));
 [units{I}] = deal('V/s');
-I = ~cellfun(@isempty,strfind(header,'Temperature'));%TODO search in Aux_Global_Table
+I = ~cellfun(@isempty,strfind(unit_line_words,'Temperature'));%TODO search in Aux_Global_Table
 [units{I}] = deal('C');
 %change fractions to underscores:
 % units = regexprep(units,'/','_');
