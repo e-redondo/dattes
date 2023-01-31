@@ -1,4 +1,4 @@
-function [xml_list] = arbin_xls2xml(srcdir,options)
+function [xml_list, xls_failed] = arbin_xls2xml(srcdir,options)
 % arbin_xls2xml  mass import of *.xls(x) files (Arbin) to *.xml
 %
 % This function search on each subfolder for xls files, convert them to csv
@@ -24,14 +24,14 @@ function [xml_list] = arbin_xls2xml(srcdir,options)
 % See also import_arbin_csv, arbin_csv2xml_folders
 %
 % Copyright 2023 DATTES_Contributors <dattes@univ-eiffel.fr> .
-% For more information, see the <a href="matlab: 
+% For more information, see the <a href="matlab:
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if nargin==0
     error('arbin_xls2xml: at least one input must be given')
 end
 
-if ~isdir(srcdir) && ~iscell(srcdir)
+if ~ischar(srcdir) && ~iscell(srcdir)
     error('arbin_xls2xml: srcdir must be a folder path (char) or a file list (cell)')
 end
 
@@ -72,18 +72,33 @@ end
 
 %TODO: multicore
 xml_list = cell(0);
+xls_failed = cell(0);
 
 %for each xls file:
 for ind = 1:length(XLS)
-    %convert to csv
-    csv_folder = xls2csv(XLS{ind});
+    D = dir(XLS{ind});
+    fprintf('arbin_xls2xml:%s (%g MB)\n',XLS{ind},D.bytes/(1024*1024))
+    try
+        ts = tic;
+        %convert to csv
+        csv_folder = xls2csv(XLS{ind});
 
-    [xml_list] = arbin_csv2xml_folders(csv_folder,options);
-    
-    %delete csv folder
-    delete(fullfile(csv_folder,'*.csv'));
-    rmdir(csv_folder)
 
+        [xml_list] = arbin_csv2xml_folders(csv_folder,options);
+
+        %delete csv folder
+        delete(fullfile(csv_folder,'*.csv'));
+        rmdir(csv_folder)
+
+        t_elapsed = toc(ts);
+        if verbose
+            %         fprintf('%d of %d OK\n',ind,length(XLS));
+            fprintf('%d of %d OK (%g MB/s)\n',ind,length(XLS),D.bytes/(t_elapsed*1024*1024));
+        end
+    catch e
+        xls_failed{end+1} = XLS{ind};
+        fprintf('%d of %d FAILED\n',ind,length(XLS));
+    end
 end
 xml_list = [xml_list(:); xml_already_existing(:)];
 end

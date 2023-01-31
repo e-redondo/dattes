@@ -38,14 +38,16 @@ fclose(fid);
 
 if ~strncmp(cycler,'arbin_csv',9)
     %Probably an error reading xls file:
-    fprintf('ERROR: not an Arbin csv file: %s\n',file_in);
+    fprintf('WARNING: not an Arbin csv file: %s\n',file_in);
     xml = [];
     return;
 end
 
 %1.- reading file
 params = struct;  % see csv2profiles if some params are needed
-params.U_thres = 0.01;
+% params.U_thres = 0.01;
+params.date_fmt = '';
+params.date_fmt = 'yyyy-mm-dd HH:MM:SS';
 if strcmp(cycler,'arbin_csv_v1')
     col_names = {'Date_Time','Test_Time(s)','Voltage(V)','Current(A)',...
         'Step_Index','',...

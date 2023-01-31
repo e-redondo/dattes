@@ -46,9 +46,9 @@ if verbose
 end
     fid_in = fopen(file_in,'r');
 %0.1 check if file is a bitrode file
-[bench, line1, line2] = which_cycler(fid_in);
+[cycler, line1, line2] = which_cycler(fid_in);
 % bench ='oup';
-if ~strncmp(bench,'bitrode_csv',11)
+if ~strncmp(cycler,'bitrode_csv',11)
     fprintf('ERROR: file does not seem a bitrode *.csv file: %s\n',file_in);
     xml = [];
     return;
