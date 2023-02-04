@@ -17,7 +17,7 @@ function config = config_soc(datetime,I,U,m,config,options)
 %     - soc.dod_ah_fin: final DoD in Amphours
 %
 %
-% See also dattes_import, calcul_soc, calcul_soc_patch, configurator
+% See also dattes_structure, calcul_soc, calcul_soc_patch, configurator
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab:

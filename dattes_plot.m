@@ -34,7 +34,7 @@ function [result] = dattes_plot(file_in,options)
 % - result: [1x1 struct] structure containing analysis results 
 % - result: [nx1 struct] cell of structures containing analysis results 
 %
-% See also dattes_import, dattes_configure, dattes_analyse
+% See also dattes_structure, dattes_configure, dattes_analyse
 %
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .

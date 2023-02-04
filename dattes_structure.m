@@ -1,5 +1,5 @@
-function result = dattes_import(file_in, options, destination_folder, read_mode)
-% dattes_import - DATTES Import function
+function result = dattes_structure(file_in, options, destination_folder, read_mode)
+% dattes_structure - DATTES Import function
 % 
 % This function read .xml (or .json, or .csv) files, read metadata files
 % (.meta) and performs some basic calculations (which_mode, split_phases,
@@ -7,15 +7,15 @@ function result = dattes_import(file_in, options, destination_folder, read_mode)
 % files.
 %
 % Usage:
-% result = dattes_import(file_in)
+% result = dattes_structure(file_in)
 % - read single file (json, csv, or xml), default options
-% result = dattes_import(file_in, 's')
+% result = dattes_structure(file_in, 's')
 % - read single file, MAT file will be saved beside file_in (same pathname, different extension)
-% result = dattes_import(file_in,options,destination_folder)
+% result = dattes_structure(file_in,options,destination_folder)
 % - read single file, MAT file will be saved in destination_folder
-% result = dattes_import(file_list,...)
+% result = dattes_structure(file_list,...)
 % - read each file in file_list, result is [mx1 cell struct]
-% result = dattes_import(source_folder,options,destination_folder, read_mode)
+% result = dattes_structure(source_folder,options,destination_folder, read_mode)
 % - read each file in source_folder result is [mx1 cell struct],
 % read_mode must be specified ('json', 'csv' or 'xml')
 %
@@ -40,7 +40,7 @@ function result = dattes_import(file_in, options, destination_folder, read_mode)
 % - result [1x1 struct] DATTES result structure
 % - result [mx1 cell struct] DATTES result cell structure if multiple files read
 %
-% See also dattes_export
+% See also dattes_import, dattes_configure
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab: 
@@ -51,19 +51,19 @@ function result = dattes_import(file_in, options, destination_folder, read_mode)
 
 %0.1 check inputs:
 if ~exist('file_in','var')
-    fprintf('ERROR dattes_import: file_in is mandatory\n');
+    fprintf('ERROR dattes_structure: file_in is mandatory\n');
     result = [];
     return
 end
 if ~ischar(file_in) && ~iscellstr(file_in)
-    fprintf('ERROR dattes_import: file_in must be string or cell string\n');
+    fprintf('ERROR dattes_structure: file_in must be string or cell string\n');
     result = [];
     return
 end
 if ~exist('options','var')
     options = '';
 elseif ~ischar(options)
-    fprintf('ERROR dattes_import: options must be string\n');
+    fprintf('ERROR dattes_structure: options must be string\n');
     result = [];
     return
 end
@@ -74,14 +74,14 @@ inher_options = options(ismember(options,'v'));
 if ~exist('destination_folder','var')
     destination_folder = '';
 elseif ~ischar(destination_folder)
-    fprintf('ERROR dattes_import: destination_folder must be string\n');
+    fprintf('ERROR dattes_structure: destination_folder must be string\n');
     result = [];
     return
 end
 if ~exist('read_mode','var')
     read_mode = '';
 elseif ~ischar(read_mode)
-    fprintf('ERROR dattes_import: read_mode must be string\n');
+    fprintf('ERROR dattes_structure: read_mode must be string\n');
     result = [];
     return
 end
@@ -92,7 +92,7 @@ if iscellstr(file_in)
         %singular case returning errors, treat 1 element cell as char
         file_in = file_in{1};
     elseif isempty(destination_folder)
-        result = cellfun(@(x) dattes_import(x, options, '', read_mode),file_in,'uniformoutput',false);
+        result = cellfun(@(x) dattes_structure(x, options, '', read_mode),file_in,'uniformoutput',false);
         return
     else
         %0.2.1 guess common root folder to all files in list:
@@ -105,8 +105,8 @@ if iscellstr(file_in)
         
         %0.2.3 reproduce file tree in destination_folder
         dest_folders = regexprep(fileparts(file_in),['^' source_folder],destination_folder);
-        %0.2.4 run dattes_import for each element in file list
-        result = cellfun(@(x,y) dattes_import(x, options, y, read_mode),file_in,dest_folders,'uniformoutput',false);
+        %0.2.4 run dattes_structure for each element in file list
+        result = cellfun(@(x,y) dattes_structure(x, options, y, read_mode),file_in,dest_folders,'uniformoutput',false);
         return;
     end
 end
@@ -126,7 +126,7 @@ switch read_mode
 end
 
 if ~ismember(file_ext,{'.json','.csv','.xml'})
-    fprintf('ERROR dattes_import: not valid file extension, found "%s"\n',file_ext);
+    fprintf('ERROR dattes_structure: not valid file extension, found "%s"\n',file_ext);
     result = [];
     return;
 end
@@ -135,7 +135,7 @@ end
 if isfolder(file_in)
     source_folder = file_in;
     file_list = lsFiles(source_folder,file_ext);
-    result = dattes_import(file_list, options, destination_folder, read_mode);
+    result = dattes_structure(file_list, options, destination_folder, read_mode);
     return;
 end
 
@@ -165,7 +165,7 @@ else
     %1.3 xml mode (extract_profiles)
     if strcmp(file_ext,'.xml')
         
-        %TODO: options 'f','u'and 's' now in dattes_import, just inherit 'v':
+        %TODO: options 'f','u'and 's' now in dattes_structure, just inherit 'v':
         [profiles, eis, metadata, configuration, err] = extract_profiles(file_in,inher_options);
         %TODO error management
         if err
@@ -243,7 +243,7 @@ end
 %7. check result structure:
 [info, err] = check_result_struct(result);
 if err<0
-    fprintf('ERROR dattes_import: not valid result structure error code: %d (see check_result_struct)\n',err);
+    fprintf('ERROR dattes_structure: not valid result structure error code: %d (see check_result_struct)\n',err);
     return
 end
 
