@@ -6,7 +6,7 @@ function t_num = time_str_to_number(t_str)
 %
 % This is beceause MATLAB's datenum/datevec give an error by adding automatically
 % current year to the result.
-% E.g.: datestr(datevec('25:01:01')° = 2 January of current year
+% E.g.: datestr(datevec('25:01:01')) = 2 January of current year
 %
 % Usage: t_num = time_str_to_number(t_str)
 %
@@ -26,7 +26,7 @@ if ischar(t_str)
 end
 
 %get says
-dd = regexp(t_str,'^[0-9]d{0,1} ','match','once');
+dd = regexp(t_str,'^[0-9]d? ','match','once');
 
 %clean days from t_str to keep just HH:MM:SS:
 t_str = regexprep(t_str,'^.* ','');
@@ -40,9 +40,9 @@ if all(Ie)
 else
     %take care of days
     %clean trailing spaces and 'd'
-    dd = regexprep(dd,'d{0,1} ','');
+    dd = regexprep(dd,'d? ','');
     %put zeros in empty values
-    [dd{Ie}]=deal('0');
+    dd(Ie) = deal({'0'});
     %convert to numbers
     dd = str2double(dd);
 end
