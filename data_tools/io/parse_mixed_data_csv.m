@@ -35,7 +35,10 @@ if ~isfield(params,'str_sep')
     %params.str_sep = "'"; % to ignore '
 
 end
-
+if ~isfield(params,'all_str')
+    % treat all column as strings
+    params.all_str = false;
+end
 %1. read header
 fid = fopen(file_in);
 [header_lines,fid] = read_csv_header(fid,params);
@@ -45,6 +48,9 @@ header_lines = header_lines(1:end-1);
 %2. build text_fmt
 text_fmt = build_scanf_fmt(first_data_line,params);
 
+if params.all_str
+    text_fmt = strrep(text_fmt,'f','s');
+end
 %3. textscan
 data_columns1 = textscan(first_data_line,text_fmt,'Delimiter',params.col_sep,'Whitespace',[' \b\t' params.str_sep]);
 data_columns = textscan(fid,text_fmt,'Delimiter',params.col_sep,'Whitespace',[' \b\t' params.str_sep]);
