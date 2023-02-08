@@ -10,8 +10,12 @@ function source_folder = find_common_ancestor(filelist)
 % For more information, see the <a href="matlab:
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
+if isempty(filelist)
+  source_folder = '';
+  return
+end
 
-source_folders = unique(fileparts(filelist));
+source_folders = unique(cellfun(@fileparts,filelist,'UniformOutput',false));
 source_folders_parts = regexp(source_folders,['\' filesep],'split');
 min_source_depth = min(cellfun(@length,source_folders_parts));
 for ind = 1:min_source_depth
