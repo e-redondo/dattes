@@ -52,7 +52,7 @@ default_params.col_sep = ',';
 default_params.buf_size = 1000;% buffer size (number of lines)
 default_params.date_fmt = 'mm/dd/yyyy HH:MM:SS.FFF'; % e.g. mm/dd/yyyy HH:MM:SS.FFF
 default_params.date_fmt = 'mm/dd/yyyy HH:MM:SS AM'; % e.g. mm/dd/yyyy HH:MM:SS.FFF
-default_params.testtime_fmt = ''; %default test time format seconds
+% default_params.testtime_fmt = ''; %default test time format seconds
 % default_params.testtime_fmt = 'HH:MM:SS.FFF';% alternative format (seen in digatron)
 
 if ~exist('params','var')
@@ -73,9 +73,9 @@ end
 if ~isfield(params,'date_fmt')
     params.date_fmt = default_params.date_fmt;
 end
-if ~isfield(params,'testtime_fmt')
-    params.testtime_fmt = default_params.testtime_fmt;
-end
+% if ~isfield(params,'testtime_fmt')
+%     params.testtime_fmt = default_params.testtime_fmt;
+% end
 
 profiles = [];
 other_cols = [];
@@ -83,7 +83,7 @@ other_cols = [];
 
 %TODO: n_header_lines
 
-[header_lines, data_columns] = parse_mixed_data_csv(file_in);
+[header_lines, data_columns,tail_lines] = parse_mixed_data_csv(file_in);
 if isempty(header_lines)
     error('csv2profiles: no header in csv file')
 end
@@ -112,6 +112,11 @@ end
 %find units from header_line
 units = find_units(units);
 
+%remove empty columns (mepty variable name)
+ind_empty_col = cellfun(@isempty,variables);
+variables = variables(~ind_empty_col);
+units = units(~ind_empty_col);
+data_columns = data_columns(~ind_empty_col);
 
 %PUT in temporal order (sometimes csv files are not in order):
 ind_col_t = find_col_index(variables,col_names{2});
@@ -133,7 +138,7 @@ if ~isempty(t)
     %which_mode)
     [t_sorted,index_sorted] = unique(t);
     if ~isequal(t_sorted,t)
-        %order columns if necessary (t_sorted different than t
+        %order columns if necessary (t_sorted different than t)
         data_columns = cellfun(@(x) x(index_sorted),data_columns,'UniformOutput',false);
         t = t_sorted;
     end
@@ -290,9 +295,9 @@ profiles.mode = m;
 % and finally calculate datetime from first value + t
 date_time = data_columns{ind_col_dt};
 if isempty(params.date_fmt)
-    date_time = datenum(date_time(1:10:end));
+    date_time = datenum_guess(date_time(1:10:end));
 else
-    date_time = datenum(date_time(1),params.date_fmt);
+    date_time = datenum_guess(date_time(1),params.date_fmt);
 end
 if isempty(date_time)
     %no column datetime found
