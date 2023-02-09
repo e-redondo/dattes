@@ -9,7 +9,7 @@ function mdb_export_tables(res_file)
 % Inputs : 
 % - res_file: .res file from Arbin cycler
 %
-%   See also importArbinTxt, importArbinXls,  arbin_res2xml, import_arbin_res if iscell(res_file)
+%   See also importArbinTxt, importArbinXls,  arbin_res2xml, import_arbin_res
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab: 
@@ -20,7 +20,7 @@ if iscell(res_file)
     return;
 end
 
-if isdir(res_file)
+if isfolder(res_file)
     res = lsFiles(res_file,'.res');
     mdb_export_tables(res);
     return;

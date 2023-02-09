@@ -1,20 +1,23 @@
-function xml = import_arbin_csv(file_in)
-% import_arbin_xls Arbin *.CSV to VEHLIB XMLstruct converter 
+function xml = import_arbin_csv(file_in, options)
+% import_arbin_xls Arbin *.CSV to VEHLIB XMLstruct converter
 %
 % Usage
-%   xml = import_arbin_xls(file_in) 
+%   xml = import_arbin_xls(file_in)
 % Read filename (*.csv file) and converts to xml (VEHLIB XMLstruct)
 % Inputs:
-% - file_in (string): filename or full pathname
+% - file_in (string): pathname of a csv file
+%           (string): folder to search csv files in
+% - options (string): containing the following characters
+%   - 'v': verbose, tells what it does
 %
 % Outputs:
 % - xml (struct): structure with XML format 4 VEHLIB
-% 
+%
 %   See also csv2profiles, import_arbin_res, import_arbin_xls, arbin_res2xml,
 % arbin_xls2xml, arbin_csv2xml
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
-% For more information, see the <a href="matlab: 
+% For more information, see the <a href="matlab:
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 %TODO: in recent versions of MITSPro, a column named CC2CV exists,
@@ -22,17 +25,47 @@ function xml = import_arbin_csv(file_in)
 verveh=2.0;
 
 %0.-Errors:
-%0.1.- Check file existance
-[D F E] = fileparts(file_in);
-filename = [F E];
+if ~exist('options','var')
+    options = '';
+end
+
+if isfolder(file_in)
+    %batch mode: search all csv files in folder, then put all in a xml
+    file_list = lsFiles(file_in,'.csv',true);
+    xml = cellfun(@(x) import_arbin_csv(x,options),file_list,'UniformOutput',false);
+    % remove empty xmls (not valid csv files):
+    ind_empty = cellfun(@isempty,xml);
+    xml = xml(~ind_empty);
+    % merge all xml into first one
+    for ind = 2:length(xml)
+        xml{1} = XMLFusion(xml{1},xml{ind});
+    end
+
+    if isempty(xml)
+      %no arbin file in folder
+      xml = [];
+    else
+      %return first (merged) xml
+      xml = xml{1};
+    end
+
+    return
+end
 
 if ~exist(file_in,'file')
     fprintf('import_arbin_csv: file does not exist: %s\n',file_in);
     xml = [];
     return;
 end
+
+%0.1.- Check file existance
+[D F E] = fileparts(file_in);
+filename = [F E];
+
+
 % chrono=tic;
-fid = fopen(file_in);
+% fid = fopen(file_in);
+fid = fopen (file_in,'r','n','ISO-8859-11');
 [cycler,line1] = which_cycler(fid);
 fclose(fid);
 
@@ -47,7 +80,7 @@ end
 params = struct;  % see csv2profiles if some params are needed
 % params.U_thres = 0.01;
 params.date_fmt = '';
-params.date_fmt = 'yyyy-mm-dd HH:MM:SS';
+% params.date_fmt = 'yyyy-mm-dd HH:MM:SS';
 if strcmp(cycler,'arbin_csv_v1')
     col_names = {'Date_Time','Test_Time(s)','Voltage(V)','Current(A)',...
         'Step_Index','',...

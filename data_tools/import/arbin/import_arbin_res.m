@@ -1,4 +1,4 @@
-function xml = import_arbin_res(file_in)
+function xml = import_arbin_res(file_in, options)
 % import_arbin_res Arbin *.RES to VEHLIB XMLstruct converter
 %
 % Usage
@@ -6,6 +6,8 @@ function xml = import_arbin_res(file_in)
 % Read filename (*.res file) and converts   to xml (VEHLIB XMLstruct)
 % Inputs:
 % - file_in (string): filename or full pathname
+% - options (string): containing the following characters
+%   - 'v': verbose, tells what it does
 %
 % Outputs:
 % - xml (struct): structure with XML format 4 VEHLIB
