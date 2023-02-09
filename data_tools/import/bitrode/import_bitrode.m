@@ -1,22 +1,20 @@
-function xml = import_bitrode(filename,dirname,options)
+function xml = import_bitrode(file_in,options)
 % import_bitrode Bitrode *.csv to VEHLIB XMLstruct converter
-% 
-% Usage 
+%
+% Usage
 % xml = import_bitrode(filename,pathname)
 % Inputs:
-% - filename (string): filename or full pathname
-% - dirname (string): path to the folder containing the file (empty if
-% filename is full pathname)
+% - file_in (string): csv file to convert
 % - options (string): containing the following characters
 %   - 'v': verbose, tells what it does
 %
 % Outputs:
 % - xml (struct): structure with XML format 4 VEHLIB
-% 
+%
 % See also bitrode_csv2xml, which_cycler
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
-% For more information, see the <a href="matlab: 
+% For more information, see the <a href="matlab:
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if ~exist('options','var')
@@ -28,10 +26,6 @@ verveh = 2.0;
 %TODO: get date_time from test (>>> .mdb file) >>> tabs
 
 %0. check if file exists
-if ~exist('dirname','var')
-    dirname = '';
-end
-file_in = fullfile(dirname,filename);
 [D, F, E] = fileparts(file_in);
 file_out = fullfile(D,sprintf('%s.veh2',F));
 if ~exist(file_in,'file')
@@ -42,9 +36,10 @@ end
 
 
 if verbose
-    fprintf('%s >>> %s\n',filename,file_out);
+    fprintf('%s >>> %s\n',file_in,file_out);
 end
-    fid_in = fopen(file_in,'r');
+%    fid_in = fopen(file_in,'r');
+    fid_in = fopen (file_in,'r','n','ISO-8859-11');
 %0.1 check if file is a bitrode file
 [cycler, line1, line2] = which_cycler(fid_in);
 % bench ='oup';
@@ -56,7 +51,7 @@ end
     fid_out = fopen(file_out,'w+');
     %lecture de l'entete:
 %     variables = fgetl(fidIn);
-    
+
 %     fprintf(fidOut,'%s\n',variables);
     chrono=tic;
     %2.1)substituer dans le corps:
@@ -76,10 +71,10 @@ end
     nb_lignes=find_replace(fid_in,fid_out,strold,strnew,0);
     fclose(fid_in);
     fclose(fid_out);
-    
+
     %read file.veh2
-    fid_out = fopen(file_out,'r');
-    
+%    fid_out = fopen(file_out,'r');
+    fid_out = fopen (file_out,'r','n','ISO-8859-11');
     %read header lines until 'Total Time'
     thisLine = fgetl(fid_out);
     header = cell(0);
@@ -100,7 +95,7 @@ end
         thisLine = fgetl(fid_out);
     end
     if isempty(testName)%if not found, test name is the filename
-        testName = filename;
+        testName = file_in;
     end
 
     if thisLine(1)=='"'
@@ -113,41 +108,41 @@ end
     strold = {'#';' ';'-';'"'};
     strnew = {'Nr';'';'';''};
     variables = regexprep(variables,strold,strnew);
-    
+
     variables = regexp(variables,'\t','split');
     indices = cellfun(@(x) ~isempty(x),variables);
     variables = variables(indices);
-    
+
     %new format 'TotalTime,S', cut ',S':
     [v, u] = regexp(variables,',','split');
     variables = cellfun(@(x) x{1},v,'UniformOutput',false);
     %variables et unites
     unites=unitesBitrode(variables);
     variables=variablesBitrode(variables);%standardiser les noms de variables
-    
+
     %corps
     A = fscanf(fid_out,'%f');
     fclose(fid_out);
     A = reshape(A,length(variables),[])';
-    
+
     %introduire entete:
     [XMLHead, err] = makeXMLHead('bitrode',date,'',sprintf('Bitrode2VEH version:%.2f',verveh));
     %metatable
-    [XMLMetatable, err] = makeXMLMetatable(testName,testDate,filename,'');
-    
+    [XMLMetatable, err] = makeXMLMetatable(testName,testDate,file_in,'');
+
     XMLVars = cell(size(variables));
     for ind = 1:length(variables)
         [XMLVars{ind}, errorcode] = ...
             makeXMLVariable((variables{ind}), (unites{ind}), '%f', (variables{ind}), A(:,ind));
     end
-    
+
     [xml, errorcode] = makeXMLStruct(XMLHead, XMLMetatable, XMLVars);
     %get cycler mode
     t = xml.table{end}.tc.vector;
     U = xml.table{end}.U.vector;
     I = xml.table{end}.I.vector;
     Step = xml.table{end}.Step.vector;
-    
+
     seuilI = 5*min(abs(diff(unique(I))));
     if isempty(seuilI)
         %if is empty, that means all values of I are equal (cst vector)
