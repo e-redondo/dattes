@@ -1,6 +1,6 @@
 function [head, date_test, type_test, source_file, empty_file,test_params] = biologic_head(file_name)
 % biologic_head Read and analyse .mpt Biologic files header
-% 
+%
 % Usage :
 % [head, date_test, type_test, source_file, empty_file] = biologic_head(file_name)
 % Inputs :
@@ -8,7 +8,7 @@ function [head, date_test, type_test, source_file, empty_file,test_params] = bio
 % Outputs :
 %   - head: [(mx1) cell string] Header information
 %   - date_test: [string]  Test date with format yyyymmdd_HHMMSS
-%   - type_test : [string]  Test type 
+%   - type_test : [string]  Test type
 %   - source_file: [string]  Source file
 %   - empty_file : [Boolean]  True if just header in file (no data)
 %
@@ -16,7 +16,7 @@ function [head, date_test, type_test, source_file, empty_file,test_params] = bio
 %
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
-% For more information, see the <a href="matlab: 
+% For more information, see the <a href="matlab:
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if nargin==0
@@ -28,7 +28,8 @@ date_test = '';
 %1.-Reading file
 [D, F, E] = fileparts(file_name);
 F = [F,E];
-fid = fopen(file_name,'r');
+%fid = fopen(file_name,'r');
+fid = fopen (file_name,'r','n','ISO-8859-11');
 if fid<0
     fprintf('biologic_head: Error in the file %s\n',F);
     return;
@@ -53,7 +54,7 @@ date_test = '';
 ligneDate = regexpFiltre(head,'^Acquisition started on : ');
 if ~isempty(ligneDate)
     date_test = regexprep(ligneDate{1},'^Acquisition started on : ','');
-    aNum = datenum(date_test,'mm/dd/yyyy HH:MM:SS');%default date format in MATLAB = Biologic MM/DD/YY
+    aNum = datenum_guess(date_test);%default date format in MATLAB = Biologic MM/DD/YY
     date_test = datestr(aNum,'yymmdd_HHMMSS.FFF');%v10.23
 else%try to deduct date time from file_name
     %try on file_name
@@ -63,7 +64,7 @@ else%try to deduct date time from file_name
         ligneDate = regexp(D1,'^[0-9]{8,8}_[0-9]{4,4}','match','once');
     end
     if ~isempty(ligneDate)
-        aNum = datenum(ligneDate,'yyyymmdd_HHMM');
+        aNum = datenum_guess(ligneDate,'yyyymmdd_HHMM');
         date_test = datestr(aNum,'yymmdd_HHMMSS.FFF');
     end
 end
@@ -124,7 +125,7 @@ if strcmp(type_test,'GEIS')
         Is_line = regexp(Is_line{1},'\s+','split');
         Is_units = regexpFiltre(head,'unit Is');
         Is_units = regexp(Is_units{1},'\s+','split');
-        
+
         Is = sscanf(Is_line{2},'%f');
         scale = 1;
         if strcmp(Is_units{3},'mA')
@@ -139,7 +140,7 @@ if strcmp(type_test,'GEIS')
         Ia_line = regexp(Ia_line{1},'\s+','split');
         Ia_units = regexpFiltre(head,'unit\s+Ia');
         Ia_units = regexp(Ia_units{1},'\s+','split');
-        
+
         Ia = sscanf(Ia_line{2},'%f');
         scale = 1;
         if strcmp(Ia_units{3},'mA')
@@ -160,14 +161,14 @@ elseif strcmp(type_test,'MB')
     control_types = regexp(control_type_line{1},'\s+','split');
     control_types = control_types(Is);%remove first and last column as in Ns
     [~,~,geis_sequences] = regexpFiltre(control_types,'GEIS');
-    
+
     %get control val in line
     control_val1_line = regexpFiltre(head,'^ctrl1_val\s+');
     %get control unit in line
     control_unit1_line = regexpFiltre(head,'^ctrl1_val_unit\s+');
-    
+
     %TODO: find Iavg in settings file. (control_val4?, ApplyI/C?)
-    
+
     start_cuts = [1 regexp(Ns_line{1},'\s[0-9]')+1];
     end_cuts = [start_cuts(2:end)-1 length(control_val1_line{1})];
     for ind = 1:length(start_cuts)
@@ -182,7 +183,7 @@ elseif strcmp(type_test,'MB')
     control_vals1(Ie) = {nan};
     %convert cell to array
     control_vals1 = cell2mat(control_vals1);
-    
+
     scale = ones(size(Ns));
     [~,~,Ism] = regexpFiltre(control_units1,'mA');%TODO same for mV?
     scale(Ism) = 0.001;
@@ -190,7 +191,7 @@ elseif strcmp(type_test,'MB')
     test_params.Is = nan(size(Ns));%TODO
     test_params.Ia = control_vals1.*scale;
     test_params.Ia(~geis_sequences) = nan;%TODO add PEIS when done
-    
+
 end
 
 end

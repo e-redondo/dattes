@@ -1,4 +1,4 @@
-function [outStruct, err, errS] = import_biologic(dirname)
+function [outStruct, err, errS] = import_biologic(dirname,options)
 % import_biologic converts *.mpt files (Biologic) in *.xml
 %
 % Usage:
@@ -7,6 +7,9 @@ function [outStruct, err, errS] = import_biologic(dirname)
 % Inputs:
 % - dirname [(1xp) string]: folder containing *.mpt files
 % - dirname [cell string]: file list to convert
+% - options (string): containing the following characters
+%   - 'v': verbose, tells what it does
+%
 % Outputs:
 % - outStruct: xml structure in VEHLIB format
 % - err [(1x1) double]: error code (==0 => OK, ~=0 => error)
@@ -23,13 +26,28 @@ function [outStruct, err, errS] = import_biologic(dirname)
 % See also: biologic_mpt2xml_files, biologic_mpt2xml_folders, which_cycler
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
-% For more information, see the <a href="matlab: 
+% For more information, see the <a href="matlab:
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
+
+%TODO: change dirname/filelist/file_in logic to be according other
+%functions (e.g. import_arbin_csv):
+% - default input: file_in
+% - if file_in is a folder: do lsfiles, cellfun, xmlfusion
+% - if file_in is a cell: cellfun
+%TODO2: when first TODO done, change input name to file_in
 
 if nargin==0
     print_usage;
 end
-
+%0.- check inputs:
+if ~exist('options','var')
+    options = '';
+end
+if isfile(dirname)
+    %if 'path/to/file.mpt' given in input, convert to cell to consider it
+    %as a file list.
+    dirname = {dirname};
+end
 %1.-trouver les fichiers MPT
 if iscell(dirname)
     fileList = dirname;
@@ -38,7 +56,7 @@ if iscell(dirname)
     fileList = fileList(indices);
 else
     %01 verification de l'existence du repertoire
-    if ~isdir(dirname)
+    if ~isfolder(dirname)
         err = -1;
         fprintf('import_biologic: nonexistent directory: %s\n',dirname);
         if err
@@ -71,7 +89,8 @@ for ind = 1:length(fileList)
     %ouvrir le fichier
     % %     nomFichier = fullfile(dirname,fileList);
     thisFile = fileList{ind};
-    fid = fopen(thisFile,'r');
+%    fid = fopen(thisFile,'r');
+    fid = fopen (thisFile,'r','n','ISO-8859-11');
     if fid>0
         %lire fichier
         [tete{ind}, corps{ind}] = read_biologic_file(fid);
@@ -126,7 +145,7 @@ function [maStruct, err] = Biologic2XML(corps,fileList)
 
 % 1.- make Head
 XMLfileType = 'Biologic File';
-XMLfileDate =  datestr(now,'yyyy/mm/dd HH:MM');
+XMLfileDate =  datestr(now,'yyyy/mm/dd');
 % XMLfileDate =  'yyyy/mm/dd HH:MM';%DEBUG
 
 [XMLHead, err] = makeXMLHead(XMLfileType,XMLfileDate);
@@ -144,7 +163,7 @@ for indF = 1:length(corps)
     donnees = corps{indF};
     if ~isempty(donnees)
         % 2.- make Table
-        
+
         [variableNames, unitNames, tableDate, typeEssai, sourcefile,test_params] = analyze_head(fileList{indF});
         % 2.1.- make metaTable
         tableName = sprintf('%s_%02i',typeEssai,indF);
@@ -175,14 +194,14 @@ for indF = 1:length(corps)
             XMLVars.tabs = makeXMLVariable('tabs', 's', '%f', 'temps absolu', tabs);
         end
         if  strcmp(typeEssai, 'GEIS') || strcmp(typeEssai, 'PEIS')
-            
+
             %mode 4
             mode =  4*ones(size(XMLVars.tc.vector));
             XMLVars.mode = makeXMLVariable('mode', '', '%i', 'mode', mode);
             %error
             Error = zeros(size(XMLVars.tc.vector));
             XMLVars.error = makeXMLVariable('error', '', '%i', 'error', Error);
-            
+
             %Iavg (Is in mpt files: constant average current):
             if isfield(test_params,'Is')
                Iavg =  test_params.Is*ones(size(XMLVars.tc.vector));
@@ -193,8 +212,8 @@ for indF = 1:length(corps)
                 Iamp =  test_params.Ia*ones(size(XMLVars.tc.vector));
                 XMLVars.Iamp = makeXMLVariable('Iamp', 'A', '%f', 'Iamp', Iamp);
             end
-        elseif  strcmp(typeEssai, 'MB')  
-            
+        elseif  strcmp(typeEssai, 'MB')
+
             %Found EIS in MB:
             %Iavg (Is in mpt files: constant average current):
             if isfield(test_params,'Is')
@@ -222,7 +241,7 @@ for indF = 1:length(corps)
                 end
                  XMLVars.Iamp = makeXMLVariable('Iamp', 'A', '%f', 'Iamp', Iamp);
             end
-        elseif  strcmp(typeEssai, 'GPI')  
+        elseif  strcmp(typeEssai, 'GPI')
             %mode 5
             mode =  5*ones(size(XMLVars.tc.vector));
             XMLVars.mode = makeXMLVariable('mode', '', '%i', 'mode', mode);
@@ -233,7 +252,7 @@ for indF = 1:length(corps)
             %Qp (AmpHeure charges endant la phase)
             Qp =  zeros(size(XMLVars.tc.vector));
             XMLVars.Qp = makeXMLVariable('Qp', 'mAh', '%f', 'Qp', Qp);
-            
+
         end
         %Ns
         if isfield(XMLVars,'Ns_changes')
