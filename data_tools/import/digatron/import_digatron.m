@@ -1,4 +1,4 @@
-function xml = import_digatron(file_in)
+function xml = import_digatron(file_in, options)
 % import_digatron_xls digatron *.CSV to VEHLIB XMLstruct converter 
 %
 % Usage
@@ -6,6 +6,8 @@ function xml = import_digatron(file_in)
 % Read filename (*.csv file) and converts to xml (VEHLIB XMLstruct)
 % Inputs:
 % - file_in (string): filename or full pathname
+% - options (string): containing the following characters
+%   - 'v': verbose, tells what it does
 %
 % Outputs:
 % - xml (struct): structure with XML format 4 VEHLIB
@@ -32,7 +34,8 @@ if ~exist(file_in,'file')
     return;
 end
 % chrono=tic;
-fid = fopen(file_in);
+% fid = fopen(file_in);
+fid = fopen (file_in,'r','n','ISO-8859-11');
 [cycler,line1] = which_cycler(fid);
 fclose(fid);
 
@@ -47,8 +50,8 @@ end
 params = struct;  % see csv2profiles if some params are needed
 % params.U_thres = 5*min(diff(unique(U)));
 % params.I_thres = 5*min(diff(unique(I)));
-params.testtime_fmt = 'HH:MM:SS';
-params.date_fmt = 'mm/dd/yyyy HH:MM:SS AM';
+% params.testtime_fmt = 'HH:MM:SS';
+params.date_fmt = '';
 
 col_names = {'Time Stamp','Prog Time','Voltage','Current','Step','Capacity','',''};
 
