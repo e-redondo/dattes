@@ -21,7 +21,7 @@ frewind(fid);
 this_line = my_fgetl(fid);
 header_lines = {this_line};
 
-while ~feof(fid) && isempty(regexp(this_line,'^\-?\.?[0-9]','once')) && length(header_lines)<100
+while ~feof(fid) && isempty(regexp(this_line,'^\s*\-?\.?[0-9]','once')) && length(header_lines)<100
     this_line = my_fgetl(fid);
     header_lines{end+1,1} = this_line;
 end

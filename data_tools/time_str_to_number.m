@@ -59,5 +59,11 @@ hh = hhmmss(:,1);
 mm = hhmmss(:,2);
 ss = hhmmss(:,3);
 
+% Not faster, same result:
+% A = cellfun(@(x) textscan(x,'%f %f %f','Delimiter',':'),t_str,'UniformOutput',false);
+% hh = cellfun(@(x) x{1},A);
+% mm = cellfun(@(x) x{2},A);
+% ss = cellfun(@(x) x{3},A);
+
 t_num = dd*86400+hh*3600+mm*60+ss;
 end

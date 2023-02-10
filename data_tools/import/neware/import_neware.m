@@ -1,5 +1,5 @@
 function xml = import_neware(file_in,options)
-% import_bitrode Neware *.csv to VEHLIB XMLstruct converter
+% import_neware Neware *.csv to VEHLIB XMLstruct converter
 % 
 % Usage 
 % xml = import_neware(file_in,options)
@@ -38,61 +38,90 @@ end
 if verbose
     fprintf('import_neware: %s\n',file_in);
 end
-    fid_in = fopen(file_in,'r');
-%0.1 check if file is a bitrode file
-[cycler, line_cycle, line_step] = which_cycler(fid_in);
-% bench ='oup';
+%     fid_in = fopen(file_in,'r');
+    fid_in = fopen (file_in,'r','n','ISO-8859-11');
+%0.1 check if file is a neware file
+[cycler, ~, ~] = which_cycler(fid_in);
+fclose(fid_in);
+
+% not a neware file
 if ~strncmp(cycler,'neware_csv',11)
     fprintf('ERROR: file does not seem a neware *.csv file: %s\n',file_in);
     xml = [];
     return;
 end
-chrono = tic;
-
-line_variables = fgetl(fid_in);
-fclose(fid_in);
 
 if verbose
     fprintf('read data\n');
 end
+
+%TODO: Reasons to split in three files:
+% - simpler to process data from step and cycle info
+% - last two characters (comma and char(9)) on each line of neware files make textscan not to
+% work properly, columns are not cut properly, some values slide to
+% preceding column making textscan to stop and putting all in wrong
+% order...
+% In the split part, each line is copied either to 'cycle' either to 'step'
+% either to 'data' file, except two last characters (end-2).
+
+%split csv file in three files:
+% lines starting with ',,' = data
+% lines starting with ',' = step info
+% lines not starting with ',' = cycle info
+fid_in = fopen (file_in,'r','n','ISO-8859-11');
+[D,F,E] = fileparts(file_in);
+file_out_data = fullfile(D,sprintf('%s_data%s',F,E));
+file_out_step = fullfile(D,sprintf('%s_step%s',F,E));
+file_out_cycle = fullfile(D,sprintf('%s_cycle%s',F,E));
+fid_out_data = fopen (file_out_data,'w+','n','ISO-8859-11');
+fid_out_step = fopen (file_out_step,'w+','n','ISO-8859-11');
+fid_out_cycle = fopen (file_out_cycle,'w+','n','ISO-8859-11');
+
+while ~feof(fid_in)
+    this_line = fgetl(fid_in);
+    if length(this_line)>2
+        if this_line(1)~=','
+            %cycle
+            fprintf(fid_out_cycle,'%s\n',this_line(1:end-2));
+        elseif this_line(2)~=','
+            %step
+            fprintf(fid_out_step,'%s\n',this_line(2:end-2));
+        else
+            %data
+            fprintf(fid_out_data,'%s\n',this_line(3:end-2));
+        end
+    end
+end
+fclose(fid_in);
+fclose(fid_out_cycle);
+fclose(fid_out_step);
+fclose(fid_out_data);
+
 %read data in csv (treat as string because mixed strings and numbers)
-data = readmatrix(file_in,'OutputType','string');
-%fill missing strings with empty strings to avoid errors in next step
-data = fillmissing(data,'constant',"");
-%convert string to cell of char
-% data = arrayfun(@(x) char(x),data,'UniformOutput',false);
+params.all_str = false;
+params.col_sep = ',';
+[header_lines,data_columns,tail_lines] = parse_mixed_data_csv(file_out_data,params);
 
-%data contains numbers (in string format) + strings
-%data_num contains just number, missing strings and other strings are NaNs
-%using data_num is faster than using data
-data_num = readmatrix(file_in,'TreatAsMissing','NA');
+% line_cycle = header_lines{end-2};
+% line_step = header_lines{end-1};
+line_variables = header_lines{end};
 
-% Ie = cellfun(@isempty,data);
-%faster than cellfun isempty:
-Ie = isnan(data_num);
+% ind_cycle = ~cellfun(@isempty,data_columns{1});
+% ind_step = ~cellfun(@isempty,data_columns{2});
+% ind_data = ~ind_cycle & ~ind_step;
 
-%split data into three:
-%1. first element non empty: 'Cycle lines'
-I_cycle_data = ~Ie(:,1);
-data_cycle = data(I_cycle_data,:);
-%2. second elemnt non empty: 'Step lines'
-I_step_data = Ie(:,1) & ~Ie(:,2);
-data_step = data(I_step_data,:);
-%3. first and second elemens empty: 'Measurements'
-I_measurement_data = Ie(:,1) & Ie(:,2);
-data = data(I_measurement_data,:);
-
-data_num = data_num(I_measurement_data,:);
+% data_cycle = cellfun(@(x) x(ind_cycle),data_columns,'UniformOutput',false);
+% data_step = cellfun(@(x) x(ind_step),data_columns,'UniformOutput',false);
+% data = cellfun(@(x) x(ind_data),data_columns,'UniformOutput',false);
 
 %TODO: analyse line_cycle and data_cycle
 %TODO: analyse line_step and data_step
 
 %analyse measurements (line_variables and data):
-variables = regexp(line_variables,',','split');
-variables = variables(3:end);
-data = data(:,3:end);
-data_num = data_num(:,3:end);
-
+variables = regexp(line_variables,params.col_sep,'split');
+%remove two fisrt columns (for cycle and for step respectively)
+% variables = variables(3:end);
+% data = data(3:end);
 
 %get variable list
 
@@ -127,16 +156,12 @@ XMLVars = cell(size(variables));
 for ind = 1:length(variables)
     if ~isempty(variables{ind})
         if strcmp(variables{ind},'tp')
-%             this_column = regexp(data(:,ind),':','split');
-%             t_hours = cellfun(@(x) sscanf(x{1},'%d'),this_column);
-%             t_minutes = cellfun(@(x) sscanf(x{2},'%d'),this_column);
-%             t_seconds = cellfun(@(x) sscanf(x{3},'%f'),this_column);
-%             this_column = t_seconds + 60*(t_minutes+60*t_hours);
-            this_column = cellfun(@to_seconds,data(:,ind));
+%             convert HH:MM:SS.FFF to double
+            this_column = time_str_to_number(data_columns{ind});
         elseif strcmp(variables{ind},'tabs')
             %do not calculate datenum for every element just first one:
             % convert 'mm/dd/yyyy HH:MM:SS' to numbers
-            tabs_0 = datenum(data(1,ind));
+            tabs_0 = datenum_guess(data_columns{ind}(1));
             
             %datetime columns convert 'mm/dd/yyyy HH:MM:SS' to numbers
 %             this_column = datenum(data(:,ind));
@@ -147,17 +172,10 @@ for ind = 1:length(variables)
             continue
         else
 %             %normal column (numbers) convert data strings to numbers.
-%                         this_column = data(:,ind);
-%                         Ie = cellfun(@isempty,this_column);
-%                         if all(Ie)
-%                             %skip columns with all empty
-%                             continue
-%                         end
-%                         this_column(Ie) = {nan};
-%                         this_column = cellfun(@(x) sscanf(x,'%f'),this_column);
-            
-            %normal column (numbers) > get directly numbers from data_num
-            this_column = data_num(:,ind);
+% probably faster methods exist, e.g: cat all text of column in string,
+% then sscanf('%f'), or textscan.
+%             this_column = str2double(data_columns{ind});
+            this_column = data_columns{ind};
             if all(isnan(this_column))
                 %skip columns with all nans (empty columns)
                 continue
@@ -225,10 +243,14 @@ xml.table{end}.Step =  xml_step;
     %met les variables dans l'ordre
     xml.table{end} = sort_cycler_variables(xml.table{end});
 
-    tecoule = toc(chrono);
     if verbose
-        fprintf('file ready in %0.2f seconds.\n',tecoule);
+        fprintf('file ready.\n');
     end
+
+    %delete temp files:
+    delete (file_out_data);
+    delete (file_out_step);
+    delete (file_out_cycle);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -273,13 +295,4 @@ end
 % Step = zeros(size(tabs));
 % 
 % end
-
-function seconds = to_seconds(hh_mm_ss)
-%convert a string like 'HH:MM:SS' to seconds rounded to ms:
-% seconds = round((datenum(hh_mm_ss)-datenum('00:00:00'))*86400,3);
-            hh_mm_ss = regexp(hh_mm_ss,':','split');
-            t_hours = sscanf(hh_mm_ss{1},'%d');
-            t_minutes = sscanf(hh_mm_ss{2},'%d');
-            t_seconds = sscanf(hh_mm_ss{3},'%f');
-            seconds = t_seconds + 60*(t_minutes+60*t_hours);
-end
+% 

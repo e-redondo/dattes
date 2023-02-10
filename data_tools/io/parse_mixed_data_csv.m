@@ -40,7 +40,7 @@ if ~isfield(params,'all_str')
     params.all_str = false;
 end
 %1. read header
-fid = fopen(file_in);
+fid = fopen(file_in,'r','n','ISO-8859-11');
 [header_lines,fid] = read_csv_header(fid,params);
 
 first_data_line = header_lines{end};
@@ -52,8 +52,14 @@ if params.all_str
     text_fmt = strrep(text_fmt,'f','s');
 end
 %3. textscan
-data_columns1 = textscan(first_data_line,text_fmt,'Delimiter',params.col_sep,'Whitespace',[' \b\t' params.str_sep]);
-data_columns = textscan(fid,text_fmt,'Delimiter',params.col_sep,'Whitespace',[' \b\t' params.str_sep]);
+if isempty(params.str_sep)
+    data_columns1 = textscan(first_data_line,text_fmt,'Delimiter',params.col_sep);
+    data_columns = textscan(fid,text_fmt,'Delimiter',params.col_sep);
+else
+   %TODO: seems not to work in octave (neware files)
+   data_columns1 = textscan(first_data_line,text_fmt,'Delimiter',params.col_sep,'Whitespace',[' \b\r\n\t' params.str_sep]);
+   data_columns = textscan(fid,text_fmt,'Delimiter',params.col_sep,'Whitespace',[' \b\r\n\t' params.str_sep]);
+end
 
 
 data_columns = cellfun(@(x,y) vertcat(x,y),data_columns1,data_columns,'UniformOutput',false);
@@ -72,7 +78,7 @@ end
 %4.tail_lines
 tail_lines = cell(0);
 while ~feof(fid)
-    tail_lines{end+1} = fgetl(fid); 
+    tail_lines{end+1} = fgetl(fid);
 end
 
 fclose(fid);
@@ -93,7 +99,7 @@ if ~isfield(params,'str_sep')
     params.str_sep = '';
     %params.str_sep = '"'; % to ignore "
     %params.str_sep = "'"; % to ignore '
-    
+
 end
 
 %cut line into 'words'

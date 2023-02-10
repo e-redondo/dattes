@@ -2,7 +2,7 @@ function [profiles, other_cols] = csv2profiles(file_in,col_names,params)
 % csv2profiles Read CSV file and get profiles
 %
 % Usage:
-% [profiles, other_cols] = csv2profiles(file_in,col_names,col_sep,dec_sep,date_fmt)
+% [profiles, other_cols] = csv2profiles(file_in,col_names,params)
 %
 % Inputs:
 % - file_in [1xp string]: pathname to .csv file
@@ -83,7 +83,7 @@ other_cols = [];
 
 %TODO: n_header_lines
 
-[header_lines, data_columns,tail_lines] = parse_mixed_data_csv(file_in);
+[header_lines, data_columns,tail_lines] = parse_mixed_data_csv(file_in,params);
 if isempty(header_lines)
     error('csv2profiles: no header in csv file')
 end
