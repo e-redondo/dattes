@@ -86,7 +86,7 @@ switch cycler
         file_ext_default = '.res';
         merge_possible = false;
     case 'arbin_xls'
-        import_fun = @import_arbin_xls2;
+        import_fun = @import_arbin_xls;
         file_ext_default = {'.xls','.xlsx'};
         merge_possible = false;
     case 'biologic'
