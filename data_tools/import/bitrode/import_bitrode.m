@@ -159,6 +159,18 @@ end
     %ajouter aux variables de xml
     mode = makeXMLVariable('mode','', '%f','mode', m);
     xml.table{end}.mode = mode;
+
+    % Add 'tabs' (absolute time)
+    Datem = datenum_guess(testDate);% date format 'Matlab'
+    if isnumeric(Datem)
+        Datee = m2edate(Datem);%date format 'Eduardo'
+        tabs = xml.table{end}.tc.vector + Datee;
+    else
+        tabs = xml.table{end}.tc.vector;
+    end
+    tabs = makeXMLVariable('tabs', 's', '%f', 'temps absolu', tabs);
+    xml.table{end}.tabs = tabs;
+
     %met les variables dans l'ordre
     xml.table{end} = sort_cycler_variables(xml.table{end});
     %on elimine le fichier 'copy'
