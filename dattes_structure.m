@@ -1,6 +1,6 @@
 function result = dattes_structure(file_in, options, destination_folder, read_mode)
 % dattes_structure - DATTES Import function
-% 
+%
 % This function read .xml (or .json, or .csv) files, read metadata files
 % (.meta) and performs some basic calculations (which_mode, split_phases,
 % calcul_soc). The results are given as output and can be stored in mat
@@ -43,7 +43,7 @@ function result = dattes_structure(file_in, options, destination_folder, read_mo
 % See also dattes_import, dattes_configure
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
-% For more information, see the <a href="matlab: 
+% For more information, see the <a href="matlab:
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 %TODO: verbose messages
@@ -107,9 +107,10 @@ if iscellstr(file_in)
         source_folder = regexprep(source_folder,'\.','\\.');
         % escape fileseps
         source_folder = regexprep(source_folder,['\' filesep],['\\' filesep]);
-        
+
         %0.2.3 reproduce file tree in destination_folder
-        dest_folders = regexprep(fileparts(file_in),['^' source_folder],destination_folder);
+        src_folders = cellfun(@fileparts,file_in,'Uniformoutput',false);
+        dest_folders = regexprep(src_folders,['^' source_folder],destination_folder);
         %0.2.4 run dattes_structure for each element in file list
         result = cellfun(@(x,y) dattes_structure(x, options, y, read_mode),file_in,dest_folders,'uniformoutput',false);
         return;
@@ -122,9 +123,9 @@ switch read_mode
     case 'json'
         file_ext = '.json';
     case 'csv'
-        file_ext = '.csv';        
+        file_ext = '.csv';
     case 'xml'
-        file_ext = '.xml'; 
+        file_ext = '.xml';
     otherwise
         %try to deduce from file_in_ext
         file_ext = file_in_ext;
@@ -240,16 +241,16 @@ if isempty(result.profiles.soc) || ismember('S',options)
         result.configuration,inher_options);
     result.profiles.dod_ah = dod_ah;
     result.profiles.soc = soc;
-    
+
     % TODO: calcul_soc_patch
 end
-    
+
 %6.- result.test
 result.test.file_in = file_in;
 result.test.file_out = file_out;
 result.test.datetime_ini = result.profiles.datetime(1);
 result.test.datetime_fin = result.profiles.datetime(end);
-% update test soc_ini and soc_fin: 
+% update test soc_ini and soc_fin:
 if isempty(result.profiles.dod_ah)
     result.test.dod_ah_ini = [];
     result.test.soc_ini = [];
