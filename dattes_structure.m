@@ -11,7 +11,7 @@ function result = dattes_structure(file_in, options, destination_folder, read_mo
 % - read single file (json, csv, or xml), default options
 % result = dattes_structure(file_in, 's')
 % - read single file, MAT file will be saved beside file_in (same pathname, different extension)
-% result = dattes_structure(file_in,options,destination_folder)
+% result = dattes_structure(file_in,'s',destination_folder)
 % - read single file, MAT file will be saved in destination_folder
 % result = dattes_structure(file_list,...)
 % - read each file in file_list, result is [mx1 cell struct]
@@ -67,6 +67,11 @@ elseif ~ischar(options)
     result = [];
     return
 end
+
+verbose = ismember('v',options);
+force = ismember('f',options);
+update = ismember('u',options);
+
 % inherit some options to some functions
 inher_options = options(ismember(options,'v'));
 
@@ -142,53 +147,70 @@ end
 %0.5 file_out
 file_out = result_filename(file_in,destination_folder);
 
-%1. read file
-%1.1 json mode (import_json)
-if strcmp(file_ext,'.json')
-    [result, err] = read_json_struct(file_in);
-    
-    %TODO: error management
-    if err
-        result = [];
-        return
+%0.6 update option
+if isfile(file_out) && update
+    %check dates, if file_in newer, set force to true
+    dir_in = dir(file_in);
+    dir_out = dir(file_out);
+    if dir_out.datenum<dir_in.datenum
+        fprintf('Destination file exists, but input file is more recent, updating: %s\n',file_in);
+        force = true;
     end
+end
+
+%1. read file
+if isfile(file_out) && ~force
+    %1.0 read mat file if it exists and no force or update
+    fprintf('File exists: %s, loading result from mat\n',file_out);
+    result = load_result(file_out);
 else
-    %1.2 csv mode (import_csv + metadata_collector)
-    if strcmp(file_ext,'.csv')
-        [profiles, eis, metadata, configuration, err] = extract_profiles_csv(file_in,inher_options);
+    %1.1 json mode (import_json)
+    if strcmp(file_ext,'.json')
+        [result, err] = read_json_struct(file_in);
+
         %TODO: error management
         if err
             result = [];
             return
         end
-    end
-    %1.3 xml mode (extract_profiles)
-    if strcmp(file_ext,'.xml')
-        
-        %TODO: options 'f','u'and 's' now in dattes_structure, just inherit 'v':
-        [profiles, eis, metadata, configuration, err] = extract_profiles(file_in,inher_options);
-        %TODO error management
-        if err
-            result = [];
+    else
+        %1.2 csv mode (import_csv + metadata_collector)
+        if strcmp(file_ext,'.csv')
+            [profiles, eis, metadata, configuration, err] = extract_profiles_csv(file_in,inher_options);
+            %TODO: error management
+            if err
+                result = [];
+                return
+            end
+        end
+        %1.3 xml mode (extract_profiles)
+        if strcmp(file_ext,'.xml')
+
+            %TODO: options 'f','u'and 's' now in dattes_structure, just inherit 'v':
+            [profiles, eis, metadata, configuration, err] = extract_profiles(file_in,inher_options);
+            %TODO error management
+            if err
+                result = [];
+                return
+            end
+        end
+        %2. compile results
+        if isempty(profiles)
+            % no data found in xml_file
             return
         end
-    end
-    %2. compile results
-    if isempty(profiles)
-        % no data found in xml_file
-        return
-    end
-    result.profiles = profiles;
-    if ~isempty(eis)
-        result.eis = eis;
-    end
-    if ~isempty(metadata)
-        result.metadata = metadata;
-    end
-    result.configuration = configuration;
-    
-    if ~isfield(result.profiles, 'mode')
-        options = [options, 'm'];
+        result.profiles = profiles;
+        if ~isempty(eis)
+            result.eis = eis;
+        end
+        if ~isempty(metadata)
+            result.metadata = metadata;
+        end
+        result.configuration = configuration;
+
+        if ~isfield(result.profiles, 'mode')
+            options = [options, 'm'];
+        end
     end
 end
 %3. which mode (if mode not in file_in or if 'm' in options)
