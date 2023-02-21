@@ -141,7 +141,11 @@ end
     t = xml.table{end}.tc.vector;
     U = xml.table{end}.U.vector;
     I = xml.table{end}.I.vector;
-    Step = xml.table{end}.Step.vector;
+    if isfield(xml.table{end},'Step')
+        Step = xml.table{end}.Step.vector;
+    else
+        Step = find_steps(t,I,U, 0.001,'v');
+    end
 
     seuilI = 5*min(abs(diff(unique(I))));
     if isempty(seuilI)
