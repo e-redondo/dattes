@@ -22,6 +22,18 @@ function [xml_files, failed_filelist,ignored_list] = dattes_import(srcdir,cycler
 %   - defaults: no verbose, no force
 % - dstdir [char]: destination folder for xml files, if not given xml are
 % written in srcdir
+% - file_ext [char]: search for alternative extension (e.g. '.txt' instead
+% '.mpt' for biologic files). Default extension is '.csv' for all cyclers,
+% except or arbin_res ('.res' default), arbin_xls ('.xls' and '.xlsx') and
+% biologic ('.mpt default) 
+%
+% See also import_arbin_csv, import_arbin_res, import_arbin_xls, import_biologic
+% import_bitrode, import_digatron, import_neware
+%
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab: 
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 %TODO: flexible verbose options:
 % Currently verbose is transmitted to lower level functions, to allow
@@ -34,6 +46,9 @@ function [xml_files, failed_filelist,ignored_list] = dattes_import(srcdir,cycler
 % verbose = ismember('v', options); true if 'v' in options
 % options = options(1:end~=(find(options=='v',1))); error in no 'v' in options
 
+%TODO: update option
+% Update ('u') option is like force ('f') but only if cycler file more
+% recent than xml file
 
 % 0. check inputs
 if nargin<2
@@ -127,6 +142,10 @@ end
 % if merge: file_list are folders contining '.csv' (or whatever extension)
 [xml_list,file_list] = get_xml_list(srcdir,options,dstdir,file_ext);
 
+if isempty(xml_list)
+    fprintf('dattes_import: No %s files to import in folder "%s"\n',cycler,srcdir);
+    return
+end
 % %remove files if they exist if not force option:
 % if ~force
 %     ind_existing = cellfun(@isfile,xml_list);
