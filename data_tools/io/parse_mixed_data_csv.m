@@ -40,7 +40,7 @@ if ~isfield(params,'all_str')
     params.all_str = false;
 end
 %1. read header
-fid = fopen(file_in,'r','n','ISO-8859-11');
+fid = fopen_safe(file_in);
 [header_lines,fid] = read_csv_header(fid,params);
 
 first_data_line = header_lines{end};

@@ -64,8 +64,7 @@ filename = [F E];
 
 
 % chrono=tic;
-% fid = fopen(file_in);
-fid = fopen (file_in,'r','n','ISO-8859-11');
+fid = fopen_safe(file_in);
 [cycler,line1] = which_cycler(fid);
 fclose(fid);
 

@@ -1,8 +1,8 @@
 function xml = import_digatron(file_in, options)
-% import_digatron_xls digatron *.CSV to VEHLIB XMLstruct converter 
+% import_digatron_xls digatron *.CSV to VEHLIB XMLstruct converter
 %
 % Usage
-%   xml = import_digatron_xls(file_in) 
+%   xml = import_digatron_xls(file_in)
 % Read filename (*.csv file) and converts to xml (VEHLIB XMLstruct)
 % Inputs:
 % - file_in (string): filename or full pathname
@@ -11,12 +11,12 @@ function xml = import_digatron(file_in, options)
 %
 % Outputs:
 % - xml (struct): structure with XML format 4 VEHLIB
-% 
+%
 %   See also csv2profiles, import_digatron_res, import_digatron_xls, digatron_res2xml,
 % digatron_xls2xml, digatron_csv2xml
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
-% For more information, see the <a href="matlab: 
+% For more information, see the <a href="matlab:
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 %TODO: in recent versions of MITSPro, a column named CC2CV exists,
@@ -34,8 +34,8 @@ if ~exist(file_in,'file')
     return;
 end
 % chrono=tic;
-% fid = fopen(file_in);
-fid = fopen (file_in,'r','n','ISO-8859-11');
+
+fid = fopen_safe(file_in);
 [cycler,line1] = which_cycler(fid);
 fclose(fid);
 

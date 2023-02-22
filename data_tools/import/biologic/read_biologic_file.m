@@ -39,15 +39,14 @@ line2_split = line2_split(indices);
 nb_lignes = sscanf(line2_split{end},'%i');
 
 head = cell(nb_lignes,1);
-head{1} = line1;
-head{2} = line2;
-for ind = 3:nb_lignes
+frewind(fid);
+for ind = 1:nb_lignes
     head{ind} = fgetl(fid);
 end
 
 %Reading body
 line1 = fgetl(fid);
-if line1 == -1
+if feof(fid)
     body=[]; %No body, test stopped before this step 
     just_head = true;
     empty_mpt = true;

@@ -1,11 +1,13 @@
-function [cycler, line1, line2] = which_cycler(fid)
+function [cycler, line1, line2, header_lines] = which_cycler(fid)
 % which_cycler detect from wich cycler the file is.
 %
 % Usage:
 % [cycler, ligne1, ligne2] = which_cycler(fid)
-% 
+% [cycler, ligne1, ligne2] = which_cycler(filename)
+%
 % Inputs:
 % - fid (file handler)
+% - filename (char): path to the file
 %
 % Outputs:
 % - cycler [(1xp) string]: string defining the cycler type
@@ -20,27 +22,37 @@ function [cycler, line1, line2] = which_cycler(fid)
 %   - 'arbin_csv_v2': Arbin csv file second version
 %   - 'neware_csv': Neware csv file
 %   - 'digatron_csv': Digatron csv file
+%   - if unknowkn cycler, first line is returned
 % - line1 [string]: file's first line (if file is text type)
-% - line2 [string]: file's second line (if file is text type)
+% - line2 [string]: file's second line (if file is text type), if bitrode
+% file, last file's line is returned
 %
-% See also: dattes, which_mode
+% See also: dattes_import
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
-% For more information, see the <a href="matlab: 
+% For more information, see the <a href="matlab:
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
+if ischar(fid)
+    fid = fopen_safe(fid);
+end
 cycler = '';
 line1 = '';
 line2 = '';
 
 header_lines = read_csv_header(fid);
 
+
 %read first line
 frewind(fid);
-line1 = fgetl(fid);
-line2 = fgetl(fid);
-if length(line2)<2
-    line2 = fgetl(fid);
+line1 = header_lines{1};
+if length(header_lines)<2
+  return;%empty file or only line1
+end
+line2 = header_lines{2};
+if length(line2)<2 && length(header_lines)>2
+    %if second line is too short, take third one
+    line2 = header_lines{3};
 end
 
 if strcmp(line1,'EC-Lab ASCII FILE')

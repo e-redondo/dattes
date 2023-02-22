@@ -38,8 +38,7 @@ end
 if verbose
     fprintf('%s >>> %s\n',file_in,file_out);
 end
-%    fid_in = fopen(file_in,'r');
-    fid_in = fopen (file_in,'r','n','ISO-8859-11');
+    fid_in = fopen_safe(file_in);
 %0.1 check if file is a bitrode file
 [cycler, line1, line2] = which_cycler(fid_in);
 % bench ='oup';
@@ -48,7 +47,7 @@ if ~strncmp(cycler,'bitrode_csv',11)
     xml = [];
     return;
 end
-    fid_out = fopen(file_out,'w+');
+    fid_out = fopen (file_out,'w+','n','ISO-8859-1');
     %lecture de l'entete:
 %     variables = fgetl(fidIn);
 
@@ -73,8 +72,8 @@ end
     fclose(fid_out);
 
     %read file.veh2
-%    fid_out = fopen(file_out,'r');
-    fid_out = fopen (file_out,'r','n','ISO-8859-11');
+
+    fid_out = fopen_safe(file_out);
     %read header lines until 'Total Time'
     thisLine = fgetl(fid_out);
     header = cell(0);

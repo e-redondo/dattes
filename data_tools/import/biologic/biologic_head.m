@@ -28,8 +28,7 @@ date_test = '';
 %1.-Reading file
 [D, F, E] = fileparts(file_name);
 F = [F,E];
-%fid = fopen(file_name,'r');
-fid = fopen (file_name,'r','n','ISO-8859-11');
+fid = fopen_safe(file_name);
 if fid<0
     fprintf('biologic_head: Error in the file %s\n',F);
     return;

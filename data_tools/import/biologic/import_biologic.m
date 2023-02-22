@@ -89,8 +89,8 @@ for ind = 1:length(fileList)
     %ouvrir le fichier
     % %     nomFichier = fullfile(dirname,fileList);
     thisFile = fileList{ind};
-%    fid = fopen(thisFile,'r');
-    fid = fopen (thisFile,'r','n','ISO-8859-11');
+
+    fid = fopen_safe(thisFile);
     if fid>0
         %lire fichier
         [tete{ind}, corps{ind}] = read_biologic_file(fid);

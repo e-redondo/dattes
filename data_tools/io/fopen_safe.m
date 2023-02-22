@@ -8,7 +8,7 @@ end
 if isequal(file_type,'UTF-8')
 fid = fopen(file_in,'r','n','UTF-8');%utf-8
 elseif isequal(file_type,'ascii')
-fid = fopen(file_in,'r','n','ISO-8859-1');%ascii files
+fid = fopen(file_in,'r','n','ISO-8859-11');%ascii files
 else
 fid = fopen(file_in,'r');%try generic open
 end

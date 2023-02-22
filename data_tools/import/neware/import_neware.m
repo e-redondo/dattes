@@ -38,8 +38,8 @@ end
 if verbose
     fprintf('import_neware: %s\n',file_in);
 end
-%     fid_in = fopen(file_in,'r');
-    fid_in = fopen (file_in,'r','n','ISO-8859-11');
+
+    fid_in = fopen_safe(file_in);
 %0.1 check if file is a neware file
 [cycler, ~, ~] = which_cycler(fid_in);
 fclose(fid_in);
@@ -68,14 +68,15 @@ end
 % lines starting with ',,' = data
 % lines starting with ',' = step info
 % lines not starting with ',' = cycle info
-fid_in = fopen (file_in,'r','n','ISO-8859-11');
+
+fid_in = fopen_safe(file_in);
 [D,F,E] = fileparts(file_in);
 file_out_data = fullfile(D,sprintf('%s_data%s',F,E));
 file_out_step = fullfile(D,sprintf('%s_step%s',F,E));
 file_out_cycle = fullfile(D,sprintf('%s_cycle%s',F,E));
-fid_out_data = fopen (file_out_data,'w+','n','ISO-8859-11');
-fid_out_step = fopen (file_out_step,'w+','n','ISO-8859-11');
-fid_out_cycle = fopen (file_out_cycle,'w+','n','ISO-8859-11');
+fid_out_data = fopen (file_out_data,'w+','n','ISO-8859-1');
+fid_out_step = fopen (file_out_step,'w+','n','ISO-8859-1');
+fid_out_cycle = fopen (file_out_cycle,'w+','n','ISO-8859-1');
 
 while ~feof(fid_in)
     this_line = fgetl(fid_in);

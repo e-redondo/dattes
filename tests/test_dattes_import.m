@@ -7,10 +7,10 @@ dstdir = 'xml_data';
 % 'v': verbose
 % 'f': force
 % 'm': merge files (applies only to arbin_csv and biologic)
-dattes_import(srcdir,'arbin_csv','vfm',dstdir)
-dattes_import(srcdir,'arbin_res','vf',fullfile(dstdir,'arbin_res'));
-dattes_import(srcdir,'arbin_xls','vf',fullfile(dstdir,'arbin_xls'));
-dattes_import(srcdir,'biologic','vfm',fullfile(dstdir,'biologic'));
+dattes_import(srcdir,'arbin_csv','vmf',dstdir)
+dattes_import(srcdir,'arbin_res','vf',dstdir);
+dattes_import(srcdir,'arbin_xls','vf',dstdir);
+dattes_import(srcdir,'biologic','vmf',dstdir);
 dattes_import(srcdir,'bitrode','vf',dstdir);
 dattes_import(srcdir,'digatron','vf',dstdir);
 dattes_import(srcdir,'neware','vf',dstdir);
