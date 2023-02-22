@@ -295,13 +295,13 @@ profiles.mode = m;
 % and finally calculate datetime from first value + t
 date_time = data_columns{ind_col_dt};
 if isempty(params.date_fmt)
-    date_time = datenum_guess(date_time(1:10:end));
+    date_time = datenum_guess(date_time(1));
 else
     date_time = datenum_guess(date_time(1),params.date_fmt);
 end
-if isempty(date_time)
-    %no column datetime found
-    profiles.datetime = date_time;
+if isempty(date_time) || ~isnumeric(date_time)
+    %no column datetime found: put test time instead datetime
+    profiles.datetime = profiles.t;
 else
     date_time = m2edate(date_time);
     profiles.datetime = date_time(1)+profiles.t-profiles.t(1);
