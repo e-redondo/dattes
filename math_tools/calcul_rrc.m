@@ -39,7 +39,7 @@ if ~exist('C0','var')
     C0=100;
 end
 
-if ismember('c',options)
+if ~ismember('c',options)
     %identification des deux parametres (R et C)
     monCaller = @(x) erreurRRC(x(1),x(2),x(3),tm,Um,Im);
     x0 = [Rs0;R0; C0];
@@ -65,7 +65,7 @@ end
 
 Rs = x(1);
 R = x(2);
-if ismember('c',options)%si deux parametres
+if ~ismember('c',options)%si deux parametres
     C = x(3);
 end
 
