@@ -1,4 +1,4 @@
-function  [R_id2, Q_id2, a_id2] = test_ident_rcpe(R,Q,a,options)
+function  [R_id, Q_id, a_id] = test_ident_rcpe(R,Q,a,options)
 
 if ~exist('options','var')
     options = 'vg'; %default verbose and graphics
@@ -44,18 +44,18 @@ DoD_p = DoD(ind_p);
 
 
 
-%method2: ident_rcpe:
-t_s2 = tic;
-% [R_id2, Q_id2, a_id2, err_rel2, Ip_id] = calcul_rcpe_pulse(t,U,I,'a',a);
-[R_id2, Q_id2, a_id2, err_rel2, Ip_id] = calcul_rcpe_pulse(t,U,I);
-t_el2 = toc(t_s2);
-U_s2 = response_rcpe_pulse(R_id2,Q_id2,a_id2,Ip,td,tf,t);
-err_rel2 = mean(abs(error_relative(U,U_s2)));
+t_s = tic;
+% [R_id, Q_id, a_id, err_rel, Ip_id] = calcul_rcpe_pulse(t,U,I,'a',a);
+[R_id, Q_id, a_id, err_rel, Ip_id] = calcul_rcpe_pulse(t,U,I);
+t_el = toc(t_s);
+U_s = response_rcpe_pulse(R_id,Q_id,a_id,Ip,td,tf,t);
+
+err_rel = mean(abs(error_relative(U,U_s)));
 
 %Report results:
 
 if ismember('v',options)
-    fprintf('calcul_rcpe:\t\t%.3fseconds, err_rel: %.3f, err_R: %.3f, err_Q: %.3f\n',t_el2, err_rel2,abs(1-R_id2/R),abs(1-Q_id2/Q));
+    fprintf('calcul_rcpe:\t\t%.3fseconds, err_rel: %.3f, err_R: %.3f, err_Q: %.3f\n',t_el, err_rel,abs(1-R_id/R),abs(1-Q_id/Q));
 end
 
 if ismember('g',options)
@@ -64,9 +64,8 @@ if ismember('g',options)
     figure;
     subplot(311), plot(t,I);
     subplot(312), plot(t,U), hold on
-    plot(t,U_s2,'g')
-    subplot(313)
-    plot(t,U_s2-U,'g','Displayname', sprintf('err rel = %.3f',err_rel2)),hold on
+    plot(t,U_s,'r')
+    subplot(313), plot(t,U_s-U,'r','Displayname', sprintf('err rel = %.3f',err_rel)),hold on
 
     legend show
 end
