@@ -52,7 +52,7 @@ if ~exist('options','var')
     options = '';%default: cut by current changes
 end
 
-if ischar
+if ~ischar(options)
     error('find_steps: options must be char');
 end
 
