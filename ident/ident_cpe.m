@@ -1,5 +1,5 @@
 function [impedance] = ident_cpe(datetime,U,I,dod_ah,config,phases,options)
-% ident_cpe impedance analysis of a R+RC+CPE topology
+% ident_cpe impedance analysis of a R+CPE topology
 %
 % [impedance] = ident_cpe(datetime,U,I,dod_ah,config,phases,options)
 % Read the config and phases structure and performe several calculations
@@ -109,7 +109,7 @@ for phase_k = 1:length(indices_cpe)
     
     
     if ~config.impedance.fixed_params
-        [q_phase, alpha_phase ~, crate_phase] = calcul_cpe_pulse(datetime_phase,voltage_phase,current_phase);
+        [q_phase, alpha_phase, ~, crate_phase] = calcul_cpe_pulse(datetime_phase,voltage_phase,current_phase);
     else
         [q_phase, alpha_phase, ~, crate_phase] = calcul_cpe_pulse(datetime_phase,voltage_phase,current_phase,'a',config.impedance.fixed_params);
     end
