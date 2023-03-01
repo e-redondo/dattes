@@ -213,20 +213,8 @@ end
 if ~isempty(answer)
     metadata.cycler.cell_temperature_name = answer;
 end
-% metadata.chamber.brand = 'Friocell';
-    prompt = 'chamber brand (e.g. Friocell, Vostch)? ';
-    answer = input(prompt,'s');
-if ~isempty(answer)
-    metadata.cycler.brand = answer;
 end
-% metadata.chamber.model = 'Friocell 707';
-    prompt = 'cycler model (e.g. Friocell 707)? ';
-    answer = input(prompt,'s');
-if ~isempty(answer)
-    metadata.cycler.model = answer;
-end
-end
-%% 3. equipement information: climatic chamnber
+%% 3. equipement information: climatic chamber
 prompt = 'Do you want to fill climatic chamber details? Y/N [N]: ';
 answer = input(prompt,'s');
 if strcmpi(answer,'Y')
