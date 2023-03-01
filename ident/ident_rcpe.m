@@ -1,9 +1,9 @@
-function [impedance] = ident_cpe(datetime,U,I,dod_ah,config,phases,options)
-% ident_cpe impedance identification of a R+CPE topology
+function [impedance] = ident_rcpe(datetime,U,I,dod_ah,config,phases,options)
+% ident_rcpe impedance identification of a R+CPE topology
 %
 %
 % Usage:
-% [impedance] = ident_cpe(datetime,U,I,dod_ah,config,phases,options)
+% [impedance] = ident_rcpe(datetime,U,I,dod_ah,config,phases,options)
 % Read the config and phases structure and performe several calculations
 % regarding impedance analysis.  Results are returned in the structure impedance analysis 
 %
@@ -28,7 +28,7 @@ function [impedance] = ident_cpe(datetime,U,I,dod_ah,config,phases,options)
 %     - dod [kx1 double]: Depth of discharge of each impedance measurement
 %     - datetime [kx1 double]: datetime of each impedance measurement
 %
-%See also dattes_analyse, calcul_cpe_pulse, ident_rcpe, ident_rrc
+% See also dattes_analyse, calcul_rcpe_pulse, ident_cpe, ident_rrc
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab: 
@@ -40,22 +40,22 @@ if ~exist('options','var')
     options = '';
 end
 if ismember('v',options)
-    fprintf('ident_cpe:...');
+    fprintf('ident_rcpe:...');
 end
 
 %% check inputs:
 impedance=struct([]);
 
 if nargin<6 || nargin>8
-    fprintf('ident_cpe: wrong number of parameters, found %d\n',nargin);
+    fprintf('ident_rcpe: wrong number of parameters, found %d\n',nargin);
     return;
 end
 if ~isstruct(config) || ~ischar(options) || ~isnumeric(datetime) || ~isstruct(phases)   || ~isnumeric(U) || ~isnumeric(I) || ~isnumeric(dod_ah)
-    fprintf('ident_cpe: wrong type of parametres\n');
+    fprintf('ident_rcpe: wrong type of parametres\n');
     return;
 end
 if ~isfield(config,'impedance')
-    fprintf('ident_cpe: config struct incomplete\n');
+    fprintf('ident_rcpe: config struct incomplete\n');
     return;
 end
 if ~isfield(config.impedance,'pulse_min_duration') || ...
@@ -63,7 +63,7 @@ if ~isfield(config.impedance,'pulse_min_duration') || ...
        ~isfield(config.impedance,'rest_min_duration') || ...
        ~isfield(config.impedance,'fixed_params') || ...
        ~isfield(config.impedance,'initial_params')   
-    fprintf('ident_cpe: config struct incomplete\n');
+    fprintf('ident_rcpe: config struct incomplete\n');
     return;
 end
 
@@ -78,29 +78,28 @@ datetime_cpe = [];
 %% 2- Determine the phases for which a CPE identification is relevant
 indices_cpe = find(config.impedance.pZ);
 rest_duration_before_pulse=config.impedance.rest_min_duration;
-pulse_max_duration = config.impedance.pulse_max_duration;
 rest_before_after_phase = [rest_duration_before_pulse 0];
 phases_identify_cpe=phases(config.impedance.pZ);
 
 %% 3-q and alpha are identified for each of these phases
 for phase_k = 1:length(indices_cpe)
-    %get pulse phase + a part of preceding rest
     [datetime_phase,voltage_phase,current_phase,dod_phase] = extract_phase2(phases(indices_cpe(phase_k)),rest_before_after_phase,datetime,U,I,dod_ah);
-  
-    %cut pulse to max duration if necessary:
+
+        %cut pulse to max duration if necessary:
     ind_pulse = datetime_phase<=datetime_phase(1)+rest_duration_before_pulse+pulse_max_duration;
     datetime_phase = datetime_phase(ind_pulse);
     voltage_phase =  voltage_phase(ind_pulse);
     current_phase =  current_phase(ind_pulse);
     dod_phase =  dod_phase(ind_pulse);
 
-    % Step time is reduced to maximize the identification accuracy
+        % Step time is reduced to maximize the identification accuracy
     time_step = 0.1;
     tmi = (datetime_phase(1):time_step:datetime_phase(end))';
     voltage_phase = interp1(datetime_phase,voltage_phase,tmi);
     current_phase = interp1(datetime_phase,current_phase,tmi);
     dod_phase = interp1(datetime_phase,dod_phase,tmi);
     datetime_phase = tmi;
+    
     
     % get ocv from dod_ah and previous tests (pseudo_ocv or ocv_points)
     ocv_phase = zeros(size(dod_phase));
@@ -112,21 +111,16 @@ for phase_k = 1:length(indices_cpe)
     %Remove OCV:
     voltage_phase = voltage_phase-ocv_phase;
     
+    %Remove relaxation
     
-    %Remove Ohmic drop
-    [resistance_phase, crate_phase] = calcul_r(datetime_phase,voltage_phase,current_phase,dod_phase,phases(indices_cpe(phase_k)).datetime_ini,9,config.impedance.rest_min_duration,0);
-    polarization_resistance = current_phase*resistance_phase(1);
-    voltage_phase = voltage_phase-polarization_resistance;
-    
-    
-    %Remove relaxation:
+    %Relaxation voltage is removed
     open_circuit_voltage = voltage_phase(1);
     voltage_phase  = voltage_phase-open_circuit_voltage; 
-    
+
     if ~config.impedance.fixed_params
-        [q_phase, alpha_phase, ~, crate_phase] = calcul_cpe_pulse(datetime_phase,voltage_phase,current_phase);
+        [resistance_phase, q_phase, alpha_phase, ~, crate_phase] = calcul_rcpe_pulse(datetime_phase,voltage_phase,current_phase);
     else
-        [q_phase, alpha_phase, ~, crate_phase] = calcul_cpe_pulse(datetime_phase,voltage_phase,current_phase,'a',config.impedance.fixed_params);
+        [resistance_phase, q_phase, alpha_phase, ~, crate_phase] = calcul_rcpe_pulse(datetime_phase,voltage_phase,current_phase,'a',config.impedance.fixed_params);
     end
     
     q=[q q_phase];
@@ -135,7 +129,7 @@ for phase_k = 1:length(indices_cpe)
     %TODO: datetime_cpe = [datetime_cpe this_phase.datetime_ini];
     datetime_cpe = [datetime_cpe datetime_phase(1)];
     dod = [dod dod_phase(1)];
-    resistance=[resistance resistance_phase(1)];
+    resistance=[resistance resistance_phase];
 end
 crate = crate/config.test.capacity;
 
@@ -161,7 +155,7 @@ end
 
 function show_result(t,U,I,dod_ah,q, alpha, dod, crate,time)
 
-hf = figure('name','ident_cpe');
+hf = figure('name','ident_rcpe');
 subplot(3,2, [1 2]),plot(t,U,'b'),hold on,xlabel('time (s)'),ylabel('voltage (V)')
 
 current_phase = ismember(t,time);
