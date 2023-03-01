@@ -143,20 +143,23 @@ voltage_discharge_sorted = cellfun(@(x,y) x(y),voltage_discharge,sorting_index_c
 
 
 %TODO: aller jusqu'à la fin, ne pas rester a CapaNom
-dod = (0:config.pseudo_ocv.capacity_resolution:config.test.capacity)';
+% dod = (0:config.pseudo_ocv.capacity_resolution:config.test.capacity)';
+dod_max = cellfun(@(x,y) max([x;y]),dod_ah_charge,dod_ah_discharge,'uniformoutput',false);
+dod = cellfun(@(x) (0:config.pseudo_ocv.capacity_resolution:x)',dod_max,'uniformoutput',false);
+
 % u_charge = interp1(dod_ah_charge_sorted,voltage_charge_sorted,dod);
 % u_discharge = interp1(dod_ah_discharge_sorted,voltage_discharge_sorted,dod);
 
-u_charge = cellfun(@(x,y) interp1(x,y,dod),dod_ah_charge_sorted,voltage_charge_sorted,'uniformoutput',false);
-u_discharge = cellfun(@(x,y) interp1(x,y,dod),dod_ah_discharge_sorted,voltage_discharge_sorted,'uniformoutput',false);
+u_charge = cellfun(@(x,y,z) interp1(x,y,z),dod_ah_charge_sorted,voltage_charge_sorted,dod,'uniformoutput',false);
+u_discharge = cellfun(@(x,y,z) interp1(x,y,z),dod_ah_discharge_sorted,voltage_discharge_sorted,dod,'uniformoutput',false);
 
-%ancienne methode: moyenne entre plusieurs
-% %TODO: traitement des NaN separement
-% u_charge = mean(cell2mat(u_charge),2);
-% u_discharge = mean(cell2mat(u_discharge),2);
-% %TODO: ponderer en fonction du regime charge/decharge
-% ocv = (u_charge+u_discharge)/2;
-% polarization = u_charge-u_discharge;
+%filter nans (out of rancge of dod interp1 vector)
+ind_nan = cellfun(@(x,y) ~isnan(x+y),u_charge,u_discharge,'uniformoutput',false);
+dod = cellfun(@(x,y) x(y),dod,ind_nan,'UniformOutput',false);
+u_charge = cellfun(@(x,y) x(y),u_charge,ind_nan,'UniformOutput',false);
+u_discharge = cellfun(@(x,y) x(y),u_discharge,ind_nan,'UniformOutput',false);
+
+
 %nouvelle methode un couple de courbes par regime
 ocv = cellfun(@(x,y) (x+y)/2,u_charge,u_discharge,'uniformoutput',false);
 polarization = cellfun(@(x,y) (x-y),u_charge,u_discharge,'uniformoutput',false);
@@ -170,7 +173,7 @@ end
 %convert to pseudo_ocv struct:
 for ind = 1:length(ocv)
     pseudo_ocv(ind).ocv = ocv{ind};
-    pseudo_ocv(ind).dod = dod;
+    pseudo_ocv(ind).dod = dod{ind};
     pseudo_ocv(ind).polarization = polarization{ind};
     pseudo_ocv(ind).efficiency = efficiency{ind};
     pseudo_ocv(ind).u_charge = u_charge{ind};
@@ -187,9 +190,9 @@ cellfun(@(x,y) plot(x,y,'b.-','tag','charge (mesure)'),dod_ah_charge,voltage_cha
 cellfun(@(x,y) plot(x,y,'r.-','tag','decharge (mesure)'),dod_ah_discharge,voltage_discharge)
 
 
-cellfun(@(x,y) plot(dod,x,'b*','tag','charge (points)'),u_charge)
-cellfun(@(x,y) plot(dod,x,'r*','tag','decharge (points)'),u_discharge)
-cellfun(@(x,y) plot(dod,x,'k-','tag','pseudoOCV'),ocv)
+cellfun(@(x,y) plot(x,y,'b*','tag','charge (points)'),dod,u_charge)
+cellfun(@(x,y) plot(x,y,'r*','tag','decharge (points)'),dod,u_discharge)
+cellfun(@(x,y) plot(x,y,'k-','tag','pseudoOCV'),dod,ocv)
 
 ylabel('voltage [V]'),xlabel('DoD [Ah]')
 
