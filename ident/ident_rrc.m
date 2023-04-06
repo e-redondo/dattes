@@ -79,6 +79,7 @@ rrc_crate = [];
 
 indice_r = find(config.impedance.pZ);
 rest_duration_before_pulse=config.impedance.rest_min_duration;
+pulse_max_duration = config.impedance.pulse_max_duration;
 rest_before_after_phase = [rest_duration_before_pulse 0];
 phases_identify_rc=phases(config.impedance.pZ);
 
@@ -86,15 +87,21 @@ phases_identify_rc=phases(config.impedance.pZ);
 for phase_k = 1:length(indice_r)
         %Time, voltage,current and DoD are extracted for the phase_k
     [datetime_phase,voltage_phase,current_phase,dod_phase] = extract_phase2(phases_identify_rc(phase_k),rest_before_after_phase,datetime,U,I,dod_ah);
-    for i=1:length(dod_phase)
-        if dod_phase(i)<0
-            dod_phase(i)=abs(dod_phase(i));
-        end
-    end
- 
+%     for i=1:length(dod_phase)
+%         if dod_phase(i)<0
+%             dod_phase(i)=abs(dod_phase(i));
+%         end
+%     end
+    %cut pulse to max duration if necessary:
+    ind_pulse = datetime_phase<=datetime_phase(1)+rest_duration_before_pulse+pulse_max_duration;
+    datetime_phase = datetime_phase(ind_pulse);
+    voltage_phase =  voltage_phase(ind_pulse);
+    current_phase =  current_phase(ind_pulse);
+    dod_phase =  dod_phase(ind_pulse);
+
     rrc_datetime(phase_k) = datetime_phase(1);
     rrc_dod(phase_k) = dod_phase(1);
-    rrc_crate(phase_k) = phases_identify_rc(phase_k).Iavg/config.test.capacity;   
+    rrc_crate(phase_k) = phases_identify_rc(phase_k).Iavg/config.test.capacity;
     [R10,C10,R20,C20,tau2]=define_RCini(datetime_phase,config);
 
     % Step time is reduced to maximize the identification accuracy
@@ -102,11 +109,24 @@ for phase_k = 1:length(indice_r)
     tmi = (datetime_phase(1):time_step:datetime_phase(end))';
     voltage_phase = interp1(datetime_phase,voltage_phase,tmi);
     current_phase = interp1(datetime_phase,current_phase,tmi);
+    dod_phase = interp1(datetime_phase,dod_phase,tmi);
     datetime_phase = tmi;
 
-%Relaxation voltage is extracted
-ocv = voltage_phase(1);
-voltage_phase  = voltage_phase-ocv;
+    % get ocv from dod_ah and previous tests (pseudo_ocv or ocv_points)
+    ocv_phase = zeros(size(dod_phase));
+    if isfield(config.impedance,'ocv')
+        if isvector(config.impedance.ocv) && isequal(size(config.impedance.dod),size(config.impedance.ocv))
+            ocv_phase = interp1(config.impedance.dod,config.impedance.ocv,dod_phase,'linear','extrap');
+        end
+    end
+    %Remove OCV:
+    voltage_phase = voltage_phase-ocv_phase;
+
+    %Remove relaxation
+
+    %Relaxation voltage is removed
+    open_circuit_voltage = voltage_phase(1);
+    voltage_phase  = voltage_phase-open_circuit_voltage;
 
 %% Rs and first RC are identified as a whole
 datetime_phase = datetime_phase-datetime_phase(1);

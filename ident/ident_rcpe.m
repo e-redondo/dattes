@@ -78,6 +78,7 @@ datetime_cpe = [];
 %% 2- Determine the phases for which a CPE identification is relevant
 indices_cpe = find(config.impedance.pZ);
 rest_duration_before_pulse=config.impedance.rest_min_duration;
+pulse_max_duration = config.impedance.pulse_max_duration;
 rest_before_after_phase = [rest_duration_before_pulse 0];
 phases_identify_cpe=phases(config.impedance.pZ);
 
