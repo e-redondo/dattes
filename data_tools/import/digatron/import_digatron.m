@@ -53,7 +53,7 @@ params = struct;  % see csv2profiles if some params are needed
 % params.testtime_fmt = 'HH:MM:SS';
 params.date_fmt = '';
 
-col_names = {'Time Stamp','Prog Time','Voltage','Current','Step','Capacity','',''};
+col_names = {'Time Stamp','Prog Time','Voltage','Current','Step','Capacity','','','','','',''};
 
 [profiles, other_cols] = csv2profiles(file_in,col_names,params);
 profiles_units = {'s','V','A','','Ah','s'};

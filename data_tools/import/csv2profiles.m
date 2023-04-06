@@ -6,10 +6,11 @@ function [profiles, other_cols] = csv2profiles(file_in,col_names,params)
 %
 % Inputs:
 % - file_in [1xp string]: pathname to .csv file
-% - col_names [1x9 cell string]: {'datetime','t','U','I','Step', 'Ah', 'Ah_dis', 'Ah_cha'}
+% - col_names [1x9 cell string]:
+%  {'datetime','t','U','I','Step', 'Ah', 'Ah_dis', 'Ah_cha','mode','T','dod_ah','soc'}
 %    - e.g. for Arbin: col_names = {'Date Time','Test Time (s)','Voltage (V)',
 %                               'Current (A)', 'Step Index','',
-%                               'Discharge Capacity (Ah)','Charge Capacity (Ah)'};
+%                               'Discharge Capacity (Ah)','Charge Capacity (Ah)','','','',''};
 % - params [(optional) 1x1 struct], with (optional fields:
 %    - I_thres [1x1 double]: Current (A) threshold for which_mode
 %    - U_thres [1x1 double]: Voltage (V) threshold for which_mode
@@ -59,7 +60,7 @@ if ~exist('params','var')
     params = struct;
 end
 if ~exist('col_names','var')
-    col_names = {'datetime','t','U','I','m','T','dod_ah','soc'};
+    col_names = {'datetime','t','U','I','', '', '', '','mode','T','dod_ah','soc'};
 end
 if ~isfield(params,'I_thres')
     params.I_thres = default_params.I_thres;
@@ -153,111 +154,133 @@ ind_col_U = find_col_index(variables,col_names{3});
 ind_col_I = find_col_index(variables,col_names{4});
 %Step: 'Step index'
 ind_col_step = find_col_index(variables,col_names{5});
-% %T: 'Temperature'
-% ind_col_temp = find_col_index(header_line,col_names{6});
 %'Ah'
 ind_col_ah = find_col_index(variables,col_names{6});
 %'Ah_dis'
 ind_col_ahdis = find_col_index(variables,col_names{7});
 %'Ah_cha'
 ind_col_ahcha = find_col_index(variables,col_names{8});
+%'mode'
+ind_col_mode = find_col_index(variables,col_names{9});
+%'T'
+ind_col_T = find_col_index(variables,col_names{10});
+%'dod_ah'
+ind_col_dod_ah = find_col_index(variables,col_names{11});
+%'soc'
+ind_col_soc = find_col_index(variables,col_names{12});
 
 
 %fill emptys with nans:
 ind_nan = cellfun(@isempty,data_columns);
 data_columns(ind_nan) = {'nan'};
 
-    %% structure data
-    U = data_columns(ind_col_U);
-    I = data_columns(ind_col_I);
-    Step = data_columns(ind_col_step);
-%     T = data_lines(ind_col_temp);
-    Ah = data_columns(ind_col_ah);
-    Ah_dis = data_columns(ind_col_ahdis);
-    Ah_cha = data_columns(ind_col_ahcha);
+%% structure data
+U = data_columns(ind_col_U);
+I = data_columns(ind_col_I);
+Step = data_columns(ind_col_step);
+%
+Ah = data_columns(ind_col_ah);
+Ah_dis = data_columns(ind_col_ahdis);
+Ah_cha = data_columns(ind_col_ahcha);
 
-    %% convert cells to numbers
-    U = vertcat(U{:});
-    I = vertcat(I{:});
-    Step = vertcat(Step{:});
-    Ah = vertcat(Ah{:});
-    Ah_dis = vertcat(Ah_dis{:});
-    Ah_cha = vertcat(Ah_cha{:});
+mode = data_columns(ind_col_mode);
+T = data_columns(ind_col_T);
+dod_ah = data_columns(ind_col_dod_ah);
+soc = data_columns(ind_col_soc);
 
-    if isempty(Ah)
-        if max(abs(Ah_dis))>0
-            Ah = Ah_cha-Ah_dis;
-        else
-            Ah = Ah_cha+Ah_dis;
-        end
+%% convert cells to numbers
+U = vertcat(U{:});
+I = vertcat(I{:});
+Step = vertcat(Step{:});
+Ah = vertcat(Ah{:});
+Ah_dis = vertcat(Ah_dis{:});
+Ah_cha = vertcat(Ah_cha{:});
+mode = vertcat(mode{:});
+T = vertcat(T{:});
+dod_ah = vertcat(dod_ah{:});
+soc = vertcat(soc{:});
+
+
+if isempty(Ah)
+    if max(abs(Ah_dis))>0
+        Ah = Ah_cha-Ah_dis;
+    else
+        Ah = Ah_cha+Ah_dis;
     end
+end
+
 %     if isempty(T)
 %         T = nan(size(t));
 %     end
 
-    %pack data:
+%pack data:
 %     profiles.datetime = m2edate(datetime);
-    profiles.t = t;
-    profiles.U = U;
-    profiles.I = I;
-%     profiles.mode = m;
-%     profiles.T = T;
-    profiles.Ah = Ah;
+profiles.datetime = []; % prealloc first field 'datetime' 
+profiles.t = t;
+profiles.U = U;
+profiles.I = I;
+profiles.mode = mode;
+profiles.T = T;
+profiles.dod_ah = dod_ah;
+profiles.soc = soc;
+%TODO: move this variable to other cols
+profiles.Ah = Ah;
 
-    %other_cols:
-    ind_other_cols = find(~ismember(variables,col_names));
-    if ~isempty(ind_other_cols)
-        other_cols.t = t;
-        other_cols.Step = Step;
-        other_cols.Step_units = '';
-        for ind_col = 1:length(ind_other_cols)
-                data_this_col = data_columns(ind_other_cols(ind_col));
-                if all(cellfun(@isnumeric,data_this_col))
-                    %convert to numeric array
-                    this_col = vertcat(data_this_col{:});
-                else
-                    %keep as cell
-                    this_col = data_this_col;
-                end
-            %TODO:put this part in function (clean_col_name).
-            this_col_name = regexprep(variables{ind_other_cols(ind_col)},'^[^a-zA-Z]','');
-            this_col_name = regexprep(this_col_name,'\s','_');
-            this_col_name = regexprep(this_col_name,'/','');
-            this_col_name = regexprep(this_col_name,'\\','');
-            this_col_name = regexprep(this_col_name,'\(','');
-            this_col_name = regexprep(this_col_name,'\)','');
-            this_col_name = regexprep(this_col_name,'\[','');
-            this_col_name = regexprep(this_col_name,'\]','');
-            this_col_name = regexprep(this_col_name,'\{','');
-            this_col_name = regexprep(this_col_name,'\}','');
-            %remove 'units' at end of variable names
-            this_col_name = regexprep(this_col_name,'_s$','');%s
-            this_col_name = regexprep(this_col_name,'_A$','');%A
-            this_col_name = regexprep(this_col_name,'_V$','');%V
-            this_col_name = regexprep(this_col_name,'_Ah$','');%Ah
-            this_col_name = regexprep(this_col_name,'_W$','');%W
-            this_col_name = regexprep(this_col_name,'_Wh$','');% Wh
-            this_col_name = regexprep(this_col_name,'_Ohm$','');% Ohm
-            this_col_name = regexprep(this_col_name,'_AhV$','');% Ah/V
-            this_col_name = regexprep(this_col_name,'_VAh$','');% V/Ah
-            this_col_name = regexprep(this_col_name,'_Vs$','');% V/s
-            this_col_name = regexprep(this_col_name,'_Cs$',''); %deg Celsius/s
-            this_col_name = regexprep(this_col_name,'_C$',''); %deg Celsius
 
-            %DEBUG
-            %     fprintf('%s\n',this_col_name);
-            %     fprintf('%s\n',genvarname(this_col_name));
-
-            other_cols.(this_col_name) = this_col;
-            other_cols.([this_col_name '_units']) = units{ind_other_cols(ind_col)};
-
+%other_cols:
+ind_other_cols = find(~ismember(variables,col_names));
+if ~isempty(ind_other_cols)
+    other_cols.t = t;
+    other_cols.Step = Step;
+    other_cols.Step_units = '';
+    for ind_col = 1:length(ind_other_cols)
+        data_this_col = data_columns(ind_other_cols(ind_col));
+        if all(cellfun(@isnumeric,data_this_col))
+            %convert to numeric array
+            this_col = vertcat(data_this_col{:});
+        else
+            %keep as cell
+            this_col = data_this_col;
         end
+        %TODO:put this part in function (clean_col_name).
+        this_col_name = regexprep(variables{ind_other_cols(ind_col)},'^[^a-zA-Z]','');
+        this_col_name = regexprep(this_col_name,'\s','_');
+        this_col_name = regexprep(this_col_name,'/','');
+        this_col_name = regexprep(this_col_name,'\\','');
+        this_col_name = regexprep(this_col_name,'\(','');
+        this_col_name = regexprep(this_col_name,'\)','');
+        this_col_name = regexprep(this_col_name,'\[','');
+        this_col_name = regexprep(this_col_name,'\]','');
+        this_col_name = regexprep(this_col_name,'\{','');
+        this_col_name = regexprep(this_col_name,'\}','');
+        %remove 'units' at end of variable names
+        this_col_name = regexprep(this_col_name,'_s$','');%s
+        this_col_name = regexprep(this_col_name,'_A$','');%A
+        this_col_name = regexprep(this_col_name,'_V$','');%V
+        this_col_name = regexprep(this_col_name,'_Ah$','');%Ah
+        this_col_name = regexprep(this_col_name,'_W$','');%W
+        this_col_name = regexprep(this_col_name,'_Wh$','');% Wh
+        this_col_name = regexprep(this_col_name,'_Ohm$','');% Ohm
+        this_col_name = regexprep(this_col_name,'_AhV$','');% Ah/V
+        this_col_name = regexprep(this_col_name,'_VAh$','');% V/Ah
+        this_col_name = regexprep(this_col_name,'_Vs$','');% V/s
+        this_col_name = regexprep(this_col_name,'_Cs$',''); %deg Celsius/s
+        this_col_name = regexprep(this_col_name,'_C$',''); %deg Celsius
+
+        %DEBUG
+        %     fprintf('%s\n',this_col_name);
+        %     fprintf('%s\n',genvarname(this_col_name));
+
+        other_cols.(this_col_name) = this_col;
+        other_cols.([this_col_name '_units']) = units{ind_other_cols(ind_col)};
+
     end
+end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%calculate mode
- %set thresholds if they are set to zero:
+if ~isfield(profiles,'mode')
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %calculate mode
+    %set thresholds if they are set to zero:
     if params.I_thres==0
         %here, threshold is maximum between:
         % - min difference (resolution)
@@ -278,16 +301,16 @@ data_columns(ind_nan) = {'nan'};
     end
 
 
-    if ~isempty(t)
+    if ~isempty(t) && isfield(other_cols,'Step')
         %m: 'mode'(CC,CV,rest,EIS,profile)
-        m = which_mode(profiles.t,profiles.I,profiles.U,other_cols.Step,params.I_thres,params.U_thres);
+        mode = which_mode(profiles.t,profiles.I,profiles.U,other_cols.Step,params.I_thres,params.U_thres);
     else
-        m=[];
+        mode = [];
     end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-profiles.mode = m;
-
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    profiles.mode = mode;
+end
 
 
 %datetime

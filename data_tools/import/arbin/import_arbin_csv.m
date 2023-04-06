@@ -77,7 +77,9 @@ end
 
 %1.- reading file
 params = struct;  % see csv2profiles if some params are needed
-% params.U_thres = 0.01;
+%params.U_thres = 0.01;
+%params.I_thres = 0.1;
+
 params.date_fmt = '';
 % params.date_fmt = 'yyyy-mm-dd HH:MM:SS';
 if strcmp(cycler,'arbin_csv_v1')
@@ -87,8 +89,10 @@ if strcmp(cycler,'arbin_csv_v1')
 elseif strcmp(cycler,'arbin_csv_v2')
     col_names = {'Date Time','Test Time (s)','Voltage (V)','Current (A)',...
         'Step Index','',...
-        'Discharge Capacity (Ah)','Charge Capacity (Ah)'};
+        'Discharge Capacity (Ah)','Charge Capacity (Ah)','','','',''};
 end
+
+
 [profiles, other_cols] = csv2profiles(file_in,col_names,params);
 profiles_units = {'s','V','A','','Ah','s'};
 
