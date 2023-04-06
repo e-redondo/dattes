@@ -202,12 +202,27 @@ config.capacity.pCapaDV = pCapaDV;
 config.capacity.pCapaCV = pCapaCV;
 
 %ident_r
+%filter by phase number:
+if isfield(config.resistance, 'filter_phase_nr')
+ind_filter_phase_nr = ismember(1:length(phases),config.resistance.filter_phase_nr);
+pR = pR & ind_filter_phase_nr;
+end
+%TODO: filter by time
+
 config.resistance.pR = pR;
 config.resistance.instant_end_rest = tFins(pRr);%temps de fins de repos immediatememnt anterieur
 
 %ident_z
+%filter by phase number:
+if isfield(config.impedance, 'filter_phase_nr')
+ind_filter_phase_nr = ismember(1:length(phases),config.impedance.filter_phase_nr);
+pZ = pZ & ind_filter_phase_nr;
+end
+%TODO: filter by time
 config.impedance.pZ = pZ;
 config.impedance.instant_end_rest = tFins(pZr);%temps de fins de repos immediatememnt anterieur
+
+
 
 
 %ident_ocv_by_points (par points)
