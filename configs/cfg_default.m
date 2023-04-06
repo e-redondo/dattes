@@ -71,6 +71,8 @@ config.impedance.initial_params = [1000, 0.5];% ident_cpe: Q0 = 1000, alpha0 = 0
 % config.impedance.initial_params = [1e-3, 150, 1e-2, 400];% ident_rrc R1ini, C1ini, R2ini, C2ini
 % config.impedance.min_params = [1e-4, 50, 1e-4, 50];% ident_rrc
 % config.impedance.max_params = [5e-2, 800, 5e-2, 800];% ident_rrc
+config.impedance.dod = [];
+config.impedance.ocv = [];
 
 
 % config.Rmin=1e-4;

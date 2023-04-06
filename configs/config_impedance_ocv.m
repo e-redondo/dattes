@@ -69,7 +69,7 @@ if iscell(result)
     if ~exist('result2','var')
         result2 = result{1};%default: if no result2, take first result as result2
     end
-    result = config_impedance_ocv(result,options,result2,'UniformOutput',false);
+    result = cellfun(@(x) config_impedance_ocv(x,options,result2),result,'UniformOutput',false);
     return
 end
 
