@@ -1,4 +1,4 @@
-function hf = plot_config(t,U,config,phases,title_str,options)
+function hf = plot_config(profiles,config,phases,title_str,options)
 %plot_config visualize configuration of a test
 %
 % plot_config(t,U,config,phases,title_str,options)
@@ -9,8 +9,9 @@ function hf = plot_config(t,U,config,phases,title_str,options)
 % Usage:
 % hf = plot_config(t,U,config,phases,title_str,options)
 % Inputs:
-% - t [nx1 double]: time in seconds
-% - U [nx1 double]: voltage in V
+% - profiles [1x1 struct] with fields
+%     - t [nx1 double]: time in seconds
+%     - U [nx1 double]: voltage in V
 % - config [nx1 struct]: configuration structure
 % - phases [nx1 struct]] phases structure
 % - title: [string] title string
@@ -27,6 +28,12 @@ function hf = plot_config(t,U,config,phases,title_str,options)
 if ~exist('options','var')
     options = '';
 end
+
+%get t,U,I,m:
+t = profiles.t;
+U = profiles.U;
+
+
 tc = t-t(1);
 %abcise: tc au lieu de tabs,en heures ou en jours si options 'h' ou 'j':
 if ismember('h',options)

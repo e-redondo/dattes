@@ -1,4 +1,4 @@
-function hf = plot_soc(t, I, DoDAh, SOC, config,title_str,options)
+function hf = plot_soc(profiles, config,title_str,options)
 % plot_soc plot state of charge graphs
 %
 % Use t, I, DoDAh and SOC to plot state of charge graphs
@@ -6,10 +6,11 @@ function hf = plot_soc(t, I, DoDAh, SOC, config,title_str,options)
 % Usage:
 % hf = plot_soc(t, I, DoDAh, SOC, config,title_str,options)
 % Inputs:
-% - t [nx1 double]: time in seconds
-% - I [nx1 double]: current in A
-% - DoDAh [nx1 double]: depth of discharge in AmpHours
-% - SOC [nx1 double]: state of charge in %
+% - profiles [1x1 struct] with fields
+%     - t [nx1 double]: time in seconds
+%     - I [nx1 double]: current in A
+%     - DoDAh [nx1 double]: depth of discharge in AmpHours
+%     - SOC [nx1 double]: state of charge in %
 % - config [1x1 struct]: config struct from configurator
 % - title [string]: phases struct from decompose_phases
 % - options [string] containing:
@@ -30,6 +31,13 @@ function hf = plot_soc(t, I, DoDAh, SOC, config,title_str,options)
 if ~exist('options','var')
     options = '';
 end
+
+%get t,U,I,m:
+t = profiles.t;
+I = profiles.I;
+DoDAh = profiles.dod_ah;
+SOC = profiles.soc;
+
 
 %x-axis: tc instead of tabs,in hours od days if options 'h' or 'd':
 tc = t-t(1);

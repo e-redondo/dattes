@@ -1,4 +1,4 @@
-function hf = plot_ocv_by_points(t,U,DoDAh, ocv_by_points)
+function hf = plot_ocv_by_points(profiles, ocv_by_points)
 % plot_ocv_by_points plot ocv by points graphs
 %
 % Use t, U, DoDAh and ocv_by_points structure to plot  ocv by points graphs
@@ -6,9 +6,10 @@ function hf = plot_ocv_by_points(t,U,DoDAh, ocv_by_points)
 % Usage:
 % hf = plot_ocv_by_points(t,U,DoDAh, ocv_by_points)
 % Inputs:
-% - t [nx1 double]: time in seconds
-% - U [nx1 double]: voltage in V
-% - DoDAh [nx1 double]: depth of discharge in AmpHours
+% - profiles [1x1 struct] with fields
+%     - t [nx1 double]: time in seconds
+%     - U [nx1 double]: voltage in V
+%     - DoDAh [nx1 double]: depth of discharge in AmpHours
 % - ocv_by_points [(1x1) struct] with fields:
 %     - ocv [(px1) double]: ocv measurements
 %     - dod [(px1) double]: depth of discharge
@@ -26,6 +27,11 @@ function hf = plot_ocv_by_points(t,U,DoDAh, ocv_by_points)
 % For more information, see the <a href="matlab: 
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
+
+%get t,U,I,m:
+t = profiles.t;
+U = profiles.U;
+DoDAh =  profiles.dod_ah;
 
 
 hf = figure('name','ident_ocv_by_points');

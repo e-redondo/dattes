@@ -1,4 +1,4 @@
-function hf = plot_profiles(t,U,I,m,title_str,options)
+function hf = plot_profiles(profiles,title_str,options)
 %plot_profiles visualize profiles of a test
 %
 % plot_profiles(t,U,I,m,title,options)
@@ -7,10 +7,11 @@ function hf = plot_profiles(t,U,I,m,title_str,options)
 % Usage:
 % hf = plot_profiles(t,U,I,m,title,options)
 % Inputs:
-% - t [nx1 double]: time in seconds
-% - U [nx1 double]: voltage in V
-% - I [nx1 double]: current in A
-% - m [nx1 double]] phase mode
+% - profiles [1x1 struct] with fields
+%     - t [nx1 double]: time in seconds
+%     - U [nx1 double]: voltage in V
+%     - I [nx1 double]: current in A
+%     - mode [nx1 double]] cycler mode
 % - title_str: [string] title string
 % Output:
 % - hf [1x1 figure handler]: handler for created figure
@@ -25,6 +26,16 @@ function hf = plot_profiles(t,U,I,m,title_str,options)
 if ~exist('options','var')
     options = '';
 end
+if ~exist('title_str','var')
+    title_str = '';
+end
+
+
+%get t,U,I,m:
+t = profiles.t;
+U = profiles.U;
+I = profiles.I;
+m = profiles.mode;
 
 if ismember('D',options)%plot time in dates
     t1 = datetime(datestr(e2mdate(t),'yyyy-mm-dd HH:MM'));

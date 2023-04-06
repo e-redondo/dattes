@@ -1,4 +1,4 @@
-function hf = plot_phases(t,U,I,phases,title_str,options)
+function hf = plot_phases(profiles,phases,title_str,options)
 %plot_phases visualize phases of a test
 %
 % Make a figure with two subplots: U vs. t et I vs. t. with identified
@@ -8,12 +8,12 @@ function hf = plot_phases(t,U,I,phases,title_str,options)
 % Usage:
 % hf = plot_phases(t,U,I,phases,title_str,options)
 % Inputs:
-% - t [nx1 double]: time in seconds
-% - U [nx1 double]: voltage in V
-% - DoDAh [nx1 double]: depth of discharge in AmpHours
+% - profiles [1x1 struct] with fields
+%     - t [nx1 double]: time in seconds
+%     - U [nx1 double]: voltage in V
+%     - I [nx1 double]: current in A
 % - phases [(1x1) struct] with fields:
-%     -  
-%     -  
+%     - duration [1x1 double]: phase duration in seconds
 % - title: [string] title string
 % Output:
 % - hf [1x1 figure handler]: handler for created figure
@@ -29,6 +29,14 @@ function hf = plot_phases(t,U,I,phases,title_str,options)
 if ~exist('options','var')
     options = '';
 end
+
+%get t,U,I,m:
+t = profiles.t;
+U = profiles.U;
+I = profiles.I;
+
+
+
 
 hf = figure('name','plot_phases');
 

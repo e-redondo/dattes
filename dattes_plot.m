@@ -84,17 +84,8 @@ if isempty(fieldnames(result))
     fprintf('dattes_plot: Nothing to plot in %s\n',file_in);
     return;
 end
-%2.load profiles
-% [datetime,t,U,I,m,DoDAh,SOC,T] = extract_profiles(file_in,options,config);
-datetime = result.profiles.datetime;
-t = result.profiles.t;
-U = result.profiles.U;
-I = result.profiles.I;
-m = result.profiles.mode;
-T = result.profiles.T;
-DoDAh = result.profiles.dod_ah;
-SOC = result.profiles.soc;
-%3. get config and phases
+%2.get profiles, config and phases
+profiles = result.profiles;
 config = result.configuration;
 phases = result.phases;
 
@@ -105,7 +96,7 @@ InherOptions = options(ismember(options,'hdD'));
 %4. go for each action:
 if ismember('x',options)
     %show result of 'x', i.e. profiles
-    plot_profiles(datetime,U,I,m,title_str,InherOptions);
+    plot_profiles(profiles,title_str,InherOptions);
 end
 if ismember('e',options)%EIS
     if isfield(result,'eis')
@@ -114,15 +105,15 @@ if ismember('e',options)%EIS
 end
 if ismember('p',options)
     %show result of 'd', i.e. split_phases
-    plot_phases(datetime,U,I,phases,title_str,InherOptions);
+    plot_phases(profiles,phases,title_str,InherOptions);
 end
 if ismember('c',options)
     %show result of 'c', i.e. configurator
-    plot_config(datetime,U,config,phases,title_str,InherOptions);
+    plot_config(profiles,config,phases,title_str,InherOptions);
 end
 if ismember('S',options)
     %show result of 'S', i.e. SOC
-    plot_soc(datetime,I, DoDAh, SOC,config,title_str,InherOptions);
+    plot_soc(profiles,config,title_str,InherOptions);
 end
 if ismember('C',options)
     %show result of 'C', i.e. Capacity
@@ -149,7 +140,7 @@ end
 if ismember('O',options)
     %show result of 'O', i.e. OCV by points
     if isfield(result,'ocv_by_points')
-        plot_ocv_by_points(datetime,U, DoDAh, result.ocv_by_points);
+        plot_ocv_by_points(profiles, result.ocv_by_points);
     else
         fprintf('no ocv_by_points result found in %s\n',result.test.file_in);
     end
