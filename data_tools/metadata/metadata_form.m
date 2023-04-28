@@ -273,6 +273,10 @@ if strcmpi(answer,'Y') || isempty(answer)
        outfile = uigetdir();
        if ischar(outfile)
            outfile = [outfile '.meta'];
+           if exist(outfile,'file')
+               metadata0 = read_json_struct(outfile);
+               metadata = merge_struct(metadata0,metadata);
+           end
            write_json_struct(outfile, metadata);
        end
    end
@@ -281,6 +285,10 @@ if strcmpi(answer,'Y') || isempty(answer)
        if ischar(outfile)
            [D, F, E] = fileparts(outfile);
            outfile = [pathfile, F, '.meta'];
+           if exist(outfile,'file')
+               metadata0 = read_json_struct(outfile);
+               metadata = merge_struct(metadata0,metadata);
+           end
            write_json_struct(outfile, metadata);
        end
    end
