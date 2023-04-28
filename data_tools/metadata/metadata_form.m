@@ -277,10 +277,10 @@ if strcmpi(answer,'Y') || isempty(answer)
        end
    end
    if strcmpi(answer,'F')
-       outfile = uigetfile();
+       [outfile, pathfile] = uigetfile('*');
        if ischar(outfile)
            [D, F, E] = fileparts(outfile);
-           outfile = [D, F, '.meta'];
+           outfile = [pathfile, F, '.meta'];
            write_json_struct(outfile, metadata);
        end
    end
