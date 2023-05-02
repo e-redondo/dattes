@@ -56,7 +56,7 @@ params.date_fmt = '';
 col_names = {'Time Stamp','Prog Time','Voltage','Current','Step','Capacity','','','','','',''};
 
 [profiles, other_cols] = csv2profiles(file_in,col_names,params);
-profiles_units = {'s','V','A','','Ah','s'};
+profiles_units = {'s','s','V','A','','degC','Ah',''};
 
 %3.- creer XML
 %3.1.- introduire entete:
@@ -74,9 +74,14 @@ variables_names(ismember(variables,{'m'})) = {'mode'};
 
 XMLVars = cell(size(variables));
 for ind = 1:length(variables)
-    [XMLVars{ind}, errorcode] = ...
-        makeXMLVariable((variables_names{ind}), (profiles_units{ind}), '%f', (variables_names{ind}), profiles.(variables{ind}));
+    if ~isempty(profiles.(variables{ind}))
+        [XMLVars{ind}, errorcode] = ...
+            makeXMLVariable((variables_names{ind}), (profiles_units{ind}), '%f', (variables_names{ind}), profiles.(variables{ind}));
+    end
 end
+% remove 'empty' vars:
+Ie = cellfun(@isempty,XMLVars);
+XMLVars = XMLVars(~Ie);
 
 %3.4 other_cols
 variables = fieldnames(other_cols);

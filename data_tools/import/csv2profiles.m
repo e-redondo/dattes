@@ -219,20 +219,23 @@ profiles.datetime = []; % prealloc first field 'datetime'
 profiles.t = t;
 profiles.U = U;
 profiles.I = I;
-profiles.mode = mode;
+if ~isempty(mode)
+    profiles.mode = mode;
+end
 profiles.T = T;
 profiles.dod_ah = dod_ah;
 profiles.soc = soc;
-%TODO: move this variable to other cols
-profiles.Ah = Ah;
 
 
 %other_cols:
 ind_other_cols = find(~ismember(variables,col_names));
 if ~isempty(ind_other_cols)
-    other_cols.t = t;
+%     other_cols.t = t;
     other_cols.Step = Step;
     other_cols.Step_units = '';
+    other_cols.Ah = Ah;
+    other_cols.Ah_units = 'Ah';
+    
     for ind_col = 1:length(ind_other_cols)
         data_this_col = data_columns(ind_other_cols(ind_col));
         if all(cellfun(@isnumeric,data_this_col))
