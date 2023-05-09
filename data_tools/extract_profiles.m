@@ -44,7 +44,6 @@ function [profiles, eis, metadata, config, err] = extract_profiles(xml_file,opti
 %   - err = -3: some vectors are missing (t,U,I,m)
 %
 % Examples:
-% extract_profiles(xml_file, 'g') 'graphic', show figures
 % extract_profiles(xml_file, 'v') 'verbose', tell what you do
 %
 % extract_profiles(this_result_file) works also
