@@ -2,3 +2,5 @@ odfpy
 openpyxl
 pandas
 xlrd
+numpy
+dateutils

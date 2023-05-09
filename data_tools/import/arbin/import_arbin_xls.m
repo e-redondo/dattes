@@ -43,8 +43,11 @@ fprintf('import_arbin_xls: %s...\n',file_in);
 end
 
  %convert to csv
- csv_folder = xls2csv(file_in);
-
+ [csv_folder, err] = xls2csv(file_in);
+ 
+ if err
+     fprintf('import_arbin_xls: error during xls to csv conversion. Check your python setup.\n');
+ else
  %import csv to xml:
  xml = import_arbin_csv(csv_folder, options);
 
@@ -54,5 +57,6 @@ end
 
  if verbose
      fprintf('import_arbin_xls: %s...OK\n',file_in);
+ end
  end
 end

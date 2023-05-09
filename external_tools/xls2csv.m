@@ -12,9 +12,9 @@ ss2csv_pathname = ss2csv_pathname{1};
 dos_cmd = sprintf('python3 "%s" "%s"',ss2csv_pathname, file_in);
 
 if isunix
-  [status,result] = unix(dos_cmd);
+  [err,result] = unix(dos_cmd);
 else
-  [status,result] = dos(dos_cmd);
+  [err,result] = dos(dos_cmd);
 end
 
 [D, F, E] = fileparts(file_in);
