@@ -38,10 +38,10 @@ if isempty(file_out)
     file_out = result_filename(dattes_struct.test.file_out, dst_folder,file_suffix, file_ext);
 end
 
-struct_out.metadata = dattes_struct.metadata;
+metadata = dattes_struct.metadata;
 
 folder_out = fileparts(file_out);
 [status, msg, msgID] = mkdir(folder_out);
-write_json_struct(file_out, struct_out);
+write_json_struct(file_out, metadata);
 
 end
