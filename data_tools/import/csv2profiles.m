@@ -6,7 +6,7 @@ function [profiles, other_cols] = csv2profiles(file_in,col_names,params)
 %
 % Inputs:
 % - file_in [1xp string]: pathname to .csv file
-% - col_names [1x9 cell string]:
+% - col_names [1x12 cell string]:
 %  {'datetime','t','U','I','Step', 'Ah', 'Ah_dis', 'Ah_cha','mode','T','dod_ah','soc'}
 %    - e.g. for Arbin: col_names = {'Date Time','Test Time (s)','Voltage (V)',
 %                               'Current (A)', 'Step Index','',
