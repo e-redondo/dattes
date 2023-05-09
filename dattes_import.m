@@ -190,6 +190,20 @@ if ismember('m',options)
     [D,F,~] = cellfun(@fileparts,file_list,'UniformOutput',false);
 end
 
+%Two options:
+[srcroot] = fileparts(srcdir);
+[dstroot] = fileparts(dstdir);
+
+if isequal(srcroot,dstroot)
+% a) srcdir and dstdir are siblings (folders at same path and same level)
+
+%Simply reaplce srcdir by dstdir:
+xml_list = regexprep(file_list,regexptranslate('escape',srcdir),regexptranslate('escape',dstdir));
+[D,F,~] = cellfun(@fileparts,xml_list,'UniformOutput',false);
+xml_list = cellfun(@(x,y) fullfile(x,sprintf('%s.xml',y)),D,F,'UniformOutput',false);
+
+else
+% b) srcdir and dstdir are not siblings (folders at different paths)
 %3. rebuild folder in tree in dstdir
 if ~isempty(dstdir)
     % dstdir: change extension + search sourcefolder and make folder tree
@@ -210,6 +224,8 @@ if ~isempty(dstdir)
 end
 %4. build xml_list
 xml_list = cellfun(@(x,y) fullfile(x,sprintf('%s.xml',y)),D,F,'UniformOutput',false);
+
+end
 
 end
 
