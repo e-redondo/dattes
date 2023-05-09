@@ -30,6 +30,7 @@ if ~exist('title_str','var')
     title_str = '';
 end
 
+%TODO check profiles struct
 
 %get t,U,I,m:
 t = profiles.t;

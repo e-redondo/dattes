@@ -30,11 +30,11 @@ if ~exist('options','var')
 end
 
 %get t,U,I,m:
-t = profiles.t;
+datetime = profiles.datetime;
 U = profiles.U;
 
 
-tc = t-t(1);
+tc = datetime-datetime(1);
 %abcise: tc au lieu de tabs,en heures ou en jours si options 'h' ou 'j':
 if ismember('h',options)
     tc = tc/3600;
@@ -51,8 +51,8 @@ hf = figure('Name','plot_config');
 subplot(311),title('calcul SOC');
 plot(tc,U,'k','displayname','test'),hold on
 
-I100 = ismember(t,config.soc.soc100_datetime);
-I0 = ismember(t,config.soc.soc0_datetime);
+I100 = ismember(datetime,config.soc.soc100_datetime);
+I0 = ismember(datetime,config.soc.soc0_datetime);
 
 plot(tc(I100),U(I100),'ro','displayname','t100')
 plot(tc(I0),U(I0),'rd','displayname','t0')
@@ -63,7 +63,7 @@ plot(tc(I0),U(I0),'rd','displayname','t0')
 % Phases of capacity analysis
 tD = [];UD = [];tC = [];UC = [];tDV= [];UDV = [];tCV = [];UCV = [];
 for ind = 1:length(phases)
-    Ip = t>=phases(ind).datetime_ini & t<=phases(ind).datetime_fin;
+    Ip = datetime>=phases(ind).datetime_ini & datetime<=phases(ind).datetime_fin;
     if config.capacity.pCapaD(ind)
         tD = [tD;tc(Ip)];
         UD = [UD;U(Ip)];
@@ -95,7 +95,7 @@ tR = [];UR = [];tW = [];UW = [];tRr = [];URr = [];tWr = [];UWr = [];
 phases_r = phases(config.resistance.pR);
 time_before_after_phase = [config.resistance.rest_min_duration 0];
 for ind = 1:length(phases_r)
-    [tpRabs,tpR,UpR] = extract_phase2(phases_r(ind),time_before_after_phase,t,tc,U);
+    [tpRabs,tpR,UpR] = extract_phase2(phases_r(ind),time_before_after_phase,datetime,tc,U);
     Ip = tpRabs>=phases_r(ind).datetime_ini;
     Ir = tpRabs<phases_r(ind).datetime_ini;
     tR = [tR;tpR(Ip)];
@@ -110,8 +110,8 @@ end
 for ind = 1:length(phases)
 
     if config.impedance.pZ(ind)
-        Ip = t>=phases(ind).datetime_ini & t<=phases(ind).datetime_ini+config.impedance.pulse_min_duration;
-        Ir = t>=phases(ind-1).datetime_fin-config.impedance.rest_min_duration & t<=phases(ind-1).datetime_fin;
+        Ip = datetime>=phases(ind).datetime_ini & datetime<=phases(ind).datetime_ini+config.impedance.pulse_min_duration;
+        Ir = datetime>=phases(ind-1).datetime_fin-config.impedance.rest_min_duration & datetime<=phases(ind-1).datetime_fin;
         tW = [tW;tc(Ip)];
         UW = [UW;U(Ip)];
         tWr = [tWr;tc(Ir)];

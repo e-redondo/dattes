@@ -24,6 +24,8 @@ if ~exist('options','var')
     options = '';
 end
 
+%TODO check eis struct
+
 hf = figure;
 for ind = 1:length(eis.ReZ)
     plot(eis.ReZ{ind},eis.ImZ{ind},'.-'),hold on

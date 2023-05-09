@@ -31,6 +31,7 @@ if ~exist('options','var')
 end
 
 %get t,U,I,m:
+datetime = profiles.datetime;
 t = profiles.t;
 U = profiles.U;
 I = profiles.I;
@@ -71,7 +72,7 @@ end
 
 to = 0;
 for ind = 1:length(phases)
-    [tp,timep,Up,Ip] = extract_phase(phases(ind),t,t1,U,I);
+    [tp,timep,Up,Ip] = extract_phase(phases(ind),datetime,t1,U,I);
 
     tX = mean(timep);
     tY1 = mean(Up);
