@@ -52,7 +52,7 @@ line(line==181)='u';%EC-LAB mars 2021, adapted to octave
 line = strrep(line,'°C','degC');%BT-LAB mars 2021
 line = strrep(line,'Temperature/degC','Temperature{degC}');%BT-LAB mars 2021
 line = strrep(line,'Ecell/V','U{V}');%OVC SCGPL
-line = strrep(line,'Temperature/uC','T{degC}');%OVC SCGPL
+line = regexprep(line,'Temperature/.C','T{degC}');%2023: file encoding problems with degres
 line = strrep(line,'I Range','I_Range');%EC-Lab mars 2021 (GCPL)
 line = strrep(line,'(Q-Qo)/mA.h','Qp{mAh}');%EC-Lab mars 2021 (GEIS)
 line = strrep(line,'dq/mA.h','dq{mAh}');%EC-Lab mars 2021 (GEIS)
@@ -190,8 +190,11 @@ elseif strcmp(type_test,'MB') %modulo bat
     line = strrep(line,'Capacity/mA.h','Capacity{mAh}');%v10.23
     line = strrep(line,'I Range','I_Range');%v11.20
     line = strrep(line,'half cycle','half_cycle');%v11.20
-    line = strrep(line,'Capacitance charge/uF','Capacitance_charge{uF}');%v11.20
-    line = strrep(line,'Capacitance discharge/uF','Capacitance_discharge{uF}');%v11.20
+%     line = strrep(line,'Capacitance charge/uF','Capacitance_charge{uF}');%v11.20
+%     line = strrep(line,'Capacitance discharge/uF','Capacitance_discharge{uF}');%v11.20
+    line = strrep(line,'Capacitance ','Capacitance_');%v10.40 (Capacitance_charge o Capacitance_discharge)
+    line = strrep(line,'/uF','{uF}');%v10.40 (microFarads)
+    line = regexprep(line,'/.F','{uF}');%v10.40bis (microFarads avec letrte grecque)
     line = strrep(line,'Capacity/mA.h','Capacity{mAh}');%v11.20
     line = strrep(line,'Efficiency/%','Efficiency{pc}');%v11.20
     line = strrep(line,'cycle number','cycle_number');%v11.20
