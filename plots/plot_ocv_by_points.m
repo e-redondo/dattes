@@ -1,4 +1,4 @@
-function hf = plot_ocv_by_points(profiles, ocv_by_points)
+function hf = plot_ocv_by_points(profiles, ocv_by_points,title_str)
 % plot_ocv_by_points plot ocv by points graphs
 %
 % Use t, U, DoDAh and ocv_by_points structure to plot  ocv by points graphs
@@ -15,6 +15,7 @@ function hf = plot_ocv_by_points(profiles, ocv_by_points)
 %     - dod [(px1) double]: depth of discharge
 %     - sign [(px1) double]: current sign before rest
 %     - time [(px1) double]: time of measurement
+% - title_str: [string] title string
 % Output:
 % - hf [1x1 figure handler]: handler for created figure
 %
@@ -28,24 +29,34 @@ function hf = plot_ocv_by_points(profiles, ocv_by_points)
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 
+if ~exist('options','var')
+    options = '';
+end
+if ~exist('title_str','var')
+    title_str = '';
+end
+
 %get t,U,I,m:
-t = profiles.t;
+t = profiles.datetime;
 U = profiles.U;
 DoDAh =  profiles.dod_ah;
 
 
 hf = figure('name','ident_ocv_by_points');
 
-subplot(211),plot(t,U),hold on,ylabel('voltage [V]'),xlabel('time [s]')
-subplot(212),plot(DoDAh,U),hold on,ylabel('voltage [V]'),xlabel('DoDAh [Ah]')
+subplot(121),plot(t,U),hold on,ylabel('voltage [V]'),xlabel('time [s]'),
+title(title_str,'interpreter','none')
+
+subplot(122),plot(DoDAh,U),hold on,ylabel('voltage [V]'),xlabel('DoDAh [Ah]')
 
 index_charge = ocv_by_points.sign>0;
 index_discharge = ocv_by_points.sign<0;
 
-subplot(211),plot(ocv_by_points.datetime(index_charge),ocv_by_points.ocv(index_charge),'r^')
-subplot(212),plot(ocv_by_points.dod(index_charge),ocv_by_points.ocv(index_charge),'r^')
-subplot(211),plot(ocv_by_points.datetime(index_discharge),ocv_by_points.ocv(index_discharge),'rv')
-subplot(212),plot(ocv_by_points.dod(index_discharge),ocv_by_points.ocv(index_discharge),'rv')
+subplot(121),plot(ocv_by_points.datetime(index_charge),ocv_by_points.ocv(index_charge),'r^')
+subplot(122),plot(ocv_by_points.dod(index_charge),ocv_by_points.ocv(index_charge),'r^')
+subplot(121),plot(ocv_by_points.datetime(index_discharge),ocv_by_points.ocv(index_discharge),'rv')
+subplot(122),plot(ocv_by_points.dod(index_discharge),ocv_by_points.ocv(index_discharge),'rv')
+
 
 %Look for all axis handles and ignore legends
 ha = findobj(hf,'type','axes','tag','');

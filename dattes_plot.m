@@ -119,7 +119,7 @@ if ismember('C',options)
     %show result of 'C', i.e. Capacity
     if isfield(result,'capacity')
         plot_capacity(result.capacity,title_str);
-        title(title_str,'interpreter','none')
+%         title(title_str,'interpreter','none')
     else
         fprintf('no capacity result found in %s\n',result.test.file_in);
     end
@@ -140,7 +140,7 @@ end
 if ismember('O',options)
     %show result of 'O', i.e. OCV by points
     if isfield(result,'ocv_by_points')
-        plot_ocv_by_points(profiles, result.ocv_by_points);
+        plot_ocv_by_points(profiles, result.ocv_by_points, title_str);
     else
         fprintf('no ocv_by_points result found in %s\n',result.test.file_in);
     end
