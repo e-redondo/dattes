@@ -47,7 +47,19 @@ function result = dattes_structure(file_in, options, destination_folder, read_mo
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 %TODO: verbose messages
-%TODO?: v = verbose, V = very verbose?
+%TODO?: v = verbose, vvv = very verbose (transmit 'v' to child functions)
+%TODO: read_mode vs. file_ext: dattes_import(src_folder, options, dest_folder, read_mode, file_ext)
+% - enable file_ext search in src_folder
+% - enable read mode different from file ext
+% Example: 'search for .txt files and read them as csv:
+%            dattes_import(src_folder, options, dest_folder, 'csv', '.txt') 
+% Example: 'search for .json files (and read them as json):
+%            dattes_import(src_folder, options, dest_folder, 'json') 
+% Example: (DEFAULT) 'search for .xml files (and read them as xml)'
+%            dattes_import(src_folder, options, dest_folde) 
+
+
+
 
 %0.1 check inputs:
 if ~exist('file_in','var')
@@ -55,7 +67,7 @@ if ~exist('file_in','var')
     result = [];
     return
 end
-if ~ischar(file_in) && ~iscellstr(file_in)
+if ~ischar(file_in) && ~iscell(file_in)
     fprintf('ERROR dattes_structure: file_in must be string or cell string\n');
     result = [];
     return
@@ -120,6 +132,8 @@ end
 %0.3 read_mode:
 [file_in_folder, file_in_name, file_in_ext] = fileparts(file_in);
 switch read_mode
+    case 'mat'
+        file_ext = '.mat';
     case 'json'
         file_ext = '.json';
     case 'csv'
@@ -127,11 +141,16 @@ switch read_mode
     case 'xml'
         file_ext = '.xml';
     otherwise
-        %try to deduce from file_in_ext
-        file_ext = file_in_ext;
+        if isempty(file_in_ext)
+            %no extension, must be a folder, default extension: '.xml'
+            file_ext = '.xml';
+        else
+            %try to deduct from file_in_ext
+            file_ext = file_in_ext;
+        end
 end
 
-if ~ismember(file_ext,{'.json','.csv','.xml'})
+if ~ismember(file_ext,{'.mat','.json','.csv','.xml'})
     fprintf('ERROR dattes_structure: not valid file extension, found "%s"\n',file_ext);
     result = [];
     return;
@@ -165,8 +184,11 @@ if isfile(file_out) && ~force
     fprintf('File exists: %s, loading result from mat\n',file_out);
     result = load_result(file_out);
 else
+    %1.0 mat mode (incomplete structure)
+    if strcmp(file_ext,'.mat')
+        result = load_result(file_in);
     %1.1 json mode (import_json)
-    if strcmp(file_ext,'.json')
+    elseif strcmp(file_ext,'.json')
         [result, err] = read_json_struct(file_in);
 
         %TODO: error management
