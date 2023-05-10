@@ -51,6 +51,12 @@ if ~isequal(E,'.m')
     return
 end
 %F must be a valid function name
+%replace espaces, dots, slash, antislash and math operators by underscore
+F = regexprep(F,'[\.\+\*\-\/\\ \^]','_');
+%limit to first namelengthmax chracters (see doc namelengthmax):
+if length(F)>namelengthmax
+    F = F(1:namelengthmax);
+end
 if ~isvarname(F)
     fprintf('write_config_script: filename must be a valid variable name (see help isvarname)\n');
     return
