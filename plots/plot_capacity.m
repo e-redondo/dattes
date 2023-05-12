@@ -22,19 +22,24 @@ function hf = plot_capacity(capacity,title_str)
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 
-hf=figure;
-subplot(221)
-plot(capacity.cccv_crate(capacity.cccv_crate<0),capacity.cccv_capacity(capacity.cccv_crate<0),...
-    'v r','MarkerSize',8, 'DisplayName','CC-CV discharge')
+if isempty(title_str)
+hf = figure('name','DATTES Capacity');
+else
+hf = figure('name',sprintf('DATTES Capacity: %s',title_str));
+end
+
+subplot(221), title('Capacity versus C-rate')
+plot(-capacity.cccv_crate(capacity.cccv_crate<0),capacity.cccv_capacity(capacity.cccv_crate<0),...
+    'v m','MarkerSize',8, 'DisplayName','CC-CV discharge')
 hold on
-plot(capacity.cc_crate(capacity.cc_crate<0),capacity.cc_capacity(capacity.cc_crate<0),...
-    'v b','MarkerSize',8, 'DisplayName','CC discharge')
+plot(-capacity.cc_crate(capacity.cc_crate<0),capacity.cc_capacity(capacity.cc_crate<0),...
+    'v r','MarkerSize',8, 'DisplayName','CC discharge')
 plot(capacity.cccv_crate(capacity.cccv_crate>0),capacity.cccv_capacity(capacity.cccv_crate>0),...
-    '^ r','MarkerSize',8, 'DisplayName','CC-CV charge')
+    '^ g','MarkerSize',8, 'DisplayName','CC-CV charge')
 plot(capacity.cc_crate(capacity.cc_crate>0),capacity.cc_capacity(capacity.cc_crate>0),...
     '^ b','MarkerSize',8, 'DisplayName','CC charge')
 
-title(title_str,'interpreter','none')
+
 xlabel('C-rate(p.u.)','interpreter','tex')
 ylabel('Capacity (Ah)','interpreter','tex')
 legend('location','best')
@@ -46,19 +51,19 @@ duration_ratio_cc=capacity.cccv_ratio_cc_duration;
 duration_ratio_cv=1-capacity.cccv_ratio_cc_duration;
 
 
-subplot(222)
+subplot(222), title('Amp-hour ratio')
 plot(capacity.cccv_datetime(capacity.cccv_crate<0),ah_ratio_cc(capacity.cccv_crate<0),...
-    'v b','MarkerSize',8, 'DisplayName','CC discharge')
+    'v r','MarkerSize',8, 'DisplayName','CC discharge')
 hold on
 plot(capacity.cccv_datetime(capacity.cccv_crate<0),ah_ratio_cv(capacity.cccv_crate<0),...
-    'v r','MarkerSize',8, 'DisplayName','CV discharge')
+    'v m','MarkerSize',8, 'DisplayName','CV discharge')
 plot(capacity.cccv_datetime(capacity.cccv_crate>0),ah_ratio_cc(capacity.cccv_crate>0),...
     '^ b','MarkerSize',8, 'DisplayName','CC charge')
 plot(capacity.cccv_datetime(capacity.cccv_crate>0),ah_ratio_cv(capacity.cccv_crate>0),...
-    '^ r','MarkerSize',8, 'DisplayName','CV charge')
+    '^ g','MarkerSize',8, 'DisplayName','CV charge')
 
 
-title(title_str,'interpreter','none')
+ylim([0 1])
 xlabel('Time (s)','interpreter','tex')
 ylabel('Ah ratio (p.u.)','interpreter','tex')
 legend('location','best')
@@ -66,18 +71,18 @@ legend('location','best')
 grid on;
 
 
-subplot(223)
+subplot(223), title('Capacity versus time')
 plot(capacity.cccv_datetime(capacity.cccv_crate<0),capacity.cccv_capacity(capacity.cccv_crate<0),...
-    'v r','MarkerSize',8, 'DisplayName','CC-CV discharge')
+    'v m','MarkerSize',8, 'DisplayName','CC-CV discharge')
 hold on
 plot(capacity.cc_datetime(capacity.cc_crate<0),capacity.cc_capacity(capacity.cc_crate<0),...
-    'v b','MarkerSize',8, 'DisplayName','CC discharge')
+    'v r','MarkerSize',8, 'DisplayName','CC discharge')
 plot(capacity.cccv_datetime(capacity.cccv_crate>0),capacity.cccv_capacity(capacity.cccv_crate>0),...
-    '^ r','MarkerSize',8, 'DisplayName','CC-CV charge')
+    '^ g','MarkerSize',8, 'DisplayName','CC-CV charge')
 plot(capacity.cc_datetime(capacity.cc_crate>0),capacity.cc_capacity(capacity.cc_crate>0),...
     '^ b','MarkerSize',8, 'DisplayName','CC charge')
 
-title(title_str,'interpreter','none')
+
 xlabel('Time(s)','interpreter','tex')
 ylabel('Capacity (Ah)','interpreter','tex')
 legend('location','best')
@@ -86,21 +91,21 @@ grid on;
 
 
 
-subplot(224)
+subplot(224), title('Duration ratio')
 plot(capacity.cccv_datetime(capacity.cccv_crate<0),duration_ratio_cc(capacity.cccv_crate<0),...
-    'v b','MarkerSize',8, 'DisplayName','CC discharge')
+    'v r','MarkerSize',8, 'DisplayName','CC discharge')
 hold on
 plot(capacity.cccv_datetime(capacity.cccv_crate<0),duration_ratio_cv(capacity.cccv_crate<0),...
-    'v r','MarkerSize',8, 'DisplayName','CV discharge')
+    'v m','MarkerSize',8, 'DisplayName','CV discharge')
 plot(capacity.cccv_datetime(capacity.cccv_crate>0),duration_ratio_cc(capacity.cccv_crate>0),...
     '^ b','MarkerSize',8, 'DisplayName','CC charge')
 plot(capacity.cccv_datetime(capacity.cccv_crate>0),duration_ratio_cv(capacity.cccv_crate>0),...
-    '^ r','MarkerSize',8, 'DisplayName','CV charge')
+    '^ g','MarkerSize',8, 'DisplayName','CV charge')
 
 
-title(title_str,'interpreter','none')
+ylim([0 1])
 xlabel('Time (s)','interpreter','tex')
-ylabel('Duration ratio (p.u.)','interpreter','tex')
+ylabel('Duration ratio (p.u. of CCCV duration)','interpreter','tex')
 legend('location','best')
 
 grid on;
@@ -109,7 +114,7 @@ grid on;
 %Look for all axis handles and ignore legends
 ha = findobj(hf,'type','axes','tag','');
 prettyAxes(ha);
-changeLine(ha,2,15);
+changeLine(ha,1,5);
 
 
 

@@ -14,7 +14,7 @@ function hf = plot_config(profiles,config,phases,title_str,options)
 %     - U [nx1 double]: voltage in V
 % - config [nx1 struct]: configuration structure
 % - phases [nx1 struct]] phases structure
-% - title: [string] title string
+% - title_str: [string] title string
 % Output:
 % - hf [1x1 figure handler]: handler for created figure
 %
@@ -102,7 +102,7 @@ plot(tc*t_factor,U,'k','displayname','test')
 plot(tD*t_factor,UD,'r.','displayname','discharge')
 plot(tC*t_factor,UC,'b.','displayname','charge')
 plot(tDV*t_factor,UDV,'m.','displayname','discharge (CV phase)')
-plot(tCV*t_factor,UCV,'c.','displayname','charge (CV phase)')
+plot(tCV*t_factor,UCV,'g.','displayname','charge (CV phase)')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %figure3: Impedances
 tR = [];UR = [];tW = [];UW = [];tRr = [];URr = [];tWr = [];UWr = [];
