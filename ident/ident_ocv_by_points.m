@@ -60,6 +60,7 @@ if ~isfield(config.ocv_points,'pOCVr')
 end
 
 datetime = profiles.datetime;
+t = profiles.t;
 U = profiles.U;
 DoDAh = profiles.dod_ah;
 
@@ -75,9 +76,10 @@ if length(phases_avant)<length(phases_ocv)
     fprintf('ident_ocv_by_points:error\n');
 end
 for ind = 1:length(phases_ocv)
-    [tp,Up,DoDAhp] = extract_phase(phases_ocv(ind),datetime,U,DoDAh);
+    [dtp,tp,Up,DoDAhp] = extract_phase(phases_ocv(ind),datetime,t,U,DoDAh);
     
-    datetime_ocv(ind) = tp(end);
+    datetime_ocv(ind) = dtp(end);
+    t_ocv(ind) = tp(end);
     ocv(ind) = Up(end);%TODO: extrapolation, calcul de la relaxation, etc.
     dod(ind) = DoDAhp(end);
     signe(ind) = sign(phases_avant(ind).Iavg);
@@ -90,6 +92,7 @@ end
 If = true(size(datetime_ocv));
 
 datetime_ocv = datetime_ocv(If);
+t_ocv = t_ocv(If);
 ocv = ocv(If);
 dod = dod(If);
 signe = signe(If);
@@ -98,6 +101,7 @@ ocv_by_points(1).ocv = ocv;
 ocv_by_points.dod = dod;
 ocv_by_points.sign = signe;
 ocv_by_points.datetime = datetime_ocv;
+ocv_by_points.t = t_ocv;
 
 if ismember('v',options)
     fprintf('OK\n');

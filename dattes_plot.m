@@ -140,7 +140,7 @@ end
 if ismember('O',options)
     %show result of 'O', i.e. OCV by points
     if isfield(result,'ocv_by_points')
-        plot_ocv_by_points(profiles, result.ocv_by_points, title_str);
+        plot_ocv_by_points(profiles, result.ocv_by_points, title_str,InherOptions);
     else
         fprintf('no ocv_by_points result found in %s\n',result.test.file_in);
     end
