@@ -1,16 +1,17 @@
-function [ica] = ident_ica(datetime,U,dod_ah,config,phases,options)
+function [ica] = ident_ica(profiles,config,phases,options)
 % ident_ica incremental capacity analysis
 %
-% [ica] = ident_ica(datetime,U,dod_ah,config,phases,options)
+% [ica] = ident_ica(profiles,config,phases,options)
 % Read the config and phases structure and performe several calculations
 % regarding incremental capacity analysis.  Results are returned in the structure incremental capacity analysis 
 %
 % Usage:
-% [ica] = ident_ica(datetime,U,dod_ah,config,phases,options)
+% [ica] = ident_ica(profiles,config,phases,options)
 % Inputs:
-% - datetime [nx1 double]: datetime in seconds
-% - U [nx1 double]: cell voltage in V
-% - dod_ah [nx1 double]: depth of discharge in AmpHours
+% - profiles [(1x1) struct] with fields:
+%     - datetime [nx1 double]: datetime in seconds
+%     - U [nx1 double]: cell voltage in V
+%     - dod_ah [nx1 double]: depth of discharge in AmpHours
 % - config [1x1 struct]: config struct from configurator
 % - phases [1x1 struct]: phases struct from decompose_phases
 % - options [string] containing:
@@ -37,13 +38,12 @@ end
 ica = struct([]);
 
 %% check inputs:
-if nargin<5 || nargin>6
+if nargin<3 || nargin>4
     fprintf('ident_ica : wrong number of parameters, found %d\n',nargin);
     return;
 end
 
-if ~isstruct(config) || ~isstruct(phases) || ~ischar(options) || ~isnumeric(datetime) ...
-        || ~isnumeric(U) ||  ~isnumeric(dod_ah)
+if ~isstruct(profiles) || ~isstruct(config) || ~isstruct(phases) || ~ischar(options)
     fprintf('ident_ica: wrong type of parameters\n');
     return;
 end
@@ -58,6 +58,9 @@ if ~isfield(config.ica,'pICA') || ~isfield(config.ica,'filter_order') || ~isfiel
     return;
 end
 
+datetime = profiles.datetime;
+U = profiles.U;
+dod_ah = profiles.dod_ah;
 
 %both charge and discharge phases:
 phases_ica = phases(config.ica.pICA);

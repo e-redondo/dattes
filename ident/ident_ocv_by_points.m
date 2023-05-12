@@ -1,15 +1,16 @@
-function [ocv_by_points] = ident_ocv_by_points(datetime,U,DoDAh,m,config,phases,options)
+function [ocv_by_points] = ident_ocv_by_points(profiles,config,phases,options)
 %ident_ocv_by_points OCV by points identification (rests after partial
 %charges/discharges)
 %
-% [ocv_by_points] = ident_ocv_by_points(datetime,U,DoDAh,m,config,phases,options)
+% [ocv_by_points] = ident_ocv_by_points(profiles,config,phases,options)
 % Read the config and phases structure and performe several calculations
 % regarding OCV by points .  Results are returned in the structure ocv_by_points
 %
 % Usage:
-%[ocv_by_points] = ident_ocv_by_points(datetime,U,DoDAh,m,config,phases,options)
+%[ocv_by_points] = ident_ocv_by_points(profiles,config,phases,options)
 % Inputs:
-% - datetime,U,DoDAh,m [(nx1) double]: vectors from extract_profiles
+% - profiles [(1x1) struct] with fields:
+%     - datetime,U,dod_ah,mode [(nx1) double]
 % - config [(1x1) struct]: config struct from configurator
 % - phases [(mx1) struct] phases from split_phases
 % - options: [string] execution options
@@ -41,12 +42,11 @@ ocv =[];
 dod =[];
 
 %% check inputs:
-if nargin<6 || nargin>7
+if nargin<3 || nargin>4
     fprintf('ident_ocv_by_points: wrong number of parameters, found %d\n',nargin);
     return;
 end
-if ~isstruct(phases) || ~isstruct(config) || ~ischar(options)...
-        || ~isnumeric(datetime) || ~isnumeric(U)|| ~isnumeric(DoDAh) || ~isnumeric(m)
+if ~isstruct(profiles) || ~isstruct(phases) || ~isstruct(config) || ~ischar(options)
     fprintf('ident_ocv_by_points: wrong type of parameters\n');
     return;
 end
@@ -58,6 +58,10 @@ if ~isfield(config.ocv_points,'pOCVr')
     fprintf('ident_ocv_by_points: incomplete structure config, redo configurator: dattes(''cs'')\n');
     return;
 end
+
+datetime = profiles.datetime;
+U = profiles.U;
+DoDAh = profiles.dod_ah;
 
 
 phases_ocv = phases(config.ocv_points.pOCVr);

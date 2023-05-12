@@ -125,7 +125,7 @@ if any(ismember('PORZI',options))
         
         %6.1. pseudo ocv
         if ismember('P',options)
-            [pseudo_ocv] = ident_pseudo_ocv(datetime,U,dod_ah,config,phases,inher_options);
+            [pseudo_ocv] = ident_pseudo_ocv(result.profiles,config,phases,inher_options);
             %save the results
             result.pseudo_ocv = pseudo_ocv;
             
@@ -133,7 +133,7 @@ if any(ismember('PORZI',options))
         
         %6.2. ocv by points
         if ismember('O',options)
-            [ocv_by_points] = ident_ocv_by_points(datetime,U,dod_ah,m,config,phases,inher_options);
+            [ocv_by_points] = ident_ocv_by_points(result.profiles,config,phases,inher_options);
             %save the results
             result.ocv_by_points = ocv_by_points;
         end
@@ -141,7 +141,7 @@ if any(ismember('PORZI',options))
         %6.3. impedances
         %6.3.1. resistance
         if ismember('R',options)
-            [resistance] = ident_r(datetime,U,I,dod_ah,config,phases,inher_options);
+            [resistance] = ident_r(result.profiles,config,phases,inher_options);
             %save the results
             result.resistance = resistance;
         end
@@ -158,7 +158,7 @@ if any(ismember('PORZI',options))
         
         %6.4. ICA/DVA
         if ismember('I',options)
-            ica = ident_ica(datetime,U,dod_ah,config,phases,inher_options);
+            ica = ident_ica(result.profiles,config,phases,inher_options);
             %sauvegarder les resultats
             result.ica = ica;
         end

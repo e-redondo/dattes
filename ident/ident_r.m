@@ -1,13 +1,14 @@
-function [resistance] = ident_r(datetime,U,I,dod_ah,config,phases,options)
+function [resistance] = ident_r(profiles,config,phases,options)
 %ident_r resistance identification 
 %
 % Usage:
-% [resistance] = ident_r(datetime,U,I,dod_ah,config,phases,options)
+% [resistance] = ident_r(profiles,config,phases,options)
 % Read the config and phases structure and performe several calculations
 % regarding resistance.  Results are returned in the structure resistance 
 %
 % Inputs:
-% - datetime, U, I, dod_ah [(nx1) double]: from extract_profiles
+% - profiles [(1x1) struct] with fields:
+%     - datetime, U, I, dod_ah [(nx1) double]
 % - config [(1x1) struct] from configurator
 % - phases [(mx1) struct] from split_phases
 % - options [(1xp) string] execution options:
@@ -37,12 +38,11 @@ resistance = struct([]);
 
 %%
 %gestion d'erreurs:
-if nargin<6 || nargin>7
+if nargin<3 || nargin>4
     fprintf('ident_r: wrong number of parameters, found %d\n',nargin);
     return;
 end
-if ~isstruct(config) || ~ischar(options) || ~isnumeric(datetime) ...
-        || ~isnumeric(U) || ~isnumeric(I) || ~isnumeric(dod_ah)
+if ~isstruct(profiles) || ~isstruct(config) || ~ischar(options)
     fprintf('ident_r: wrong type of parameters\n');
     return;
 end
@@ -54,6 +54,12 @@ if ~isfield(config.resistance,'pR') || ~isfield(config.resistance,'rest_min_dura
     fprintf('ident_r: incomplete structure config, redo configurator: dattes(''cs'')\n');
     return;
 end
+
+
+datetime = profiles.datetime;
+U = profiles.U;
+I = profiles.I;
+dod_ah = profiles.dod_ah;
 
 pulse_min_duration = config.resistance.pulse_min_duration;
 rest_min_duration = config.resistance.rest_min_duration;

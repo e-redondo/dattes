@@ -1,11 +1,12 @@
-function [pseudo_ocv] = ident_pseudo_ocv(datetime,U,DoDAh,config,phases,options)
+function [pseudo_ocv] = ident_pseudo_ocv(profiles,config,phases,options)
 %ident_pseudo_ocv pseudoOCV identification
 %
 % Usage:
-% [pseudo_ocv] = ident_pseudo_ocv(datetime,U,DoDAh,config,phases,options)
+% [pseudo_ocv] = ident_pseudo_ocv(profiles,config,phases,options)
 %
 % Inputs:
-% - datetime,U,DoDAh [(nx1) double]: from extract_profiles and calcul_soc
+% - profiles [(1x1) struct] with fields:
+%     - datetime,U,DoDAh [(nx1) double]
 % - config [(1x1) struct]: from configurator
 % - phases [(mx1) struct]: from split_phases
 % - options [(1xp) string]: execution options
@@ -32,7 +33,7 @@ function [pseudo_ocv] = ident_pseudo_ocv(datetime,U,DoDAh,config,phases,options)
 %% check inputs:
 pseudo_ocv = struct([]);
 
-if nargin<6 || nargin>7
+if nargin<3 || nargin>4
     fprintf('ident_pseudo_ocv: wrong number of parameters, found %d\n',nargin);
     return;
 end
@@ -121,6 +122,10 @@ voltage_charge = cell(size(phases_ocv_charge));
 dod_ah_charge = cell(size(phases_ocv_charge));
 voltage_discharge = cell(size(phases_ocv_discharge));
 dod_ah_discharge = cell(size(phases_ocv_discharge));
+
+datetime = profiles.datetime;
+U = profiles.U;
+DoDAh = profiles.dod_ah;
 
 for ind =1:length(phases_ocv_charge)
     %extraire les phases
