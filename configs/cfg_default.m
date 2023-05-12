@@ -56,15 +56,15 @@ config.soc.crate_cv_end = 1/20;
 % config.resistance.delta_time = [0 5 10 30 60]; % config.instant_calcul_R %Instant du pulse auquel on mesure R (par défaut 0 secondes)
 config.resistance.delta_time = [2 10]; % config.instant_calcul_R %Instant du pulse auquel on mesure R (par défaut 0 secondes)
 config.resistance.pulse_min_duration = 9; %config.minimal_duration_pulse = 9;%duree min d'un pulse pour resistance
-config.resistance.pulse_max_duration = 3600;% maximal pulse 600sec
+config.resistance.pulse_max_duration = 600;% maximal pulse 600sec
 config.resistance.rest_min_duration = 9; % config.minimal_duration_rest_before_pulse =9;%duree min repos avant
 
 % impedance ('Z' action):
+config.impedance.pulse_min_duration = 59;% minimal pulse 60sec
+config.impedance.pulse_max_duration = 600;% maximal pulse 600sec
+config.impedance.rest_min_duration = 9;% minimal rest before 300sec
 config.impedance.ident_fcn = @ident_cpe;% use ident_cpe
 % config.impedance.ident_fcn = @ident_rrc;% use ident_rrc
-config.impedance.pulse_min_duration = 299;% minimal pulse 300sec
-config.impedance.pulse_max_duration = 599;% maximal pulse 600sec
-config.impedance.rest_min_duration = 9;% minimal rest before 300sec
 config.impedance.fixed_params = false;% not fixed params
 % config.impedance.fixed_params = 0.5;% ident_cpe 2nd param fixed to 0.5
 config.impedance.initial_params = [1000, 0.5];% ident_cpe: Q0 = 1000, alpha0 = 0.5
