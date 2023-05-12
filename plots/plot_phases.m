@@ -29,37 +29,42 @@ function hf = plot_phases(profiles,phases,title_str,options)
 if ~exist('options','var')
     options = '';
 end
+if ~exist('title_str','var')
+    title_str = '';
+end
 
 %get t,U,I,m:
-datetime = profiles.datetime;
+date_time = profiles.datetime;
 t = profiles.t;
 U = profiles.U;
 I = profiles.I;
 
 
-
-
-hf = figure('name','plot_phases');
+if isempty(title_str)
+    hf = figure('name','DATTES phases');
+else
+    hf = figure('name',sprintf('DATTES phases: %s',title_str));
+end
 
 if ismember('D',options)%plot time in dates
-    t1 = datetime(datestr(e2mdate(t),'yyyy-mm-dd HH:MM'));
+    t1 = datetime(datestr(e2mdate(date_time),'yyyy-mm-dd HH:MM'));
     x_lab = 'date/time';
 else
     if ismember('h',options)%plot time in hours since start_time
         t1 = (t-t(1))/3600;
-        x_lab = 'time (hours)';
+        x_lab = 'time [h]';
     elseif ismember('d',options)%plot time in days since start_time
         t1 = (t-t(1))/86400;
-        x_lab = 'time (days)';
+        x_lab = 'time [d]';
     else
         t1 = t-t(1);% Remove first instant
-        x_lab = 'time (seconds)';
+        x_lab = 'time [s]';
     end
 end
 subplot(211),plot(t1,U,'k')
-hold on,xlabel(x_lab),ylabel('voltage')
+hold on,xlabel(x_lab),ylabel('Voltage [V]')
 subplot(212),plot(t1,I,'k')
-hold on,xlabel(x_lab),ylabel('current')
+hold on,xlabel(x_lab),ylabel('Current [A]')
         
 c = lines(length(phases));
 
@@ -72,7 +77,7 @@ end
 
 to = 0;
 for ind = 1:length(phases)
-    [tp,timep,Up,Ip] = extract_phase(phases(ind),datetime,t1,U,I);
+    [tp,timep,Up,Ip] = extract_phase(phases(ind),date_time,t1,U,I);
 
     tX = mean(timep);
     tY1 = mean(Up);
@@ -86,7 +91,6 @@ for ind = 1:length(phases)
         subplot(212),text(tX,tY2,num2str(ind),'edgecolor',c(ind,:),'BackgroundColor','w');
     end
 end
-subplot(211),title(title_str,'interpreter','none')
 
 
 %Look for all axis handles and ignore legends
@@ -94,5 +98,5 @@ ha = findobj(hf,'type','axes','tag','');
 
 prettyAxes(ha);
 linkaxes(ha, 'x' );
-changeLine(ha,2,15);
+changeLine(ha,1,5);
 end

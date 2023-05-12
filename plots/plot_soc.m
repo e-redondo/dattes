@@ -31,8 +31,12 @@ function hf = plot_soc(profiles, config,title_str,options)
 if ~exist('options','var')
     options = '';
 end
+if ~exist('title_str','var')
+    title_str = '';
+end
 
 %get t,U,I,m:
+date_time = profiles.datetime;
 t = profiles.t;
 I = profiles.I;
 DoDAh = profiles.dod_ah;
@@ -40,39 +44,52 @@ SOC = profiles.soc;
 
 
 %x-axis: tc instead of tabs,in hours od days if options 'h' or 'd':
-tc = t-t(1);
 if ismember('h',options)
-    tc = tc/3600;
-    tunit = 'h';
+    tc = t/3600;
+    t_unit = 'h';
 elseif ismember('d',options)
-    tc = tc/86400;
-    tunit = 'd';
+    tc = t/86400;
+    t_unit = 'd';
+elseif ismember('D',options)
+    tc = datetime(datestr(e2mdate(date_time),'yyyy-mm-dd HH:MM'));
+    t_unit = 's';
 else
-    tunit = 's';
+    tc = t;
+    t_unit = 's';
 end
 
 I100 = [];
 if isfield(config.soc,'soc100_datetime')
-    I100 = ismember(t,config.soc.soc100_datetime);
+    I100 = ismember(date_time,config.soc.soc100_datetime);
 end
 
-hf = figure('name','plot_soc');
+if isempty(title_str)
+hf = figure('name','DATTES SoC/DoD');
+else
+hf = figure('name',sprintf('DATTES SoC/DoD: %s',title_str));
+end
 
-subplot(311),plot(tc,I),hold on,ylabel('current [A]'),xlabel(sprintf('time [%s]',tunit)),grid on
+subplot(311),hold on,ylabel('current [A]'),xlabel(sprintf('time [%s]',t_unit))
+subplot(312),hold on,ylabel('DoDAh [Ah]'),xlabel(sprintf('time [%s]',t_unit))
+subplot(313),hold on,ylabel('SOC [%]'),xlabel(sprintf('time [%s]',t_unit))
+
+
+subplot(311),plot(tc,I,'k')
 subplot(311),plot(tc(I100),I(I100),'ro')
 if ~isempty(DoDAh)
-    subplot(312),plot(tc,DoDAh),hold on,ylabel('DoDAh [Ah]'),xlabel(sprintf('time [%s]',tunit)), grid on
+    subplot(312),plot(tc,DoDAh,'k')
     subplot(312),plot(tc(I100),DoDAh(I100),'ro'),ylim([min(0,min(DoDAh)) max(config.test.capacity,max(DoDAh))])
+    subplot(313),plot(tc,SOC,'k')
     subplot(313),plot(tc(I100),SOC(I100),'ro'),ylim([min(0,min(SOC)) max(100,max(SOC))])
-    subplot(313),plot(tc,SOC),hold on,ylabel('SOC [%]'),xlabel(sprintf('time [%s]',tunit)), grid on
+    
 end
 
-subplot(311),title(title_str,'interpreter','none')
+% subplot(311),title(title_str,'interpreter','none')
 ha = findobj( hf, 'type', 'axes', 'tag', '' );
 prettyAxes(ha);
 if length(ha)>1
   linkaxes(ha, 'x' );
 end
-changeLine(ha,2,15);
+changeLine(ha,1,5);
 
 end

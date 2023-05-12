@@ -28,34 +28,50 @@ function hf = plot_config(profiles,config,phases,title_str,options)
 if ~exist('options','var')
     options = '';
 end
+if ~exist('title_str','var')
+    title_str = '';
+end
 
-%get t,U,I,m:
-datetime = profiles.datetime;
-U = profiles.U;
-
-
-tc = datetime-datetime(1);
 %abcise: tc au lieu de tabs,en heures ou en jours si options 'h' ou 'j':
 if ismember('h',options)
-    tc = tc/3600;
+    t_name = 't';
+    t_factor = 1/3600;
     tunit = 'h';
 elseif ismember('d',options)
-    tc = tc/86400;
+    t_name = 't';
+    t_factor = 1/86400;
     tunit = 'd';
+elseif ismember('D',options)%datetime
+    t_name = 'datetime';
+    t_factor = 1;
+    tunit = 's';
 else
+    t_name = 't';
+    t_factor = 1;
     tunit = 's';
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%figure1: t100, ini et fin CV
-hf = figure('Name','plot_config');
-subplot(311),title('calcul SOC');
-plot(tc,U,'k','displayname','test'),hold on
 
+datetime = profiles.datetime;
+U = profiles.U;
+tc = profiles.(t_name);
+
+if isempty(title_str)
+hf = figure('name','DATTES configuration');
+else
+hf = figure('name',sprintf('DATTES configuration: %s',title_str));
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%figure1: SoC configuration
 I100 = ismember(datetime,config.soc.soc100_datetime);
 I0 = ismember(datetime,config.soc.soc0_datetime);
 
-plot(tc(I100),U(I100),'ro','displayname','t100')
-plot(tc(I0),U(I0),'rd','displayname','t0')
+subplot(321),title('SoC configuration'),xlabel(sprintf('time [%s]',tunit)),hold on
+plot(tc*t_factor,U,'k','displayname','test')
+
+
+plot(tc(I100)*t_factor,U(I100),'ro','displayname','SoC100 point')
+plot(tc(I0)*t_factor,U(I0),'rd','displayname','SoC0 point')
 
 % plot(t(Iinicv),U(Iinicv),'r+','tag','debutCV')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,12 +97,12 @@ for ind = 1:length(phases)
         UCV = [UCV;U(Ip)];
     end
 end
-subplot(312),title('calcul Capa');
-plot(tc,U,'k','displayname','test'),hold on
-plot(tD,UD,'r.','displayname','capaD')
-plot(tC,UC,'b.','displayname','capaC')
-plot(tDV,UDV,'m.','displayname','capaDV')
-plot(tCV,UCV,'c.','displayname','capaCV'),xlabel(sprintf('time [%s]',tunit))
+subplot(322),title('Capacity configuration'),xlabel(sprintf('time [%s]',tunit)),hold on
+plot(tc*t_factor,U,'k','displayname','test')
+plot(tD*t_factor,UD,'r.','displayname','discharge')
+plot(tC*t_factor,UC,'b.','displayname','charge')
+plot(tDV*t_factor,UDV,'m.','displayname','discharge (CV phase)')
+plot(tCV*t_factor,UCV,'c.','displayname','charge (CV phase)')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %figure3: Impedances
 tR = [];UR = [];tW = [];UW = [];tRr = [];URr = [];tWr = [];UWr = [];
@@ -120,18 +136,61 @@ for ind = 1:length(phases)
     end
 end
 
-subplot(313),title('calcul Z');
-plot(tc,U,'k','displayname','test'),hold on
-plot(tW,UW,'go','displayname','diffusion')
-plot(tWr,UWr,'g.','displayname','rest diffusion')
-plot(tR,UR,'co','displayname','resistance')
-plot(tRr,URr,'c.','displayname','rest resistance'),xlabel(sprintf('time [%s]',tunit))
 
-subplot(311),title(title_str,'interpreter','none'),xlabel(sprintf('time [%s]',tunit))
+subplot(325),title('Resistance configuration'),xlabel(sprintf('time [%s]',tunit)),hold on
+plot(tc*t_factor,U,'k','displayname','test')
+plot(tR*t_factor,UR,'r.','displayname','pulse resistance')
+plot(tRr*t_factor,URr,'b.','displayname','rest resistance')
+
+subplot(326),title('Impedance configuration'),xlabel(sprintf('time [%s]',tunit)),hold on
+plot(tc*t_factor,U,'k','displayname','test')
+plot(tW*t_factor,UW,'r.','displayname','pulse impedance')
+plot(tWr*t_factor,UWr,'b.','displayname','rest impedance')
+
+%pOCV configuration
+phases_pocv_c = phases(config.pseudo_ocv.pOCVpC);
+phases_pocv_d = phases(config.pseudo_ocv.pOCVpD);
+t_ocv_c = [];
+U_ocv_c = [];
+t_ocv_d = [];
+U_ocv_d = [];
+for ind = 1:length(phases_pocv_c)
+    pro_ocv_c = extract_phase2(phases_pocv_c(ind), [0 0], profiles);
+    t_ocv_c = [t_ocv_c; pro_ocv_c.(t_name)];
+    U_ocv_c = [U_ocv_c; pro_ocv_c.U];
+end
+for ind = 1:length(phases_pocv_d)
+    pro_ocv_d = extract_phase2(phases_pocv_d(ind), [0 0], profiles);
+    t_ocv_d = [t_ocv_d; pro_ocv_d.(t_name)];
+    U_ocv_d = [U_ocv_d; pro_ocv_d.U];
+end
+
+subplot(323),title('pseudo OCV configuration'),xlabel(sprintf('time [%s]',tunit)),hold on
+plot(tc*t_factor,U,'k','displayname','test')
+plot(t_ocv_d*t_factor,U_ocv_d,'r.','displayname','pseudo OCV (discharge)')
+plot(t_ocv_c*t_factor,U_ocv_c,'b.','displayname','pseudo OCV (charge)')
+
+
+%ICA configuration
+
+phases_ica = phases(config.ica.pICA);
+t_ica = [];
+U_ica = [];
+for ind = 1:length(phases_ica)
+    pro_ica = extract_phase2(phases_ica(ind), [0 0], profiles);
+    t_ica = [t_ica; pro_ica.(t_name)];
+    U_ica = [U_ica; pro_ica.U];
+end
+
+subplot(324),title('ICA configuration'),xlabel(sprintf('time [%s]',tunit)),hold on
+plot(tc*t_factor,U,'k','displayname','test')
+plot(t_ica*t_factor,U_ica,'r.','displayname','ICA')
+
+
 ha = findobj(hf, 'type','axes','tag','');
-arrayfun(@(x) legend(x,'show','location','eastoutside'),ha);
+arrayfun(@(x) legend(x,'show','location','best'),ha);
 % printLegTag(ha,'eastoutside');
 prettyAxes(ha);
-linkaxes(ha, 'x' );
-changeLine(ha,2,15);
+% linkaxes(ha, 'xy' );
+changeLine(ha,1,5);
 end

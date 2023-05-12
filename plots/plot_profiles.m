@@ -33,41 +33,45 @@ end
 %TODO check profiles struct
 
 %get t,U,I,m:
+date_time = profiles.datetime;
 t = profiles.t;
 U = profiles.U;
 I = profiles.I;
 m = profiles.mode;
 
 if ismember('D',options)%plot time in dates
-    t1 = datetime(datestr(e2mdate(t),'yyyy-mm-dd HH:MM'));
-    x_lab = 'date/time';
+    t1 = datetime(datestr(e2mdate(date_time),'yyyy-mm-dd HH:MM'));
+    x_lab = 'Date/time';
 else
     if ismember('h',options)%plot time in hours since start_time
         t1 = (t-t(1))/3600;
-        x_lab = 'time (hours)';
+        x_lab = 'Time [hours]';
     elseif ismember('d',options)%plot time in days since start_time
         t1 = (t-t(1))/86400;
-        x_lab = 'time (days)';
+        x_lab = 'Time [days]';
     else
         t1 = t-t(1);% Remove first instant
-        x_lab = 'time (seconds)';
+        x_lab = 'Time [s]';
     end
 end
 
 
-hf = figure;
-subplot(211),plot(t1,U,'b','displayname','test'),hold on,xlabel(x_lab),ylabel('voltage')
+if isempty(title_str)
+hf = figure('name','DATTES profiles and mode');
+else
+hf = figure('name',sprintf('DATTES profiles and mode: %s',title_str));
+end
 
-title(title_str,'interpreter','none')
-subplot(212),plot(t1,I,'b','displayname','test'),hold on,xlabel(x_lab),ylabel('current')
+subplot(211),plot(t1,U,'k','displayname','test'),hold on,xlabel(x_lab),ylabel('Voltage [V]')
+subplot(212),plot(t1,I,'k','displayname','test'),hold on,xlabel(x_lab),ylabel('Current [A]')
 
-c = 'rgcmk';
+c = lines(5);
 tags = {'CC','CV','rest','EIS','profile'};
 for ind = 1:5
     indices = m==ind;
 
-    subplot(211),plot(t1(indices),U(indices),[c(ind) '.'],'displayname',tags{ind})
-    subplot(212),plot(t1(indices),I(indices),[c(ind) '.'],'displayname',tags{ind})
+    subplot(211),plot(t1(indices),U(indices),'.','color',c(ind,:),'displayname',tags{ind})
+    subplot(212),plot(t1(indices),I(indices),'.','color',c(ind,:),'displayname',tags{ind})
 end
 
 %Look for all axis handles and ignore legends
@@ -76,4 +80,5 @@ arrayfun(@(x) legend(x,'location','eastoutside'),ha);
 % printLegTag(ha,'eastoutside');
 linkaxes(ha, 'x' );
 prettyAxes(ha);
+changeLine(ha,1,5);
 end
