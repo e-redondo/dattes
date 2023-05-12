@@ -172,7 +172,7 @@ Ipulse = m==1 & [0; m(1:end-1)]==3;
 
 %5.1.- mode CC et dernier point avant en repos (3)
 pR = ismember(tInis,datetime(Ipulse))& durees<=config.resistance.pulse_max_duration;
-pZ =pR;
+pZ = ismember(tInis,datetime(Ipulse))& durees<=config.impedance.pulse_max_duration;
 
 %5.2.- duree minimale pour pR, tminR (10secondes); pour pW, tminW (300sec)
 pR = pR & durees>=config.resistance.pulse_min_duration;
