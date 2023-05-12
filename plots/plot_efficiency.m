@@ -28,6 +28,13 @@ function hf = plot_efficiency(pseudo_ocv,title_str)
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 
+if ~exist('options','var')
+    options = '';
+end
+if ~exist('title_str','var')
+    title_str = '';
+end
+
 if isempty(title_str)
 hf = figure('name','DATTES pseudo OCV Efficiency');
 else
@@ -49,5 +56,5 @@ legend('location','best')
 %Look for all axis handles and ignore legends
 ha = findobj(hf,'type','axes','tag','');
 prettyAxes(ha);
-changeLine(ha,2,15);
+changeLine(ha,1,5);
 end

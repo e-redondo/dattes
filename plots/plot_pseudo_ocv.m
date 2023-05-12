@@ -40,9 +40,9 @@ linestyles = repmat(linestyles,1,N);
 
 for ind = 1:length(pseudo_ocv)
 
-disp_name_c = sprintf('charge C-rate=%.3fC',pseudo_ocv(ind).crate);
-disp_name_d = sprintf('discharge C-rate=%.3fC',pseudo_ocv(ind).crate);
-disp_name_o = sprintf('pseudo OCV C-rate=%.3fC',pseudo_ocv(ind).crate);
+disp_name_c = sprintf('charge C-rate=%.2gC',pseudo_ocv(ind).crate);
+disp_name_d = sprintf('discharge C-rate=%.2gC',pseudo_ocv(ind).crate);
+disp_name_o = sprintf('pseudo OCV C-rate=%.2gC',pseudo_ocv(ind).crate);
 
 plot(pseudo_ocv(ind).dod,pseudo_ocv(ind).u_charge,['b' linestyles{ind}],'displayname',disp_name_c)
 plot(pseudo_ocv(ind).dod,pseudo_ocv(ind).u_discharge,['r' linestyles{ind}],'displayname',disp_name_d)
@@ -56,5 +56,5 @@ legend('location','southwest')
 %Look for all axis handles and ignore legends
 ha = findobj(hf,'type','axes','tag','');
 prettyAxes(ha);
-changeLine(ha,2,15);
+changeLine(ha,1,5);
 end
