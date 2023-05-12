@@ -12,7 +12,6 @@ function [capacity] = ident_capacity(config,phases,options)
 % phases (1xn struct) phases array structure from split_phases
 % options (string) containing:
 %   - 'v': verbose, tell what you do
-%   - 'g' : show figures
 %
 % Output:
 % - capacity [(1x1) struct] with fields:

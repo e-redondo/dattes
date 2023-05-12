@@ -16,7 +16,6 @@ function [impedance] = ident_cpe(datetime,U,I,dod_ah,config,phases,options)
 % - phases [1x1 struct]: phases struct from decompose_phases
 % - options [string]
 %   - 'v': verbose, tell what you do
-%   - 'g' : show figures
 %
 % Output:
 % - impedance [(1x1) struct] with fields:
@@ -142,12 +141,6 @@ crate = crate/config.test.capacity;
 if ismember('v',options)
     fprintf('OK\n');
 end
-
-
-if ismember('g',options)
-    show_result(datetime,U,I,dod_ah,q, alpha, dod, crate,datetime);
-end
-
     
 impedance(1).topology = 'R0 + CPE';
 impedance.q = q;
@@ -157,28 +150,4 @@ impedance.dod = dod;
 impedance.crate = crate;
 impedance.datetime = datetime_cpe;
 
-end
-
-function show_result(t,U,I,dod_ah,q, alpha, dod, crate,time)
-
-hf = figure('name','ident_cpe');
-subplot(3,2, [1 2]),plot(t,U,'b'),hold on,xlabel('time (s)'),ylabel('voltage (V)')
-
-current_phase = ismember(t,time);
-subplot(3,2, [1 2]),plot(t(current_phase),U(current_phase),'ro')
-current_phase = ismember(t,time(isnan(q)));
-subplot(3,2, [1 2]),plot(t(current_phase),U(current_phase),'rx')
-
-
-subplot(323),plot(dod,q,'ro'),xlabel('DoD(Ah)')
-subplot(324),plot(crate,q,'ro'),xlabel('Current(C)')
-subplot(325),plot(dod,alpha,'ro'),xlabel('DoD(Ah)')
-subplot(326),plot(crate,alpha,'ro'),xlabel('Current(C)')
-
-%Look for all axis handles and ignore legends
-ha = findobj(hf,'type','axes','tag','');
-% printLegTag(ha,'eastoutside');
-prettyAxes(ha);
-% linkaxes(ha, 'x' );
-changeLine(ha,2,15);
 end

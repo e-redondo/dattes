@@ -8,7 +8,7 @@ function config = configurator(datetime,I,U,m,config,phases,options)
 % - datetime,I,U,m [(nx1) double] from extract_profiles
 % - config [(1x1) struct] containing minimal info (see cfg_default)
 % - phases [(mx1) struct] from split_phases
-% - options [(1xp) string] some options ('v', 'g').
+% - options [(1xp) string] some options ('v').
 %
 % Outputs:
 % config [(1x1) struct] with fields:
@@ -239,17 +239,8 @@ config.ica.pICA = (config.capacity.pCapaC | config.capacity.pCapaD) & abs(Regime
 % config.pICAC = config.pCapaC & abs(Regime)<config.regimeICAmax;
 % config.pICAD = config.pCapaD & abs(Regime)<config.regimeICAmax;
 
-
-
-
 if ismember('v',options)
     fprintf('OK\n');
 end
 
-if ismember('g',options)
-%     showResult(t,U,I100,Iinicv,config,phases);
-    
-    hf = plot_config(datetime,U,config,phases,'','h');
-    set(hf,'name','configurator');
-end
 end

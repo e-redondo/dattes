@@ -199,10 +199,7 @@ profiles.soc = [];
 %read EIS
 eis = extract_eis(xml,options);
 % 
-% if ismember('g',options)
-%     showResult(profiles,xml_file,options);
-%     showResulteis(eis,xml_file);
-% end
+
 
 %AUTO generate config
 if isempty(max_voltage)%not found in metadata:
@@ -264,26 +261,6 @@ end
 err=0;
 
 end
-
-
-% function showResult(profiles,xml_file,options)
-% 
-% [~, title_str, ~] = fileparts(xml_file);
-% InherOptions = options(ismember(options,'hj'));
-% h = plot_profiles(profiles,title_str,InherOptions);
-% set(h,'name','extract_profiles');
-% 
-% end
-% 
-% function showResulteis(eis,xml_file)
-% 
-% if ~isempty(eis)
-%     [~, title_str, ~] = fileparts(xml_file);
-%     h = plot_eis(eis,title_str);
-%     set(h,'name','extract_eis');
-% end
-% 
-% end
 
 function [eis] = extract_eis(xml,options)
 %extract_eis extraire les variables importantes d'un essai d'impedancemetrie.
@@ -428,9 +405,7 @@ if ~isempty(t)
     if ismember('v',options)
         fprintf('OK (EIS file)\n');
     end
-    if ismember('g',options)
-        showResulteis(eis);
-    end
+
 end
 
 end

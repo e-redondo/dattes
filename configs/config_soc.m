@@ -8,7 +8,7 @@ function config = config_soc(datetime,I,U,m,config,options)
 % - datetime,U,I,m [(nx1) double] from profiles
 % - config [(1x1) struct] containing minimal info (see cfg_default)
 % - phases [(mx1) struct] from split_phases
-% - options [(1xp) string] some options ('v', 'g').
+% - options [(1xp) string] some options ('v').
 %
 % Outputs:
 % config [(1x1) struct] with fields:
@@ -34,7 +34,7 @@ end
 if length(datetime)<2 
    error('t must have at least to elements');
 end
-if length(datetime)~=length(U) ||  length(datetime)~=length(U) || length(datetime)~=length(U)
+if length(datetime)~=length(U) ||  length(datetime)~=length(I) || length(datetime)~=length(m)
    error('t,U,I,m must have same length');
 end
 % config: 1x1 struct with fields:
@@ -100,7 +100,4 @@ if ismember('v',options)
     fprintf('OK\n');
 end
 
-if ismember('g',options)
-  % TODO (or not?)
-end
 end

@@ -166,10 +166,6 @@ polarization = cellfun(@(x,y) (x-y),u_charge,u_discharge,'uniformoutput',false);
 efficiency = cellfun(@(x,y) (y./x),u_charge,u_discharge,'uniformoutput',false);
 pTime = max(timeC,timeD);
 
-if ismember('g',options)
-    showResult(voltage_charge,dod_ah_charge,voltage_discharge,dod_ah_discharge,dod,u_charge,u_discharge,ocv);
-end
-
 %convert to pseudo_ocv struct:
 for ind = 1:length(ocv)
     pseudo_ocv(ind).ocv = ocv{ind};
@@ -181,23 +177,4 @@ for ind = 1:length(ocv)
     pseudo_ocv(ind).crate = crate(ind);
     pseudo_ocv(ind).datetime = pTime(ind);
 end
-end
-
-function showResult(voltage_charge,dod_ah_charge,voltage_discharge,dod_ah_discharge,dod,u_charge,u_discharge,ocv)
-
-hf = figure('name','ident_pseudo_ocv');hold on
-cellfun(@(x,y) plot(x,y,'b.-','tag','charge (mesure)'),dod_ah_charge,voltage_charge)
-cellfun(@(x,y) plot(x,y,'r.-','tag','decharge (mesure)'),dod_ah_discharge,voltage_discharge)
-
-
-cellfun(@(x,y) plot(x,y,'b*','tag','charge (points)'),dod,u_charge)
-cellfun(@(x,y) plot(x,y,'r*','tag','decharge (points)'),dod,u_discharge)
-cellfun(@(x,y) plot(x,y,'k-','tag','pseudoOCV'),dod,ocv)
-
-ylabel('voltage [V]'),xlabel('DoD [Ah]')
-
-%Look for all axis handles and ignore legends
-ha = findobj(hf,'type','axes','tag','');
-prettyAxes(ha);
-changeLine(ha,2,15);
 end

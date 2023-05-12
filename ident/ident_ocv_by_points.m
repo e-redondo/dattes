@@ -14,7 +14,6 @@ function [ocv_by_points] = ident_ocv_by_points(datetime,U,DoDAh,m,config,phases,
 % - phases [(mx1) struct] phases from split_phases
 % - options: [string] execution options
 %    - 'v' = verbose
-%    - 'g' = graphics
 % Outputs:
 % - ocv_by_points [(1x1) struct] with fields:
 %     - ocv [(px1) double]: ocv measurements
@@ -98,9 +97,6 @@ ocv_by_points.datetime = datetime_ocv;
 
 if ismember('v',options)
     fprintf('OK\n');
-end
-if ismember('g',options)
-    plotOCVp(datetime,U,DoDAh, datetime_ocv, ocv, dod, signe);
 end
 
 end

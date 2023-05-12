@@ -15,7 +15,6 @@
 % - phases [1x1 struct]: phases struct from decompose_phases
 % - options [string] containing:
 %   - 'v': verbose, tell what you do
-%   - 'g' : show figures
 %
 % Output:
 % - impedance [(1x1) struct] with fields:
@@ -173,27 +172,27 @@ Usr2c2 = rc_output(datetime_phase,current_phase,R2id,C2id);
     err_qua=1000*abs(Usimu-voltage_phase).^2;
     err_abs=1000*abs(Usimu-voltage_phase);
     
-    if ismember('g',options) 
-        x=rand;
-        if x<0.1
-          phase_number=indice_r(phase_k);
-
-            figure
-            subplot(311),          
-            plot(datetime_phase,voltage_phase,'.-',datetime_phase,Usimu,'r.-'),ylabel('Voltage (V)')
-            legend('measure','simulation')
-              title(['Simulation versus measurement for phase ',num2str(phase_number)])
-
-            subplot(312),plot(datetime_phase,err_qua,'g.'),ylabel('Quadratic error (mV²)')
-            legend(sprintf('Mean value quadratic error: %e',mean(err_qua)),'location','best')
-        title(['Quadratic error evolution for phase ',num2str(phase_number)])
-
-            subplot(313),plot(datetime_phase,err_abs,'g.'),ylabel('Absolute error (mV)')
-            legend(sprintf('Mean value absolute error: %e',mean(err_abs)),'location','best')
-              title(['Absolute error evolution for phase ',num2str(phase_number)])
-
-         end
-    end
+%     if ismember('g',options) 
+%         x=rand;
+%         if x<0.1
+%           phase_number=indice_r(phase_k);
+% 
+%             figure
+%             subplot(311),          
+%             plot(datetime_phase,voltage_phase,'.-',datetime_phase,Usimu,'r.-'),ylabel('Voltage (V)')
+%             legend('measure','simulation')
+%               title(['Simulation versus measurement for phase ',num2str(phase_number)])
+% 
+%             subplot(312),plot(datetime_phase,err_qua,'g.'),ylabel('Quadratic error (mV²)')
+%             legend(sprintf('Mean value quadratic error: %e',mean(err_qua)),'location','best')
+%         title(['Quadratic error evolution for phase ',num2str(phase_number)])
+% 
+%             subplot(313),plot(datetime_phase,err_abs,'g.'),ylabel('Absolute error (mV)')
+%             legend(sprintf('Mean value absolute error: %e',mean(err_abs)),'location','best')
+%               title(['Absolute error evolution for phase ',num2str(phase_number)])
+% 
+%          end
+%     end
     
 
 end

@@ -15,7 +15,6 @@ function [ica] = ident_ica(datetime,U,dod_ah,config,phases,options)
 % - phases [1x1 struct]: phases struct from decompose_phases
 % - options [string] containing:
 %   - 'v': verbose, tell what you do
-%   - 'g' : show figures
 %
 % Output:
 % - ica [mx1 struct] with fields:

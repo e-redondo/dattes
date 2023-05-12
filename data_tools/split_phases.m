@@ -10,7 +10,6 @@ function [phases, tcell, Icell, Ucell, modes] = split_phases(datetime,I,U,m,opti
 % - options [(1xp) string]: execution options:
 %    - 'u': unsigned ignore changes in polarity of current
 %    - 'v': verbose
-%    - 'g': graphics
 %
 % Outputs:
 % - phases [(mx1) struct]: structure array with fields:
@@ -30,7 +29,6 @@ function [phases, tcell, Icell, Ucell, modes] = split_phases(datetime,I,U,m,opti
 % - modes [(mx1) double]: mode of each phase
 %
 % Examples:
-% split_phases(t,I,U,m,'g') % 'graphics', show results in a figure.
 % split_phases(t,I,U,m,'v') % 'verbose', tell what it does.
 %
 % See also which_mode, extract_profiles, plot_phases
@@ -126,9 +124,5 @@ if ismember('v',options)
     fprintf('OK\n');
 end
 
-if ismember('g',options)
-    hf = plot_phases(datetime,U,I,phases,'','h');
-    set(hf,'name','split_phases');
-end
 end
 

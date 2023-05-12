@@ -12,7 +12,6 @@ function [resistance] = ident_r(datetime,U,I,dod_ah,config,phases,options)
 % - phases [(mx1) struct] from split_phases
 % - options [(1xp) string] execution options:
 %     - 'v': verbose
-%     - 'g': graphics
 %
 % Outputs:
 % - resistance [(1x1) struct] with fields:
@@ -106,31 +105,5 @@ resistance.delta_time = delta_time;
 if ismember('v',options)
     fprintf('OK\n');
 end
-if ismember('g',options)
-    showResult(datetime,U,I,dod_ah,R,dod,crate,datetime_r);
-end
-end
 
-function showResult(t,U,I,dod_ah,R,dod,crate,time)
-
-hf = figure('name','ident_r');
-subplot(221),plot(t,U,'b'),hold on,xlabel('time (s)'),ylabel('voltage (V)')
-
-
-Ip = ismember(t,time);
-subplot(221),plot(t(Ip),U(Ip),'ro')
-Ip = ismember(t,time(isnan(R)));
-subplot(221),plot(t(Ip),U(Ip),'rx')
-
-
-subplot(223),plot(time,R,'ro'),xlabel('time (s)'),ylabel('resistance (Ohm)')
-subplot(222),plot(dod,R,'ro'),xlabel('DoD(Ah)'),ylabel('resistance (Ohm)')
-subplot(224),plot(crate,R,'ro'),xlabel('Current(C)'),ylabel('resistance (Ohm)')
-
-%Look for all axis handles and ignore legends
-ha = findobj(hf,'type','axes','tag','');
-% printLegTag(ha,'eastoutside');
-prettyAxes(ha);
-% linkaxes(ha, 'x' );
-changeLine(ha,2,15);
 end

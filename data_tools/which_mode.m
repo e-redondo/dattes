@@ -10,7 +10,6 @@ function m = which_mode(t,I,U,Step,I_threshold,U_threshold,options)
 % - U_threshold (1x1 double): voltage threshold to consider change
 % - options (1xp string): execution options
 %    - 'v': verbose
-%    - 'g': graphics
 %
 % Output:
 % - m (nx1 double): cycler working mode
@@ -92,9 +91,6 @@ for ind = 1:length(phases)
    end
 end
 
-if ismember('g',options)
-    showResult(t,U,I,m);
-end
 end
 
 
@@ -151,33 +147,6 @@ if sum(modes)==0
     return;
 end
 m=find(modes);
-end
-
-
-function showResult(t,U,I,m)
-
-h = figure('name','which_mode');
-subplot(211),plot(t,U,'b','displayname','test'),hold on,xlabel('time'),ylabel('voltage')
-subplot(212),plot(t,I,'b','displayname','test'),hold on,xlabel('time'),ylabel('current')
-
-c = 'rmgck';
-tags = {'CC','CV','rest','EIS','profile'};
-for ind = 1:5
-    indices = m==ind;
-    
-    subplot(211),plot(t(indices),U(indices),[c(ind) 'o'],'displayname',tags{ind})
-    subplot(212),plot(t(indices),I(indices),[c(ind) 'o'],'displayname',tags{ind})
-end
-
-
-%cherche tout les handles du type axe et ignore les legendes
-ha = findobj(h, 'type', 'axes', 'tag', '' );   
-% printLegTag(ha,'eastoutside');
-legend(subplot(211),'show','location','eastoutside')
-legend(subplot(212),'show','location','eastoutside')
-
-linkaxes(ha, 'x' );
-prettyAxes(ha);
 end
 
 function indCCCV = findCCCV(t,I)
