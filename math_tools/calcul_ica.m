@@ -59,8 +59,8 @@ end
 dudt = moving_derivative(ti,uf,100*Ts);
 dqdt = moving_derivative(ti,qf,100*Ts);
 
-dudq = dudt./dqdt;
-dqdu = dqdt./dudt;
+dudq = -dudt./dqdt;
+dqdu = -dqdt./dudt;
 
 if ismember('g',options)
     figure;
