@@ -7,8 +7,10 @@ function hf = plot_capacity(capacity,title_str)
 % Usage:
 % hf = plot_capacity(cc_capacity, cc_crate)
 % Inputs:
+% - capacity [(1x1) struct] with fields:
 %  - cc_capacity: [nx1] Capacity during CC phase in Ah
 %  - cc_crate: [nx1] C-rate during CC phase in Ah
+% - title_str: [string] title string
 % Output:
 % - hf [1x1 figure handler]: handler for created figure
 %

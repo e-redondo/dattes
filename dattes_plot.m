@@ -129,7 +129,7 @@ if ismember('P',options)
     %show result of 'P', i.e pseudoOCV
     if isfield(result,'pseudo_ocv')
         if ~isempty(result.pseudo_ocv)
-            plot_pseudo_ocv(result.pseudo_ocv);
+            plot_pseudo_ocv(result.pseudo_ocv, title_str);
         else
             fprintf('no pseudo_ocv result found in %s\n',result.test.file_in);
         end
@@ -149,7 +149,7 @@ if ismember('E',options)
     %show result of 'E', i.e. Efficiency
     if isfield(result,'pseudo_ocv')
         if ~isempty(result.pseudo_ocv)
-           plot_efficiency(result.pseudo_ocv);
+           plot_efficiency(result.pseudo_ocv,title_str);
         else
             fprintf('no efficiency (pseudo_ocv) result found in %s\n',result.test.file_in);
         end
@@ -160,7 +160,7 @@ end
 if ismember('R',options)
     %show result of 'R', i.e. Resistance
     if isfield(result,'resistance')
-        plot_r(result.resistance);
+        plot_r(result.resistance,title_str);
     else
         fprintf('no resistance result found in %s\n',result.test.file_in);
     end
@@ -178,7 +178,7 @@ if ismember('I',options)
     %show result of 'I', i.e. ica
     if isfield(result,'ica')
         if ~isempty(result.ica)
-            plot_ica(result.ica);
+            plot_ica(result.ica,title_str);
         else
             fprintf('no ica result found in %s\n',result.test.file_in);
         end

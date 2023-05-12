@@ -1,4 +1,4 @@
-function hf = plot_ica(ica)
+function hf = plot_ica(ica,title_str)
 % plot_ica plot incremental capacity analysis graphs
 %
 % plot_ica(ica)
@@ -25,7 +25,12 @@ function hf = plot_ica(ica)
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 
-    hf = figure;
+if isempty(title_str)
+hf = figure('name','DATTES Incremental Capacity Analysis');
+else
+hf = figure('name',sprintf('DATTES Incremental Capacity Analysis: %s',title_str));
+end
+
     for ind = 1:length(ica)
         qf = ica(ind).q;
         uf = ica(ind).u;
@@ -34,11 +39,17 @@ function hf = plot_ica(ica)
         crate = ica(ind).crate;
         test_date = datestr(e2mdate(ica(ind).datetime),'yyyy-mm-dd');
         
-        disp_name = sprintf('C-rate=%.3fC, date=%s',crate, test_date);
-        subplot(221),plot(qf,uf,'DisplayName',disp_name),xlabel('Ah'),ylabel('V'),hold on
-        subplot(222),plot(dqdu,uf),title('ICA plot'),xlabel('Ah/V'),ylabel('V'),hold on
-        subplot(223),plot(qf,dudq),title('DVA plot'),xlabel('Ah'),ylabel('V/Ah'),hold on
+        disp_name = sprintf('C-rate=%.3fC, date=%s',crate);
+        subplot(221),plot(qf,uf,'DisplayName',disp_name),title('Voltage vs. capacity'),xlabel('Capacity [Ah]'),ylabel('Voltage [V]'),hold on
+        subplot(222),plot(dqdu,uf),title('ICA plot'),xlabel('dQdU (Ah/V)'),ylabel('Voltage [V]'),hold on
+        subplot(223),plot(qf,dudq),title('DVA plot'),xlabel('Capacity [Ah]'),ylabel('dU/dQ [V/Ah]'),hold on
     end
     subplot(221),legend show;
     legend('location','southwest')
+
+
+    %Look for all axis handles and ignore legends
+ha = findobj(hf,'type','axes','tag','');
+prettyAxes(ha);
+changeLine(ha,2,15);
 end

@@ -42,12 +42,18 @@ U = profiles.U;
 DoDAh =  profiles.dod_ah;
 
 
-hf = figure('name','ident_ocv_by_points');
+if isempty(title_str)
+hf = figure('name','DATTES OCV by points');
+else
+hf = figure('name',sprintf('DATTES OCV by points: %s',title_str));
+end
 
-subplot(121),plot(t,U),hold on,ylabel('voltage [V]'),xlabel('time [s]'),
-title(title_str,'interpreter','none')
 
-subplot(122),plot(DoDAh,U),hold on,ylabel('voltage [V]'),xlabel('DoDAh [Ah]')
+subplot(121),plot(t,U),hold on,ylabel('Voltage [V]'),xlabel('Time [s]'),
+title('Voltage vs. time')
+
+subplot(122),plot(DoDAh,U),hold on,ylabel('Voltage [V]'),xlabel('DoDAh [Ah]')
+title('Voltage vs. DoD')
 
 index_charge = ocv_by_points.sign>0;
 index_discharge = ocv_by_points.sign<0;
@@ -58,6 +64,8 @@ subplot(121),plot(ocv_by_points.datetime(index_discharge),ocv_by_points.ocv(inde
 subplot(122),plot(ocv_by_points.dod(index_discharge),ocv_by_points.ocv(index_discharge),'rv')
 
 
+hl = legend('voltage profile','OCV after partial charge','OCV after partial discharge');
+hl.Location = 'southwest';
 %Look for all axis handles and ignore legends
 ha = findobj(hf,'type','axes','tag','');
 prettyAxes(ha);

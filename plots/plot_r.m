@@ -1,4 +1,4 @@
-function hf = plot_r(resistance)
+function hf = plot_r(resistance,title_str)
 % plot_r plot resistance graphs
 %
 % Use resistance structure to plot resistance graphs
@@ -12,6 +12,7 @@ function hf = plot_r(resistance)
 %     - crate [(qx1) double]: current rate (C)
 %     - time [(qx1) double]: time of measurement (s)
 %     - delta_time [(qx1) double]: time from pulse start (s)
+% - title_str: [string] title string
 % Output:
 % - hf [1x1 figure handler]: handler for created figure
 %
@@ -23,13 +24,24 @@ function hf = plot_r(resistance)
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 
+if ~exist('options','var')
+    options = '';
+end
+if ~exist('title_str','var')
+    title_str = '';
+end
+
 Idis = resistance.crate<0;
 Icha = resistance.crate>0;
 dt = unique(resistance.delta_time);
 
 c = lines(length(dt));
 
-hf = figure('name','ident R');
+if isempty(title_str)
+hf = figure('name','DATTES Resistance');
+else
+hf = figure('name',sprintf('DATTES Resistance: %s',title_str));
+end
 
 for ind = 1:length(dt)
     Is = resistance.delta_time == dt(ind);
@@ -40,24 +52,28 @@ for ind = 1:length(dt)
     subplot(221),hold on
     plot(resistance.dod(Idis & Is),resistance.R(Idis & Is),'v','color',c(ind,:),'DisplayName',tagD)
     plot(resistance.dod(Icha & Is),resistance.R(Icha & Is),'^','color',c(ind,:),'DisplayName',tagC)
+    title('Resistance vs. DoD')
     xlabel('DoD (Ah)','interpreter','tex')
     ylabel('R (Ohm)','interpreter','tex')
-    
+%     title(title_str,'interpreter','none')
+
     subplot(222),hold on
     plot(resistance.crate(Idis & Is),resistance.R(Idis & Is),'v','color',c(ind,:),'DisplayName',tagD)
     plot(resistance.crate(Icha & Is),resistance.R(Icha & Is),'^','color',c(ind,:),'DisplayName',tagC)
-    xlabel('C-Rate (C)','interpreter','tex')
+    title('Resistance vs. C-rate')
+    xlabel('C-rate (C)','interpreter','tex')
     ylabel('R (Ohm)','interpreter','tex')
     
     subplot(2,2,[3 4]),hold on
     plot(resistance.datetime(Idis & Is),resistance.R(Idis & Is),'v','color',c(ind,:),'DisplayName',tagD)
     plot(resistance.datetime(Icha & Is),resistance.R(Icha & Is),'^','color',c(ind,:),'DisplayName',tagC)
+    title('Resistance vs. time')
     xlabel('time (s)','interpreter','tex')
     ylabel('R (Ohm)','interpreter','tex')
     
     
 end
-subplot(2,2,[3 4]),legend('location','eastoutside')
+subplot(2,2,[3 4]),legend('location','best')
 %Look for all axis handles and ignore legends
 ha = findobj(hf,'type','axes','tag','');
 prettyAxes(ha);

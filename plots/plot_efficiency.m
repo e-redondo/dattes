@@ -1,4 +1,4 @@
-function hf = plot_efficiency(pseudo_ocv)
+function hf = plot_efficiency(pseudo_ocv,title_str)
 % plot_efficiency plot efficiency graphs
 %
 % plot_ocv_by_points(t,U,DoDAh, ocv_by_points)
@@ -17,6 +17,7 @@ function hf = plot_efficiency(pseudo_ocv)
 %      - u_discharge [(kx1) double]: voltage during discharging half cycle
 %      - crate [(1x1) double]: C-rate
 %      - time [(1x1) double]: time of measurement
+% - title_str: [string] title string
 % Output:
 % - hf [1x1 figure handler]: handler for created figure
 %
@@ -27,11 +28,23 @@ function hf = plot_efficiency(pseudo_ocv)
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 
-hf = figure('name','ident pOCV(Effi)');hold on
-for ind = 1:length(pseudo_ocv)
-plot(pseudo_ocv(ind).dod,pseudo_ocv(ind).efficiency,'k-','tag','efficiency')
+if isempty(title_str)
+hf = figure('name','DATTES pseudo OCV Efficiency');
+else
+hf = figure('name',sprintf('DATTES pseudo OCV Efficiency: %s',title_str));
 end
-ylabel('efficiency [p.u.]'),xlabel('DoD [Ah]')
+hold on
+
+for ind = 1:length(pseudo_ocv)
+
+disp_name = sprintf('C-rate=%.3fC',pseudo_ocv(ind).crate);
+plot(pseudo_ocv(ind).dod,pseudo_ocv(ind).efficiency,'-','displayname',disp_name)
+
+end
+ylabel('Efficiency [p.u.]'),xlabel('DoD [Ah]')
+title('Efficiency vs. DoD')
+legend show;
+legend('location','best')
 
 %Look for all axis handles and ignore legends
 ha = findobj(hf,'type','axes','tag','');
