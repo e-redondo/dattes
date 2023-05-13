@@ -40,33 +40,58 @@ function hf = plot_impedance(impedance,title_str)
 if ~exist('title_str','var')
     title_str = '';
 end
+
 fieldlist = fieldnames(impedance);
 [~, parameters] = regexpFiltre(fieldlist,'dod');
 [~, parameters] = regexpFiltre(parameters,'time');
 [~, parameters] = regexpFiltre(parameters,'crate');
 [~, parameters] = regexpFiltre(parameters,'topology');
 
+
+Idis = impedance.crate<0;
+Icha = impedance.crate>0;
+
 for ind = 1:length(parameters)
-fig_title = sprintf('impedance topology: %s, parameter: %s',...
+
+    if isempty(title_str)
+        fig_title = sprintf('DATTES impedance. Topology: %s, parameter: %s',...
                      impedance.topology,parameters{ind});
+    else
+         fig_title = sprintf('DATTES impedance (%s). Topology: %s, parameter: %s',...
+                     title_str,impedance.topology,parameters{ind});       
+    end
 hf = figure('name',fig_title);hold on
-subplot(221),plot(impedance.dod,impedance.(parameters{ind}),'o')
+subplot(221),hold on
 xlabel('DoD (Ah)','interpreter','tex')
 ylabel(parameters{ind},'interpreter','tex')
-title(title_str,'interpreter','none')
 
-subplot(222),plot(impedance.crate,impedance.(parameters{ind}),'o')
+z = impedance.(parameters{ind});
+z_cha = z(Icha);
+z_dis = z(Idis);
+
+plot(impedance.dod(Icha),z_cha,'^','displayname','charge')
+plot(impedance.dod(Idis),z_dis,'v','displayname','discharge')
+
+subplot(222),hold on
 xlabel('C-rate (C)','interpreter','tex')
 ylabel(parameters{ind},'interpreter','tex')
+plot(impedance.crate(Icha),z_cha,'^','displayname','charge')
+plot(impedance.crate(Idis),z_dis,'v','displayname','discharge')
 
-subplot(2,2,[3 4]),plot(impedance.datetime,impedance.(parameters{ind}),'o')
+
+subplot(2,2,[3 4]),hold on
 xlabel('time (s)','interpreter','tex')
 ylabel(parameters{ind},'interpreter','tex')
+plot(impedance.datetime(Icha),z_cha,'^','displayname','charge')
+plot(impedance.datetime(Idis),z_dis,'v','displayname','discharge')
 
-%Look for all axis handles and ignore legends
+legend show;
+legend('location','best')
+
+%Look for all axis handles except legends
 ha = findobj(hf,'type','axes','tag','');
 prettyAxes(ha);
-changeLine(ha,2,15);
+changeLine(ha,1,5);
 end
 
 end
