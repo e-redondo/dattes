@@ -41,17 +41,17 @@ m = profiles.mode;
 
 if ismember('D',options)%plot time in dates
     t1 = datetime(datestr(e2mdate(date_time),'yyyy-mm-dd HH:MM'));
-    x_lab = 'Date/time';
+    x_lab = 'datetime';
 else
     if ismember('h',options)%plot time in hours since start_time
         t1 = (t-t(1))/3600;
-        x_lab = 'Time [hours]';
+        x_lab = 'time [hours]';
     elseif ismember('d',options)%plot time in days since start_time
         t1 = (t-t(1))/86400;
-        x_lab = 'Time [days]';
+        x_lab = 'time [days]';
     else
         t1 = t-t(1);% Remove first instant
-        x_lab = 'Time [s]';
+        x_lab = 'time [s]';
     end
 end
 
@@ -76,7 +76,7 @@ end
 
 %Look for all axis handles and ignore legends
 ha = findobj(hf, 'type', 'axes', 'tag', '' );
-arrayfun(@(x) legend(x,'location','eastoutside'),ha);
+arrayfun(@(x) legend(x,'location','best'),ha);
 % printLegTag(ha,'eastoutside');
 linkaxes(ha, 'x' );
 prettyAxes(ha);
