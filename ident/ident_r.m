@@ -57,6 +57,7 @@ end
 
 
 datetime = profiles.datetime;
+t = profiles.t;
 U = profiles.U;
 I = profiles.I;
 dod_ah = profiles.dod_ah;
@@ -106,6 +107,7 @@ resistance(1).R = R;
 resistance.dod = dod;
 resistance.crate = crate;
 resistance.datetime = datetime_r;
+resistance.t = datetime_r-profiles.datetime(1);
 resistance.delta_time = delta_time;
 
 if ismember('v',options)

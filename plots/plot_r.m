@@ -1,4 +1,4 @@
-function hf = plot_r(resistance,title_str)
+function hf = plot_r(resistance,title_str,options)
 % plot_r plot resistance graphs
 %
 % Use resistance structure to plot resistance graphs
@@ -31,6 +31,25 @@ if ~exist('title_str','var')
     title_str = '';
 end
 
+%abcise: tc au lieu de tabs,en heures ou en jours si options 'h' ou 'j':
+if ismember('h',options)
+    t_name = 't';
+    t_factor = 1/3600;
+    t_label = 'time [h]';
+elseif ismember('d',options)
+    t_name = 't';
+    t_factor = 1/86400;
+    t_label = 'time [d]';
+elseif ismember('D',options)%datetime
+    t_name = 'datetime';
+    t_factor = 1;
+    t_label = 'datetime [s]';
+else
+    t_name = 't';
+    t_factor = 1;
+    t_label = 'time [s]';
+end
+
 Idis = resistance.crate<0;
 Icha = resistance.crate>0;
 dt = unique(resistance.delta_time);
@@ -43,33 +62,41 @@ else
 hf = figure('name',sprintf('DATTES Resistance: %s',title_str));
 end
 
+
+subplot(221),hold on,title('Resistance vs. DoD')
+xlabel('DoD [Ah]'),ylabel('R [Ohm]','interpreter','tex')
+
+subplot(222),hold on,title('Resistance vs. C-rate')
+xlabel('C-rate [C]'),ylabel('R [Ohm]','interpreter','tex')
+
+subplot(2,2,[3 4]),hold on,title('Resistance vs. time')
+xlabel(t_label),ylabel('R [Ohm]','interpreter','tex')
+
 for ind = 1:length(dt)
     Is = resistance.delta_time == dt(ind);
     
     tagC = sprintf('%g seconds charge',dt(ind));
     tagD = sprintf('%g seconds discharge',dt(ind));
     
-    subplot(221),hold on
+    subplot(221)
     plot(resistance.dod(Idis & Is),resistance.R(Idis & Is),'v','color',c(ind,:),'DisplayName',tagD)
     plot(resistance.dod(Icha & Is),resistance.R(Icha & Is),'^','color',c(ind,:),'DisplayName',tagC)
-    title('Resistance vs. DoD')
-    xlabel('DoD (Ah)','interpreter','tex')
-    ylabel('R (Ohm)','interpreter','tex')
+    
 %     title(title_str,'interpreter','none')
 
-    subplot(222),hold on
+    subplot(222)
     plot(resistance.crate(Idis & Is),resistance.R(Idis & Is),'v','color',c(ind,:),'DisplayName',tagD)
     plot(resistance.crate(Icha & Is),resistance.R(Icha & Is),'^','color',c(ind,:),'DisplayName',tagC)
-    title('Resistance vs. C-rate')
-    xlabel('C-rate (C)','interpreter','tex')
-    ylabel('R (Ohm)','interpreter','tex')
     
-    subplot(2,2,[3 4]),hold on
-    plot(resistance.datetime(Idis & Is),resistance.R(Idis & Is),'v','color',c(ind,:),'DisplayName',tagD)
-    plot(resistance.datetime(Icha & Is),resistance.R(Icha & Is),'^','color',c(ind,:),'DisplayName',tagC)
-    title('Resistance vs. time')
-    xlabel('time (s)','interpreter','tex')
-    ylabel('R (Ohm)','interpreter','tex')
+    
+    subplot(2,2,[3 4])
+    t_r = resistance.(t_name);
+    t_r_d = t_r(Idis & Is);
+    t_r_c = t_r(Icha & Is);
+    
+    plot(t_r_d*t_factor,resistance.R(Idis & Is),'v','color',c(ind,:),'DisplayName',tagD)
+    plot(t_r_c*t_factor,resistance.R(Icha & Is),'^','color',c(ind,:),'DisplayName',tagC)
+
     
     
 end
@@ -77,5 +104,5 @@ subplot(2,2,[3 4]),legend('location','best')
 %Look for all axis handles and ignore legends
 ha = findobj(hf,'type','axes','tag','');
 prettyAxes(ha);
-changeLine(ha,2,15);
+changeLine(ha,1,5);
 end

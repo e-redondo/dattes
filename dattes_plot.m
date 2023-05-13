@@ -160,7 +160,7 @@ end
 if ismember('R',options)
     %show result of 'R', i.e. Resistance
     if isfield(result,'resistance')
-        plot_r(result.resistance,title_str);
+        plot_r(result.resistance,title_str,InherOptions);
     else
         fprintf('no resistance result found in %s\n',result.test.file_in);
     end
