@@ -43,8 +43,6 @@ function [result] = dattes_plot(file_in,options)
 
 if iscell(file_in)
     [result] = cellfun(@(x) dattes_plot(x,options),file_in,'UniformOutput',false);
-    %mise en forme (cell 2 struct):
-%     [result, config, phases] = compil_result(result, config, phases);
     return;
 end
 %% 0.1.- check inputs:

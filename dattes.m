@@ -173,8 +173,6 @@ end
 %% Bulk mode (XML is a cellstring)
 if iscell(xml_file)
     [result] = cellfun(@(x) dattes(x,options,cfg_file),xml_file,'UniformOutput',false);
-    %formatting (cell 2 struct):
-%     [result] = compil_result(result);
     return;
 end
 

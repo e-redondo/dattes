@@ -18,7 +18,7 @@ function [result] = load_result(file_in,options)
 % Outputs : 
 % - result: [1x1 struct] structure containing analysis results 
 %
-% See also dattes, save_result, edit_result
+% See also save_result, result_filename
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab: 
@@ -29,8 +29,6 @@ if ~exist('options','var')
 end
 if iscell(file_in)
     [result] = cellfun(@load_result,file_in,'UniformOutput',false);
-%     %mise en forme (cell 2 struct):
-%     [result] = compil_result(result, config, phases);
     return;
 end
 

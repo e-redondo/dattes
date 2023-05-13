@@ -4,7 +4,7 @@ function file_out = result_filename(file_in, dst_folder,suffix, file_out_ext)
 % Create result file named file_in_suffix.mat
 %
 % Usage:
-% [result, config] = edit_result(result, config,Field,Values,options)
+% file_out = result_filename(file_in, dst_folder,suffix, file_out_ext)
 % Inputs : 
 % - file_in [1xn string]: input filename
 % - dst_folder [1xp string]: (optional) destinaiton folder (default= src_folder)
@@ -24,7 +24,7 @@ function file_out = result_filename(file_in, dst_folder,suffix, file_out_ext)
 % (4) file_out = result_filename(raw_data/test.xml,'','')
 %       file_out = 'raw_data/test.mat'
 %
-% See also dattes, load_result, save_result
+% See also load_result, save_result
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab: 
