@@ -1,11 +1,26 @@
-% First step: Run initpah_dattes
+%% DATTES demo
+% Thanks for trying DATTES !
+% This script will present you the main features of DATTES.
 
-% Second step: download data for this demo:
+% 1- Get all DATTES tools
+% Before running, this script please collect all DATTES tools by running:
+% initpath_dattes
+
+% 2 - Get experimental data for this demo
+% Experimental data for this demo are available with the following
+% information
 % URL: https://cloud.univ-eiffel.fr/s/q5c5pBfKyzrHHT6
 % password: demo_DATTES_23.05
 
-% Third step: In MATLAB/Octave, go to the folder containing 20230414_1501_BUGE382_M3_L1_caracini.zip
+% 3- Go to the folder containing downloaded experimental data
+% In MATLAB/Octave, go to the folder containing 20230414_1501_BUGE382_M3_L1_caracini.zip
 
+% Important information 
+% The shared file is very large leading to a rather slow analysis process.
+% The long analysis duration is mainly due to the preprocessing function dattes_import.
+% This function is the most time consuming, it is only necessary for the
+% very first analysis.
+% Future analysis will be much faster
 function demo_dattes()
 
 url = 'https://cloud.univ-eiffel.fr/s/q5c5pBfKyzrHHT6';
@@ -46,8 +61,8 @@ result = dattes_configure(result);
 dattes_plot(result,'c');
 
 % Capacity measurements
-##result = dattes_analyse(result,'C');
-##dattes_plot(result,'C');
+result = dattes_analyse(result,'C');
+dattes_plot(result,'C');
 
 % Resistance measurements
 result = dattes_analyse(result,'R');
