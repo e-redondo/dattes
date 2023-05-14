@@ -48,7 +48,6 @@ if ismember('e',options)%enable = addpath
         addpath(fullfile(srcdir,'external_tools','octave','financial'));
     end
     addpath(fullfile(srcdir,'plots'));
-    addpath(fullfile(srcdir,'results'));
     
     %if no VEHLIB is found in this computer add minimal dependencies
     if isempty(which('initpath'))
@@ -78,7 +77,6 @@ if ismember('d',options)%disable = rmpath
     rmpath(fullfile(srcdir,'ident'));
     rmpath(fullfile(srcdir,'math_tools'));
     rmpath(fullfile(srcdir,'plots'));
-    rmpath(fullfile(srcdir,'results'));
     
     %remove octave only if it was added before:
     P = path;
