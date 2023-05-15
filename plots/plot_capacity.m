@@ -40,8 +40,8 @@ plot(capacity.cc_crate(capacity.cc_crate>0),capacity.cc_capacity(capacity.cc_cra
     '^ b','MarkerSize',8, 'DisplayName','CC charge')
 
 
-xlabel('C-rate(p.u.)','interpreter','tex')
-ylabel('Capacity (Ah)','interpreter','tex')
+xlabel('C-rate [p.u.]','interpreter','tex')
+ylabel('Capacity [Ah]','interpreter','tex')
 legend('location','best')
 grid on;
 
@@ -64,8 +64,8 @@ plot(capacity.cccv_datetime(capacity.cccv_crate>0),ah_ratio_cv(capacity.cccv_cra
 
 
 ylim([0 1])
-xlabel('Time (s)','interpreter','tex')
-ylabel('Ah ratio (p.u.)','interpreter','tex')
+xlabel('time [s]','interpreter','tex')
+ylabel('Ah ratio [p.u.]','interpreter','tex')
 legend('location','best')
 
 grid on;
@@ -83,8 +83,8 @@ plot(capacity.cc_datetime(capacity.cc_crate>0),capacity.cc_capacity(capacity.cc_
     '^ b','MarkerSize',8, 'DisplayName','CC charge')
 
 
-xlabel('Time(s)','interpreter','tex')
-ylabel('Capacity (Ah)','interpreter','tex')
+xlabel('time [s]','interpreter','tex')
+ylabel('Capacity [Ah]','interpreter','tex')
 legend('location','best')
 
 grid on;
@@ -104,8 +104,8 @@ plot(capacity.cccv_datetime(capacity.cccv_crate>0),duration_ratio_cv(capacity.cc
 
 
 ylim([0 1])
-xlabel('Time (s)','interpreter','tex')
-ylabel('Duration ratio (p.u. of CCCV duration)','interpreter','tex')
+xlabel('time [s]','interpreter','tex')
+ylabel('Duration ratio [p.u. of CCCV duration]','interpreter','tex')
 legend('location','best')
 
 grid on;

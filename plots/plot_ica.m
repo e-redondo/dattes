@@ -41,7 +41,7 @@ for ind = 1:length(ica)
     disp_name = sprintf('C-rate=%.3fC',crate);
 
     subplot(221),plot(qf,uf,'DisplayName',disp_name),title('Voltage vs. capacity'),xlabel('Capacity [Ah]'),ylabel('Voltage [V]'),hold on
-    subplot(222),plot(dqdu,uf),title('ICA plot'),xlabel('dQdU (Ah/V)'),ylabel('Voltage [V]'),hold on
+    subplot(222),plot(dqdu,uf),title('ICA plot'),xlabel('dQ/dU [Ah/V]'),ylabel('Voltage [V]'),hold on
     subplot(223),plot(qf,dudq),title('DVA plot'),xlabel('Capacity [Ah]'),ylabel('dU/dQ [V/Ah]'),hold on
 end
 subplot(221),legend show;
