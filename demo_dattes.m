@@ -9,7 +9,7 @@
 % 2 - Get experimental data for this demo
 % Experimental data for this demo are available with the following
 % information
-% URL: https://cloud.univ-eiffel.fr/s/q5c5pBfKyzrHHT6
+% URL: https://cloud.univ-eiffel.fr/s/q5c5pBfKyzrHHT6/download
 % password: demo_DATTES_23.05
 
 % 3- Go to the folder containing downloaded experimental data
@@ -23,7 +23,7 @@
 % Future analysis will be much faster
 function demo_dattes()
 
-url = 'https://cloud.univ-eiffel.fr/s/q5c5pBfKyzrHHT6';
+url = 'https://cloud.univ-eiffel.fr/s/q5c5pBfKyzrHHT6/download';
 pass = 'demo_DATTES_23.05';
 zip_file = '20230414_1501_BUGE382_M3_L1_caracini.zip';
 
