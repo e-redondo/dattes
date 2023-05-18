@@ -47,7 +47,7 @@ if ~isstruct(result)
 end
 % checkstruct:
 allowed_fields = {'profiles','eis','phases','metadata','test','configuration',...
-     'capacity','pseudo_ocv','ocv_by_points','resistance','impedance','ica'};
+     'analyse'};
 mandatory_fields = {'profiles','phases','test'};
 field_types = {'struct','struct','struct','struct','struct','struct','struct'};
 

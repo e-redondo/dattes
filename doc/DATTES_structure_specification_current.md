@@ -26,28 +26,8 @@ This document describe data structure for current version of DATTES:
     - configuration [1x1 struct]:
         - created by config scripts
         - modified by cfg_default, configurator
-    - capacity [1x1 struct]:
-        - created by ident_capacity
-        - contains (1xk) vectors for CC capacity measurements
-        - contains (1xi) vectors for CV phases
-        - contains (1xj) vectors for CCCV capacity measurements
-    - pseudo_ocv [1xr struct]:
-        - created by ident_pseudo_ocv (empty struct if error)
-        - each pseudo_ocv contains (sx1) vectors for each pseudo_ocv measurement (charge/discharge half cycles)
-        - each pseudo_ocv contains (1x1) values (crate and time of measurement)
-    - ocv_points [1x1 struct]:
-        - created by ident_ocv_by_points (empty struct if error)
-        - contains (tx1) vectors for each ocv points
-    - resistance [1x1 struct]:
-        - created by ident_r (empty struct if error)
-        - contains (1xv) vectors for resistance measurements
-    - impedance [1x1 struct]:
-        - created by ident_cpe, ident_rrc (empty struct if error)
-        - contains (1xg) string with chosen topology (R+CPE or R+RC+RC)
-        - contains (1xw) vectors for impedance identifications (circuit parameters)
-    - ica [1xy struct]:
-        - created by ident_ica (empty struct if error)
-        - each ica contains (zx1) vectors for each ICA measurement
+    - analyse [1x1 struct]:
+        - created/modified by dattes_analyse
 ### profiles substructure
 - profiles [1x1 struct] with fields:
     - datetime [mx1 double]: absolute time in seconds (seconds from 1/1/2000 00:00)
@@ -189,23 +169,24 @@ This document describe data structure for current version of DATTES:
     - visualization [1×1 struct]: configuration for plots (unused)
         - GdDureeMin: minimum phase duration (s) for plot_phases (default = 300)
         - GdmaxPhases: minimum phase number to apply GdDureeMin in plot_phases (default = 100)
-### capacity substructure
+### analyse substructure
+- analyse [1x1 struct] with fields:
+    - capacity [1x1 struct]:
+        - created by ident_capacity
+    - pseudo_ocv [1xr struct]:
+        - created by ident_pseudo_ocv (empty struct if error)
+    - ocv_points [1x1 struct]:
+        - created by ident_ocv_by_points (empty struct if error)
+    - resistance [1x1 struct]:
+        - created by ident_r (empty struct if error)
+    - impedance [1x1 struct]:
+        - created by ident_cpe, ident_rrc (empty struct if error)
+    - ica [1xy struct]:
+        - created by ident_ica (empty struct if error)
+
+#### analyse.capacity substructure
 - capacity [1x1 struct] with fields:
-    - cc_capacity [1xk double]: CC capacity measurement
-    - cc_crate [1xk double]: C-Rate of CC capacity measurement
-    - cc_datetime [1xk double]: time of CC capacity measurement
-    - cc_duration [1xk double]:duration CC capacity measurement
-    - cv_capacity [1xi double]: CV capacity measurement
-    - cv_voltage [1xi double]: voltage of CV capacity measurement
-    - cv_datetime [1xi double]: time of CV capacity measurement
-    - cv_duration [1xi double]: duration of CV capacity measurement
-    - cccv_datetime [1xj double]: time of CCCV capacity measurement
-    - cccv_capacity [1xj double]: CCCV capacity measurement
-    - cccv_duration [1xj double]: duration of CV capacity measurement
-    - cccv_crate [1xj double]:C-Rate of CC part of CCCV capacity measurement
-    - cccv_ratio_cc_ah [1xj double]: Ah of CC part related to total CCCV capacity measurement
-    - cccv_ratio_cc_duration [1xj double]: duration of CC partrelated to total CV capacity measurement duration
-### pseudo_ocv substructure
+#### analyse.pseudo_ocv substructure
 - pseudo_ocv [1xr struct]:
     - ocv [sx1 double]: OCV vector
     - dod [sx1 double]: DoD vector (Ah)
@@ -215,21 +196,21 @@ This document describe data structure for current version of DATTES:
     - u_discharge [sx1 double]: voltage during discharging half cycle
     - crate [1x1 double]: cycle C-rate
     - time [1x1 double]: instant of measuremament (cycle final time in seconds from 1/1/2000 00:00)
-### ocv_points substructure
+#### analyse.ocv_points substructure
 - ocv_by_points [1x1 struct]:
     - ocv [tx1 double]: OCV vector
     - dod [tx1 double]: DoD vector (Ah)
     - sign [tx1 double]: +1 if rest after partial charge, -1 if rest after partial discharge
     - datetime [tx1 double]: time of measuremament (rest final time in seconds from 1/1/2000 00:00)
-### resistance substructure
+#### analyse.resistance substructure
 - resistance [1x1 struct]:
     - R [1xv double]: resistance (Ohm)
     - dod [1xv double]: DoD (Ah)
     - crate [1xv double]: pulse C-Rate (p.u.)
     - datetime [1xv double]: time of measuremament (pulse initial time in seconds from 1/1/2000 00:00)
     - delta_time [1xv double]: delta time from initial pulse to calculate resistance
-### impedance substructure
-#### ident_cpe (R+CPE)
+#### analyse.impedance substructure
+##### ident_cpe (R+CPE)
 - impedance [1x1 struct]:
     - topology [1xg char]:  'R0 + CPE'
     - q [1xw double]: q parameter of CPE (Ohm^-1)
@@ -238,7 +219,7 @@ This document describe data structure for current version of DATTES:
     - dod [1xw double]: DoD (Ah)
     - crate [1xw double]: pulse C-Rate (p.u.)
     - datetime [1xw double]: time of measuremament (pulse initial time in seconds from 1/1/2000 00:00)
-#### iden_rrc (R+RC+RC)
+##### iden_rrc (R+RC+RC)
 - impedance [1x1 struct]:
     - topology [1xg char]:  'R0 + R1C1 + R2C2'
     - r0 [1xw double]: series resistance (Ohm)
@@ -249,7 +230,7 @@ This document describe data structure for current version of DATTES:
     - dod [1xw double]: DoD (Ah)
     - crate [1xw double]: pulse C-Rate (p.u.)
     - datetime [1xw double]: time of measuremament (pulse initial time in seconds from 1/1/2000 00:00)
-### ica substructure
+#### analyse.ica substructure
 - ica [1xy struct]:
     - dqdu [zx1 double]: derivative of capacity over voltage (Ah/V)
     - dudq [zx1 double]: derivative of voltage over capacity (V/Ah)

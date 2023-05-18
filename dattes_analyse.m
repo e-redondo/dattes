@@ -110,7 +110,7 @@ config = result.configuration;
 %% 1. Capacity measurements at different C-rates 1C, C/2, C/5....
 if ismember('C',options)
     [capacity] = ident_capacity(config,phases,inher_options);
-    result.capacity = capacity;
+    result.analyse.capacity = capacity;
 end
 
 %% 2. Profile processing (datetime,U,I,m,dod_ah) >>> R, CPE, ICA, OCV, etc.
@@ -127,7 +127,7 @@ if any(ismember('PORZI',options))
         if ismember('P',options)
             [pseudo_ocv] = ident_pseudo_ocv(result.profiles,config,phases,inher_options);
             %save the results
-            result.pseudo_ocv = pseudo_ocv;
+            result.analyse.pseudo_ocv = pseudo_ocv;
             
         end
         
@@ -135,7 +135,7 @@ if any(ismember('PORZI',options))
         if ismember('O',options)
             [ocv_by_points] = ident_ocv_by_points(result.profiles,config,phases,inher_options);
             %save the results
-            result.ocv_by_points = ocv_by_points;
+            result.analyse.ocv_by_points = ocv_by_points;
         end
         
         %6.3. impedances
@@ -143,7 +143,7 @@ if any(ismember('PORZI',options))
         if ismember('R',options)
             [resistance] = ident_r(result.profiles,config,phases,inher_options);
             %save the results
-            result.resistance = resistance;
+            result.analyse.resistance = resistance;
         end
         %6.3.2. Impedance
         if ismember('Z',options)
@@ -153,14 +153,14 @@ if any(ismember('PORZI',options))
                ident_z = str2func(ident_z);
             end
             [impedance] = ident_z(datetime,U,I,dod_ah,config,phases,inher_options);
-            result.impedance= impedance;
+            result.analyse.impedance= impedance;
         end
         
         %6.4. ICA/DVA
         if ismember('I',options)
             ica = ident_ica(result.profiles,config,phases,inher_options);
             %sauvegarder les resultats
-            result.ica = ica;
+            result.analyse.ica = ica;
         end
     end
 end

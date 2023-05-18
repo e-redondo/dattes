@@ -30,15 +30,15 @@ function [result] = dattes_plot(file_in,options)
 %   - 'Z': plot impedance identification result from dattes_analyse
 %   - 'I': plot ICA/DVA result from dattes_analyse
 %
-% Outputs : 
-% - result: [1x1 struct] structure containing analysis results 
-% - result: [nx1 struct] cell of structures containing analysis results 
+% Outputs :
+% - result: [1x1 struct] structure containing analysis results
+% - result: [nx1 struct] cell of structures containing analysis results
 %
 % See also dattes_structure, dattes_configure, dattes_analyse
 %
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
-% For more information, see the <a href="matlab: 
+% For more information, see the <a href="matlab:
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if iscell(file_in)
@@ -66,7 +66,7 @@ if ischar(file_in)
     end
 end
 
-if ~ischar(options) 
+if ~ischar(options)
     error('dattes_plot: options must be a string (actions/options list)');
 end
 
@@ -113,76 +113,81 @@ if ismember('S',options)
     %show result of 'S', i.e. SOC
     plot_soc(profiles,config,title_str,InherOptions);
 end
-if ismember('C',options)
-    %show result of 'C', i.e. Capacity
-    if isfield(result,'capacity')
-        plot_capacity(result.capacity,title_str);
-%         title(title_str,'interpreter','none')
-    else
-        fprintf('no capacity result found in %s\n',result.test.file_in);
+
+if isfield(result,'analyse')
+    if ismember('C',options)
+        %show result of 'C', i.e. Capacity
+        if isfield(result.analyse,'capacity')
+            plot_capacity(result.analyse.capacity,title_str);
+            %         title(title_str,'interpreter','none')
+        else
+            fprintf('dattes_plot: no capacity result found in %s\n',result.test.file_in);
+        end
+
     end
+    if ismember('P',options)
+        %show result of 'P', i.e pseudoOCV
+        if isfield(result.analyse,'pseudo_ocv')
+            if ~isempty(result.analyse.pseudo_ocv)
+                plot_pseudo_ocv(result.analyse.pseudo_ocv, title_str);
+            else
+                fprintf('dattes_plot: no pseudo_ocv result found in %s\n',result.test.file_in);
+            end
+        else
+            fprintf('dattes_plot: no pseudo_ocv result found in %s\n',result.test.file_in);
+        end
+    end
+    if ismember('O',options)
+        %show result of 'O', i.e. OCV by points
+        if isfield(result.analyse,'ocv_by_points')
+            plot_ocv_by_points(profiles, result.analyse.ocv_by_points, title_str,InherOptions);
+        else
+            fprintf('dattes_plot: no ocv_by_points result found in %s\n',result.test.file_in);
+        end
+    end
+    if ismember('E',options)
+        %show result of 'E', i.e. Efficiency
+        if isfield(result.analyse,'pseudo_ocv')
+            if ~isempty(result.analyse.pseudo_ocv)
+                plot_efficiency(result.analyse.pseudo_ocv,title_str);
+            else
+                fprintf('dattes_plot: no efficiency (pseudo_ocv) result found in %s\n',result.test.file_in);
+            end
+        else
+            fprintf('dattes_plot: no efficiency (pseudo_ocv) result found in %s\n',result.test.file_in);
+        end
+    end
+    if ismember('R',options)
+        %show result of 'R', i.e. Resistance
+        if isfield(result.analyse,'resistance')
+            plot_r(result.analyse.resistance,title_str,InherOptions);
+        else
+            fprintf('dattes_plot: no resistance result found in %s\n',result.test.file_in);
+        end
+
+    end
+    if ismember('Z',options)
+        %show result of 'Z', i.e. impedance
+        if isfield(result.analyse,'impedance')
+            plot_impedance(result.analyse.impedance,title_str);
+        else
+            fprintf('dattes_plot: no impedance result found in %s\n',result.test.file_in);
+        end
+    end
+    if ismember('I',options)
+        %show result of 'I', i.e. ica
+        if isfield(result.analyse,'ica')
+            if ~isempty(result.analyse.ica)
+                plot_ica(result.analyse.ica,title_str);
+            else
+                fprintf('dattes_plot: no ica result found in %s\n',result.test.file_in);
+            end
+        else
+            fprintf('dattes_plot: no ica result found in %s\n',result.test.file_in);
+        end
+    end
+else
+    fprintf('dattes_plot: no analysis results to plot in %s\n',result.test.file_in);
 
 end
-if ismember('P',options)
-    %show result of 'P', i.e pseudoOCV
-    if isfield(result,'pseudo_ocv')
-        if ~isempty(result.pseudo_ocv)
-            plot_pseudo_ocv(result.pseudo_ocv, title_str);
-        else
-            fprintf('no pseudo_ocv result found in %s\n',result.test.file_in);
-        end
-    else
-        fprintf('no pseudo_ocv result found in %s\n',result.test.file_in);
-    end
-end
-if ismember('O',options)
-    %show result of 'O', i.e. OCV by points
-    if isfield(result,'ocv_by_points')
-        plot_ocv_by_points(profiles, result.ocv_by_points, title_str,InherOptions);
-    else
-        fprintf('no ocv_by_points result found in %s\n',result.test.file_in);
-    end
-end
-if ismember('E',options)
-    %show result of 'E', i.e. Efficiency
-    if isfield(result,'pseudo_ocv')
-        if ~isempty(result.pseudo_ocv)
-           plot_efficiency(result.pseudo_ocv,title_str);
-        else
-            fprintf('no efficiency (pseudo_ocv) result found in %s\n',result.test.file_in);
-        end
-    else
-        fprintf('no efficiency (pseudo_ocv) result found in %s\n',result.test.file_in);
-    end
-end
-if ismember('R',options)
-    %show result of 'R', i.e. Resistance
-    if isfield(result,'resistance')
-        plot_r(result.resistance,title_str,InherOptions);
-    else
-        fprintf('no resistance result found in %s\n',result.test.file_in);
-    end
-    
-end
-if ismember('Z',options)
-    %show result of 'Z', i.e. impedance
-    if isfield(result,'impedance')
-        plot_impedance(result.impedance,title_str);
-    else
-        fprintf('no impedance result found in %s\n',result.test.file_in);
-    end
-end
-if ismember('I',options)
-    %show result of 'I', i.e. ica
-    if isfield(result,'ica')
-        if ~isempty(result.ica)
-            plot_ica(result.ica,title_str);
-        else
-            fprintf('no ica result found in %s\n',result.test.file_in);
-        end
-    else
-        fprintf('no ica result found in %s\n',result.test.file_in);
-    end
-end
-
 end
