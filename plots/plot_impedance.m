@@ -62,9 +62,9 @@ for ind = 1:length(parameters)
     end
 hf = figure('name',fig_title);hold on
 subplot(221),hold on
-xlabel('DoD (Ah)','interpreter','tex')
+xlabel('DoD [Ah]','interpreter','tex')
 ylabel(parameters{ind},'interpreter','tex')
-
+title(sprintf('%s vs DoD',parameters{ind}))
 z = impedance.(parameters{ind});
 z_cha = z(Icha);
 z_dis = z(Idis);
@@ -73,15 +73,19 @@ plot(impedance.dod(Icha),z_cha,'^','displayname','charge')
 plot(impedance.dod(Idis),z_dis,'v','displayname','discharge')
 
 subplot(222),hold on
-xlabel('C-rate (C)','interpreter','tex')
+xlabel('C-rate [C]','interpreter','tex')
 ylabel(parameters{ind},'interpreter','tex')
+title(sprintf('%s vs C-rate',parameters{ind}))
+
 plot(impedance.crate(Icha),z_cha,'^','displayname','charge')
 plot(impedance.crate(Idis),z_dis,'v','displayname','discharge')
 
 
 subplot(2,2,[3 4]),hold on
-xlabel('time (s)','interpreter','tex')
+xlabel('datetime [s]','interpreter','tex')
 ylabel(parameters{ind},'interpreter','tex')
+title(sprintf('%s vs datetime',parameters{ind}))
+
 plot(impedance.datetime(Icha),z_cha,'^','displayname','charge')
 plot(impedance.datetime(Idis),z_dis,'v','displayname','discharge')
 

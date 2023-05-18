@@ -36,19 +36,19 @@ end
 if ismember('h',options)
     t_name = 't';
     t_factor = 1/3600;
-    tunit = 'h';
+    x_lab = 'time [h]';
 elseif ismember('d',options)
     t_name = 't';
     t_factor = 1/86400;
-    tunit = 'd';
+    x_lab = 'time [d]';
 elseif ismember('D',options)%datetime
     t_name = 'datetime';
     t_factor = 1;
-    tunit = 's';
+    x_lab = 'datetime [s]';
 else
     t_name = 't';
     t_factor = 1;
-    tunit = 's';
+    x_lab = 'time [s]';
 end
 
 datetime = profiles.datetime;
@@ -66,7 +66,7 @@ end
 I100 = ismember(datetime,config.soc.soc100_datetime);
 I0 = ismember(datetime,config.soc.soc0_datetime);
 
-subplot(321),title('SoC configuration'),xlabel(sprintf('time [%s]',tunit)),hold on
+subplot(321),title('SoC configuration'),xlabel(x_lab),hold on
 plot(tc*t_factor,U,'k','displayname','test')
 
 
@@ -97,7 +97,7 @@ for ind = 1:length(phases)
         UCV = [UCV;U(Ip)];
     end
 end
-subplot(322),title('Capacity configuration'),xlabel(sprintf('time [%s]',tunit)),hold on
+subplot(322),title('Capacity configuration'),xlabel(x_lab),hold on
 plot(tc*t_factor,U,'k','displayname','test')
 plot(tD*t_factor,UD,'r.','displayname','discharge')
 plot(tC*t_factor,UC,'b.','displayname','charge')
@@ -137,12 +137,12 @@ for ind = 1:length(phases)
 end
 
 
-subplot(325),title('Resistance configuration'),xlabel(sprintf('time [%s]',tunit)),hold on
+subplot(325),title('Resistance configuration'),xlabel(x_lab),hold on
 plot(tc*t_factor,U,'k','displayname','test')
 plot(tR*t_factor,UR,'r.','displayname','pulse resistance')
 plot(tRr*t_factor,URr,'b.','displayname','rest resistance')
 
-subplot(326),title('Impedance configuration'),xlabel(sprintf('time [%s]',tunit)),hold on
+subplot(326),title('Impedance configuration'),xlabel(x_lab),hold on
 plot(tc*t_factor,U,'k','displayname','test')
 plot(tW*t_factor,UW,'r.','displayname','pulse impedance')
 plot(tWr*t_factor,UWr,'b.','displayname','rest impedance')
@@ -165,7 +165,7 @@ for ind = 1:length(phases_pocv_d)
     U_ocv_d = [U_ocv_d; pro_ocv_d.U];
 end
 
-subplot(323),title('pseudo OCV configuration'),xlabel(sprintf('time [%s]',tunit)),hold on
+subplot(323),title('pseudo OCV configuration'),xlabel(x_lab),hold on
 plot(tc*t_factor,U,'k','displayname','test')
 plot(t_ocv_d*t_factor,U_ocv_d,'r.','displayname','pseudo OCV (discharge)')
 plot(t_ocv_c*t_factor,U_ocv_c,'b.','displayname','pseudo OCV (charge)')
@@ -182,7 +182,7 @@ for ind = 1:length(phases_ica)
     U_ica = [U_ica; pro_ica.U];
 end
 
-subplot(324),title('ICA configuration'),xlabel(sprintf('time [%s]',tunit)),hold on
+subplot(324),title('ICA configuration'),xlabel(x_lab),hold on
 plot(tc*t_factor,U,'k','displayname','test')
 plot(t_ica*t_factor,U_ica,'r.','displayname','ICA')
 

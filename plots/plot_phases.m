@@ -48,7 +48,7 @@ end
 
 if ismember('D',options)%plot time in dates
     t1 = datetime(datestr(e2mdate(date_time),'yyyy-mm-dd HH:MM'));
-    x_lab = 'date/time';
+    x_lab = 'datetime';
 else
     if ismember('h',options)%plot time in hours since start_time
         t1 = (t-t(1))/3600;

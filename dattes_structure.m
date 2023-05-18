@@ -173,7 +173,7 @@ if isfile(file_out) && update
     dir_in = dir(file_in);
     dir_out = dir(file_out);
     if dir_out.datenum<dir_in.datenum
-        fprintf('Destination file exists, but input file is more recent, updating: %s\n',file_in);
+        fprintf('dattes_structure: Destination file exists, but input file is more recent, updating: %s\n',file_in);
         force = true;
     end
 end
@@ -181,7 +181,7 @@ end
 %1. read file
 if isfile(file_out) && ~force
     %1.0 read mat file if it exists and no force or update
-    fprintf('File exists: %s, loading result from mat\n',file_out);
+    fprintf('dattes_structure: File exists: %s, loading result from mat\n',file_out);
     result = dattes_load(file_out);
 else
     %1.0 mat mode (incomplete structure)

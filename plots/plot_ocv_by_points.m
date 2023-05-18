@@ -43,19 +43,19 @@ end
 if ismember('h',options)
     t_name = 't';
     t_factor = 1/3600;
-    t_label = 'Time [h]';
+    t_label = 'time [h]';
 elseif ismember('d',options)
     t_name = 't';
     t_factor = 1/86400;
-    t_label = 'Time [d]';
+    t_label = 'time [d]';
 elseif ismember('D',options)%datetime
     t_name = 'datetime';
     t_factor = 1;
-    t_label = 'Time [s]';
+    t_label = 'datetime [s]';
 else
     t_name = 't';
     t_factor = 1;
-    t_label = 'Time [s]';
+    t_label = 'time [s]';
 end
 
 %get t,U,I,m:
@@ -74,7 +74,7 @@ end
 subplot(121),plot(t*t_factor,U),hold on,ylabel('Voltage [V]'),xlabel(t_label),
 title('Voltage vs. time')
 
-subplot(122),plot(DoDAh,U),hold on,ylabel('Voltage [V]'),xlabel('DoDAh [Ah]')
+subplot(122),plot(DoDAh,U),hold on,ylabel('Voltage [V]'),xlabel('DoD [Ah]')
 title('Voltage vs. DoD')
 
 index_charge = ocv_by_points.sign>0;

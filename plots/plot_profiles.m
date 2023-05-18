@@ -45,10 +45,10 @@ if ismember('D',options)%plot time in dates
 else
     if ismember('h',options)%plot time in hours since start_time
         t1 = (t-t(1))/3600;
-        x_lab = 'time [hours]';
+        x_lab = 'time [h]';
     elseif ismember('d',options)%plot time in days since start_time
         t1 = (t-t(1))/86400;
-        x_lab = 'time [days]';
+        x_lab = 'time [d]';
     else
         t1 = t-t(1);% Remove first instant
         x_lab = 'time [s]';
