@@ -75,7 +75,7 @@ if ischar(result)
         if ismember('v',options)
             fprintf('dattes_analyse: loading mat file in %s...\n',result);
         end
-        result = load_result(result);
+        result = dattes_load(result);
     end
 end
 
@@ -171,7 +171,7 @@ if ismember('s',options)
         fprintf('dattes: save result...');
     end
     %save outputs result,config and phases in a xml_file_result.mat
-    save_result(result);
+    dattes_save(result);
     if ismember('v',options)
         fprintf('OK\n');
     end

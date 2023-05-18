@@ -74,7 +74,7 @@ if iscell(result)
 end
 
 if ischar(result)
-    result = load_result(result);
+    result = dattes_load(result);
 end
 
 if ~exist('result2','var')
@@ -83,7 +83,7 @@ end
 
 if ischar(result2)
     %TODO manage 'F' option: file_in2 as csv file
-    result2 = load_result(result2);
+    result2 = dattes_load(result2);
 end
 
 graphics = ismember('g',options);
@@ -117,7 +117,7 @@ result.configuration.impedance.ocv = ocv;
 
 %TODO: verbose
 if ismember('s',options)
-    save_result(result)
+    dattes_save(result)
 end
 
 if graphics

@@ -86,6 +86,6 @@ result = dattes_analyse(result,'I');
 dattes_plot(result,'I');
 
 %save results:
-save_result(result);
+dattes_save(result);
 
 end

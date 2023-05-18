@@ -91,7 +91,7 @@ elseif ischar(dattes_struct)
     end
     if exist(dattes_struct,'file')
         file_in = dattes_struct;
-        dattes_struct = load_result(file_in);
+        dattes_struct = dattes_load(file_in);
     end
 end
 

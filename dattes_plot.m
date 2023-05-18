@@ -75,7 +75,7 @@ end
 if isstruct(file_in)
     result = file_in;
 else
-    [result] = load_result(file_in,options);
+    [result] = dattes_load(file_in,options);
 end
 
 if isempty(fieldnames(result))

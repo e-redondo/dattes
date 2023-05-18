@@ -182,11 +182,11 @@ end
 if isfile(file_out) && ~force
     %1.0 read mat file if it exists and no force or update
     fprintf('File exists: %s, loading result from mat\n',file_out);
-    result = load_result(file_out);
+    result = dattes_load(file_out);
 else
     %1.0 mat mode (incomplete structure)
     if strcmp(file_ext,'.mat')
-        result = load_result(file_in);
+        result = dattes_load(file_in);
     %1.1 json mode (import_json)
     elseif strcmp(file_ext,'.json')
         [result, err] = read_json_struct(file_in);
@@ -294,6 +294,6 @@ end
 
 %8. save mat file (if 's' in options)
 if ismember('s',options)
-    save_result(result);
+    dattes_save(result);
 end
 end

@@ -1,5 +1,5 @@
-function [result] = load_result(file_in,options)
-% load_result load the results of DATTES
+function [result] = dattes_load(file_in,options)
+% dattes_load load the results of DATTES
 %
 % This function loads a mat file and make some checks for validation.
 % If input file is not a mat file, the function uses result_filename to
@@ -7,7 +7,7 @@ function [result] = load_result(file_in,options)
 % e.g. file_in.xml >>> file_in_dattes.mat
 %
 % Usage:
-% [result] = load_result(file_in,options)
+% [result] = dattes_load(file_in,options)
 % Inputs : 
 % - file_in:
 %     -   [1xn string]: input file
@@ -18,7 +18,7 @@ function [result] = load_result(file_in,options)
 % Outputs : 
 % - result: [1x1 struct] structure containing analysis results 
 %
-% See also save_result, result_filename
+% See also dattes_save, result_filename
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab: 
@@ -28,7 +28,7 @@ if ~exist('options','var')
     options = '';
 end
 if iscell(file_in)
-    [result] = cellfun(@load_result,file_in,'UniformOutput',false);
+    [result] = cellfun(@dattes_load,file_in,'UniformOutput',false);
     return;
 end
 
@@ -44,14 +44,14 @@ end
 %check if file exists
 if exist(file_mat,'file')
     if ismember('v',options)
-        fprintf('load_result:load results %s...',file_in);
+        fprintf('dattes_load:load results %s...',file_in);
     end
     %list variables in MAT file
     S = who('-file',file_mat);
 %     if ismember('config',S)
 %         %load config if it is in the MAT file
 %         load(fileOut,'config');
-%         %convert strings back to function handlers (see save1result in save_result):
+%         %convert strings back to function handlers (see save1result in dattes_save):
 %         config.impedance.ident_fcn = str2func(config.impedance.ident_fcn);
 %     end
     if ismember('result',S)
@@ -67,7 +67,7 @@ if exist(file_mat,'file')
     end
 else
     if ismember('v',options)
-        fprintf('load_result: the file %s did not exist yet, variables initialized\n',file_mat);
+        fprintf('dattes_load: the file %s did not exist yet, variables initialized\n',file_mat);
     end
 end
 % if ~exist('config','var')
@@ -81,7 +81,7 @@ if ~exist('result','var')
     result = struct;
 end
 
-%convert strings back to function handlers (see save1result in save_result):
+%convert strings back to function handlers (see save1result in dattes_save):
 result = str2func_struct(result);
 
 % if ~exist('phases','var')

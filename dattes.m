@@ -179,7 +179,7 @@ end
 %% 1. LOAD
 % if ismember('l',options)
 %1.0.- load previous results (if they exist)
-[result] = load_result(xml_file,inher_options);
+[result] = dattes_load(xml_file,inher_options);
 % else
 %     result = struct;
 % end
@@ -196,7 +196,7 @@ elseif ~isempty(which(cfg_file))
     config.test.cfg_file = cfg_file;
 elseif isfield(result, 'configuration')
     %cfg_file is empty, e.g. dattes(xml,'cvs')
-    % take config from load_result, if result contains any configuration
+    % take config from dattes_load, if result contains any configuration
     config0 = result.configuration;
 else
     %no configuration, empty struct
@@ -343,7 +343,7 @@ if ismember('s',options)
         fprintf('dattes: save result...');
     end
     %save outputs result,config and phases in a xml_file_result.mat
-    save_result(result);
+    dattes_save(result);
 %     if ismember('S',options)
 %         %save dod_ah and soc in the xml_file.mat
 %         mat_file = regexprep(xml_file,'xml$','mat');

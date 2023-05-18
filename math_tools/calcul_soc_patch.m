@@ -54,7 +54,7 @@ end
 %chaque fois.
 % XML = {result.test.file_in};
 if ismember('u',options)%option 'unpatch', defaire ce que l'on a fait
-    [result] = load_result(XML);
+    [result] = dattes_load(XML);
     %search files with imposed DoDIni or DoDFin:
     Ie = ~cellfun(@(x) isempty(x.configuration.soc.dod_ah_ini) && isempty(x.configuration.soc.dod_ah_fin),result);
     %List of files that will be treated
@@ -74,7 +74,7 @@ if ismember('u',options)%option 'unpatch', defaire ce que l'on a fait
         if verbose
             fprintf('reset SOC for %s\n',r{ind}.test.file_in);
         end
-        save_result(r{ind});
+        dattes_save(r{ind});
         dattes(r{ind}.test.file_in,'Ss');%reset SOC
     end
     return;
@@ -88,7 +88,7 @@ else
     xml = regexpFiltre(XML,cellName);
 end
 
-r = load_result(xml);
+r = dattes_load(xml);
 %take start times
 tInis = cellfun(@(x) x.test.datetime_ini,r);
 
@@ -97,7 +97,7 @@ tInis = cellfun(@(x) x.test.datetime_ini,r);
 xml = xml(Is);
 
 %reload by chronological order
-r = load_result(xml);
+r = dattes_load(xml);
 c = cellfun(@(x) x.configuration,r,'uniformoutput',false);
 p = cellfun(@(x) x.phases,r,'uniformoutput',false);
 
@@ -116,14 +116,14 @@ if ismember('b',options)%before: search for previous test
                 fprintf('%s.DoDFin >>> %s.DoDIni\n',r{indAvant(ind)}.test.file_in, r{indEmptySOC(ind)}.test.file_in)
             end
         end
-        save_result(r{indEmptySOC(ind)});%save configuration
+        dattes_save(r{indEmptySOC(ind)});%save configuration
         r{indEmptySOC(ind)} = dattes(xml{indEmptySOC(ind)},'Ss');%recalculate SOC
         if isempty(r{indEmptySOC(ind)}.test.soc_ini)
             fprintf('calcul_soc %s >>>>>>>>>>>>NOK\n',r{indEmptySOC(ind)}.test.file_in);
         else
             fprintf('calcul_soc %s >>>>>>>>>>>>OK\n',r{indEmptySOC(ind)}.test.file_in);
         end
-        save_result(r{indEmptySOC(ind)});%save result
+        dattes_save(r{indEmptySOC(ind)});%save result
     end
 elseif ismember('a',options)%after: search for following test
     for ind = length(indEmptySOC):-1:1%reverse for (end:-1:start)
@@ -133,18 +133,18 @@ elseif ismember('a',options)%after: search for following test
                 fprintf('%s.DoDFin <<< %s.DoDIni\n', r{indEmptySOC(ind)}.test.file_in,r(indApres(ind)).test.file_in)
             end
         end
-        save_result(r{indEmptySOC(ind)});%save configuration
+        dattes_save(r{indEmptySOC(ind)});%save configuration
         r{indEmptySOC(ind)} = dattes(xml{indEmptySOC(ind)},'Ss',r{indEmptySOC(ind)}.configuration.test.cfg_file);%recalculate SOC
         if isempty(r{indEmptySOC(ind)}.test.soc_ini)
             fprintf('calcul_soc %s >>>>>>>>>>>>NOK\n',r{indEmptySOC(ind)}.test.file_in);
         else
             fprintf('calcul_soc %s >>>>>>>>>>>>OK\n',r{indEmptySOC(ind)}.test.file_in);
         end
-        save_result(r{indEmptySOC(ind)});%save resultat
+        dattes_save(r{indEmptySOC(ind)});%save resultat
     end
 end
 
-[result] = load_result(XML);
+[result] = dattes_load(XML);
 xml = xml(Ie);%list analysed files 
 
 end

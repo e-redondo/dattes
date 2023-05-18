@@ -57,7 +57,7 @@ if ischar(result)
         return
     elseif exist(result,'file')
         %file_in mode
-        result = load_result(result);
+        result = dattes_load(result);
     end
 end
 
@@ -147,7 +147,7 @@ if ismember('s',options)
     if ismember('v',options)
         fprintf('dattes_configure: save result...');
     end
-    save_result(result);
+    dattes_save(result);
     if ismember('v',options)
         fprintf('OK\n');
     end
