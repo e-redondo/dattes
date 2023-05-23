@@ -81,7 +81,9 @@ if ~isempty(DoDAh)
     subplot(312),plot(tc(I100),DoDAh(I100),'ro'),ylim([min(0,min(DoDAh)) max(config.test.capacity,max(DoDAh))])
     subplot(313),plot(tc,SOC,'k')
     subplot(313),plot(tc(I100),SOC(I100),'ro'),ylim([min(0,min(SOC)) max(100,max(SOC))])
-    
+else%'plot nans = plot nothing, but avoid error in linkaxes
+    subplot(312),plot(tc,nan(size(tc)),'k')
+    subplot(313),plot(tc,nan(size(tc)),'k')
 end
 
 % subplot(311),title(title_str,'interpreter','none')
