@@ -76,7 +76,7 @@ else
     inher_options = '';
 end
 
-if iscellstr(dattes_struct)
+if iscell(dattes_struct)
     %filelist
     filelist = dattes_struct;
     %TODO find_common_ancestor

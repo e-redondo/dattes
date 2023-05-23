@@ -1,7 +1,7 @@
 function result = dattes_structure(file_in, options, destination_folder, read_mode)
-% dattes_structure - DATTES Import function
+% dattes_structure - DATTES data structuration function
 %
-% This function read .xml (or .json, or .csv) files, read metadata files
+% This function read .xml (or .json, or .csv, or .mat) files, read metadata files
 % (.meta) and performs some basic calculations (which_mode, split_phases,
 % calcul_soc). The results are given as output and can be stored in mat
 % files.
@@ -58,7 +58,9 @@ function result = dattes_structure(file_in, options, destination_folder, read_mo
 % Example: (DEFAULT) 'search for .xml files (and read them as xml)'
 %            dattes_import(src_folder, options, dest_folde) 
 
-
+%TODO: enable result (DATTES struct) input
+%TODO: enable results (cell of DATTES structs) input, in this case
+%particular attention to iscell / iscellstr.
 
 
 %0.1 check inputs:

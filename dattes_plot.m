@@ -192,7 +192,11 @@ if isfield(result,'analyse')
         end
     end
 else
-    fprintf('dattes_plot: no analysis results to plot in %s\n',result.test.file_in);
+    if ismember('C',options) || ismember('P',options) || ...
+            ismember('E',options) || ismember('O',options) || ...
+            ismember('R',options) || ismember('Z',options) || ismember('I',options)
+        fprintf('dattes_plot: no analysis results to plot in %s\n',result.test.file_in);
+    end
 
 end
 end

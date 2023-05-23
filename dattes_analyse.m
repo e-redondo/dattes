@@ -79,7 +79,7 @@ if ischar(result)
     end
 end
 
-if iscellstr(result)
+if iscell(result)
     %file_list mode
     result = cellfun(@(x) dattes_analyse(x,options),result,'Uniformoutput',false);
     % stop after

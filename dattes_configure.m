@@ -61,7 +61,7 @@ if ischar(result)
     end
 end
 
-if iscellstr(result)
+if iscell(result)
     %file_list mode
     result = cellfun(@(x) dattes_configure(x,options,custom_cfg_script),result,'Uniformoutput',false);
     % stop after
