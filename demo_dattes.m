@@ -1,20 +1,20 @@
 %% DATTES demo
 % Thanks for trying DATTES !
 % This script will present you the main features of DATTES.
-
+%
 % 1- Get all DATTES tools
 % Before running, this script please collect all DATTES tools by running:
 % initpath_dattes
-
+%
 % 2 - Get experimental data for this demo
 % Experimental data for this demo are available with the following
 % information
 % URL: https://cloud.univ-eiffel.fr/s/q5c5pBfKyzrHHT6/download
 % password: demo_DATTES_23.05
-
+%
 % 3- Go to the folder containing downloaded experimental data
 % In MATLAB/Octave, go to the folder containing 20230414_1501_BUGE382_M3_L1_caracini.zip
-
+%
 % Important information 
 % The shared file is very large leading to a rather slow analysis process.
 % The long analysis duration is mainly due to the preprocessing function dattes_import.
@@ -27,13 +27,19 @@ url = 'https://cloud.univ-eiffel.fr/s/q5c5pBfKyzrHHT6/download';
 pass = 'demo_DATTES_23.05';
 zip_file = '20230414_1501_BUGE382_M3_L1_caracini.zip';
 
-zip_list = lsFiles('./','.zip');
-zip_list = regexpFiltre(zip_list,zip_file);
+try
+    zip_list = lsFiles('./','.zip');
+    zip_list = regexpFiltre(zip_list,zip_file);
+catch
+    help demo_dattes
+    return
+end
 
 if isempty(zip_list) % zip file not found in this folder or subfolders
-    fprintf('Demo data not found, please download it from Univ. Eiffel cloud:\n');
-    fprintf('URL: %s\n',url);
-    fprintf('password: %s\n',pass);
+%     fprintf('Demo data not found, please download it from Univ. Eiffel cloud:\n');%
+%     fprintf('URL: %s\n',url);
+%     fprintf('password: %s\n',pass);
+    help demo_dattes
     return
 end
 
