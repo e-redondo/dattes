@@ -1,150 +1,292 @@
-function [result,xml] = calcul_soc_patch(XML,options,cellName)
-% calcul_soc_patch - calculate SOC when calcul_soc has failed.
+function [results] = calcul_soc_patch(results,options,cellnames)
+% calcul_soc_patch - calcul_soc when no SoC100 is found.
+% 
+% This function handles with a set of results. When some results do not
+% have SoC100 points, SoC can be calculated by the preceding or postponing
+% test done in the cell.
 %
-% [result,xml] = calcul_soc_patch(XML,options,cellName)
+% Usage (1): results = calcul_soc_patch(results,options)
+% Search on results with missing SoC for each cell id (metadata.cell.id),
+% calculate SoC takin as reference th efinal DoD_Ah of the preceding test.
+% Usage (2): results = calcul_soc_patch(results,'f',cellnames)
+% Search for cellnames in the filelist ({result.test.file_out}) instead
+% cell id.
+% Usage (3): results = calcul_soc_patch(filelist,options)
+% Use a filelist (cell of pathnames) as input.
+% Usage (4): results = calcul_soc_patch(srcdir,options)
+% Search in srcdir for mat files.
+%
 % Inputs:
-% - XML [1xn cell string]: file List
-% - options [1xp char]:
-% -- 'b': search before 
-% -- 'a': search after
-% -- 'v': verbose
-% -- 'u': unpatch (undo of previous calcul_soc_patch)
-% - cellName [1xm char]: regex to filter XML by a pattern 'cell name'
+% - results [cell of struct]: cell containing DATTES structures
+% - filelist [cell of char]: cell containing mat files pathnames
+% - srcdir [char]: folder name to search mat files
+% - options [char]: execution option
+%     - 's': save
+%     - 'v': verbose
+%     - 'f': search cellname pattern in filenames rather than metadata.cell.id
+%     - 'b': take soc from results before (default)
+%     - 'a': take soc from results after
+%     - 'u': unpatch, find precedingly patched results, set them soc to empty
+% - cellnames [cell of char]: list of cell id or regex patterns to filter filelist
 %
-% Outputs : 
-% - result: [1x1 struct] structure containing analysis results 
-% - xml [nx1 cell]: list of treated files
+% Output:
+% - results [cell of struct]: cell containing DATTES structures
 %
-%
-%Exemple (1):
-% [result] = calcul_soc_patch(XML,'cell62','av');
-% calcule les SOCs manquants dans la liste XML avec le nom cell62 en
-% prenant les fichiers anterieurs ('a'), et en disant ce qu'il est fait ('v')
-%
-%Exemple (2):
-%2.1) [result] = dattes(XML,'cfg_file','cs');
-%refait la configuration, les essais sans repere de SoC100 auront DoDini et DoDfin = [].
-%2.2) [result] = calcul_soc_patch(XML,'','u');
-%les fichiers qui ont DoDini et DoDfin = [] seront recalcules (vecteur SOC = [])
-%
-% See also dattes, calcul_soc
+% See also dattes_structure, calcul_soc
 %
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab: 
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
-if ~exist('options','var')
-    options = '';
+
+%0.1 check options
+if ~exist('cellnames','var')
+    cellnames = '';
 end
-if ~exist('cellName','var')
-    cellName = '';
+if ~exist('options','var')
+    options = 'b';
 end
 
 verbose = ismember('v',options);
-
-if ~ismember('a',options) && ~ismember('b',options)
-    options = [options 'b'];%before by default
-end
-
-
-
-%TODO: changer ca
-%essayer de mettre comme argument (result,config,phases), pour ne pas charger tout a
-%chaque fois.
-% XML = {result.test.file_in};
-if ismember('u',options)%option 'unpatch', defaire ce que l'on a fait
-    [result] = dattes_load(XML);
-    %search files with imposed DoDIni or DoDFin:
-    Ie = ~cellfun(@(x) isempty(x.configuration.soc.dod_ah_ini) && isempty(x.configuration.soc.dod_ah_fin),result);
-    %List of files that will be treated
-    xml = XML(Ie);
-    %Filter results to this files:
-    r = result(Ie);
-
     
-    for ind = 1:length(r)
-        r{ind}.configuration.soc.dod_ah_ini = [];
-        r{ind}.configuration.soc.dod_ah_fin = [];
-        
-        r{ind}.test.dod_ah_ini = [];
-        r{ind}.test.soc_ini = [];
-        r{ind}.test.dod_ah_fin = [];
-        r{ind}.test.soc_fin = [];
-        if verbose
-            fprintf('reset SOC for %s\n',r{ind}.test.file_in);
-        end
-        dattes_save(r{ind});
-        dattes(r{ind}.test.file_in,'Ss');%reset SOC
-    end
-    return;
-end
-
-
-%1.-filter to nameCell: take only tests from nameCell
-if isempty(cellName)
-    xml = XML;%no filtering, take all files
+if ismember('u',options)
+    mode = 'unpatch';
+elseif ismember('a',options)
+    mode = 'after';
 else
-    xml = regexpFiltre(XML,cellName);
+    mode = 'before';
 end
 
-r = dattes_load(xml);
-%take start times
-tInis = cellfun(@(x) x.test.datetime_ini,r);
-
-%put in chronological order
-[~, Is] = sort(tInis);
-xml = xml(Is);
-
-%reload by chronological order
-r = dattes_load(xml);
-c = cellfun(@(x) x.configuration,r,'uniformoutput',false);
-p = cellfun(@(x) x.phases,r,'uniformoutput',false);
+if ismember('f',options) && isempty(cellnames)
+    fprintf('ERROR calcul_soc_patch: input cellnames is mandatory with ''f'' option\n')
+    return
+end
 
 
-%2.-search tests with empty SOCIni
-Ie = cellfun(@(x) isempty(x.test.soc_ini),r);
-indEmptySOC =  find(Ie);
-indAvant = indEmptySOC-1;
-indApres = indEmptySOC+1;
+%1. Load results
+% a) results is cell of structs 
+% b) results is cell of chars (mat file list): load each file
+% c) results is char (folder name): search mat files and load
 
-if ismember('b',options)%before: search for previous test
-    for ind = 1:length(indEmptySOC)%direct for (start:1:end)
-        if indAvant(ind)>0 && ismember('b',options)%look for the previous
-            r{indEmptySOC(ind)}.configuration.soc.dod_ah_ini = r{indAvant(ind)}.test.dod_ah_fin;
-            if verbose
-                fprintf('%s.DoDFin >>> %s.DoDIni\n',r{indAvant(ind)}.test.file_in, r{indEmptySOC(ind)}.test.file_in)
-            end
-        end
-        dattes_save(r{indEmptySOC(ind)});%save configuration
-        r{indEmptySOC(ind)} = dattes(xml{indEmptySOC(ind)},'Ss');%recalculate SOC
-        if isempty(r{indEmptySOC(ind)}.test.soc_ini)
-            fprintf('calcul_soc %s >>>>>>>>>>>>NOK\n',r{indEmptySOC(ind)}.test.file_in);
-        else
-            fprintf('calcul_soc %s >>>>>>>>>>>>OK\n',r{indEmptySOC(ind)}.test.file_in);
-        end
-        dattes_save(r{indEmptySOC(ind)});%save result
+if ischar(results)
+    srcdir = results;
+    if ~isfolder(srcdir)
+        fprintf('ERROR calcul_soc_patch: input must be a cell of struct, a cell of chars or a folder name\n')
+        return
     end
-elseif ismember('a',options)%after: search for following test
-    for ind = length(indEmptySOC):-1:1%reverse for (end:-1:start)
-        if indApres(ind)<=length(r) && ismember('a',options)%recherche du posterieur
-            r{indEmptySOC(ind)}.configuration.soc.dod_ah_fin = r{indApres(ind)}.test.dod_ah_ini;
-            if verbose
-                fprintf('%s.DoDFin <<< %s.DoDIni\n', r{indEmptySOC(ind)}.test.file_in,r(indApres(ind)).test.file_in)
-            end
-        end
-        dattes_save(r{indEmptySOC(ind)});%save configuration
-        r{indEmptySOC(ind)} = dattes(xml{indEmptySOC(ind)},'Ss',r{indEmptySOC(ind)}.configuration.test.cfg_file);%recalculate SOC
-        if isempty(r{indEmptySOC(ind)}.test.soc_ini)
-            fprintf('calcul_soc %s >>>>>>>>>>>>NOK\n',r{indEmptySOC(ind)}.test.file_in);
-        else
-            fprintf('calcul_soc %s >>>>>>>>>>>>OK\n',r{indEmptySOC(ind)}.test.file_in);
-        end
-        dattes_save(r{indEmptySOC(ind)});%save resultat
+    mat_list = lsFiles(srcdir,'.mat');
+    results = dattes_load(mat_list);%dattes load must filter mat files not containing result
+elseif iscell(results)
+    %check all elements of results are same type
+    % if not: ERROR
+    if all(cellfun(@ischar,results))
+        % if cell of chars >> dattes_load
+        mat_list = results;
+        results = dattes_load(mat_list);
+    elseif ~all(cellfun(@isstruct,results))
+        fprintf('ERROR calcul_soc_patch: input must be a cell of struct, a cell of chars or a folder name\n')
+        return
+    end
+else
+    fprintf('ERROR calcul_soc_patch: input must be a cell of struct, a cell of chars or a folder name\n')
+    return
+end
+
+% filter empty values after dattes_load (invalid mat_files)
+ind_empty = cellfun(@(x) isempty(fieldnames(x)),results);
+results = results(~ind_empty);
+% check result struct
+[~,invalid_results] = cellfun(@(x) check_result_struct(x),results,'UniformOutput',false);
+invalid_results = cellfun(@(x) x<0,invalid_results);
+results = results(~invalid_results);
+
+
+[cellids, filelist] = get_cellids(results);
+
+% find results concerning cellname
+% if 'f' in options, search in filenames (result.test.file_in)
+% else search in metadata.cell.id
+if ismember('f',options)
+    % search for cellnames in filelist instead cellids:
+    % overwrite cellids with filelist:
+    if verbose
+        fprintf('calcul_soc_patch: based on filelist\n');
+    end
+    cellids = filelist;
+else
+    if verbose
+        fprintf('calcul_soc_patch: based on cell ids\n');
+    end
+    if isempty(cellnames)
+        cellnames = unique(cellids);
     end
 end
 
-[result] = dattes_load(XML);
-xml = xml(Ie);%list analysed files 
+switch mode
+    case 'unpatch'
+        results = unpatch_result(results,verbose);
+    case 'before'
+        for ind = 1:length(cellnames)
+            %search for cellnames{ind}
+            [~,~,ind_this_cell] = regexpFiltre(cellids,cellnames{ind});
+            res_this_cell = results(ind_this_cell);
+            %patch
+            res_this_cell = patch_result_before(res_this_cell,verbose);
+            %return patched to results
+            results(ind_this_cell) = res_this_cell;
+        end
+    case 'after'
+        for ind = 1:length(cellnames)
+            %search for cellnames{ind}
+            [~,~,ind_this_cell] = regexpFiltre(cellids,cellnames{ind});
+            res_this_cell = results(ind_this_cell);
+            %patch
+            res_this_cell = patch_results_after(res_this_cell,verbose);
+            %return patched to results
+            results(ind_this_cell) = res_this_cell;
+        end
+end
+
+if ismember('s',options)
+            %verbose
+        if verbose
+            fprintf('calcul_soc_patch: saving results\n');
+        end
+    dattes_save(results);
+end
+
+end
+
+function results = unpatch_result(results,verbose)
+
+for ind = 1:length(results)
+    result = results{ind};
+    if ~isempty(result.configuration.soc.dod_ah_ini) || ~isempty(result.configuration.soc.dod_ah_fin)
+        %was patched > unpatch
+        %unpatch result.configuration
+        result.configuration.soc.dod_ah_ini = [];
+        result.configuration.soc.dod_ah_fin = [];
+        %unpatch result.test
+        result.test.dod_ah_ini = [];
+        result.test.soc_ini = [];
+        result.test.dod_ah_fin = [];
+        result.test.soc_fin = [];
+        %unpatch result.profiles
+        result.profiles.soc = [];
+        result.profiles.dod_ah = [];
+        %verbose
+        if verbose
+            fprintf('calcul_soc_patch: unpatch_result, reset SOC for %s\n',result.test.file_out);
+        end
+        %put back in results cell
+        results{ind} = result;
+    end
+end
+
+end
+
+function results = patch_result_before(results,verbose)
+% sort by test datetime
+test_datetimes = cellfun(@(x) x.test.datetime_ini,results);
+[~,ind_sort] = sort(test_datetimes);
+results = results(ind_sort);
+for ind = 2:length(results)
+    result = results{ind};
+    if isempty(result.test.soc_ini) 
+        if verbose
+            fprintf('calcul_soc_patch: patch_result_before for %s',result.test.file_out);
+        end
+        % need to be patched
+        res_before = results{ind-1};
+        if ~isempty(res_before.test.soc_ini)
+            % can be patched
+            result.configuration.soc.dod_ah_ini = res_before.test.dod_ah_fin;
+            % calcul soc
+            [dod_ah, soc] = calcul_soc(result.profiles.datetime,result.profiles.I,...
+                result.configuration);
+            if ~isempty(dod_ah)
+                %on success update result.profiles
+                result.profiles.dod_ah = dod_ah;
+                result.profiles.soc = soc;
+                %on success update result.test
+                result.test.dod_ah_ini = result.profiles.dod_ah(1);
+                result.test.soc_ini = result.profiles.soc(1);
+                result.test.dod_ah_fin = result.profiles.dod_ah(end);
+                result.test.soc_fin = result.profiles.soc(end);
+            end
+            %put back in results cell
+            results{ind} = result;
+            if verbose
+                fprintf(' OK\n');
+            end
+        else
+            if verbose
+                fprintf(' NOK\n');
+            end
+        end
+    end
+end
+
+end
+
+function results = patch_results_after(results,verbose)
+% sort by test datetime
+test_datetimes = cellfun(@(x) x.test.datetime_ini,results);
+[~,ind_sort] = sort(test_datetimes);
+results = results(ind_sort);
+for ind = (length(results)-1):-1:1
+    result = results{ind};
+    if isempty(result.test.soc_ini)
+        if verbose
+            fprintf('calcul_soc_patch: patch_results_after for %s',result.test.file_out);
+        end
+        % need to be patched
+        res_after = results{ind+1};
+        if ~isempty(res_after.test.soc_ini)
+            % can be patched
+            result.configuration.soc.dod_ah_ini = res_after.test.dod_ah_fin;
+            % calcul soc
+            [dod_ah, soc] = calcul_soc(result.profiles.datetime,result.profiles.I,...
+                result.configuration);
+            if ~isempty(dod_ah)
+                %on success update result.profiles
+                result.profiles.dod_ah = dod_ah;
+                result.profiles.soc = soc;
+                %on success update result.test
+                result.test.dod_ah_ini = result.profiles.dod_ah(1);
+                result.test.soc_ini = result.profiles.soc(1);
+                result.test.dod_ah_fin = result.profiles.dod_ah(end);
+                result.test.soc_fin = result.profiles.soc(end);
+            end
+            %put back in results cell
+            results{ind} = result;
+            if verbose
+                fprintf(' OK\n');
+            end
+        else
+            if verbose
+                fprintf(' NOK\n');
+            end
+        end
+    end
+end
+end
+
+function [cellids, filelist] = get_cellids(results)
+
+filelist = cellfun(@(x) x.test.file_out,results,'UniformOutput',false);
+cellids = cell(size(results));
+for ind = 1:length(results)
+    cellids{ind} = '';
+    result = results{ind};
+    if isfield(result,'metadata')
+        if isfield(result.metadata,'cell')
+            if isfield(result.metadata.cell,'id')
+                cellids{ind} = result.metadata.cell.id;
+            end
+        end
+    end
+end
 
 end
