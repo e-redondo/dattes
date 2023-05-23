@@ -41,6 +41,11 @@ function [result] = dattes_plot(file_in,options)
 % For more information, see the <a href="matlab:
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
+if nargin<2
+    fprintf('dattes_plot: ERROR not enough input paramters\n');
+    return
+end
+
 if iscell(file_in)
     [result] = cellfun(@(x) dattes_plot(x,options),file_in,'UniformOutput',false);
     return;
