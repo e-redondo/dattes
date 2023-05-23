@@ -25,7 +25,7 @@ end
 fieldList2 = fieldnames(S2);
 for ind = 1:length(S1)
     for ind2 = 1:length(fieldList2)
-        if isstruct(S2(ind).(fieldList2{ind2}))
+        if isstruct(S2(ind).(fieldList2{ind2})) && isfield(S1(ind),fieldList2{ind2})
             S1(ind).(fieldList2{ind2}) = merge_struct(S1(ind).(fieldList2{ind2}),S2(ind).(fieldList2{ind2}));
         else
             S1(ind).(fieldList2{ind2}) = S2(ind).(fieldList2{ind2});
