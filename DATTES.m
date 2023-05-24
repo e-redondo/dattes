@@ -6,13 +6,14 @@
 % It is written in MATLAB and all functions are GNU Octave compatible.
 %
 % With DATTES you can:
-% - Read data from a large variety oy battery cyclers
+% - Read data from a large variety of battery cyclers
 % - Convert this data to standard formats
 % - Prepare this data to be processed in an easy way
 % - Perform most common analysis:
 %     - Capacity
 %     - Resistance
 %     - Impedance
+%     - EIS
 %     - OCV
 %     - ICA/DVA
 % - Visualise and export your results
@@ -27,12 +28,12 @@
 %
 % (Other DATTES tools)
 % - dattes_plot: Visualisation tool, you can plot every DATTES result
-% - dattes_export: Export the results to easily inteact with other software
+% - dattes_export: Export the results to easily interact with other softwares
 %
 %
 % (Examples)
 % DATTES let you work in different ways depending on the quantity and
-% organisation  of your experimental data and your preferences.
+% organisation of your experimental data and your preferences.
 %
 % - Working with filelists: You can use filelists to process a batch of files
 %       xml_list = dattes_import(list_of_arbin_files,'arbin_csv','v',dest_folder);
@@ -61,6 +62,8 @@
 % dattes_analyse, dattes_plot, dattes_export
 %
 % DATTES website: https://dattes.gitlab.io/
+% License : GNU GPL V3
+% Software paper :
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab:
