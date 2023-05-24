@@ -23,12 +23,12 @@
 % - dattes_structure: Preprocess data to easily analyse it.
 % - dattes_configure: Customise the way you analyse your data.
 % - dattes_analyse: Analyse your data.
-%    
+%
 %
 % (Other DATTES tools)
 % - dattes_plot: Visualisation tool, you can plot every DATTES result
 % - dattes_export: Export the results to easily inteact with other software
-%   
+%
 %
 % (Examples)
 % DATTES let you work in different ways depending on the quantity and
@@ -60,8 +60,10 @@
 % See also dattes_import, dattes_structure, dattes_configure,
 % dattes_analyse, dattes_plot, dattes_export
 %
+% DATTES website: https://dattes.gitlab.io/
+%
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
-% For more information, see the <a href="matlab: 
+% For more information, see the <a href="matlab:
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
-
+help DATTES
