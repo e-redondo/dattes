@@ -83,7 +83,7 @@ for ind = 1:length(phases)
     tY1 = mean(Up);
     tY2 = mean(Ip);
     
-    if phases(ind).duration>minDuree
+    if phases(ind).duration>minDuree || ind==1 || ind==length(phases)
         subplot(211),plot(timep,Up,'color',c(ind,:),'tag',num2str(ind))
         subplot(212),plot(timep,Ip,'color',c(ind,:),'tag',num2str(ind))
  

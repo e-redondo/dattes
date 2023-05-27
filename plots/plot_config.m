@@ -77,64 +77,72 @@ plot(tc(I0)*t_factor,U(I0),'rd','displayname','SoC0 point')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %figure2: Capacity
 % Phases of capacity analysis
-tD = [];UD = [];tC = [];UC = [];tDV= [];UDV = [];tCV = [];UCV = [];
-for ind = 1:length(phases)
-    Ip = datetime>=phases(ind).datetime_ini & datetime<=phases(ind).datetime_fin;
-    if config.capacity.pCapaD(ind)
-        tD = [tD;tc(Ip)];
-        UD = [UD;U(Ip)];
-    end
-    if config.capacity.pCapaC(ind)
-        tC = [tC;tc(Ip)];
-        UC = [UC;U(Ip)];
-    end
-    if config.capacity.pCapaDV(ind)
-        tDV = [tDV;tc(Ip)];
-        UDV = [UDV;U(Ip)];
-    end
-    if config.capacity.pCapaCV(ind)
-        tCV = [tCV;tc(Ip)];
-        UCV = [UCV;U(Ip)];
+if isfield(config,'capacity')
+    if isfield(config.capacity,'pCapaC') && isfield(config.capacity,'pCapaD') && ...
+            isfield(config.capacity,'pCapaCV') && isfield(config.capacity,'pCapaDV')
+        tD = [];UD = [];tC = [];UC = [];tDV= [];UDV = [];tCV = [];UCV = [];
+        for ind = 1:length(phases)
+            Ip = datetime>=phases(ind).datetime_ini & datetime<=phases(ind).datetime_fin;
+            if config.capacity.pCapaD(ind)
+                tD = [tD;tc(Ip)];
+                UD = [UD;U(Ip)];
+            end
+            if config.capacity.pCapaC(ind)
+                tC = [tC;tc(Ip)];
+                UC = [UC;U(Ip)];
+            end
+            if config.capacity.pCapaDV(ind)
+                tDV = [tDV;tc(Ip)];
+                UDV = [UDV;U(Ip)];
+            end
+            if config.capacity.pCapaCV(ind)
+                tCV = [tCV;tc(Ip)];
+                UCV = [UCV;U(Ip)];
+            end
+        end
+        subplot(322),title('Capacity configuration'),xlabel(x_lab),hold on
+        plot(tc*t_factor,U,'k','displayname','test')
+        plot(tD*t_factor,UD,'r.','displayname','discharge')
+        plot(tC*t_factor,UC,'b.','displayname','charge')
+        plot(tDV*t_factor,UDV,'m.','displayname','discharge (CV phase)')
+        plot(tCV*t_factor,UCV,'g.','displayname','charge (CV phase)')
     end
 end
-subplot(322),title('Capacity configuration'),xlabel(x_lab),hold on
-plot(tc*t_factor,U,'k','displayname','test')
-plot(tD*t_factor,UD,'r.','displayname','discharge')
-plot(tC*t_factor,UC,'b.','displayname','charge')
-plot(tDV*t_factor,UDV,'m.','displayname','discharge (CV phase)')
-plot(tCV*t_factor,UCV,'g.','displayname','charge (CV phase)')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %figure3: Impedances
-tR = [];UR = [];tW = [];UW = [];tRr = [];URr = [];tWr = [];UWr = [];
+if isfield(config,'resistance') && isfield(config,'impedance')
+    if isfield(config.resistance,'pR') && isfield(config.impedance,'pZ')
+        tR = [];UR = [];tW = [];UW = [];tRr = [];URr = [];tWr = [];UWr = [];
 
-%resistance (ident_r):config.pR
-phases_r = phases(config.resistance.pR);
-time_before_after_phase = [config.resistance.rest_min_duration 0];
-for ind = 1:length(phases_r)
-    [tpRabs,tpR,UpR] = extract_phase2(phases_r(ind),time_before_after_phase,datetime,tc,U);
-    Ip = tpRabs>=phases_r(ind).datetime_ini;
-    Ir = tpRabs<phases_r(ind).datetime_ini;
-    tR = [tR;tpR(Ip)];
-    tRr = [tRr;tpR(Ir)];
-    UR = [UR;UpR(Ip)];
-    URr = [URr;UpR(Ir)];
-    
-end
-%impedance (iden_z): TODO new method like ident_r
+        %resistance (ident_r):config.pR
+        phases_r = phases(config.resistance.pR);
+        time_before_after_phase = [config.resistance.rest_min_duration 0];
+        for ind = 1:length(phases_r)
+            [tpRabs,tpR,UpR] = extract_phase2(phases_r(ind),time_before_after_phase,datetime,tc,U);
+            Ip = tpRabs>=phases_r(ind).datetime_ini;
+            Ir = tpRabs<phases_r(ind).datetime_ini;
+            tR = [tR;tpR(Ip)];
+            tRr = [tRr;tpR(Ir)];
+            UR = [UR;UpR(Ip)];
+            URr = [URr;UpR(Ir)];
 
-%resistance and impedance (old method):
-for ind = 1:length(phases)
+        end
+        %impedance (iden_z): TODO new method like ident_r
 
-    if config.impedance.pZ(ind)
-        Ip = datetime>=phases(ind).datetime_ini & datetime<=phases(ind).datetime_ini+config.impedance.pulse_min_duration;
-        Ir = datetime>=phases(ind-1).datetime_fin-config.impedance.rest_min_duration & datetime<=phases(ind-1).datetime_fin;
-        tW = [tW;tc(Ip)];
-        UW = [UW;U(Ip)];
-        tWr = [tWr;tc(Ir)];
-        UWr = [UWr;U(Ir)];
-        
-    end
-end
+        %resistance and impedance (old method):
+        for ind = 1:length(phases)
+
+            if config.impedance.pZ(ind)
+                Ip = datetime>=phases(ind).datetime_ini & datetime<=phases(ind).datetime_ini+config.impedance.pulse_min_duration;
+                Ir = datetime>=phases(ind-1).datetime_fin-config.impedance.rest_min_duration & datetime<=phases(ind-1).datetime_fin;
+                tW = [tW;tc(Ip)];
+                UW = [UW;U(Ip)];
+                tWr = [tWr;tc(Ir)];
+                UWr = [UWr;U(Ir)];
+
+            end
+        end
+
 
 
 subplot(325),title('Resistance configuration'),xlabel(x_lab),hold on
@@ -146,46 +154,52 @@ subplot(326),title('Impedance configuration'),xlabel(x_lab),hold on
 plot(tc*t_factor,U,'k','displayname','test')
 plot(tW*t_factor,UW,'r.','displayname','pulse impedance')
 plot(tWr*t_factor,UWr,'b.','displayname','rest impedance')
-
+    end
+end
 %pOCV configuration
-phases_pocv_c = phases(config.pseudo_ocv.pOCVpC);
-phases_pocv_d = phases(config.pseudo_ocv.pOCVpD);
-t_ocv_c = [];
-U_ocv_c = [];
-t_ocv_d = [];
-U_ocv_d = [];
-for ind = 1:length(phases_pocv_c)
-    pro_ocv_c = extract_phase2(phases_pocv_c(ind), [0 0], profiles);
-    t_ocv_c = [t_ocv_c; pro_ocv_c.(t_name)];
-    U_ocv_c = [U_ocv_c; pro_ocv_c.U];
-end
-for ind = 1:length(phases_pocv_d)
-    pro_ocv_d = extract_phase2(phases_pocv_d(ind), [0 0], profiles);
-    t_ocv_d = [t_ocv_d; pro_ocv_d.(t_name)];
-    U_ocv_d = [U_ocv_d; pro_ocv_d.U];
-end
+if isfield(config,'pseudo_ocv')
+    if isfield(config.pseudo_ocv,'pOCVpC') && isfield(config.pseudo_ocv,'pOCVpD')
+        phases_pocv_c = phases(config.pseudo_ocv.pOCVpC);
+        phases_pocv_d = phases(config.pseudo_ocv.pOCVpD);
+        t_ocv_c = [];
+        U_ocv_c = [];
+        t_ocv_d = [];
+        U_ocv_d = [];
+        for ind = 1:length(phases_pocv_c)
+            pro_ocv_c = extract_phase2(phases_pocv_c(ind), [0 0], profiles);
+            t_ocv_c = [t_ocv_c; pro_ocv_c.(t_name)];
+            U_ocv_c = [U_ocv_c; pro_ocv_c.U];
+        end
+        for ind = 1:length(phases_pocv_d)
+            pro_ocv_d = extract_phase2(phases_pocv_d(ind), [0 0], profiles);
+            t_ocv_d = [t_ocv_d; pro_ocv_d.(t_name)];
+            U_ocv_d = [U_ocv_d; pro_ocv_d.U];
+        end
 
-subplot(323),title('pseudo OCV configuration'),xlabel(x_lab),hold on
-plot(tc*t_factor,U,'k','displayname','test')
-plot(t_ocv_d*t_factor,U_ocv_d,'r.','displayname','pseudo OCV (discharge)')
-plot(t_ocv_c*t_factor,U_ocv_c,'b.','displayname','pseudo OCV (charge)')
-
+        subplot(323),title('pseudo OCV configuration'),xlabel(x_lab),hold on
+        plot(tc*t_factor,U,'k','displayname','test')
+        plot(t_ocv_d*t_factor,U_ocv_d,'r.','displayname','pseudo OCV (discharge)')
+        plot(t_ocv_c*t_factor,U_ocv_c,'b.','displayname','pseudo OCV (charge)')
+    end
+end
 
 %ICA configuration
+if isfield(config,'ica')
+    if isfield(config.ica,'pICA')
+        phases_ica = phases(config.ica.pICA);
+        t_ica = [];
+        U_ica = [];
+        for ind = 1:length(phases_ica)
+            pro_ica = extract_phase2(phases_ica(ind), [0 0], profiles);
+            t_ica = [t_ica; pro_ica.(t_name)];
+            U_ica = [U_ica; pro_ica.U];
+        end
 
-phases_ica = phases(config.ica.pICA);
-t_ica = [];
-U_ica = [];
-for ind = 1:length(phases_ica)
-    pro_ica = extract_phase2(phases_ica(ind), [0 0], profiles);
-    t_ica = [t_ica; pro_ica.(t_name)];
-    U_ica = [U_ica; pro_ica.U];
+        subplot(324),title('ICA configuration'),xlabel(x_lab),hold on
+        plot(tc*t_factor,U,'k','displayname','test')
+        plot(t_ica*t_factor,U_ica,'r.','displayname','ICA')
+    end
 end
-
-subplot(324),title('ICA configuration'),xlabel(x_lab),hold on
-plot(tc*t_factor,U,'k','displayname','test')
-plot(t_ica*t_factor,U_ica,'r.','displayname','ICA')
-
 
 ha = findobj(hf, 'type','axes','tag','');
 arrayfun(@(x) legend(x,'show','location','best'),ha);
