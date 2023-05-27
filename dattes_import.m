@@ -172,6 +172,10 @@ if iscell(srcdir)
     % no need to search, srcdir is a filelist
     file_list = srcdir;
 else
+    %FIX error when srcdir is './' or '.'
+    if isequal(fileparts(srcdir),'.') || isequal(srcdir,'.')
+        srcdir = pwd;
+    end
     if iscell(file_ext)
         % more than one file extension to search e.g.: {'xls','xlsx'}
         file_list = cellfun(@(x) lsFiles(srcdir,x),file_ext,'UniformOutput',false);
