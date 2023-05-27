@@ -123,8 +123,11 @@ if isfield(result,'analyse')
     if ismember('C',options)
         %show result of 'C', i.e. Capacity
         if isfield(result.analyse,'capacity')
-            plot_capacity(result.analyse.capacity,title_str);
-            %         title(title_str,'interpreter','none')
+            if ~isempty(result.analyse.capacity)
+                plot_capacity(result.analyse.capacity,title_str);
+            else
+                fprintf('dattes_plot: no capacity result found in %s\n',result.test.file_in);
+            end
         else
             fprintf('dattes_plot: no capacity result found in %s\n',result.test.file_in);
         end
