@@ -20,20 +20,20 @@
 %
 % (DATTES Workflow)
 % The DATTES workflow is composed of four steps:
-% - dattes_import: Convert the cycler data to a standard format (XML).
-% - dattes_structure: Preprocess data to easily analyse it.
-% - dattes_configure: Customise the way you analyse your data.
-% - dattes_analyse: Analyse your data.
+%       - dattes_import: Convert the cycler data to a standard format (XML)
+%       - dattes_structure: Preprocess data to easily analyse it
+%       - dattes_configure: Customise the way you analyse your data
+%       - dattes_analyse: Analyse your data
 %
 %
 % (Other DATTES tools)
-% - dattes_plot: Visualisation tool, you can plot every DATTES result
-% - dattes_export: Export the results to easily interact with other softwares
+%       - dattes_plot: Visualisation tool, you can plot every DATTES result
+%       - dattes_export: Export the results to easily interact with other software
 %
 %
 % (Examples)
-% DATTES let you work in different ways depending on the quantity and
-% organisation of your experimental data and your preferences.
+%       DATTES let you work in different ways depending on the quantity and
+%       organisation of your experimental data and your preferences.
 %
 % - Working with filelists: You can use filelists to process a batch of files
 %       xml_list = dattes_import(list_of_arbin_files,'arbin_csv','v',dest_folder);
@@ -57,9 +57,16 @@
 %       dattes_plot(results,'sCP...');
 %       dattes_save(results);
 %
+% (Getting started with DATTES)
+% - initpath_dattes
+%       To start using DATTES, you need run 'initpath_dattes' to add DATTES
+%       code folders to your path.
+% - demo_dattes
+%       This script helps you to get some experimental data and shows you
+%       the main features of DATTES.
 %
-% See also dattes_import, dattes_structure, dattes_configure,
-% dattes_analyse, dattes_plot, dattes_export
+% See also initpath_dattes, demo_dattes,dattes_import, dattes_structure,
+% dattes_configure, dattes_analyse, dattes_plot, dattes_export
 %
 % DATTES website: https://dattes.gitlab.io/
 % License : GNU GPL V3

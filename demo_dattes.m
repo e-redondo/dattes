@@ -21,6 +21,13 @@
 % This function is the most time consuming, it is only necessary for the
 % very first analysis.
 % Future analysis will be much faster
+%
+% See also DATTES
+%
+% Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
+% For more information, see the <a href="matlab:
+% web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
+
 function demo_dattes()
 
 url = 'https://cloud.univ-eiffel.fr/s/q5c5pBfKyzrHHT6/download';
