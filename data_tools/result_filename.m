@@ -43,7 +43,12 @@ end
 %separate folder (D), file (F) and extension (E)
 [src_folder, F, E] = fileparts(file_in);
 
-%print suffix: filename_result.mat
+% avoid double suffix: e.g. filename_suffix_suffix.mat
+if endsWith(F,suffix)
+    suffix = '';
+end
+
+%print suffix: filename_suffix.mat
 if isempty(suffix)
     file_out = sprintf('%s%s',F, file_out_ext);
 else
