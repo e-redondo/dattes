@@ -41,6 +41,7 @@ if isempty(file_out)
     file_out = fullfile(folder_out,[file_preffix file_out '.m']);
 end
 
+folder_out = fileparts(file_out);
 [status, msg, msgID] = mkdir(folder_out);
 write_metadata_script(file_out, dattes_struct.metadata);
 
