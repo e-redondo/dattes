@@ -206,10 +206,10 @@ end
   impedance.c1=c1;
   impedance.r2=r2;
   impedance.c2=c2;
-  impedance.datetime = rrc_datetime;
   impedance.dod = rrc_dod;
   impedance.crate = rrc_crate;
-
+  impedance.datetime = rrc_datetime;
+  
 end
 
 

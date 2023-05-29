@@ -50,6 +50,9 @@ function [profiles, eis, metadata, config, err] = extract_profiles_csv(csv_file,
 % For more information, see the <a href="matlab: 
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
+
+%TODO: check if file contains profiles/eis variables
+
 if ~exist('options','var')
     options = '';
 end

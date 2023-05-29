@@ -104,10 +104,10 @@ capacity.cv_voltage = cv_voltage;
 capacity.cv_datetime = cv_datetime;
 capacity.cv_duration = cv_duration;
 
-capacity.cccv_datetime=cccv_datetime;
 capacity.cccv_capacity=cccv_capacity;
-capacity.cccv_duration=cccv_duration;
 capacity.cccv_crate=cccv_crate;
+capacity.cccv_datetime=cccv_datetime;
+capacity.cccv_duration=cccv_duration;
 
 capacity.cccv_ratio_cc_ah=cccv_ratio_cc_ah;
 capacity.cccv_ratio_cc_duration=cccv_ratio_cc_duration;

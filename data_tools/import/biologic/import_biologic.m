@@ -212,6 +212,9 @@ for indF = 1:length(corps)
                 Iamp =  test_params.Ia*ones(size(XMLVars.tc.vector));
                 XMLVars.Iamp = makeXMLVariable('Iamp', 'A', '%f', 'Iamp', Iamp);
             end
+            %TODO: put always Iamp / Iavg to NaN to avoid errors in
+            %extract_eis (field not found in xml.table)
+            %TODO: add support for PEIS (Uamp / Uavg?)
         elseif  strcmp(typeEssai, 'MB')
 
             %Found EIS in MB:
@@ -241,6 +244,9 @@ for indF = 1:length(corps)
                 end
                  XMLVars.Iamp = makeXMLVariable('Iamp', 'A', '%f', 'Iamp', Iamp);
             end
+            %TODO: put always Iamp / Iavg to NaN to avoid errors in
+            %extract_eis (field not found in xml.table)
+            %TODO: add support for PEIS (Uamp / Uavg?)
         elseif  strcmp(typeEssai, 'GPI')
             %mode 5
             mode =  5*ones(size(XMLVars.tc.vector));

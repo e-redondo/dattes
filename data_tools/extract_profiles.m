@@ -132,6 +132,8 @@ end
 
 [xml] = lectureXMLFile4Vehlib(xml_file);
 
+%TODO: check if error in xml read
+
 %extraire les vecteurs
 %verifier si les champs existent (tabs,U,I,mode)
 if any(cellfun(@(x) ~isfield(x,'tabs'),xml.table)) ||...
@@ -179,7 +181,7 @@ elseif isfield(metadata,'test')
     end
 end
 if isnan(max(datetime+I+U+m))%gestion d'erreurs
-    error('Oups! extract_profiles a trouve des nans: %s\n',xml_file);
+    error('extract_profiles: NaNs found in: %s\n',xml_file);
 end
 
 if ismember('v',options)
