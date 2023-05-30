@@ -117,10 +117,7 @@ if iscellstr(file_in)
         %0.2.1 guess common root folder to all files in list:
         source_folder = find_common_ancestor(file_in);
         %0.2.2 make valid regex expression:
-        % escape dots (current folder, parent folder)
-        source_folder = regexprep(source_folder,'\.','\\.');
-        % escape fileseps
-        source_folder = regexprep(source_folder,['\' filesep],['\\' filesep]);
+        source_folder = regexptranslate('escape',source_folder);
 
         %0.2.3 reproduce file tree in destination_folder
         src_folders = cellfun(@fileparts,file_in,'Uniformoutput',false);
@@ -143,7 +140,7 @@ switch read_mode
     case 'xml'
         file_ext = '.xml';
     otherwise
-        if isempty(file_in_ext)
+        if isfolder(file_in)
             %no extension, must be a folder, default extension: '.xml'
             file_ext = '.xml';
         else
