@@ -90,7 +90,7 @@ end
 [info,err] = check_result_struct(result);
 if err<0
     fprintf('ERROR dattes_analyse: input result is not a valid DATTES struct\n');
-    result = [];
+%     result = [];
     return
 end
 
