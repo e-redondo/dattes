@@ -96,6 +96,10 @@ end
 [profiles, other_cols] = csv2profiles(file_in,col_names,params);
 profiles_units = {'s','s','V','A','','degC','Ah',''};
 
+%DEBUG
+% [D,F,E] = fileparts(file_in);
+% save(sprintf('%s.mat',F),'profiles');
+
 %3.- creer XML
 %3.1.- introduire entete:
 [XMLHead, err] = makeXMLHead('arbin',date,'',sprintf('arbin_csv2xml version:%.2f',verveh));
