@@ -5,7 +5,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Langage: Matlab- Octave](https://img.shields.io/badge/Made%20with-Matlab_Octave-orange)](https://www.gnu.org/software/octave/index)
 
-DATTES is a collection of tools to read, adapt, analyze and visualize data from experiments on energy storage  syst>
+DATTES is a collection of tools to read, adapt, analyze and visualize data from experiments on energy storage  systems.
 
 DATTES is written in MATLAB and all functions are GNU Octave compatible
 
@@ -25,9 +25,10 @@ DATTES makes it possible to:
 - [**Cite DATTES**](https://dattes.gitlab.io/page/citation/)
 - [**Contribute to DATTES**](https://dattes.gitlab.io/page/contribute/)
 
+
 ## :scroll: License
 
-Copyright (c) 2015, E. Redondo, M. Hassini.
+Copyright (c) 2015-2023, E. Redondo, M. Hassini (Univ. Gustave Eiffel).
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -52,7 +53,7 @@ You should have received a copy of the GNU General Public License along with thi
     <a href="" title="Make documentation"><img class="emoji" alt="book" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png" width="20" height="20"></a> 
     </td>
     <td align="center">
-    <a href="https://mhassini.gitlab.io">
+    <a href="https://cv.hal.science/marwan-hassini">
     <img src="https://cv.archives-ouvertes.fr/photo/882114" height="120px;" alt=""/>
     <br /><sub><b>Marwan Hassini</b></sub></a><br />
     <a href="Codes" title="Codes"><img class="emoji" alt="computer" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4bb.png" width="20" height="20"></a> 
