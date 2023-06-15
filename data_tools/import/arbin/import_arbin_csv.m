@@ -112,6 +112,7 @@ variables = fieldnames(profiles);
 %change some variable names: (see doc/structure specification)
 variables_names = variables;variables_names = variables;
 variables_names(ismember(variables,{'datetime'})) = {'tabs'};
+variables_names(ismember(variables,{'t'})) = {'tc'};
 variables_names(ismember(variables,{'m'})) = {'mode'};
 
 XMLVars = cell(size(variables));
