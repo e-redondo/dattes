@@ -204,8 +204,10 @@ config.capacity.pCapaCV = pCapaCV;
 %ident_r
 %filter by phase number:
 if isfield(config.resistance, 'filter_phase_nr')
-ind_filter_phase_nr = ismember(1:length(phases),config.resistance.filter_phase_nr);
-pR = pR & ind_filter_phase_nr;
+    if ~isempty(config.resistance.filter_phase_nr)
+        ind_filter_phase_nr = ismember(1:length(phases),config.resistance.filter_phase_nr);
+        pR = pR & ind_filter_phase_nr;
+    end
 end
 %TODO: filter by time
 
@@ -215,8 +217,10 @@ config.resistance.instant_end_rest = tFins(pRr);%temps de fins de repos immediat
 %ident_z
 %filter by phase number:
 if isfield(config.impedance, 'filter_phase_nr')
-ind_filter_phase_nr = ismember(1:length(phases),config.impedance.filter_phase_nr);
-pZ = pZ & ind_filter_phase_nr;
+    if ~isempty(config.impedance.filter_phase_nr)
+        ind_filter_phase_nr = ismember(1:length(phases),config.impedance.filter_phase_nr);
+        pZ = pZ & ind_filter_phase_nr;
+    end
 end
 %TODO: filter by time
 config.impedance.pZ = pZ;

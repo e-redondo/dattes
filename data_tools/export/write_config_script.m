@@ -97,9 +97,11 @@ for ind = 1:length(fieldlist)
         print_string(fid,name,value);
     elseif isnumeric(value)
         if isscalar(value)
-            print_scalar(fid,name, value)
+            print_scalar(fid,name, value);
         elseif isvector(value)
-            print_vector(fid,name,value)
+            print_vector(fid,name,value);
+        elseif isempty(value)
+            print_empty_numeric(fid,name);
         end
     elseif isa(value,'function_handle')
         print_func(fid,name,value);
@@ -121,9 +123,11 @@ for ind = 1:length(fieldlist)
         print_string(fid,name,value);
     elseif isnumeric(value)
         if isscalar(value)
-            print_scalar(fid,name, value)
+            print_scalar(fid,name, value);
         elseif isvector(value)
-            print_vector(fid,name,value)
+            print_vector(fid,name,value);
+        elseif isempty(value)
+            print_empty_numeric(fid,name);
         end
     elseif isa(value,'function_handle')
         print_func(fid,name,value);
@@ -144,9 +148,11 @@ for ind = 1:length(fieldlist)
         print_string(fid,name,value);
     elseif isnumeric(value)
         if isscalar(value)
-            print_scalar(fid,name, value)
+            print_scalar(fid,name, value);
         elseif isvector(value)
-            print_vector(fid,name,value)
+            print_vector(fid,name,value);
+        elseif isempty(value)
+            print_empty_numeric(fid,name);
         end
     elseif isa(value,'function_handle')
         print_func(fid,name,value);
@@ -166,9 +172,11 @@ for ind = 1:length(fieldlist)
         print_string(fid,name,value);
     elseif isnumeric(value)
         if isscalar(value)
-            print_scalar(fid,name, value)
+            print_scalar(fid,name, value);
         elseif isvector(value)
-            print_vector(fid,name,value)
+            print_vector(fid,name,value);
+        elseif isempty(value)
+            print_empty_numeric(fid,name);
         end
     elseif isa(value,'function_handle')
         print_func(fid,name,value);
@@ -189,9 +197,11 @@ for ind = 1:length(fieldlist)
         print_string(fid,name,value);
     elseif isnumeric(value)
         if isscalar(value)
-            print_scalar(fid,name, value)
+            print_scalar(fid,name, value);
         elseif isvector(value)
-            print_vector(fid,name,value)
+            print_vector(fid,name,value);
+        elseif isempty(value)
+            print_empty_numeric(fid,name);
         end
     elseif isa(value,'function_handle')
         print_func(fid,name,value);
@@ -215,6 +225,8 @@ for ind = 1:length(fieldlist)
             print_scalar(fid,name, value);
         elseif isvector(value)
             print_vector(fid,name,value);
+        elseif isempty(value)
+            print_empty_numeric(fid,name);
         end
     elseif isa(value,'function_handle')
         print_func(fid,name,value);
@@ -240,6 +252,10 @@ for ind = 1 :length(value)-1
 fprintf(fid,"%g, ",value(ind));
 end
 fprintf(fid,"%g];\n",value(end));
+end
+
+function print_empty_numeric(fid,name)
+fprintf(fid,"%s = [];\n",name);
 end
 
 function print_func(fid,name,value)

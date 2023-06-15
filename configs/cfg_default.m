@@ -58,7 +58,7 @@ config.resistance.delta_time = [2 10]; % config.instant_calcul_R %Instant du pul
 config.resistance.pulse_min_duration = 9; %config.minimal_duration_pulse = 9;%duree min d'un pulse pour resistance
 config.resistance.pulse_max_duration = 600;% maximal pulse 600sec
 config.resistance.rest_min_duration = 9; % config.minimal_duration_rest_before_pulse =9;%duree min repos avant
-
+config.resistance.filter_phase_nr = [];
 % impedance ('Z' action):
 config.impedance.pulse_min_duration = 59;% minimal pulse 60sec
 config.impedance.pulse_max_duration = 600;% maximal pulse 600sec
@@ -73,6 +73,7 @@ config.impedance.initial_params = [1000, 0.5];% ident_cpe: Q0 = 1000, alpha0 = 0
 % config.impedance.max_params = [5e-2, 800, 5e-2, 800];% ident_rrc
 config.impedance.dod = [];
 config.impedance.ocv = [];
+config.impedance.filter_phase_nr = [];
 
 
 % config.Rmin=1e-4;
