@@ -101,14 +101,30 @@ function  m  = quelMode(t,U,I,sU,sI)
 %si abs(I(2)-I(1)) || abs(I(3)-I(2)) < sI >>> m=3
 modes  = false(1,5);
 
+%filter spikes:
+[Us, i_su] = sort(U);
+[Is, i_si] = sort(I);
+d = floor(length(U)/20);%remove 5% bottom and upper elements (1/20 each side)
+
+U(i_su(1:d)) = nan;
+U(i_si(1:d)) = nan;
+U(i_su(end-d+1:end)) = nan;
+U(i_si(end-d+1:end)) = nan;
+
+ind_nan = isnan(U);
+
+tf = t(~ind_nan);
+Uf = U(~ind_nan);
+If = I(~ind_nan);
+
 % modes(3) = max(abs(I))<=sI/2;%repos
-modes(3) = mean(abs(I))<=sI/2;%repos %FIX, BRICOLE, points a 0.2A pdt des repos
+modes(3) = mean(abs(If))<=sI/2;%repos %FIX, BRICOLE, points a 0.2A pdt des repos
 if modes(3)
     m = 3;
     return;
 end
-dU = max(U)-min(U);
-dI =  max(I)-min(I);
+dU = max(Uf)-min(Uf);
+dI =  max(If)-min(If);
 modes(2) = dU<=sU;%CV
 modes(1) = dI<=sI;%CC
 
@@ -116,8 +132,8 @@ if sum(modes)==0
     %try again with other sI/sU
     % FIX: sometimes no CC phases are found because sI is lower than I
     % resolution.
-    I_resolution = min(diff(unique(I)));
-    U_resolution = min(diff(unique(U)));
+    I_resolution = min(diff(unique(If)));
+    U_resolution = min(diff(unique(Uf)));
     
     %consider constant if all values oscillate +/- resolution (3*U_resolution)
     modes(2) = dU<=3*U_resolution;%CV
@@ -141,7 +157,8 @@ if sum(modes)==0
     %je ne sais pas ce que c'est, ca doit etre un profil
     %     return;
 %     indCCCV = findCCCV(t,I);
-    indCCCV = split_cccv(t,I);
+    indCCCVf = split_cccv(tf,If);
+    indCCCV = find(t==tf(indCCCVf));
     m = ones(size(I));%CC = 1
     m(indCCCV:end) = 2;%CV = 2
     return;

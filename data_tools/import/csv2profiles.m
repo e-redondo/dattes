@@ -231,8 +231,10 @@ profiles.soc = soc;
 ind_other_cols = find(~ismember(variables,col_names));
 if ~isempty(ind_other_cols)
 %     other_cols.t = t;
-    other_cols.Step = Step;
-    other_cols.Step_units = '';
+    if ~isempty(Step)
+        other_cols.Step = Step;
+        other_cols.Step_units = '';
+    end
     other_cols.Ah = Ah;
     other_cols.Ah_units = 'Ah';
     
