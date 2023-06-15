@@ -150,17 +150,19 @@ datetime = cellfun(@(x) x.tabs.vector,xml.table,'uniformoutput',false);
 if any(cellfun(@(x) isnan(max(x)),datetime))
     datetime = cellfun(@(x) x.tc.vector,xml.table,'uniformoutput',false);
 end
-
+t = cellfun(@(x) x.tc.vector,xml.table,'uniformoutput',false);
 U = cellfun(@(x) x.(Uname).vector,xml.table,'uniformoutput',false);
 I = cellfun(@(x) x.I.vector,xml.table,'uniformoutput',false);
 m = cellfun(@(x) x.mode.vector,xml.table,'uniformoutput',false);
 %decapsuler les cellules
 datetime = vertcat(datetime{:});
+t = vertcat(t{:});
 U = vertcat(U{:});
 I = vertcat(I{:});
 m = vertcat(m{:});
 %doublons
-[datetime, Iu] = unique(datetime);
+[t, Iu] = unique(t);
+datetime = datetime(Iu);
 U = U(Iu);
 I = I(Iu);
 m = m(Iu);
@@ -189,8 +191,16 @@ if ismember('v',options)
 end
 
 % compile profiles
-profiles(1).datetime = datetime;
-profiles.t = datetime-datetime(1);
+% TODO: detect and fix Arbin CSV errors
+delta_datetime = datetime(end)-datetime(1);
+delta_testtime = t(end)-t(1);
+if abs(delta_datetime-delta_testtime)>60 % error of more than minute
+    warning(sprintf('Difference in date/time respect to test time.\nXML file probably  corrupted: %s',xml_file));
+end
+% the new way hides some Arbin errors (datetime lapses with no acquisition)
+profiles(1).datetime = datetime(1)+t;
+% profiles.t = datetime-datetime(1);
+profiles.t = t;
 profiles.U = U;
 profiles.I = I;
 profiles.mode = m;
