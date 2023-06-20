@@ -16,6 +16,17 @@ DATTES makes it possible to:
 - Visualize your experimental and data analysis results
 - Use your experimental results for model identification
 
+## Getting started
+1. Download DATTES (stable release or development version):
+    - stable release: https://gitlab.com/dattes/dattes/-/releases
+    - development version (git): `git clone https://gitlab.com/dattes/dattes.git`
+2. In MATLAB / Octave run: `initpath_dattes`
+
+This script adds all DATTES' code folders to your Path.
+
+3. In MATLAB / Octave, run: `demo_dattes`
+
+This script helps you to get some experimental data and shows you the main features of DATTES.
 
 
 ## :link: Useful links
