@@ -12,7 +12,7 @@ function [dqdu,dudq,qf,uf] = calcul_ica(t,q,u,N,wn,options)
 % - options : 
 %   -N: Filter type : no filter
 %   -G: Filter type : gaussian filter
-%   -M: Filter type : mean filter
+%   -M: Filter typestr : mean filter
 %   -B: Filter type :  butter filter
 %   -b: Filter type : balanced, i.e. filter à l'endroit et à l'envers, puis moyenner
 %   -g : show figures
@@ -32,7 +32,7 @@ if ~exist('options','var')
     options = '';%no filter
 end
 %0. constant sampling:
-Ts = min(unique(diff(t)));
+Ts = max(1,min(unique(diff(t))));
 
 ti = (t(1):Ts:t(end))';
 qi = interp1(t,q,ti);
