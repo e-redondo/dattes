@@ -31,9 +31,9 @@ end
 if ~isvector(datetime) || ~isvector(U) ||~isvector(I) ||~isvector(m)
    error('t,U,I,m must be vectors');
 end
-if length(datetime)<2 
-   error('t must have at least to elements');
-end
+% if length(datetime)<2 
+%    error('t must have at least two elements');
+% end
 if length(datetime)~=length(U) ||  length(datetime)~=length(I) || length(datetime)~=length(m)
    error('t,U,I,m must have same length');
 end

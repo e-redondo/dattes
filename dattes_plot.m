@@ -83,6 +83,12 @@ else
     [result] = dattes_load(file_in,options);
 end
 
+[info, err] = check_result_struct(result);
+if err
+    fprintf('dattes_plot: Not a DATTES result struct in %s\n',file_in);
+    return;
+end
+
 if isempty(fieldnames(result))
     fprintf('dattes_plot: Nothing to plot in %s\n',file_in);
     return;
