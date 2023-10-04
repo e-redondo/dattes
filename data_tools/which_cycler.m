@@ -132,6 +132,10 @@ if length(header_lines)>2
         return
     end
 end
+if ~isempty(regexp(line1,'^,ChargeKey,LogDateStamp,version,productnum'))
+    cycler = 'hyperion_csv';
+    return
+end
 %unknown type: return first line
 cycler = line1;
 frewind(fid);
