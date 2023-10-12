@@ -148,6 +148,45 @@ if strcmp(type_test,'GEIS')
         test_params.Ia = scale*Ia;%convert to A
     end
     %TODO do the same for other test types, e.g. PEIS (Is?,Va, etc.)
+elseif strcmp(type_test,'PEIS')
+    %average voltage
+    Vs_line = regexpFiltre(head,'^E \(.+\)');
+    if ~isempty(Vs_line)
+        %search for line containing Is setting:
+        Vs_units = regexp(Vs_line{1},'\(.+\)','match','once');
+        Vs_units = regexprep(Vs_units,'\(','');
+        Vs_units = regexprep(Vs_units,'\)','');
+        
+        Vs_words = regexp(Vs_line{1},'\s+','split');
+        Vs = cellfun(@(x) sscanf(x,'%f'),Vs_words,'UniformOutput',false);
+        Ie = cellfun(@isempty,Vs);
+        Vs = Vs{~Ie};
+
+        scale = 1;
+        if strcmp(Vs_units,'mV')
+            scale = 0.001;%TODO other possible scales? µA?
+        end
+        test_params.Us = scale*Vs;%convert to V
+    end
+    %voltage amplitude
+    Va_line = regexpFiltre(head,'^Va\s+');
+    if ~isempty(Vs_line)
+        Va_units = regexp(Va_line{1},'\(.+\)','match','once');
+        Va_units = regexprep(Va_units,'\(','');
+        Va_units = regexprep(Va_units,'\)','');
+        
+        Va_words = regexp(Va_line{1},'\s+','split');
+        Va = cellfun(@(x) sscanf(x,'%f'),Va_words,'UniformOutput',false);
+        Ie = cellfun(@isempty,Va);
+
+        Va = Va{~Ie};
+        scale = 1;
+        if strcmp(Va_units,'mV')
+            scale = 0.001;%TODO other possible scales? µV?
+        end
+        test_params.Ua = scale*Va;%convert to V
+    end
+    %TODO do the same for other test types, e.g. PEIS (Vs?,Va, etc.)
 elseif strcmp(type_test,'MB')
 %     fprintf('here\n');
     %Ns line: Sequence numbers
@@ -160,6 +199,7 @@ elseif strcmp(type_test,'MB')
     control_types = regexp(control_type_line{1},'\s+','split');
     control_types = control_types(Is);%remove first and last column as in Ns
     [~,~,geis_sequences] = regexpFiltre(control_types,'GEIS');
+    [~,~,peis_sequences] = regexpFiltre(control_types,'PEIS');
 
     %get control val in line
     control_val1_line = regexpFiltre(head,'^ctrl1_val\s+');
@@ -185,11 +225,17 @@ elseif strcmp(type_test,'MB')
 
     scale = ones(size(Ns));
     [~,~,Ism] = regexpFiltre(control_units1,'mA');%TODO same for mV?
+    [~,~,Usm] = regexpFiltre(control_units1,'mV');%TODO same for mV?
     scale(Ism) = 0.001;
+    scale(Usm) = 0.001;
     %TODO, put values to avoid errors:
     test_params.Is = nan(size(Ns));%TODO
     test_params.Ia = control_vals1.*scale;
-    test_params.Ia(~geis_sequences) = nan;%TODO add PEIS when done
+    test_params.Ia(~geis_sequences) = nan;
+    %TODO, put values to avoid errors:
+    test_params.Us = nan(size(Ns));%TODO
+    test_params.Ua = control_vals1.*scale;
+    test_params.Ua(~peis_sequences) = nan;
 
 end
 

@@ -206,18 +206,34 @@ for indF = 1:length(corps)
             if isfield(test_params,'Is')
                Iavg =  test_params.Is*ones(size(XMLVars.tc.vector));
                XMLVars.Iavg = makeXMLVariable('Iavg', 'A', '%f', 'Iavg', Iavg);
+            else
+               XMLVars.Iavg = makeXMLVariable('Iavg', 'A', '%f', 'Iavg', nan(size(XMLVars.tc.vector)));
             end
             %Iamp (Ia in mpt files: current amplitude):
             if isfield(test_params,'Ia')
                 Iamp =  test_params.Ia*ones(size(XMLVars.tc.vector));
                 XMLVars.Iamp = makeXMLVariable('Iamp', 'A', '%f', 'Iamp', Iamp);
+            else
+               XMLVars.Iamp = makeXMLVariable('Iamp', 'A', '%f', 'Iamp', nan(size(XMLVars.tc.vector)));
             end
-            %TODO: put always Iamp / Iavg to NaN to avoid errors in
-            %extract_eis (field not found in xml.table)
-            %TODO: add support for PEIS (Uamp / Uavg?)
+            %Uavg (Is in mpt files: constant average current):
+            if isfield(test_params,'Us')
+               Uavg =  test_params.Us*ones(size(XMLVars.tc.vector));
+               XMLVars.Uavg = makeXMLVariable('Uavg', 'V', '%f', 'Uavg', Uavg);
+            else
+               XMLVars.Uavg = makeXMLVariable('Uavg', 'A', '%f', 'Uavg', nan(size(XMLVars.tc.vector)));
+            end
+            %Uamp (Ia in mpt files: current amplitude):
+            if isfield(test_params,'Ua')
+                Uamp =  test_params.Ua*ones(size(XMLVars.tc.vector));
+                XMLVars.Uamp = makeXMLVariable('Uamp', 'V', '%f', 'Uamp', Uamp);
+            else
+               XMLVars.Uamp = makeXMLVariable('Uamp', 'A', '%f', 'Uamp', nan(size(XMLVars.tc.vector)));
+            end
+
         elseif  strcmp(typeEssai, 'MB')
 
-            %Found EIS in MB:
+            %Found GEIS in MB:
             %Iavg (Is in mpt files: constant average current):
             if isfield(test_params,'Is')
                 Iavg =  nan(size(XMLVars.tc.vector));
@@ -243,6 +259,34 @@ for indF = 1:length(corps)
                     end
                 end
                  XMLVars.Iamp = makeXMLVariable('Iamp', 'A', '%f', 'Iamp', Iamp);
+            end
+
+            %Found PEIS in MB:
+            %Uavg (Us in mpt files: constant average voltage):
+            if isfield(test_params,'Us')
+                Uavg =  nan(size(XMLVars.tc.vector));
+                if ~all(isnan(test_params.Us))
+                    Ns = XMLVars.Ns.vector;
+                    for ind = 1:length(test_params.Us)
+                        if ~isnan(test_params.Us(ind))
+                            Uavg(Ns+1==ind) = test_params.Us(ind);
+                        end
+                    end
+                end
+                XMLVars.Uavg = makeXMLVariable('Uavg', 'V', '%f', 'Uavg', Uavg);
+            end
+            %Uamp (Ua in mpt files: current amplitude):
+            if isfield(test_params,'Ua')
+                Uamp =  nan(size(XMLVars.tc.vector));
+                if ~all(isnan(test_params.Ua))
+                    Ns = XMLVars.Ns.vector;
+                    for ind = 1:length(test_params.Ua)
+                        if ~isnan(test_params.Ua(ind))
+                            Uamp(Ns+1==ind) = test_params.Ua(ind);
+                        end
+                    end
+                end
+                 XMLVars.Uamp = makeXMLVariable('Uamp', 'V', '%f', 'Uamp', Uamp);
             end
             %TODO: put always Iamp / Iavg to NaN to avoid errors in
             %extract_eis (field not found in xml.table)

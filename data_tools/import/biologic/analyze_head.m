@@ -34,6 +34,8 @@ function [variable_names, unit_names] = analyseVariables(line, type_test)
 variable_names = cell(0);
 unit_names = cell(0);
 %variables communes:
+line = strrep(line,' ','_');%replace every space in varname by underscore
+line = strrep(line,'.','');%replace every dot in varname by nothing
 line = strrep(line,'time/s','tc{s}');
 line = strrep(line,'Ewe/V','U{V}');%OVC SCGPL
 line = strrep(line,'I/mA','I{mA}');%MB et autres?
@@ -56,6 +58,20 @@ line = regexprep(line,'Temperature/.C','T{degC}');%2023: file encoding problems 
 line = strrep(line,'I Range','I_Range');%EC-Lab mars 2021 (GCPL)
 line = strrep(line,'(Q-Qo)/mA.h','Qp{mAh}');%EC-Lab mars 2021 (GEIS)
 line = strrep(line,'dq/mA.h','dq{mAh}');%EC-Lab mars 2021 (GEIS)
+line = strrep(line,'Analog_IN_1/V','Analog_IN_1{V}');%%%%%%%%%%%%%%%%%%%%%%%%%
+line = strrep(line,'Analog_IN_1/C','Analog_IN_1{C}');%%%%%%%%%%%%%%%%%%%%%%%%%
+line = strrep(line,'Analog_IN_2/V','Analog_IN_2{V}');%%%%%%%%%%%%%%%%%%%%%%%%%
+line = strrep(line,'Analog_IN_2/C','Analog_IN_2{C}');%%%%%%%%%%%%%%%%%%%%%%%%%
+line = strrep(line,'Analog OUT','Analog_OUT');%%%%%%%%%%%%%%%%%%%%%%%%%
+line = strrep(line,'Analog_OUT/V','Analog_OUT{V}');
+line = strrep(line,'dq/mAh','dq{mAh}');
+line = strrep(line,'(Q-Qo)/mAh','Qc{mAh}');
+line = strrep(line,'Energy/Wh','Ep{Wh}');
+line = strrep(line,'|Energy|/Wh','Ep{Wh}');
+line = strrep(line,'Q_charge/discharge/mAh','Qp{mAh}');%10.40 bis
+line = strrep(line,'Q_discharge/mAh','Qdischarge{mAh}');%10.40 bis
+line = strrep(line,'Q_charge/mAh','Qcharge{mAh}');%10.40 bis
+line = strrep(line,'Capacity/mAh','Capacity{mAh}');%v10.23
 if strcmp(type_test,'SGCPL') || strcmp(type_test,'GCPL')
     %variables du SGCPL: 'mode','ox_red','error','control_changes','Ns_changes','counter','time','control','Ewe','dq','Analog_IN_1','I','Qp','x'
     %version: 10.23
@@ -67,24 +83,11 @@ if strcmp(type_test,'SGCPL') || strcmp(type_test,'GCPL')
     line = strrep(line,'control/V/mA','control{V_or_mA}');
     line = strrep(line,'control/V','control{V}');%v10.40
     line = strrep(line,'control/mA','control{mA}');%v10.40
-    line = strrep(line,'dq/mA.h','dq{mAh}');
-    line = strrep(line,'Analog IN ','Analog_IN_');%%%%%%%%%%%%%%%%%%%%%%%%%
-    line = strrep(line,'Analog_IN_1/V','Analog_IN_1{V}');%%%%%%%%%%%%%%%%%%%%%%%%%
-    line = strrep(line,'Analog_IN_1/C','Analog_IN_1{C}');%%%%%%%%%%%%%%%%%%%%%%%%%
-    line = strrep(line,'Analog_IN_2/V','Analog_IN_2{V}');%%%%%%%%%%%%%%%%%%%%%%%%%
-    line = strrep(line,'Analog_IN_2/C','Analog_IN_2{C}');%%%%%%%%%%%%%%%%%%%%%%%%%
-    line = strrep(line,'Analog OUT','Analog_OUT');%%%%%%%%%%%%%%%%%%%%%%%%%
-    line = strrep(line,'Analog_OUT/V','Analog_OUT{V}');
-    line = strrep(line,'(Q-Qo)/mA.h','Qc{mAh}');
-    line = strrep(line,'Q charge/discharge/mA.h','Qp{mAh}');%10.40 bis
-    line = strrep(line,'Q discharge/mA.h','Qdischarge{mAh}');%10.40 bis
-    line = strrep(line,'Q charge/mA.h','Qcharge{mAh}');%10.40 bis
     line = strrep(line,'Energy discharge/W.h','Edischarge{Wh}');%10.40 bis
     line = strrep(line,'Energy charge/W.h','Echarge{Wh}');%10.40 bis
     line = strrep(line,'half cycle','half_cycle');%10.40 bis
     line = strrep(line,'<I>/mA','I{mA}');
     line = strrep(line,'P/W','Pp{W}');%v10.23
-    line = strrep(line,'Capacity/mA.h','Capacity{mAh}');%v10.23
     line = strrep(line,'Efficiency/%','Efficiency{pc}');%10.40 bis
     line = strrep(line,'Capacitance ','Capacitance_');%v10.40 (Capacitance_charge o Capacitance_discharge)
     line = strrep(line,'/uF','{uF}');%v10.40 (microFarads)
@@ -106,7 +109,6 @@ elseif strcmp(type_test,'GPI')%v10.23
     line = strrep(line,'Analog OUT','Analog_OUT');%%%%%%%%%%%%%%%%%%%%%%%%%
     line = strrep(line,'Analog_OUT/V','Analog_OUT{V}');
     line = strrep(line,'(Q-Qo)/mA.h','Qp{mAh}');
-    line = strrep(line,'Energy/W.h','Ep{Wh}');
     line = strrep(line,'P/W','Pp{W}');
     line = strrep(line,'<I>/mA','I{mA}');
 elseif strcmp(type_test,'GEIS') || strcmp(type_test,'PEIS')

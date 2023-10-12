@@ -318,6 +318,8 @@ ImZ = cellfun(@(x) x.ImZ.vector,xml.table(Is),'uniformoutput',false);
 f = cellfun(@(x) x.freq.vector,xml.table(Is),'uniformoutput',false);
 Iavg = cellfun(@(x) x.Iavg.vector,xml.table(Is),'uniformoutput',false);
 Iamp = cellfun(@(x) x.Iamp.vector,xml.table(Is),'uniformoutput',false);
+Uavg = cellfun(@(x) x.Uavg.vector,xml.table(Is),'uniformoutput',false);
+Uamp = cellfun(@(x) x.Uamp.vector,xml.table(Is),'uniformoutput',false);
 %decapsuler les cellules
 t = vertcat(t{:});
 U = vertcat(U{:});
@@ -328,6 +330,8 @@ ImZ = vertcat(ImZ{:});
 f = vertcat(f{:});
 Iavg = vertcat(Iavg{:});
 Iamp = vertcat(Iamp{:});
+Uavg = vertcat(Uavg{:});
+Uamp = vertcat(Uamp{:});
 % non eis (f==0)
 Is = f~=0;
 t = t(Is);
@@ -339,6 +343,8 @@ ImZ = ImZ(Is);
 f = f(Is);
 Iavg = Iavg(Is);
 Iamp = Iamp(Is);
+Uavg = Uavg(Is);
+Uamp = Uamp(Is);
 
 %sort by time
 [t, Is] = sort(t);
@@ -350,6 +356,8 @@ ImZ = ImZ(Is);
 f = f(Is);
 Iavg = Iavg(Is);
 Iamp = Iamp(Is);
+Uavg = Uavg(Is);
+Uamp = Uamp(Is);
 
 if ~isempty(t)
     if isnan(max(t+I+U+m))%gestion d'erreurs
@@ -389,6 +397,8 @@ if ~isempty(t)
     fc = cell(size(Istart));
     Iavgc = cell(size(Istart));
     Iampc = cell(size(Istart));
+    Uavgc = cell(size(Istart));
+    Uampc = cell(size(Istart));
 
     for ind = 1:length(Istart)
         tc{ind} = t(Istart(ind):Iend(ind));
@@ -400,6 +410,8 @@ if ~isempty(t)
         fc{ind} = f(Istart(ind):Iend(ind));
         Iavgc{ind} = Iavg(Istart(ind):Iend(ind));
         Iampc{ind} = Iamp(Istart(ind):Iend(ind));
+        Uavgc{ind} = Uavg(Istart(ind):Iend(ind));
+        Uampc{ind} = Uamp(Istart(ind):Iend(ind));
 
     end
     
@@ -414,6 +426,8 @@ if ~isempty(t)
     eis.f = fc;
     eis.Iavg = Iavgc;
     eis.Iamp = Iampc;
+    eis.Uavg = Uavgc;
+    eis.Uamp = Uampc;
     if ismember('v',options)
         fprintf('OK (EIS file)\n');
     end
