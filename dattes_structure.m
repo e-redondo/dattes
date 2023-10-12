@@ -260,6 +260,10 @@ result.test.file_in = file_in;
 result.test.file_out = file_out;
 result.test.datetime_ini = result.profiles.datetime(1);
 result.test.datetime_fin = result.profiles.datetime(end);
+result.test.duration = result.test.datetime_fin-result.test.datetime_ini;
+result.test.datetime_ini_str = datestr(e2mdate(result.test.datetime_ini),'yyyy/mm/dd HH:MM:SS');
+result.test.datetime_fin_str = datestr(e2mdate(result.test.datetime_fin),'yyyy/mm/dd HH:MM:SS');
+
 % update test soc_ini and soc_fin:
 if isempty(result.profiles.dod_ah)
     result.test.dod_ah_ini = [];

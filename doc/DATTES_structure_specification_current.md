@@ -96,6 +96,9 @@ This document describe data structure for current version of DATTES:
     - file_out [1xf char]: pathname of output file (MAT file)
     - datetime_ini [1x1 double]: test start time in seconds from 1/1/2000 00:00
     - datetime_fin [1x1 double]: test end time in seconds from 1/1/2000 00:00
+    - duration [1x1 double]: test duration in seconds
+    - datetime_ini_str [1xf char]: test start time string in format 'yyyy/mm/dd HH:MM:SS'
+    - datetime_fin_str [1xf char]: test end time string in format 'yyyy/mm/dd HH:MM:SS'
     - dod_ah_ini [1x1 double]: initial DoD in Ah
     - soc_ini [1x1 double]: initial SoC in %
     - dod_ah_fin [1x1 double]: final DoD in Ah
