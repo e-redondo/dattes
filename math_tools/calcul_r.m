@@ -1,4 +1,4 @@
-function [Rp, R_I,Rt,RDoD,Rdt,err] = calcul_r(t,U,I,DoDAh,instant_end_rest,duration_pulse,duration_rest,t_calcul_R,graph)
+function [Rp, R_I,Rt,RDoD,Rdt,U_sim,err_U,err] = calcul_r(t,U,I,DoDAh,instant_end_rest,duration_pulse,duration_rest,t_calcul_R,graph)
 %calcul_r Calculate resistance thanks to profiles t,U and I
 %
 % Usage
@@ -92,7 +92,8 @@ end
         Rt = [];
         RDoD = [];
         Rdt = [];  
-        
+        U_sim = [];
+        err_U = [];
         
     for ind = 1:length(t_calcul_R)
         if max(tpulse)-min(tpulse)<t_calcul_R(ind)
@@ -109,9 +110,11 @@ end
             
             R_I(end+1) = mean(Ipulse);                                 %le courant d'estimation de la resistance est la moyenne du courant (filtrer le bruit)
             Rp(end+1) = (Ural_pul-Ural_rep)/R_I(end);                       %la resistance est la difference de potentiel entre le rest et le pulse divise par le courant
-            Rt(end+1) = t(1) + duration_rest;
+            Rt(end+1) = t(1) + duration_rest;%intant of measurement
             RDoD(end+1) = DoDAh(1);
-            Rdt(end+1) = t_calcul_R(ind);
+            Rdt(end+1) = t_calcul_R(ind);%delta t
+            U_sim(end+1) = Ural_rep+R_I(end)*Rp(end);
+            err_U(end+1) = U_sim(end)-U(find(t>=Rt(end) & t<=Rt(end)+1,1));
         end
     end
     
