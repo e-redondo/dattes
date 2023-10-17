@@ -39,12 +39,16 @@ line = strrep(line,'.','');%replace every dot in varname by nothing
 line = strrep(line,'time/s','tc{s}');
 line = strrep(line,'Ewe/V','U{V}');%OVC SCGPL
 line = strrep(line,'I/mA','I{mA}');%MB et autres?
-line = strrep(line,'Energy/W.h','Energy{Wh}');%MB et autres?
-line = strrep(line,'|Energy|/W.h','Energy{Wh}');%MB et autres?
+line = strrep(line,'Energy/Wh','Energy{Wh}');%MB et autres?
+line = strrep(line,'|Energy|/Wh','Energy{Wh}');%MB et autres?
 line = strrep(line,'<Ewe>/V','U{V}');%GEIS
 line = regexprep(line,'Ewe-Ece/V','EweEceDiff{V}');%IFPen dans SIMCAL
 line = regexprep(line,'Ece/V','Ece{V}');%IFPen dans SIMCAL
 line = regexprep(line,'<Ece>/V','Ece{V}');%MB GEIS, 2022-07
+
+line = strrep(line,'U/V','U{V}');%COMUTES2 EIGSI files
+line = regexprep(line,'Tamb/.C','Tamb{degC}');%COMUTES2 EIGSI files
+line = regexprep(line,'Tcell/.C','Temperature{degC}');%COMUTES2 EIGSI files
 
 line = regexprep(line,'z cycle','z_cycle');%202101 v1.31 MB et autres?
 line(line==65533)='u';%v10.40 'micro' par 'u'
@@ -67,11 +71,16 @@ line = strrep(line,'Analog_OUT/V','Analog_OUT{V}');
 line = strrep(line,'dq/mAh','dq{mAh}');
 line = strrep(line,'(Q-Qo)/mAh','Qc{mAh}');
 line = strrep(line,'Energy/Wh','Ep{Wh}');
-line = strrep(line,'|Energy|/Wh','Ep{Wh}');
+line = strrep(line,'Energy_charge/Wh','Energy_charge{Wh}');
+line = strrep(line,'Energy_discharge/Wh','Energy_discharge{Wh}');
 line = strrep(line,'Q_charge/discharge/mAh','Qp{mAh}');%10.40 bis
 line = strrep(line,'Q_discharge/mAh','Qdischarge{mAh}');%10.40 bis
 line = strrep(line,'Q_charge/mAh','Qcharge{mAh}');%10.40 bis
 line = strrep(line,'Capacity/mAh','Capacity{mAh}');%v10.23
+% line = strrep(line,'Capacitance ','Capacitance_');%v10.40 (Capacitance_charge o Capacitance_discharge)
+line = strrep(line,'/uF','{uF}');%v10.40 (microFarads)
+line = regexprep(line,'/.F','{uF}');%v10.40bis (microFarads avec letrte grecque)
+    
 if strcmp(type_test,'SGCPL') || strcmp(type_test,'GCPL')
     %variables du SGCPL: 'mode','ox_red','error','control_changes','Ns_changes','counter','time','control','Ewe','dq','Analog_IN_1','I','Qp','x'
     %version: 10.23
@@ -89,9 +98,6 @@ if strcmp(type_test,'SGCPL') || strcmp(type_test,'GCPL')
     line = strrep(line,'<I>/mA','I{mA}');
     line = strrep(line,'P/W','Pp{W}');%v10.23
     line = strrep(line,'Efficiency/%','Efficiency{pc}');%10.40 bis
-    line = strrep(line,'Capacitance ','Capacitance_');%v10.40 (Capacitance_charge o Capacitance_discharge)
-    line = strrep(line,'/uF','{uF}');%v10.40 (microFarads)
-    line = regexprep(line,'/.F','{uF}');%v10.40bis (microFarads avec letrte grecque)
     line = strrep(line,'cycle number','cycle_number');%v10.40bis
 elseif strcmp(type_test,'GPI')%v10.23
     %variables du GPI: 'mode','ox/red','error','control changes','Ns changes','counter inc.','Ns','time/s','control/mA','Ewe/V','<I>/mA','(Q-Qo)/mA.h','Energy/W.h','Analog IN 1/V','P/W'
