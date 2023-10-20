@@ -55,11 +55,11 @@ if length(line2)<2 && length(header_lines)>2
     line2 = header_lines{3};
 end
 
-if strcmp(line1,'EC-Lab ASCII FILE')
+if ~isempty(regexp(line1,'EC-Lab ASCII FILE','match'))
     cycler = 'bio';%Biologic File
     return
 end
-if strcmp(line1,'BT-Lab ASCII FILE')
+if ~isempty(regexp(line1,'BT-Lab ASCII FILE','match'))
     cycler = 'bio';%Biologic File
     return
 end
