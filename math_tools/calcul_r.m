@@ -40,6 +40,8 @@ R_I = 0;%(crate)
 Rt = 0;%(datetime)
 RDoD = 0;%(dod)
 Rdt = 0;%(delta_time)
+U_sim = 0;
+err_U = 0;
 err = 0;
 
 if (isempty(t) || isempty(U) || isempty(I))
@@ -65,6 +67,8 @@ end
         Rt = nan;
         RDoD = nan;
         Rdt = nan;
+        U_sim = nan;
+        err_U = nan;
         return;
     end
     
@@ -79,6 +83,8 @@ end
         Rt = nan;
         RDoD = nan;
         Rdt = nan;
+        U_sim = nan;
+        err_U = nan;
         return;
         
     end
@@ -90,6 +96,8 @@ end
         Rt = nan;
         RDoD = nan;
         Rdt = nan;
+        U_sim = nan;
+        err_U = nan;
         return;
     end
     
