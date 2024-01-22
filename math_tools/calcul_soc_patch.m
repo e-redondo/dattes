@@ -121,7 +121,7 @@ else
     if verbose
         fprintf('calcul_soc_patch: based on cell ids\n');
     end
-    if isempty(cellnames)
+    if isempty(cellnames) || isequal(cellnames,{'.'})
         cellnames = unique(cellids);
     end
 end
