@@ -1,6 +1,6 @@
-# DATTES structure specification (current version)
+# DATTES structure specification (release 23.05)
 
-This document describe data structure for current version of DATTES:
+This document describe data structure for DATTES 23.05:
 - **result structure**: data structuration of DATTES output
 - **XML structure**: data structuration for XML files
 
@@ -264,7 +264,7 @@ This document describe data structure for current version of DATTES:
 XML files must be VEHLIB compatible (pass verifFomatXML4Vehlib function).
 
 Additionnaly, tables in this xml must contain the following variables:
-- tabs: time in seconds from 1/1/200 00:00 or test time in seconds starting at 0.
+- tabs: time in seconds from 1/1/2000 00:00 or test time in seconds starting at 0.
 - 'Uname' given in configuration: cell voltage measurement (V)
 - I: current measurement (A)
 - mode: cycler working mode (1=CC, 2=CV, 3=rest, 4=EIS, 5=profile)

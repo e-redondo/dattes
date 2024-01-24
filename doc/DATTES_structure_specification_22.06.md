@@ -212,7 +212,7 @@ This document describe data structure for DATTES 22.06:
 XML files must be VEHLIB compatible (pass verifFomatXML4Vehlib function).
 
 Additionnaly, tables in this xml must contain the following variables:
-- tabs: time in seconds from 1/1/200 00:00 or test time in seconds starting at 0.
+- tabs: time in seconds from 1/1/2000 00:00 or test time in seconds starting at 0.
 - 'Uname' given in configuration: cell voltage measurement (V)
 - I: current measurement (A)
 - mode: cycler working mode (1=CC, 2=CV, 3=rest, 4=EIS, 5=profile)
