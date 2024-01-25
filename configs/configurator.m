@@ -148,12 +148,12 @@ pRepos0 = ismember(tInis,datetime(I0r | I0ccr));
 %1.1. Iavg<0
 %1.2.- finissent a SoC0 (I0cc)
 %1.3.- sont precedes par une phase de repos a SoC100 (I100r ou I100ccr)
-pCapaD = [phases.Iavg]<0 & ismember(tFins,datetime(I0cc)) & [0 pRepos100(1:end-1)];
+pCapaD = [phases.Iavg]<0 & ismember(tFins,datetime(I0cc));% & [0 pRepos100(1:end-1)];
 %2) phases capa charge (CC):
 %2.1.- Iavg>0
 %2.2.- finissent a SoC100 (I100cc)
 %2.3.- sont precedes par une phase de repos a SoC0 (I0r ou I0ccr)
-pCapaC = [phases.Iavg]>0 & ismember(tFins,datetime(I100cc)) & [0 pRepos0(1:end-1)];
+pCapaC = [phases.Iavg]>0 & ismember(tFins,datetime(I100cc));% & [0 pRepos0(1:end-1)];
 % pCapaC = [phases.Iavg]>0 & [0 pRepos0(1:end-1)];%LYP, BRICOLE
 %3) phases de decharge residuelle
 %1.1.- Iavg<0
@@ -207,6 +207,7 @@ if isfield(config.resistance, 'filter_phase_nr')
     if ~isempty(config.resistance.filter_phase_nr)
         ind_filter_phase_nr = ismember(1:length(phases),config.resistance.filter_phase_nr);
         pR = pR & ind_filter_phase_nr;
+        pRr = [pR(2:end) false];
     end
 end
 %TODO: filter by time
