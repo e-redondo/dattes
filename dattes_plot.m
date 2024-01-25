@@ -174,7 +174,7 @@ if isfield(result,'analyse')
     if ismember('R',options)
         %show result of 'R', i.e. Resistance
         if isfield(result.analyse,'resistance')
-            plot_r(result.analyse.resistance,title_str,InherOptions);
+            plot_r(result.profiles,result.analyse.resistance,title_str,InherOptions);
         else
             fprintf('dattes_plot: no resistance result found in %s\n',result.test.file_in);
         end
@@ -186,6 +186,12 @@ if isfield(result,'analyse')
             plot_impedance(result.analyse.impedance,title_str);
         else
             fprintf('dattes_plot: no impedance result found in %s\n',result.test.file_in);
+        end
+    end
+    if ismember('z',options)%EIS
+        %show result of 'z', i.e. impedance frmo EIS
+        if isfield(result,'eis')
+            plot_impedance_eis(result.analyse.eis,title_str);
         end
     end
     if ismember('I',options)

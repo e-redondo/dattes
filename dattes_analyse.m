@@ -22,6 +22,7 @@ function result = dattes_analyse(result,options)
 %   -'P': pseudoOCV (low current charge/discharge cycles)
 %   -'O': OCV by points (partial charge/discharges followed by rests)
 %   -'I': ICA/DVA
+%   -'e': EIS impedance identification
 %   -'A': synonym for 'CRWPOI' (do all)
 %
 %
@@ -164,7 +165,11 @@ if any(ismember('PORZI',options))
         end
     end
 end
-
+%EIS analysis, SoC not mandatory but recommended
+if ismember('e',options)
+    [eis] = ident_eis(result.eis,inher_options);
+    result.analyse.eis = eis;
+end
 %% 3. Save results
 if ismember('s',options)
     if ismember('v',options)
