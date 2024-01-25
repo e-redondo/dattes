@@ -39,6 +39,8 @@ if ismember('e',options)%enable = addpath
     addpath(fullfile(srcdir,'external_tools'));
     addpath(fullfile(srcdir,'ident'));
     addpath(fullfile(srcdir,'math_tools'));
+    addpath(fullfile(srcdir,'models/ecm_freq'));
+    addpath(fullfile(srcdir,'models/ecm_time'));
     if isempty(which('butter'))
         fprintf('DATTES (initpath_dattes): Adding butter function from Octave signal package.\n')
         addpath(fullfile(srcdir,'external_tools','octave','signal'));
@@ -77,6 +79,8 @@ if ismember('d',options)%disable = rmpath
     rmpath(fullfile(srcdir,'ident'));
     rmpath(fullfile(srcdir,'math_tools'));
     rmpath(fullfile(srcdir,'plots'));
+    rmpath(fullfile(srcdir,'models/ecm_freq'));
+    rmpath(fullfile(srcdir,'models/ecm_time'));
     
     %remove octave only if it was added before:
     P = path;
