@@ -1,4 +1,4 @@
-function hf = plot_r(resistance,title_str,options)
+function hf = plot_r(profiles,resistance,title_str,options)
 % plot_r plot resistance graphs
 %
 % Use resistance structure to plot resistance graphs
@@ -69,7 +69,7 @@ xlabel('DoD [Ah]'),ylabel('R [Ohm]','interpreter','tex')
 subplot(222),hold on,title('Resistance vs. C-rate')
 xlabel('C-rate [C]'),ylabel('R [Ohm]','interpreter','tex')
 
-subplot(2,2,[3 4]),hold on,title('Resistance vs. time')
+subplot(2,2,3),hold on,title('Resistance vs. time')
 xlabel(t_label),ylabel('R [Ohm]','interpreter','tex')
 
 for ind = 1:length(dt)
@@ -89,7 +89,7 @@ for ind = 1:length(dt)
     plot(resistance.crate(Icha & Is),resistance.R(Icha & Is),'^','color',c(ind,:),'DisplayName',tagC)
     
     
-    subplot(2,2,[3 4])
+    subplot(2,2,3)
     t_r = resistance.(t_name);
     t_r_d = t_r(Idis & Is);
     t_r_c = t_r(Icha & Is);
@@ -98,9 +98,12 @@ for ind = 1:length(dt)
     plot(t_r_c*t_factor,resistance.R(Icha & Is),'^','color',c(ind,:),'DisplayName',tagC)
 
     
+    subplot(2,2,4)
+    plot(profiles.t,profiles.U,'k'),hold on
+    plot(resistance.t+resistance.delta_time,resistance.U_sim,'ro')
     
 end
-subplot(2,2,[3 4]),legend('location','best')
+subplot(2,2,3),legend('location','best')
 %Look for all axis handles and ignore legends
 ha = findobj(hf,'type','axes','tag','');
 prettyAxes(ha);
