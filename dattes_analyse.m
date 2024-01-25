@@ -23,7 +23,7 @@ function result = dattes_analyse(result,options)
 %   -'O': OCV by points (partial charge/discharges followed by rests)
 %   -'I': ICA/DVA
 %   -'e': EIS impedance identification
-%   -'A': synonym for 'CRWPOI' (do all)
+%   -'A': synonym for 'CRZPOIe' (do all)
 %
 %
 % See also dattes_configure, dattes_export
@@ -50,7 +50,7 @@ elseif ~ischar(options)
 end
 
 %abbreviation options ('All')
-options = strrep(options,'A','CSRWPOI');
+options = strrep(options,'A','CRZPOIe');
 %remove duplicate:
 options = unique(options);
 %Options that will be given as inputs (inherit) to sub-fonctions:

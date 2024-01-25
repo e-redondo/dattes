@@ -10,9 +10,9 @@ This document describe data structure for current version of DATTES:
         - created by extract_profiles
         - modified by calcul_soc and calcul_soc_patch
         - contains (mx1) vectors with main cell variables (datetime,t,U,I,mode,soc,dod_ah)
-    - eis [1x1 struct]:
+    - eis [1xp struct]:
         - created by extract_profiles
-        - contains (px1) cells with EIS measurements, each 'p' contains (nx1) vectors (datetime,U,I,mode,ReZ,ImZ,f)
+        - contains (1xp) EIS measurements, each 'p' contains (nx1) vectors (datetime,U,I,mode,ReZ,ImZ,f)
     - metadata: [1×1 struct]:
         - created by metadata_collector (extract_profiles) if any '.meta' file found
     - test [1x1 struct]:
@@ -28,6 +28,7 @@ This document describe data structure for current version of DATTES:
         - modified by cfg_default, configurator
     - analyse [1x1 struct]:
         - created/modified by dattes_analyse
+
 ### profiles substructure
 - profiles [1x1 struct] with fields:
     - datetime [mx1 double]: absolute time in seconds (seconds from 1/1/2000 00:00)
@@ -38,6 +39,7 @@ This document describe data structure for current version of DATTES:
     - T [mx1 double]: cell temperature (empty if no probe found)
     - dod_ah [mx1 double]:  Depth of Discharge in Ah (empty if no SoC calculation)
     - soc [mx1 double]:  State of Charge in % (empty if no SoC calculation)
+
 ### eis substructure
 - eis [1xp struct] with fields:
     - datetime [nx1 double]: absolute time in seconds (seconds from 1/1/2000 00:00)
@@ -93,6 +95,7 @@ This document describe data structure for current version of DATTES:
     - regional: [1×1 struct] with fields:
         - date_format [string]: e.g 'yyyy/mm/dd'
         - time_format [string]: e.g 'HH:MM:SS.SSS'
+
 ### test substructure
 - test [1x1 struct] with fields:
     - file_in [1xf char]: pathname of XML/CSV/JSON input file
@@ -106,6 +109,7 @@ This document describe data structure for current version of DATTES:
     - soc_ini [1x1 double]: initial SoC in %
     - dod_ah_fin [1x1 double]: final DoD in Ah
     - soc_fin [1x1 double]: final SoC in %
+
 ### phases substructure
 - phases [1xq struct] with fields:
     - datetime_ini [1x1 double]:phase start time in seconds from 1/1/2000 00:00
@@ -119,6 +123,7 @@ This document describe data structure for current version of DATTES:
     - Iavg [1x1 double]: average current
     - capacity [1x1 double]: phase capacity (Ah)
     - mode [1x1 double]: cycler mode
+
 ### configuration substructure
 - configuration [1x1 struct] with fields:
     - test [1×1 struct]: general configuration
@@ -178,20 +183,30 @@ This document describe data structure for current version of DATTES:
         - capacity_resolution (1x1 double): delta dod in pseud_ocv calculation (Ah) (default = capacity/100)
         - pOCVpC (1xq logical): true for pseudo_ocv charging half cycles
         - pOCVpD (1xq logical): true for pseudo_ocv discharging half cycles
+
 ### analyse substructure
 - analyse [1x1 struct] with fields:
     - capacity [1x1 struct]:
         - created by ident_capacity
+        - capacity measurement results
     - pseudo_ocv [1xr struct]:
         - created by ident_pseudo_ocv (empty struct if error)
+        - OCV measurement by pseudoOCV method
     - ocv_by_points [1x1 struct]:
         - created by ident_ocv_by_points (empty struct if error)
+        - OCV measurement by partial charges/discharges
     - resistance [1x1 struct]:
         - created by ident_r (empty struct if error)
+        - resistance measurement (delta V / delta I)
     - impedance [1x1 struct]:
         - created by ident_cpe, ident_rrc (empty struct if error)
+        - impedance identification under current pulses (ECM time model)
     - ica [1xy struct]:
         - created by ident_ica (empty struct if error)
+        - ICA/DVA curves
+    - eis [1xp struct]:
+        - created by ident_eis (empty struct if error)
+        - impedance identification under EIS (ECM frequency model)
 
 #### analyse.capacity substructure
 - capacity [1x1 struct] with fields:
@@ -220,6 +235,7 @@ This document describe data structure for current version of DATTES:
     - u_discharge [sx1 double]: voltage during discharging half cycle
     - crate [1x1 double]: cycle C-rate
     - datetime [1x1 double]: instant of measurement (cycle final time in seconds from 1/1/2000 00:00)
+
 #### analyse.ocv_by_points substructure
 - ocv_by_points [1x1 struct]:
     - ocv [tx1 double]: OCV vector
@@ -227,6 +243,7 @@ This document describe data structure for current version of DATTES:
     - sign [tx1 double]: +1 if rest after partial charge, -1 if rest after partial discharge
     - datetime [tx1 double]: datetime of measurement (rest final time in seconds from 1/1/2000 00:00)
     - t [tx1 double]: time of measurement (rest final time in seconds from test start)
+
 #### analyse.resistance substructure
 - resistance [1x1 struct]:
     - R [1xv double]: resistance (Ohm)
@@ -235,6 +252,7 @@ This document describe data structure for current version of DATTES:
     - datetime [1xv double]: datetime of measurement (pulse initial time in seconds from 1/1/2000 00:00)
     - t [1xv double]: time of measurement (pulse initial time in seconds from test start)
     - delta_time [1xv double]: delta time from initial pulse to calculate resistance
+
 #### analyse.impedance substructure
 ##### ident_cpe/ident_rcpe (R+CPE)
 - impedance [1x1 struct]:
@@ -256,6 +274,7 @@ This document describe data structure for current version of DATTES:
     - dod [1xw double]: DoD (Ah)
     - crate [1xw double]: pulse C-Rate (p.u.)
     - datetime [1xw double]: datetime of measuremament (pulse initial time in seconds from 1/1/2000 00:00)
+
 #### analyse.ica substructure
 - ica [1xy struct]:
     - dqdu [zx1 double]: derivative of capacity over voltage (Ah/V)
@@ -264,6 +283,7 @@ This document describe data structure for current version of DATTES:
     - u [zx1 double]: filtered cell voltage (V), abscise for dqdu
     - crate [1x1 double]: half cycle C-Rate (p.u.)
     - datetime [1x1 double]: datetime of measurement (final half cycle time in seconds from 1/1/2000 00:00)
+
 #### analyse.eis substructure
 - eis [1xp struct] with fields:
     - Zparams [1x1 struct]: circuit parameter values
@@ -275,7 +295,6 @@ This document describe data structure for current version of DATTES:
     - soc [nx1 double]: soc (%) of each impedance value
     - dod_ah [nx1 double]: dod (Ah) of each impedance value
    
-
 ## XML structure specification for DATTES
 XML files must be VEHLIB compatible (pass verifFomatXML4Vehlib function).
 
