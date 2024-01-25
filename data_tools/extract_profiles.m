@@ -428,6 +428,18 @@ if ~isempty(t)
     eis.Iamp = Iampc;
     eis.Uavg = Uavgc;
     eis.Uamp = Uampc;
+
+    %convert [1x1 struct] containing [mx1 cells] containing [nx1 cells] to
+    %  [mx1 struct] containing [nx1 cells]
+    fieldlist = fieldnames(eis);
+    for ind = 1:length(eis.datetime)
+        for ind2 = 1:length(fieldlist)
+            eis2(ind).(fieldlist{ind2}) = eis.(fieldlist{ind2}){ind};
+        end
+    end
+
+    eis = eis2;
+
     if ismember('v',options)
         fprintf('OK (EIS file)\n');
     end

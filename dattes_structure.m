@@ -255,17 +255,17 @@ if isempty(result.profiles.soc) || ismember('S',options)
     
     if isfield(result,'eis')
         if isempty(dod_ah)
-            %cells of same size with empty arrays
-            result.eis.dod_ah = cellfun(@(x) [],result.eis.datetime,'UniformOutput',false);
-            result.eis.soc = cellfun(@(x) [],result.eis.datetime,'UniformOutput',false);
+            %empty arrays
+            for ind = 1:length(result.eis)
+                result.eis(ind).dod_ah = [];
+                result.eis(ind).soc = [];
+            end
         else
             %update soc and dod_ah in eis
-            result.eis.dod_ah =...
-                cellfun(@(x) interp1(result.profiles.datetime,result.profiles.dod_ah,x),...
-                result.eis.datetime,'UniformOutput',false);
-            result.eis.soc =...
-                cellfun(@(x) interp1(result.profiles.datetime,result.profiles.soc,x),...
-                result.eis.datetime,'UniformOutput',false);
+            for ind = 1:length(result.eis)
+                result.eis(ind).dod_ah = interp1(result.profiles.datetime,result.profiles.dod_ah,result.eis(ind).datetime);
+                result.eis(ind).soc = interp1(result.profiles.datetime,result.profiles.soc,result.eis(ind).datetime);
+            end
         end
     end
 end
