@@ -252,7 +252,22 @@ if isempty(result.profiles.soc) || ismember('S',options)
         result.configuration,inher_options);
     result.profiles.dod_ah = dod_ah;
     result.profiles.soc = soc;
-
+    
+    if isfield(result,'eis')
+        if isempty(dod_ah)
+            %cells of same size with empty arrays
+            result.eis.dod_ah = cellfun(@(x) [],result.eis.datetime,'UniformOutput',false);
+            result.eis.soc = cellfun(@(x) [],result.eis.datetime,'UniformOutput',false);
+        else
+            %update soc and dod_ah in eis
+            result.eis.dod_ah =...
+                cellfun(@(x) interp1(result.profiles.datetime,result.profiles.dod_ah,x),...
+                result.eis.datetime,'UniformOutput',false);
+            result.eis.soc =...
+                cellfun(@(x) interp1(result.profiles.datetime,result.profiles.soc,x),...
+                result.eis.datetime,'UniformOutput',false);
+        end
+    end
 end
 
 %6.- result.test

@@ -49,6 +49,9 @@ This document describe data structure for current version of DATTES:
     - f [px1 cell of [nx1 double]]: frecuency (Hz)
     - Iavg [px1 cell of [nx1 double]]: average curent (current offset) of GEIS
     - Iamp [px1 cell of [nx1 double]]: current amplitude of GEIS
+    - soc [px1 cell of [nx1 double]]: State of Charge in % of each EIS point (empty if no SoC calculation)
+    - dod_ah [px1 cell of [nx1 double]]: Depth of Discharge in Ah of each EIS point (empty if no SoC calculation)
+
 ### metadata substructure
 - metadata [1x1 struct] with fields:
     - test: [1×1 struct] with fields:
