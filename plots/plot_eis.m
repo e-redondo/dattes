@@ -28,8 +28,35 @@ end
 
 hf = figure;
 for ind = 1:length(eis.ReZ)
-    plot(eis.ReZ{ind},eis.ImZ{ind},'.-'),hold on
+    tag = sprintf('EIS nr:%d',ind);
+    if isfield(eis,'soc')
+        soc = mean(eis.soc{ind});
+        if ~isnan(soc)
+            tag = sprintf('%s,SoC = %.1f%%',tag,soc);
+        end
+    end
+    if isfield(eis,'Iavg')
+        Iavg = mean(eis.Iavg{ind});
+        if ~isnan(Iavg)
+            tag = sprintf('%s, avg I = %.3gA',tag,Iavg);
+        end
+    end
+    if isfield(eis,'Iamp')
+        Iamp = mean(eis.Iamp{ind});
+        if ~isnan(Iamp)
+            tag = sprintf('%s, I amplitude = %.3gA',tag,mean(eis.Iamp{ind}));
+        end
+    end
+    if isfield(eis,'Uamp')
+        Uamp = mean(eis.Uamp{ind});
+        if ~isnan(Uamp)
+            tag = sprintf('%s, U amplitude = %.3gV',tag,mean(eis.Uamp{ind}));
+        end
+    end
+    
+    plot(eis.ReZ{ind},eis.ImZ{ind},'.-','displayname',tag),hold on
 end
+set(gca,'DataAspectRatio',[1 1 1],'PlotBoxAspectRatio',[1 1 1])
 title(title_str,'interpreter','none')
 
 end
