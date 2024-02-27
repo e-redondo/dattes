@@ -74,8 +74,11 @@ time_before_after_phase = [rest_min_duration 0];
 R = [];
 crate = [];
 datetime_r = [];
+t_r = [];
 dod = [];
 delta_time = [];
+U_sim = [];
+err_U = [];
 
 
 
@@ -88,16 +91,21 @@ for ind = 1:length(indices_phases_r)
     tp = tp(Is);
     Up = Up(Is);
     Ip = Ip(Is);
-
-    [thisR, this_crate, this_time, this_dod,this_delta_time, err] = calcul_r(tp,Up,Ip,DoDp,config.resistance.instant_end_rest(ind),pulse_min_duration,rest_min_duration ,delta_time_cfg);
-   
+    DoDp = DoDp(Is);
+    % [Rp, R_I,Rt,RDoD,Rdt,U_sim,err_U,err] = calcul_r(t,U,I,DoDAh,instant_end_rest,duration_pulse,duration_rest,delta_time)
+    [thisR, this_crate, this_datetime, this_dod,this_delta_time,this_U_sim,this_err_U, err] = calcul_r(tp,Up,Ip,DoDp,config.resistance.instant_end_rest(ind),pulse_min_duration,rest_min_duration ,delta_time_cfg);
+    
+    ind_s = ismember(profiles.datetime,this_datetime);
+    this_time = profiles.t(ind_s);
     R = [R thisR];
     crate = [crate this_crate];
-    datetime_r = [datetime_r this_time];
+    datetime_r = [datetime_r this_datetime];
     dod = [dod this_dod];
     delta_time = [delta_time this_delta_time];
+    U_sim = [U_sim this_U_sim];
+    err_U = [err_U this_err_U];
     
-
+    t_r  = [t_r this_time*ones(size(this_delta_time))];
     
 end
 crate = crate/config.test.capacity;
@@ -107,8 +115,11 @@ resistance(1).R = R;
 resistance.dod = dod;
 resistance.crate = crate;
 resistance.datetime = datetime_r;
-resistance.t = datetime_r-profiles.datetime(1);
+
+resistance.t = t_r;
 resistance.delta_time = delta_time;
+resistance.U_sim = U_sim;
+resistance.err_U = err_U;
 
 if ismember('v',options)
     fprintf('OK\n');

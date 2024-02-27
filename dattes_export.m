@@ -156,6 +156,10 @@ end
 
 function [export_mode, export_format, include_metadata] = check_options_string(options)
 
+%special case: just one letter == 'M' > metadat to meta file
+if isequal(options,'M')
+    options = 'Mjm';
+end
 % 0.1 input format 
 if ~ischar(options) || length(options)<2 || length(options)>3
     export_mode = '';
@@ -245,8 +249,8 @@ if ismember(options(1),'MC') && strcmp(export_format,'csv')
     include_metadata = false;
     return
 end
-%4.3 include metadata in metadata or configuration not possible
-if ismember(options(1),'MC') && include_metadata
+%4.3 include metadata in configuration not possible
+if ismember(options(1),'C') && include_metadata
     export_mode = '';
     export_format = '';
     include_metadata = false;

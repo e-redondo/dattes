@@ -42,7 +42,10 @@ function [results] = calcul_soc_patch(results,options,cellnames)
 
 %0.1 check options
 if ~exist('cellnames','var')
-    cellnames = '';
+    cellnames = {'.'};
+end
+if ischar(cellnames)
+    cellnames = {cellnames};
 end
 if ~exist('options','var')
     options = 'b';
@@ -118,7 +121,7 @@ else
     if verbose
         fprintf('calcul_soc_patch: based on cell ids\n');
     end
-    if isempty(cellnames)
+    if isempty(cellnames) || isequal(cellnames,{'.'})
         cellnames = unique(cellids);
     end
 end

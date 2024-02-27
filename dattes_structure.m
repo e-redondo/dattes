@@ -30,12 +30,14 @@ function result = dattes_structure(file_in, options, destination_folder, read_mo
 %    - 's': save result(s) in mat file(s)
 %    - 'f': force, read file_in even if mat file exists, otherwise read mat file instead
 %    - 'u': update, read if mat file exists but is older than file_in
+%    - 'M': update metadata, search for updates in meta file
 % - destination_folder [1xp string]: folder to store mat files.
 %     If not given, mat files will be stored beside file_in
 % - read_mode [1x3 or 1x4 string]: needed if source_folder, optional if not
 %    - xml: read xml files
 %    - json: read json files
 %    - csv: read csv files
+%    - mat: read mat files
 % Output:
 % - result [1x1 struct] DATTES result structure
 % - result [mx1 cell struct] DATTES result cell structure if multiple files read
@@ -69,7 +71,7 @@ if ~exist('file_in','var')
     result = [];
     return
 end
-if ~ischar(file_in) && ~iscell(file_in)
+if ~ischar(file_in) && ~iscell(file_in) && ~isstruct(file_in)
     fprintf('ERROR dattes_structure: file_in must be string or cell string\n');
     result = [];
     return
@@ -128,45 +130,63 @@ if iscellstr(file_in)
     end
 end
 
-%0.3 read_mode:
-[file_in_folder, file_in_name, file_in_ext] = fileparts(file_in);
-switch read_mode
-    case 'mat'
-        file_ext = '.mat';
-    case 'json'
-        file_ext = '.json';
-    case 'csv'
-        file_ext = '.csv';
-    case 'xml'
-        file_ext = '.xml';
-    otherwise
-        if isfolder(file_in)
-            %no extension, must be a folder, default extension: '.xml'
+
+if ischar(file_in)% either is a file either is a folder
+    %read_mode:
+    [~, ~, file_in_ext] = fileparts(file_in);
+    switch read_mode
+        case 'mat'
+            file_ext = '.mat';
+        case 'json'
+            file_ext = '.json';
+        case 'csv'
+            file_ext = '.csv';
+        case 'xml'
             file_ext = '.xml';
-        else
-            %try to deduct from file_in_ext
-            file_ext = file_in_ext;
-        end
+        otherwise
+            if isfolder(file_in)
+                %no extension, must be a folder, default extension: '.xml'
+                file_ext = '.xml';
+            else
+                %try to deduct from file_in_ext
+                file_ext = file_in_ext;
+            end
+    end
+    if ~ismember(file_ext,{'.mat','.json','.csv','.xml'})
+        fprintf('ERROR dattes_structure: not valid file extension, found "%s"\n',file_ext);
+        result = [];
+        return;
+    end
+
+    %file_out
+    file_out = result_filename(file_in,destination_folder);
+    if isfolder(file_in)%(file_in is a folder) get file list
+        source_folder = file_in;
+        file_list = lsFiles(source_folder,file_ext);
+        result = dattes_structure(file_list, options, destination_folder, read_mode);
+        return;
+    end
 end
 
-if ~ismember(file_ext,{'.mat','.json','.csv','.xml'})
-    fprintf('ERROR dattes_structure: not valid file extension, found "%s"\n',file_ext);
-    result = [];
+% (file_in is cell of DATTES results): add iscell with no common ancestor here
+if iscell(file_in)
+    result = cellfun(@(x) dattes_structure(x, options, destination_folder, read_mode),file_in,'uniformoutput',false);
     return;
 end
 
-%0.4 get file list if file_in is source folder:
-if isfolder(file_in)
-    source_folder = file_in;
-    file_list = lsFiles(source_folder,file_ext);
-    result = dattes_structure(file_list, options, destination_folder, read_mode);
-    return;
+if isstruct(file_in)% (file_in is a DATTES result):
+    [info,err] = check_result_struct(file_in);
+    if err
+        fprintf('ERROR: wrong DATTES struct');
+        return
+    else
+        result = file_in;
+        file_in = result.test.file_in;
+        file_out = result.test.file_out;
+    end
 end
 
-%0.5 file_out
-file_out = result_filename(file_in,destination_folder);
-
-%0.6 update option
+%update option
 if isfile(file_out) && update
     %check dates, if file_in newer, set force to true
     dir_in = dir(file_in);
@@ -177,12 +197,117 @@ if isfile(file_out) && update
     end
 end
 
-%1. read file
-if isfile(file_out) && ~force
-    %1.0 read mat file if it exists and no force or update
-    fprintf('dattes_structure: File exists: %s, loading result from mat\n',file_out);
-    result = dattes_load(file_out);
+% read file only if input is not a DATTES result struct or if force option
+if ~exist('result','var')
+    %1.b read file
+    if isfile(file_out) && ~force
+        %1.0 read mat file if it exists and no force or update
+        fprintf('dattes_structure: File exists: %s, loading result from mat\n',file_out);
+        result = read_dattes_file(file_out,'.mat',inher_options);
+    else
+        result = read_dattes_file(file_in,file_ext,inher_options);
+    end
+end
+
+if ~isfield(result.profiles, 'mode')
+    %if there is no mode in profiles, mark 'm' option to run which_mode
+    options = [options, 'm'];
+end
+
+% 'M' option: update metadata
+% search for meta files in file_in tree:
+if ismember('M',options)
+    if verbose
+        fprintf('dattes_structure: Updating metadata from %s\n',file_in)
+    end
+    [metadata, meta_list,err_metadata] = metadata_collector(file_in);
+    result.metadata = merge_struct(result.metadata,metadata);
+    result.configuration = meta_to_config(result.metadata);
+end
+
+%3. which mode (if mode not in file_in or if 'm' in options)
+if ismember('m',options)
+    I_threshold = 5*min(diff(unique(result.profiles.I)));
+    U_threshold = 5*min(diff(unique(result.profiles.U)));
+    Step = result.profiles.mode;
+    m = which_mode(result.profiles.t,result.profiles.I,result.profiles.U,...
+                   Step,I_threshold,U_threshold,inher_options);
+    result.profiles.mode = m;
+end
+
+%4. split phases (if mode not in file_in or if 'm' in options)
+if ~isfield(result, 'phases') || ismember('m', options)
+    result.phases = split_phases(result.profiles.datetime,result.profiles.I,...
+                                 result.profiles.U,result.profiles.mode);
+end
+
+%5. calcul_soc (if soc not in file_in or if 'S' in options)
+if isempty(result.profiles.soc) || ismember('S',options)
+    %5.1 config_soc (detect soc100)
+    result.configuration = config_soc(result.profiles.datetime,result.profiles.I,...
+                                      result.profiles.U,result.profiles.mode,...
+                                      result.configuration,inher_options);
+    %5.2 calcul_soc
+    [dod_ah, soc] = calcul_soc(result.profiles.datetime,result.profiles.I,...
+        result.configuration,inher_options);
+    result.profiles.dod_ah = dod_ah;
+    result.profiles.soc = soc;
+    
+    if isfield(result,'eis')
+        if isempty(dod_ah)
+            %empty arrays
+            for ind = 1:length(result.eis)
+                result.eis(ind).dod_ah = [];
+                result.eis(ind).soc = [];
+            end
+        else
+            %update soc and dod_ah in eis
+            for ind = 1:length(result.eis)
+                result.eis(ind).dod_ah = interp1(result.profiles.datetime,result.profiles.dod_ah,result.eis(ind).datetime);
+                result.eis(ind).soc = interp1(result.profiles.datetime,result.profiles.soc,result.eis(ind).datetime);
+            end
+        end
+    end
+end
+
+%6.- result.test
+result.test.file_in = file_in;
+result.test.file_out = file_out;
+result.test.datetime_ini = result.profiles.datetime(1);
+result.test.datetime_fin = result.profiles.datetime(end);
+result.test.duration = result.test.datetime_fin-result.test.datetime_ini;
+result.test.datetime_ini_str = datestr(e2mdate(result.test.datetime_ini),'yyyy/mm/dd HH:MM:SS');
+result.test.datetime_fin_str = datestr(e2mdate(result.test.datetime_fin),'yyyy/mm/dd HH:MM:SS');
+
+% update test soc_ini and soc_fin:
+if isempty(result.profiles.dod_ah)
+    result.test.dod_ah_ini = [];
+    result.test.soc_ini = [];
+    result.test.dod_ah_fin = [];
+    result.test.soc_fin = [];
 else
+    result.test.dod_ah_ini = result.profiles.dod_ah(1);
+    result.test.soc_ini = result.profiles.soc(1);
+    result.test.dod_ah_fin = result.profiles.dod_ah(end);
+    result.test.soc_fin = result.profiles.soc(end);
+end
+
+%7. check result structure:
+[info, err] = check_result_struct(result);
+if err<0
+    fprintf('ERROR dattes_structure: not valid result structure error code: %d (see check_result_struct)\n',err);
+    return
+end
+
+%8. save mat file (if 's' in options)
+if ismember('s',options)
+    dattes_save(result);
+end
+end
+
+
+function result = read_dattes_file(file_in,file_ext,inher_options)
+
     %1.0 mat mode (incomplete structure)
     if strcmp(file_ext,'.mat')
         result = dattes_load(file_in);
@@ -229,70 +354,54 @@ else
             result.metadata = metadata;
         end
         result.configuration = configuration;
+    end
 
-        if ~isfield(result.profiles, 'mode')
-            options = [options, 'm'];
-        end
+end
+
+
+function config = meta_to_config(metadata)
+
+
+% Get values from metadata:
+if isfield(metadata,'cell')
+    % U_min, U_max, capacity for calcul_soc
+    if isfield(metadata.cell,'max_voltage')
+        max_voltage = metadata.cell.max_voltage;
+    end
+    if isfield(metadata.cell,'min_voltage')
+        min_voltage = metadata.cell.min_voltage;
+    end
+    if isfield(metadata.cell,'nom_capacity')
+        capacity = metadata.cell.nom_capacity;
     end
 end
-%3. which mode (if mode not in file_in or if 'm' in options)
-if ismember('m',options)
-    I_threshold = 5*min(diff(unique(result.profiles.I)));
-    U_threshold = 5*min(diff(unique(result.profiles.U)));
-    Step = result.profiles.mode;
-    m = which_mode(result.profiles.t,result.profiles.I,result.profiles.U,...
-                   Step,I_threshold,U_threshold,inher_options);
-    result.profiles.mode = m;
+if isfield(metadata,'cycler')
+    % names for columns contaning cell voltage and temperature
+    if isfield(metadata.cycler,'cell_voltage_name')
+        Uname = metadata.cycler.cell_voltage_name;
+    else
+        Uname = 'U';%same ads cfg_default if not found
+    end
+    if isfield(metadata.cycler,'cell_temperature_name')
+        Tname = metadata.cycler.cell_temperature_name;
+    else
+        Tname = '';%same ads cfg_default if not found   
+    end
 end
 
-%4. split phases (if mode not in file_in or if 'm' in options)
-if ~isfield(result, 'phases') || ismember('m', options)
-    result.phases = split_phases(result.profiles.datetime,result.profiles.I,...
-                                 result.profiles.U,result.profiles.mode);
-end
+%add u max u min detection if no metadata
 
-%5. calcul_soc (if soc not in file_in or if 'S' in options)
-if isempty(result.profiles.soc) || ismember('S',options)
-    %5.1 config_soc (detect soc100)
-    result.configuration = config_soc(result.profiles.datetime,result.profiles.I,...
-                                      result.profiles.U,result.profiles.mode,...
-                                      result.configuration,inher_options);
-    %5.2 calcul_soc
-    [dod_ah, soc] = calcul_soc(result.profiles.datetime,result.profiles.I,...
-        result.configuration,inher_options);
-    result.profiles.dod_ah = dod_ah;
-    result.profiles.soc = soc;
+% create config struct with minimal info (U_max, U_min, capacity):
+    config(1).test.max_voltage = max_voltage;
+    config.test.min_voltage = min_voltage;
+    config.test.capacity = capacity;
+    %Load defaults:
+    config = cfg_default(config);
+    %Update Uname, Tname:
+    config.test.Uname = Uname;
+    config.test.Tname = Tname;
+    
+    %traceability:
+    config.test.cfg_file = 'autogenerated from metadata';
 
-    % TODO: calcul_soc_patch
-end
-
-%6.- result.test
-result.test.file_in = file_in;
-result.test.file_out = file_out;
-result.test.datetime_ini = result.profiles.datetime(1);
-result.test.datetime_fin = result.profiles.datetime(end);
-% update test soc_ini and soc_fin:
-if isempty(result.profiles.dod_ah)
-    result.test.dod_ah_ini = [];
-    result.test.soc_ini = [];
-    result.test.dod_ah_fin = [];
-    result.test.soc_fin = [];
-else
-    result.test.dod_ah_ini = result.profiles.dod_ah(1);
-    result.test.soc_ini = result.profiles.soc(1);
-    result.test.dod_ah_fin = result.profiles.dod_ah(end);
-    result.test.soc_fin = result.profiles.soc(end);
-end
-
-%7. check result structure:
-[info, err] = check_result_struct(result);
-if err<0
-    fprintf('ERROR dattes_structure: not valid result structure error code: %d (see check_result_struct)\n',err);
-    return
-end
-
-%8. save mat file (if 's' in options)
-if ismember('s',options)
-    dattes_save(result);
-end
 end

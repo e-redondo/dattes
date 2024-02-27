@@ -10,7 +10,7 @@ function [result] = dattes_load(file_in,options)
 % [result] = dattes_load(file_in,options)
 % Inputs : 
 % - file_in:
-%     -   [1xn string]: input file
+%     -   [1xn string]: input file or folder to search mat files in
 %     -   [nx1 cell string]: filelist
 % - options  [string, optional]:
 %    - 'v': verbose
@@ -27,6 +27,15 @@ function [result] = dattes_load(file_in,options)
 if ~exist('options','var')
     options = '';
 end
+
+if ischar(file_in)
+    if isfolder(file_in)
+        mat_list = lsFiles(file_in,'.mat');
+        [result] = dattes_load(mat_list,options);
+        return;
+    end
+end
+
 if iscell(file_in)
     [result] = cellfun(@dattes_load,file_in,'UniformOutput',false);
     return;

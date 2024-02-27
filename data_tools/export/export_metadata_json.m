@@ -19,6 +19,9 @@ function export_metadata_json(dattes_struct, options, dst_folder, file_out)
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 %0. check inputs
+if ~exist('options','var')
+    options = '';%empty string = default = generate file_out
+end
 if ~exist('file_out','var')
     file_out = '';%empty string = default = generate file_out
 end
@@ -31,6 +34,12 @@ if ~isfield(dattes_struct,'metadata')
      return
 end
 
+if ismember('m',options)
+    % metadata filename must have .meta extension
+    % metadata pathname must be beside raw data (dattes_struct.test.file_out)
+    [D,F,E] = fileparts(dattes_struct.test.file_in);
+    file_out = fullfile(D,sprintf('%s.meta',F));
+end
 %check fileout name
 if isempty(file_out)
     file_suffix = 'metadata';
@@ -39,6 +48,12 @@ if isempty(file_out)
 end
 
 metadata = dattes_struct.metadata;
+
+if exist(file_out,'file')
+    metadata0 =  read_json_struct(file_out);
+    % merge new metadata with original, existing fields will be updated
+    metadata = merge_struct(metadata0,metadata);
+end
 
 folder_out = fileparts(file_out);
 [status, msg, msgID] = mkdir(folder_out);

@@ -12,8 +12,8 @@ function xml = import_arbin_res(file_in, options)
 % Outputs:
 % - xml (struct): structure with XML format 4 VEHLIB
 % 
-%   See also importArbinTxt, importArbinXls, importBiologic, importBitrode,
-%   arbin_res2xml, import_arbin_xls
+%   See also mdb_export_tables, arbin_res2xml, import_arbin_xls,
+%  import_arbin_csv, dattes_import
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab: 

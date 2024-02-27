@@ -61,6 +61,13 @@ if ~just_head
         As1 = strrep(line1,'XXX','NaN');
         As = fread(fid,inf, 'uint8=>char')';
         As = strrep(As,'XXX','NaN');
+        
+        if ismember(',',line1)
+            %decimal separator = comma
+            As1 = strrep(line1,',','.');
+            As = strrep(As,',','.');
+        end
+
         A1 = sscanf(As1,'%f\t');
         A = sscanf(As,'%f\t');
         A = [A1(:); A(:)];

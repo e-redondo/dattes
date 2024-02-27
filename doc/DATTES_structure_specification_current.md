@@ -39,16 +39,19 @@ This document describe data structure for current version of DATTES:
     - dod_ah [mx1 double]:  Depth of Discharge in Ah (empty if no SoC calculation)
     - soc [mx1 double]:  State of Charge in % (empty if no SoC calculation)
 ### eis substructure
-- eis [1x1 struct] with fields:
-    - datetime [px1 cell of [nx1 double]]: absolute time in seconds (seconds from 1/1/2000 00:00)
-    - U [px1 cell of [nx1 double]]: cell voltage (V)
-    - I [px1 cell of [nx1 double]]: current (A)
-    - mode [px1 cell of [nx1 double]]: cycler mode (n.u.), 1=CC, 2=CV, 3=rest, 4=EIS, 5=profile
-    - ReZ [px1 cell of [nx1 double]]:  Real part of impedance (Ohm)
-    - ImZ [px1 cell of [nx1 double]]:  Imaginary part of impedance (Ohm)
-    - f [px1 cell of [nx1 double]]: frecuency (Hz)
-    - Iavg [px1 cell of [nx1 double]]: average curent (current offset) of GEIS
-    - Iamp [px1 cell of [nx1 double]]: current amplitude of GEIS
+- eis [1xp struct] with fields:
+    - datetime [nx1 double]: absolute time in seconds (seconds from 1/1/2000 00:00)
+    - U [nx1 double]: cell voltage (V)
+    - I [nx1 double]: current (A)
+    - mode [nx1 double]: cycler mode (n.u.), 1=CC, 2=CV, 3=rest, 4=EIS, 5=profile
+    - ReZ [nx1 double]:  Real part of impedance (Ohm)
+    - ImZ [nx1 double]:  Imaginary part of impedance (Ohm)
+    - f [nx1 double]: frecuency (Hz)
+    - Iavg [nx1 double]: average curent (current offset) of GEIS
+    - Iamp [nx1 double]: current amplitude of GEIS
+    - soc [nx1 double]: State of Charge in % of each EIS point (empty if no SoC calculation)
+    - dod_ah [nx1 double]: Depth of Discharge in Ah of each EIS point (empty if no SoC calculation)
+
 ### metadata substructure
 - metadata [1x1 struct] with fields:
     - test: [1×1 struct] with fields:
@@ -96,6 +99,9 @@ This document describe data structure for current version of DATTES:
     - file_out [1xf char]: pathname of output file (MAT file)
     - datetime_ini [1x1 double]: test start time in seconds from 1/1/2000 00:00
     - datetime_fin [1x1 double]: test end time in seconds from 1/1/2000 00:00
+    - duration [1x1 double]: test duration in seconds
+    - datetime_ini_str [1xf char]: test start time string in format 'yyyy/mm/dd HH:MM:SS'
+    - datetime_fin_str [1xf char]: test end time string in format 'yyyy/mm/dd HH:MM:SS'
     - dod_ah_ini [1x1 double]: initial DoD in Ah
     - soc_ini [1x1 double]: initial SoC in %
     - dod_ah_fin [1x1 double]: final DoD in Ah
@@ -258,13 +264,23 @@ This document describe data structure for current version of DATTES:
     - u [zx1 double]: filtered cell voltage (V), abscise for dqdu
     - crate [1x1 double]: half cycle C-Rate (p.u.)
     - datetime [1x1 double]: datetime of measurement (final half cycle time in seconds from 1/1/2000 00:00)
-
+#### analyse.eis substructure
+- eis [1xp struct] with fields:
+    - Zparams [1x1 struct]: circuit parameter values
+    - Zsim [nx1 complex double]: simulated impedance values
+    - Zmeas [nx1 complex double]: measured impedance values
+    - f [nx1 double]: frequency values
+    - topology [1xq char]: circuit topology
+    - datetime [nx1 double]: datetime of each impedance value
+    - soc [nx1 double]: soc (%) of each impedance value
+    - dod_ah [nx1 double]: dod (Ah) of each impedance value
+   
 
 ## XML structure specification for DATTES
 XML files must be VEHLIB compatible (pass verifFomatXML4Vehlib function).
 
 Additionnaly, tables in this xml must contain the following variables:
-- tabs: time in seconds from 1/1/200 00:00 or test time in seconds starting at 0.
+- tabs: time in seconds from 1/1/2000 00:00 or test time in seconds starting at 0.
 - tc: test time in seconds
 - 'Uname' given in configuration: cell voltage measurement (V)
 - I: current measurement (A)

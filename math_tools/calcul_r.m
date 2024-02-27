@@ -1,26 +1,31 @@
-function [Rp, R_I,Rt,RDoD,Rdt,err] = calcul_r(t,U,I,DoDAh,instant_end_rest,duration_pulse,duration_rest,t_calcul_R,graph)
+function [Rp, R_I,Rt,RDoD,Rdt,U_sim,err_U,err] = calcul_r(t,U,I,DoDAh,instant_end_rest,duration_pulse,duration_rest,delta_time,graph)
 %calcul_r Calculate resistance thanks to profiles t,U and I
 %
 % Usage
-%[Rp, R_I,Rt,RDoD,Rdt,err] = calcul_r(t,U,I,DoDAh,instant_end_rest,duration_pulse,duration_rest,t_calcul_R,graph)
+%[Rp, R_I,Rt,RDoD,Rdt,err] = calcul_r(t,U,I,DoDAh,instant_end_rest,duration_pulse,duration_rest,delta_time,graph)
 %
 % Inputs :
-% - t [nx1 double]: time in s
+% - t [nx1 double]: datetime in s since 1/1/2000
 % - U [nx1 double]: cell voltage in V
 % - I [nx1 double]: cell current in A
-% - instant_end_rest [double]: Last rest instant before a pulse in s
-% - duration_pulse [double]: Pulse duration to be considered for
+% - DoDAh [nx1 double]: depth of discharge in Ah
+% - instant_end_rest [1x1 double]: Last rest instant before a pulse in s
+% - duration_pulse [1x1 double]: Pulse duration to be considered for
 % interpolation in s
-% - duration_rest [double]: Rest duration to be considered for
+% - duration_rest [1x1 double]: Rest duration to be considered for
 % interpolation  in s
 % - graph:[char] 'g' to show result
 %
 %  Outputs
-% - Rp: Estimated resistance at the pulse in ohms
-% - R_I: Current at which resistance has been calculated in A
-% - Rt:  Time at which resistance has been calculated in s
-% - RDoD :Depth of discharge at which resistance has been calculated in Ah
-% - Rdt :  Instant at which resistance is calculated since the beginning of the pulse in s
+% - Rp [px1 double]: Estimated resistance at the pulse in ohms
+% - R_I [px1 double]: Current rate at which resistance has been calculated in C
+% - Rt [px1 double]:  Datetime at which resistance has been calculated in s
+% - RDoD [px1 double]:Depth of discharge at which resistance has been calculated in Ah
+% - Rdt [px1 double] :  Instant at which resistance is calculated since the beginning of
+% the pulse in s (delta_time)
+% - U_sim [px1 double]: Voltage calculated based on resistance Rp 
+% - err_U [px1 double]: difference between measured voltage and U_sim  
+% - err [1x1 double]:  error code
 %
 % See also ident_r
 %
@@ -28,14 +33,14 @@ function [Rp, R_I,Rt,RDoD,Rdt,err] = calcul_r(t,U,I,DoDAh,instant_end_rest,durat
 % For more information, see the <a href="matlab: 
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
-Rp = 0;
-R_I = 0;
-Rt = 0;
-RDoD = 0;
-Rdt = 0;
+R_I = 0;         %(crate)
+Rt = 0;          %(datetime)
+RDoD = 0;    %(dod)
+Rdt = 0;        %(delta_time)
 err = 0;
 
-if (isempty(t) || isempty(U) || isempty(I))
+
+if (isempty(t) || isempty(U) || isempty(I))   
     fprintf('calcul_r : input arrays empty\n');    
     error('$')
 elseif all(I == 0)
@@ -46,45 +51,45 @@ elseif any(diff(t)<= 0)
     error('$')       
 end
 
- rest = (t<instant_end_rest & t>=(instant_end_rest - duration_rest)); 
+ rest = (t<=instant_end_rest & t>=(instant_end_rest - duration_rest)); 
     trest = t(rest);  
     Urest = U(rest); 
     Irest = I(rest);  
     
-    if length(trest)<3
-        err=-1;
-        Rp = nan;
-        R_I = nan;
-        Rt = nan;
-        RDoD = nan;
-        Rdt = nan;
-        return;
-    end
+%     if length(trest)<3
+%         err=-1;
+%         Rp = nan;
+%         R_I = nan;
+%         Rt = nan;
+%         RDoD = nan;
+%         Rdt = nan;
+%         return;
+%     end
     
     pulse = (t>instant_end_rest);    % on s'interesse a la periode de temps du pulse: (instant_end_rest)<t<=(instant_end_rest + duration_rest)
     tpulse = t(pulse);
     Upulse = U(pulse);
     Ipulse = I(pulse);
-    if length(tpulse)<3
-        err=-2;
-        Rp = nan;
-        R_I = nan;
-        Rt = nan;
-        RDoD = nan;
-        Rdt = nan;
-        return;
-        
-    end
-    
-    if max(t)<instant_end_rest+duration_pulse
-        err=-2;
-        Rp = nan;
-        R_I = nan;
-        Rt = nan;
-        RDoD = nan;
-        Rdt = nan;
-        return;
-    end
+%     if length(tpulse)<3
+%         err=-2;
+%         Rp = nan;
+%         R_I = nan;
+%         Rt = nan;
+%         RDoD = nan;
+%         Rdt = nan;
+%         return;
+%         
+%     end
+%     
+%     if max(t)<instant_end_rest+duration_pulse
+%         err=-2;
+%         Rp = nan;
+%         R_I = nan;
+%         Rt = nan;
+%         RDoD = nan;
+%         Rdt = nan;
+%         return;
+%     end
     
 
         Rp = [];
@@ -92,30 +97,54 @@ end
         Rt = [];
         RDoD = [];
         Rdt = [];  
+        Ural_pul=[];
+        U_sim = [];
+        err_U = [];
         
         
-    for ind = 1:length(t_calcul_R)
-        if max(tpulse)-min(tpulse)<t_calcul_R(ind)
+    for ind = 1:length(delta_time)
+        if max(tpulse)-min(tpulse)<delta_time(ind)
             %DEBUG
-            %fprintf('Pulse is not long enough, DoD: %.1f Ah, pulse length: %.1f s, R delta time: %.1f s.\n',DoDAh(1),max(tpulse)-min(tpulse), t_calcul_R(ind));
+            %fprintf('Pulse is not long enough, DoD: %.1f Ah, pulse length: %.1f s, R delta time: %.1f s.\n',DoDAh(1),max(tpulse)-min(tpulse), delta_time(ind));
             continue
         else
 %             w = abs(tpulse-tpulse(end));                               %poids d'interpolation polynominal pour le pulse, les points loin de l'impulse de courant ont un poids plus eleve
-            w = 1./(abs(instant_end_rest-tpulse)+1);
-            Ural_pul = fitting_pol2(tpulse,Upulse,instant_end_rest+t_calcul_R(ind),w);%U ralonge pour le pulse, ont extrapole le point a l'instant de l'impulse
+%             w = 1./(abs(instant_end_rest-tpulse)+1);
+%              Ural_pul = fitting_pol2(tpulse,Upulse,instant_end_rest+delta_time(ind),w);%U ralonge pour le pulse, ont extrapole le point a l'instant de l'impulse
 %             w = abs(trest-trest(1));
             w = 1./(abs(instant_end_rest-trest)+1);
-            Ural_rep = fitting_pol2(trest,Urest,instant_end_rest+t_calcul_R(ind),w);%U ralonge pour le rest,ont extrapole le point a l'instant de l'impulse
+            Ural_rep = fitting_pol2(trest,Urest,instant_end_rest+delta_time(ind),w);%U ralonge pour le rest,ont extrapole le point a l'instant de l'impulse
+ 
+            if  delta_time(ind) == 0
+                Ural_pul(ind) = Upulse(1);
+%                             w2 = 1./(abs(instant_end_rest-tpulse)+1);
+%              Ural_pul = fitting_pol2(tpulse,Upulse,instant_end_rest+delta_time(ind),w2);%U ralonge pour le pulse, ont extrapole le point a l'instant de l'impulse
+            else
+             
+           %  Upulse is estimated withitn a window 
+            instant = tpulse(1) + delta_time(ind);          % Instant de calcul de la résistance
+            lower_limit = instant - 1.1;                           % Lower limit of the window
+            upper_limit = instant + 1.1;                          % Upper Limit of the window
+            window = tpulse >= lower_limit & tpulse <= upper_limit;
+                            % Ural_pul (ind) = interp1(tpulse(window), Upulse(window), instant);
+            p = polyfit(tpulse(window),Upulse(window),1);
+            Ural_pul(ind) = polyval(p,instant);
+            end
             
             R_I(end+1) = mean(Ipulse);                                 %le courant d'estimation de la resistance est la moyenne du courant (filtrer le bruit)
-            Rp(end+1) = (Ural_pul-Ural_rep)/R_I(end);                       %la resistance est la difference de potentiel entre le rest et le pulse divise par le courant
-            Rt(end+1) = t(1) + duration_rest;
+            Rp(end+1) = (Ural_pul(ind)-Ural_rep)/R_I(end);                       %la resistance est la difference de potentiel entre le rest et le pulse divise par le courant
+            Rt(end+1) = instant_end_rest;                                                   %instant of measurement
             RDoD(end+1) = DoDAh(1);
-            Rdt(end+1) = t_calcul_R(ind);
-        end
+            Rdt(end+1) = delta_time(ind);                                           % Delta time
+            U_sim(end+1) = Ural_rep+R_I(end)*Rp(end);
+            U_meas = U(find(t>=Rt(end) & t<=Rt(end)+1,1));
+            if isempty(U_meas)
+                U_meas = nan;
+            end
+            err_U(end+1) = U_sim(end)-U_meas; 
+   
     end
-    
-    
+    end
        
 
     if (any(Rp<0) || any(isnan(Rp)))
@@ -124,25 +153,25 @@ end
     end
     if exist('graph','var')
         if graph
-            show_result(t,U,I,instant_end_rest,Ural_pul,Ural_rep,R_I,tpulse,Upulse,trest,Urest,t_calcul_R)
+            show_result(t,U,I,instant_end_rest,Ural_pul,Ural_rep,R_I,tpulse,Upulse,trest,Urest,delta_time)
         end
     end
 
     %DEBUG
-    % show_result(t,U,I,instant_end_rest,Ural_pul,Ural_rep,R_I,tpulse,Upulse,trest,Urest,t_calcul_R)
+    % show_result(t,U,I,instant_end_rest,Ural_pul,Ural_rep,R_I,tpulse,Upulse,trest,Urest,delta_time)
 
 end
 
 
-function show_result(t,U,I,instant_end_rest,Ural_pul,Ural_rep,R_I,tpulse,Upulse,trest,Urest,t_calcul_R)
+function show_result(t,U,I,instant_end_rest,Ural_pul,Ural_rep,R_I,tpulse,Upulse,trest,Urest,delta_time)
 figure,
 w = abs(tpulse-tpulse(end));  
-Ural_pul_syn = fitting_pol2(tpulse,Upulse,tpulse+t_calcul_R,w);%U ralonge pour le pulse
+Ural_pul_syn = fitting_pol2(tpulse,Upulse,tpulse+delta_time,w);%U ralonge pour le pulse
 w = abs(trest-trest(1));
-Ural_rep_syn = fitting_pol2(trest,Urest,trest+t_calcul_R,w);%U ralonge pour le rest
+Ural_rep_syn = fitting_pol2(trest,Urest,trest+delta_time,w);%U ralonge pour le rest
 
 subplot(211),plot(t-instant_end_rest,U,'.-',0,Ural_pul,'r^',0,Ural_rep,'rs'),hold on
-subplot(211),plot(tpulse-instant_end_rest,Ural_pul_syn,'m.-',trest-instant_end_rest+t_calcul_R,Ural_rep_syn,'c.-'),hold on
+subplot(211),plot(tpulse-instant_end_rest,Ural_pul_syn,'m.-',trest-instant_end_rest+delta_time,Ural_rep_syn,'c.-'),hold on
 subplot(212),plot(t-instant_end_rest,I,'.-',0,R_I,'r^'),hold on
 
 subplot(211),xlim([min(trest-instant_end_rest) max(tpulse-instant_end_rest)])

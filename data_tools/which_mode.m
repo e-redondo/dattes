@@ -41,7 +41,7 @@ if ~isvector(t) || ~isvector(I) || ~isvector(U) || ~isvector(Step)
     error('which_mode: t,U,I,Step must be vectors')
 end
 
-if length(t)<2  || length(t)~=length(I)|| length(t)~=length(U)|| length(t)~=length(Step)
+if    length(t)~=length(I)|| length(t)~=length(U) || length(t)~=length(Step)
    error('which_mode: t,U,I,Step must have same size and length>2')
 end
 if ~exist('options','var')

@@ -60,7 +60,8 @@ meta_list = vertcat(meta_list{:});
 %remove extensions
 meta_filenames = regexprep(meta_list,'.meta$','');
 % filter meta_files in right 'branch', that is:
-ind_filter = cellfun(@(x) ~isempty(regexp(filename,x)),meta_filenames);
+% ind_filter = cellfun(@(x) ~isempty(regexp(filename,x)),meta_filenames);
+ind_filter = cellfun(@(x) ~isempty(regexp(filename, regexptranslate('escape',x))),meta_filenames);
 meta_list = meta_list(ind_filter);
 %sort by length (folder depth):
 meta_path_lengths = cellfun(@length,meta_list);
