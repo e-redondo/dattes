@@ -120,10 +120,10 @@ if iscellstr(file_in)
         source_folder = find_common_ancestor(file_in);
         %0.2.2 make valid regex expression:
         source_folder = regexptranslate('escape',source_folder);
-
+        d = regexptranslate('escape',destination_folder);
         %0.2.3 reproduce file tree in destination_folder
         src_folders = cellfun(@fileparts,file_in,'Uniformoutput',false);
-        dest_folders = regexprep(src_folders,['^' source_folder],destination_folder);
+        dest_folders = regexprep(src_folders,['^' source_folder],d);
         %0.2.4 run dattes_structure for each element in file list
         result = cellfun(@(x,y) dattes_structure(x, options, y, read_mode),file_in,dest_folders,'uniformoutput',false);
         return;
