@@ -2,8 +2,8 @@ function [cycler, line1, line2, header_lines] = which_cycler(fid)
 % which_cycler detect from wich cycler the file is.
 %
 % Usage:
-% [cycler, ligne1, ligne2] = which_cycler(fid)
-% [cycler, ligne1, ligne2] = which_cycler(filename)
+% [cycler, ligne1, ligne2, header_lines] = which_cycler(fid)
+% [cycler, ligne1, ligne2, header_lines] = which_cycler(filename)
 %
 % Inputs:
 % - fid (file handler)
@@ -26,6 +26,7 @@ function [cycler, line1, line2, header_lines] = which_cycler(fid)
 % - line1 [string]: file's first line (if file is text type)
 % - line2 [string]: file's second line (if file is text type), if bitrode
 % file, last file's line is returned
+% - header_lines [nx1 cell]: header lines
 %
 % See also: dattes_import
 %
@@ -114,6 +115,16 @@ elseif ~isempty(regexp(line1,'^Test Name','match'))
 end
 if ~isempty(regexp(line1,'Data_Point,Test_Time\(s\),Date_Time','match'))
     cycler = 'arbin_csv_v1';
+    frewind(fid);
+    return
+end
+if ~isempty(regexp(line1,'Data_Point,Date_Time,Test_Time\(s\)','match'))
+    cycler = 'arbin_csv_v1';
+    frewind(fid);
+    return
+end
+if ~isempty(regexp(line1,'Date_Time,Test_Time\(s\)','match'))
+    cycler = 'arbin_csv_v3';%(no data_point column)
     frewind(fid);
     return
 end

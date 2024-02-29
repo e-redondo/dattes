@@ -7,10 +7,10 @@ function [profiles, other_cols] = csv2profiles(file_in,col_names,params)
 % Inputs:
 % - file_in [1xp string]: pathname to .csv file
 % - col_names [1x12 cell string]:
-%  {'datetime','t','U','I','Step', 'Ah', 'Ah_dis', 'Ah_cha','mode','T','dod_ah','soc'}
-%    - e.g. for Arbin: col_names = {'Date Time','Test Time (s)','Voltage (V)',
-%                               'Current (A)', 'Step Index','',
-%                               'Discharge Capacity (Ah)','Charge Capacity (Ah)','','','',''};
+%  {'datetime','t','U','I','mode','T','dod_ah','soc','Step', 'Ah', 'Ah_dis', 'Ah_cha'}
+%    - e.g. for Arbin:     col_names = {'Date_Time','Test_Time(s)','Voltage(V)','Current(A)',...
+%         '','','','','Step_Index','',...
+%         'Discharge_Capacity(Ah)','Charge_Capacity(Ah)'};
 % - params [(optional) 1x1 struct], with (optional fields:
 %    - I_thres [1x1 double]: Current (A) threshold for which_mode
 %    - U_thres [1x1 double]: Voltage (V) threshold for which_mode
@@ -18,7 +18,19 @@ function [profiles, other_cols] = csv2profiles(file_in,col_names,params)
 %    - col_sep: ','
 %
 % Outputs:
-% - profiles:
+% - profiles [1x1 struct] with fields:
+%   - datetime [nx1 double]
+%   - t [nx1 double]
+%   - U [nx1 double]
+%   - I [nx1 double]
+%   - mode [nx1 double]
+%   - T [nx1 double]
+%   - dod_ah [nx1 double]
+%   - soc [nx1 double]
+%   - step [nx1 double]
+%   - ah [nx1 double]
+%   - ah_dis [nx1 double]
+%   - ah_cha [nx1 double]
 % - other_cols:
 %
 % See also which_mode
@@ -60,7 +72,7 @@ if ~exist('params','var')
     params = struct;
 end
 if ~exist('col_names','var')
-    col_names = {'datetime','t','U','I','', '', '', '','mode','T','dod_ah','soc'};
+    col_names = {'datetime','t','U','I','mode','T','dod_ah','soc','', '', '', ''};
 end
 if ~isfield(params,'I_thres')
     params.I_thres = default_params.I_thres;
@@ -113,6 +125,7 @@ end
 %find units from header_line
 units = find_units(units);
 
+
 %remove empty columns (mepty variable name)
 ind_empty_col = cellfun(@isempty,variables);
 variables = variables(~ind_empty_col);
@@ -152,22 +165,22 @@ ind_col_dt = find_col_index(variables,col_names{1});
 ind_col_U = find_col_index(variables,col_names{3});
 %I: 'current'
 ind_col_I = find_col_index(variables,col_names{4});
-%Step: 'Step index'
-ind_col_step = find_col_index(variables,col_names{5});
-%'Ah'
-ind_col_ah = find_col_index(variables,col_names{6});
-%'Ah_dis'
-ind_col_ahdis = find_col_index(variables,col_names{7});
-%'Ah_cha'
-ind_col_ahcha = find_col_index(variables,col_names{8});
 %'mode'
-ind_col_mode = find_col_index(variables,col_names{9});
+ind_col_mode = find_col_index(variables,col_names{5});
 %'T'
-ind_col_T = find_col_index(variables,col_names{10});
+ind_col_T = find_col_index(variables,col_names{6});
 %'dod_ah'
-ind_col_dod_ah = find_col_index(variables,col_names{11});
+ind_col_dod_ah = find_col_index(variables,col_names{7});
 %'soc'
-ind_col_soc = find_col_index(variables,col_names{12});
+ind_col_soc = find_col_index(variables,col_names{8});
+%Step: 'Step index'
+ind_col_step = find_col_index(variables,col_names{9});
+%'Ah'
+ind_col_ah = find_col_index(variables,col_names{10});
+%'Ah_dis'
+ind_col_ahdis = find_col_index(variables,col_names{11});
+%'Ah_cha'
+ind_col_ahcha = find_col_index(variables,col_names{12});
 
 
 %fill emptys with nans:
@@ -219,12 +232,14 @@ profiles.datetime = []; % prealloc first field 'datetime'
 profiles.t = t;
 profiles.U = U;
 profiles.I = I;
-if ~isempty(mode)
-    profiles.mode = mode;
-end
+profiles.mode = mode;
 profiles.T = T;
 profiles.dod_ah = dod_ah;
 profiles.soc = soc;
+profiles.step = Step;
+profiles.ah = Ah;
+profiles.ah_dis = Ah_dis;
+profiles.ah_cha = Ah_cha;
 
 
 %other_cols:
@@ -249,6 +264,8 @@ if ~isempty(ind_other_cols)
         end
         %TODO:put this part in function (clean_col_name).
         this_col_name = regexprep(variables{ind_other_cols(ind_col)},'^[^a-zA-Z]','');
+        % remove units from variable names:
+        this_col_name = regexprep(this_col_name,'\(.+\)','');
         this_col_name = regexprep(this_col_name,'\s','_');
         this_col_name = regexprep(this_col_name,'/','');
         this_col_name = regexprep(this_col_name,'\\','');
@@ -282,7 +299,7 @@ if ~isempty(ind_other_cols)
     end
 end
 
-if ~isfield(profiles,'mode')
+if isempty(mode)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %calculate mode
     %set thresholds if they are set to zero:
@@ -374,21 +391,23 @@ units = regexp(unit_line_words,'\(.+\)','match','once');
 units = regexprep(units,'\(','');
 units = regexprep(units,'\)','');
 %other units
-I = ~cellfun(@isempty,strfind(unit_line_words,'Voltage'));
+I = ~cellfun(@isempty,strfind(unit_line_words,'Voltage')) & cellfun(@isempty,units);
 [units{I}] = deal('V');
-I = ~cellfun(@isempty,strfind(unit_line_words,'Time'));
+I = ~cellfun(@isempty,strfind(unit_line_words,'Time')) & cellfun(@isempty,units);
 [units{I}] = deal('s');
-I = ~cellfun(@isempty,strfind(unit_line_words,'Current'));
+I = ~cellfun(@isempty,strfind(unit_line_words,'Current')) & cellfun(@isempty,units);
 [units{I}] = deal('A');
-I = ~cellfun(@isempty,strfind(unit_line_words,'Capacity'));
+I = ~cellfun(@isempty,strfind(unit_line_words,'Capacity')) & cellfun(@isempty,units);
 [units{I}] = deal('Ah');
-I = ~cellfun(@isempty,strfind(unit_line_words,'Energy'));
+I = ~cellfun(@isempty,strfind(unit_line_words,'Energy')) & cellfun(@isempty,units);
 [units{I}] = deal('Wh');
-I = ~cellfun(@isempty,strfind(unit_line_words,'Power'));
+I = ~cellfun(@isempty,strfind(unit_line_words,'Power')) & cellfun(@isempty,units);
 [units{I}] = deal('W');
-I = ~cellfun(@isempty,strfind(unit_line_words,'dV/dt'));
+I = ~cellfun(@isempty,strfind(unit_line_words,'dV/dt')) & cellfun(@isempty,units);
 [units{I}] = deal('V/s');
-I = ~cellfun(@isempty,strfind(unit_line_words,'Temperature'));%TODO search in Aux_Global_Table
+%TODO: often, temperatures come with special caracters (errors in unicode
+%for degres), force always to celsius?
+I = ~cellfun(@isempty,strfind(unit_line_words,'Temperature'));
 [units{I}] = deal('C');
 %change fractions to underscores:
 % units = regexprep(units,'/','_');
