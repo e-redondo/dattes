@@ -214,17 +214,19 @@ dod_ah = vertcat(dod_ah{:});
 soc = vertcat(soc{:});
 
 
+[ah, ah_dis, ah_cha] = format_amphour(Ah_dis, Ah_cha);
+
 if isempty(Ah)
     if max(abs(Ah_dis))>0
         Ah = Ah_cha-Ah_dis;
     else
         Ah = Ah_cha+Ah_dis;
     end
+else
+    ah = Ah;%keep Ah calculated by cycler if given
 end
 
-%     if isempty(T)
-%         T = nan(size(t));
-%     end
+
 
 %pack data:
 %     profiles.datetime = m2edate(datetime);
@@ -237,9 +239,9 @@ profiles.T = T;
 profiles.dod_ah = dod_ah;
 profiles.soc = soc;
 profiles.step = Step;
-profiles.ah = Ah;
-profiles.ah_dis = Ah_dis;
-profiles.ah_cha = Ah_cha;
+profiles.ah = ah;
+profiles.ah_dis = ah_dis;
+profiles.ah_cha = ah_cha;
 
 
 %other_cols:

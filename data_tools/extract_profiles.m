@@ -168,6 +168,25 @@ I = I(Iu);
 m = m(Iu);
 
 T = [];
+ah = [];
+ah_cha = [];
+ah_dis = [];
+if all(cellfun(@(x) isfield(x,'ah'),xml.table))
+    ah = cellfun(@(x) x.ah.vector,xml.table,'uniformoutput',false);
+    ah = vertcat(ah{:});
+    ah = ah(Iu);%amp hours calculated by cycler, not by current integration
+end
+if all(cellfun(@(x) isfield(x,'ah_dis'),xml.table))
+    ah_dis = cellfun(@(x) x.ah_dis.vector,xml.table,'uniformoutput',false);
+    ah_dis = vertcat(ah_dis{:});
+    ah_dis = ah_dis(Iu);%amp hours calculated by cycler, not by current integration
+end
+if all(cellfun(@(x) isfield(x,'ah_cha'),xml.table))
+    ah_cha = cellfun(@(x) x.ah_cha.vector,xml.table,'uniformoutput',false);
+    ah_cha = vertcat(ah_cha{:});
+    ah_cha = ah_cha(Iu);%amp hours calculated by cycler, not by current integration
+end
+
 
 if all(cellfun(@(x) isfield(x,Tname),xml.table))
     %extraire
@@ -207,6 +226,9 @@ profiles.mode = m;
 profiles.T = T;
 profiles.dod_ah = [];
 profiles.soc = [];
+profiles.ah = ah;
+profiles.ah_dis = ah_dis;
+profiles.ah_cha = ah_cha;
 
 %read EIS
 eis = extract_eis(xml,options);
