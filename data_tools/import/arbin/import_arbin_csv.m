@@ -32,6 +32,12 @@ end
 if isfolder(file_in)
     %batch mode: search all csv files in folder, then put all in a xml
     file_list = lsFiles(file_in,'.csv',true);
+
+    %ignore non data files from Arbin:
+    [~,file_list] = regexpFiltre(file_list,'Statistics.*.csv$','i');
+    [~,file_list] = regexpFiltre(file_list,'Info.csv$','i');
+    [~,file_list] = regexpFiltre(file_list,'GlobalInfo.CSV$','i');
+    
     xml = cellfun(@(x) import_arbin_csv(x,options),file_list,'UniformOutput',false);
     % remove empty xmls (not valid csv files):
     ind_empty = cellfun(@isempty,xml);
@@ -143,7 +149,9 @@ variables = fieldnames(other_cols);
 [units,variables] = regexpFiltre(variables,'_units$');
 
 %TODO: standard variable names:
-new_variables = regexprep(variables,'Step_Time', 'tp');
+new_variables = regexprep(variables,'__', '_');% remove duplicates in spaces + underscores
+
+new_variables = regexprep(new_variables,'Step_Time', 'tp');
 %     'Step_Index' , 'Step'
 new_variables = regexprep(new_variables,'Step_Index' , 'Step');
 %     'Cycle_Index' , 'Cycle'
@@ -157,6 +165,7 @@ new_variables = regexprep(new_variables,'Aux_Voltage_' , 'U');
 %
 new_variables = regexprep(new_variables,'Aux_Temperature_' , 'T');
 
+new_variables = regexprep(new_variables,'Temperature_' , 'T');
 
 XMLVars_other = cell(size(variables));
 for ind = 1:length(variables)
