@@ -77,6 +77,7 @@ for ind = 1:length(meta_list)
         try
             [this_metadata, err] = read_json_struct(this_meta);
         catch e
+            fprintf('metadata_collector: ERROR in metafile: %s\n',this_meta);
             errors(ind) = -1;
             this_metadata = struct;
         end

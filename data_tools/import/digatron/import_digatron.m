@@ -53,10 +53,11 @@ params = struct;  % see csv2profiles if some params are needed
 % params.testtime_fmt = 'HH:MM:SS';
 params.date_fmt = '';
 
-col_names = {'Time Stamp','Prog Time','Voltage','Current','Step','Capacity','','','','','',''};
+%dt, tt, u, i, m, T, dod_ah, soc, step, ah, ah_dis, ah_cha
+col_names = {'Time Stamp','Prog Time','Voltage','Current','','','','','Step','Capacity','',''};
 
 [profiles, other_cols] = csv2profiles(file_in,col_names,params);
-profiles_units = {'s','s','V','A','','degC','Ah',''};
+profiles_units = {'s','s','V','A','','degC','Ah','','','Ah','Ah','Ah'};
 
 %3.- creer XML
 %3.1.- introduire entete:

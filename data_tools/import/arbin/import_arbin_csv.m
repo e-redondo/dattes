@@ -32,6 +32,12 @@ end
 if isfolder(file_in)
     %batch mode: search all csv files in folder, then put all in a xml
     file_list = lsFiles(file_in,'.csv',true);
+
+    %ignore non data files from Arbin:
+    [~,file_list] = regexpFiltre(file_list,'Statistics.*.csv$','i');
+    [~,file_list] = regexpFiltre(file_list,'Info.csv$','i');
+    [~,file_list] = regexpFiltre(file_list,'GlobalInfo.CSV$','i');
+    
     xml = cellfun(@(x) import_arbin_csv(x,options),file_list,'UniformOutput',false);
     % remove empty xmls (not valid csv files):
     ind_empty = cellfun(@isempty,xml);
@@ -83,18 +89,27 @@ params = struct;  % see csv2profiles if some params are needed
 params.date_fmt = '';
 % params.date_fmt = 'yyyy-mm-dd HH:MM:SS';
 if strcmp(cycler,'arbin_csv_v1')
+    %dt, tt, u, i, m, T, dod_ah, soc, step, ah, ah_dis, ah_cha
     col_names = {'Date_Time','Test_Time(s)','Voltage(V)','Current(A)',...
-        'Step_Index','',...
-        'Discharge_Capacity(Ah)','Charge_Capacity(Ah)','','','',''};
+        '','','','','Step_Index','',...
+        'Discharge_Capacity(Ah)','Charge_Capacity(Ah)'};
+elseif strcmp(cycler,'arbin_csv_v3')
+    %dt, tt, u, i, m, T, dod_ah, soc, step, ah, ah_dis, ah_cha
+    col_names = {'Date_Time','Test_Time(s)','Voltage(V)','Current(A)',...
+        '','','','','Step_Index','',...
+        'Discharge_Capacity(Ah)','Charge_Capacity(Ah)'};
 elseif strcmp(cycler,'arbin_csv_v2')
+    %dt, tt, u, i, m, T, dod_ah, soc, step, ah, ah_dis, ah_cha
     col_names = {'Date Time','Test Time (s)','Voltage (V)','Current (A)',...
-        'Step Index','',...
-        'Discharge Capacity (Ah)','Charge Capacity (Ah)','','','',''};
+        '','','','','Step_Index','',...
+        'Discharge Capacity (Ah)','Charge Capacity (Ah)'};
+
 end
 
 
 [profiles, other_cols] = csv2profiles(file_in,col_names,params);
-profiles_units = {'s','s','V','A','','degC','Ah',''};
+%dt, tt, u, i, m, T, dod_ah, soc, step, ah, ah_dis, ah_cha
+profiles_units = {'s','s','V','A','','degC','Ah','','','Ah','Ah','Ah'};
 
 %DEBUG
 % [D,F,E] = fileparts(file_in);
@@ -131,16 +146,18 @@ XMLVars = XMLVars(~Ie);
 variables = fieldnames(other_cols);
 
 %separate unis
-[units,variables] = regexpFiltre(variables(2:end),'_units$');
+[units,variables] = regexpFiltre(variables,'_units$');
 
 %TODO: standard variable names:
-new_variables = regexprep(variables,'Step_Time', 'tp');
+new_variables = regexprep(variables,'__', '_');% remove duplicates in spaces + underscores
+
+new_variables = regexprep(new_variables,'Step_Time', 'tp');
 %     'Step_Index' , 'Step'
 new_variables = regexprep(new_variables,'Step_Index' , 'Step');
 %     'Cycle_Index' , 'Cycle'
 new_variables = regexprep(new_variables,'Cycle_Index' , 'Cycle');
 %     'Current' , 'I'
-new_variables = regexprep(new_variables,'Current' , 'I');
+% new_variables = regexprep(new_variables,'Current' , 'I');
 %     'Voltage' , 'U'
 % new_variables = regexprep(new_variables,'Voltage' , 'U');
 %
@@ -148,6 +165,7 @@ new_variables = regexprep(new_variables,'Aux_Voltage_' , 'U');
 %
 new_variables = regexprep(new_variables,'Aux_Temperature_' , 'T');
 
+new_variables = regexprep(new_variables,'Temperature_' , 'T');
 
 XMLVars_other = cell(size(variables));
 for ind = 1:length(variables)
