@@ -60,8 +60,6 @@ line = strrep(line,'Temperature/degC','Temperature{degC}');%BT-LAB mars 2021
 line = strrep(line,'Ecell/V','U{V}');%OVC SCGPL
 line = regexprep(line,'Temperature/.C','T{degC}');%2023: file encoding problems with degres
 line = strrep(line,'I Range','I_Range');%EC-Lab mars 2021 (GCPL)
-line = strrep(line,'(Q-Qo)/mA.h','Qp{mAh}');%EC-Lab mars 2021 (GEIS)
-line = strrep(line,'dq/mA.h','dq{mAh}');%EC-Lab mars 2021 (GEIS)
 line = strrep(line,'Analog_IN_1/V','Analog_IN_1{V}');%%%%%%%%%%%%%%%%%%%%%%%%%
 line = strrep(line,'Analog_IN_1/C','Analog_IN_1{C}');%%%%%%%%%%%%%%%%%%%%%%%%%
 line = strrep(line,'Analog_IN_2/V','Analog_IN_2{V}');%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,14 +67,23 @@ line = strrep(line,'Analog_IN_2/C','Analog_IN_2{C}');%%%%%%%%%%%%%%%%%%%%%%%%%
 line = strrep(line,'Analog OUT','Analog_OUT');%%%%%%%%%%%%%%%%%%%%%%%%%
 line = strrep(line,'Analog_OUT/V','Analog_OUT{V}');
 line = strrep(line,'dq/mAh','dq{mAh}');
-line = strrep(line,'(Q-Qo)/mAh','Qc{mAh}');
-line = strrep(line,'Energy/Wh','Ep{Wh}');
+
+%Amp hours counters:
+line = strrep(line,'dq/mA.h','dq{mAh}');
+
+line = strrep(line,'(Q-Qo)/mA.h','ah{mAh}');
+line = strrep(line,'(Q-Qo)/mAh','ah{mAh}');
+    
+line = strrep(line,'Q_charge/discharge/mAh','Qp{mAh}');%10.40 bis
+line = strrep(line,'Q charge/discharge/mA.h','Qp{mAh}');%v11.20
+
+line = strrep(line,'Q_charge/mAh','ah_cha{mAh}');%10.40 bis
+line = strrep(line,'Q charge/mA.h','ah_cha{mAh}');%v11.20line = strrep(line,'Energy/Wh','Ep{Wh}');
+line = strrep(line,'Q discharge/mA.h','ah_dis{mAh}');%v11.20
+line = strrep(line,'Q_discharge/mAh','ah_dis{mAh}');%10.40 bis
+line = strrep(line,'Capacity/mAh','Capacity{mAh}');%v10.23
 line = strrep(line,'Energy_charge/Wh','Energy_charge{Wh}');
 line = strrep(line,'Energy_discharge/Wh','Energy_discharge{Wh}');
-line = strrep(line,'Q_charge/discharge/mAh','Qp{mAh}');%10.40 bis
-line = strrep(line,'Q_discharge/mAh','Qdischarge{mAh}');%10.40 bis
-line = strrep(line,'Q_charge/mAh','Qcharge{mAh}');%10.40 bis
-line = strrep(line,'Capacity/mAh','Capacity{mAh}');%v10.23
 % line = strrep(line,'Capacitance ','Capacitance_');%v10.40 (Capacitance_charge o Capacitance_discharge)
 line = strrep(line,'/uF','{uF}');%v10.40 (microFarads)
 line = regexprep(line,'/.F','{uF}');%v10.40bis (microFarads avec letrte grecque)
@@ -106,7 +113,6 @@ elseif strcmp(type_test,'GPI')%v10.23
     line = strrep(line,'Ns changes','Ns_changes');
     line = strrep(line,'counter inc.','counter');
     line = strrep(line,'control/mA','control{mA}');
-    line = strrep(line,'dq/mA.h','dq{mAh}');
     line = strrep(line,'Analog IN ','Analog_IN_');%%%%%%%%%%%%%%%%%%%%%%%%%
     line = strrep(line,'Analog_IN_1/V','Analog_IN_1{V}');%%%%%%%%%%%%%%%%%%%%%%%%%
     line = strrep(line,'Analog_IN_1/C','Analog_IN_1{C}');%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,7 +120,6 @@ elseif strcmp(type_test,'GPI')%v10.23
     line = strrep(line,'Analog_IN_2/C','Analog_IN_2{C}');%%%%%%%%%%%%%%%%%%%%%%%%%
     line = strrep(line,'Analog OUT','Analog_OUT');%%%%%%%%%%%%%%%%%%%%%%%%%
     line = strrep(line,'Analog_OUT/V','Analog_OUT{V}');
-    line = strrep(line,'(Q-Qo)/mA.h','Qp{mAh}');
     line = strrep(line,'P/W','Pp{W}');
     line = strrep(line,'<I>/mA','I{mA}');
 elseif strcmp(type_test,'GEIS') || strcmp(type_test,'PEIS')
@@ -129,7 +134,6 @@ elseif strcmp(type_test,'GEIS') || strcmp(type_test,'PEIS')
     line = strrep(line,'cycle number','cycle_number');
     line = strrep(line,'I Range','I_Range{A}');
     line = strrep(line,'|Ewe|/V','Umod{V}');
-    
     line = strrep(line,'|I|/A','Imod{A}');
     line = strrep(line,'Re(Y)/Ohm-1','ReY{1_Ohm}');
     line = strrep(line,'Im(Y)/Ohm-1','ImY{1_Ohm}');
@@ -146,9 +150,7 @@ elseif strcmp(type_test,'GEIS') || strcmp(type_test,'PEIS')
     line = strrep(line,'|Zwe-ce|/Ohm','ZWeCe{Ohm}');%IFPen dans SIMCAL
     line = strrep(line,'Re(Zwe-ce)/Ohm','ReZWeCe{Ohm}');%IFPen dans SIMCAL
     line = strrep(line,'-Im(Zwe-ce)/Ohm','ImZWeCe{Ohm}');%IFPen dans SIMCAL
-    
     line = strrep(line,'P/W','Pp{W}');%v11.20
-    
 elseif strcmp(type_test,'OCV')
     %variables du OCV: 'mode','error','time','Ewe','Analog_IN_1'
     line = strrep(line,'Analog IN ','Analog_IN_');
@@ -178,7 +180,6 @@ elseif strcmp(type_test,'MB') %modulo bat
     line = strrep(line,'control/mA','control{mA}');
     line = strrep(line,'control/V/mA','control{V_or_mA}');
     line = strrep(line,'control/V','control{V}');%202101 v1.37?
-    line = strrep(line,'dq/mA.h','dq{mAh}');
     line = strrep(line,'Analog IN ','Analog_IN_');%%%%%%%%%%%%%%%%%%%%%%%%%
     line = strrep(line,'Analog_IN_1/V','Analog_IN_1{V}');%%%%%%%%%%%%%%%%%%%%%%%%%
     line = strrep(line,'Analog_IN_1/C','Analog_IN_1{C}');%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -186,11 +187,6 @@ elseif strcmp(type_test,'MB') %modulo bat
     line = strrep(line,'Analog_IN_2/C','Analog_IN_2{C}');%%%%%%%%%%%%%%%%%%%%%%%%%
     line = strrep(line,'Analog OUT','Analog_OUT');%%%%%%%%%%%%%%%%%%%%%%%%%
     line = strrep(line,'Analog_OUT/V','Analog_OUT{V}');
-%     line = strrep(line,'(Q-Qo)/mA.h','Qp{mAh}');
-    line = strrep(line,'(Q-Qo)/mA.h','Qc{mAh}');%v11.20
-    line = strrep(line,'Q charge/discharge/mA.h','Qp{mAh}');%v11.20
-    line = strrep(line,'Q discharge/mA.h','Qdischarge{mAh}');%v11.20
-    line = strrep(line,'Q charge/mA.h','Qcharge{mAh}');%v11.20
     line = strrep(line,'Energy discharge/W.h','Edischarge{Wh}');%v11.20
     line = strrep(line,'Energy charge/W.h','Echarge{Wh}');%v11.20
     line = strrep(line,'<I>/mA','I{mA}');
@@ -245,7 +241,6 @@ else %essai inconnu comme MB (2021/08 v11.36)
     line = strrep(line,'control/mA','control{mA}');
     line = strrep(line,'control/V/mA','control{V_or_mA}');
     line = strrep(line,'control/V','control{V}');%202101 v1.37?
-    line = strrep(line,'dq/mA.h','dq{mAh}');
     line = strrep(line,'Analog IN ','Analog_IN_');%%%%%%%%%%%%%%%%%%%%%%%%%
     line = strrep(line,'Analog_IN_1/V','Analog_IN_1{V}');%%%%%%%%%%%%%%%%%%%%%%%%%
     line = strrep(line,'Analog_IN_1/C','Analog_IN_1{C}');%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -253,11 +248,6 @@ else %essai inconnu comme MB (2021/08 v11.36)
     line = strrep(line,'Analog_IN_2/C','Analog_IN_2{C}');%%%%%%%%%%%%%%%%%%%%%%%%%
     line = strrep(line,'Analog OUT','Analog_OUT');%%%%%%%%%%%%%%%%%%%%%%%%%
     line = strrep(line,'Analog_OUT/V','Analog_OUT{V}');
-%     line = strrep(line,'(Q-Qo)/mA.h','Qp{mAh}');
-    line = strrep(line,'(Q-Qo)/mA.h','Qc{mAh}');%v11.20
-    line = strrep(line,'Q charge/discharge/mA.h','Qp{mAh}');%v11.20
-    line = strrep(line,'Q discharge/mA.h','Qdischarge{mAh}');%v11.20
-    line = strrep(line,'Q charge/mA.h','Qcharge{mAh}');%v11.20
     line = strrep(line,'Energy discharge/W.h','Edischarge{Wh}');%v11.20
     line = strrep(line,'Energy charge/W.h','Echarge{Wh}');%v11.20
     line = strrep(line,'<I>/mA','I{mA}');

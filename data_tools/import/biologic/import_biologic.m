@@ -299,7 +299,7 @@ for indF = 1:length(corps)
             %I
             I =  zeros(size(XMLVars.tc.vector));
             XMLVars.I = makeXMLVariable('I', 'mA', '%f', 'I', I);
-            %Qp (AmpHeure charges endant la phase)
+            %Qp (AmpHeure charges pendant la phase)
             Qp =  zeros(size(XMLVars.tc.vector));
             XMLVars.Qp = makeXMLVariable('Qp', 'mAh', '%f', 'Qp', Qp);
 
