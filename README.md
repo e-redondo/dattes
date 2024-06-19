@@ -39,7 +39,10 @@ This script helps you to get some experimental data and shows you the main featu
 
 ## :scroll: License
 
-Copyright (c) 2015-2023, E. Redondo, M. Hassini (Univ. Gustave Eiffel).
+Copyright (c) Univ. Gustave Eiffel<br>
+2015-2020 E. Redondo<br>
+2021-2023 E. Redondo, M. Hassini<br>
+2024- E. Redondo, M. Hassini, Pedro Seger, Ali Abbas<br>
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -59,16 +62,30 @@ You should have received a copy of the GNU General Public License along with thi
     <a href="https://cv.archives-ouvertes.fr/redondo">
     <img src="https://cv.archives-ouvertes.fr/photo/326135" height="120px;" alt=""/>
     <br /><sub><b>Eduardo Redondo-Iglesias</b></sub></a><br />
-    <a href="Created DATTES" title="Created DATTES"> <img class="emoji" alt="nrain" src="https://github.githubassets.com/images/icons/emoji/unicode/1f9e0.png?v8" width="20" height="20"> </a>
-    <a href="Codes" title="Codes"><img class="emoji" alt="computer" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4bb.png" width="20" height="20"></a> 
-    <a href="" title="Make documentation"><img class="emoji" alt="book" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png" width="20" height="20"></a> 
+    <a href="Created DATTES" title="Created DATTES"> &#x1F914; </a>
+    <a href="Write Code" title="Codes">&#x1F4BB;</a> 
+    <a href="" title="Make documentation">&#x1F4D6;</a> 
     </td>
     <td align="center">
     <a href="https://cv.hal.science/marwan-hassini">
     <img src="https://cv.archives-ouvertes.fr/photo/882114" height="120px;" alt=""/>
     <br /><sub><b>Marwan Hassini</b></sub></a><br />
-    <a href="Codes" title="Codes"><img class="emoji" alt="computer" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4bb.png" width="20" height="20"></a> 
-    <a href="" title="Make documentation"><img class="emoji" alt="book" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png" width="20" height="20"></a> 
+    <a href="Write Code" title="Codes">&#x1F4BB;</a> 
+    <a href="" title="Make documentation">&#x1F4D6;</a> 
+    </td>
+    </tr>
+      <tr>
+    <td align="center">
+    <a href="https://scholar.google.com/citations?user=zd7ifWgAAAAJ">
+    <img src="https://scholar.googleusercontent.com/citations?view_op=view_photo&user=zd7ifWgAAAAJ" height="120px;" alt=""/>
+    <br /><sub><b>Pedro Von Hohendorff Seger</b></sub></a><br />
+    <a href="Write Code" title="Codes">&#x1F4BB;</a>
+    </td>
+        <td align="center">
+            <img src="https://media.licdn.com/dms/image/D4D03AQFdQFXvrJengQ/profile-displayphoto-shrink_400_400/0/1708205608211?e=1724284800&v=beta&t=NsZ7wZQTKLzWC4iTi7VKucEPWVWRSV8z9murbeiNH8E" height="120px;" alt=""/>
+    <a href="https://www.linkedin.com/in/aabbas94">
+    <br /><sub><b>Ali Abbas</b></sub></a><br />
+    <a href="Write Code" title="Codes">&#x1F4BB;</a>
     </td>
   </tr>
 </table>
