@@ -25,10 +25,13 @@ function [ah, ah_dis, ah_cha] = format_amphour(Ah_dis, Ah_cha)
 
 
 %detect Ah_dis and Ah_cha sign, change everyone to positive
-if max(abs(Ah_dis))<0
+[~,ind_max] = max(abs(Ah_dis));
+if Ah_dis(ind_max)<0
     Ah_dis = -Ah_dis; 
 end
-if max(abs(Ah_cha))<0
+
+[~,ind_max] = max(abs(Ah_cha));
+if Ah_cha(ind_max)<0
     Ah_cha = -Ah_cha;
 end
 
