@@ -171,20 +171,53 @@ T = [];
 ah = [];
 ah_cha = [];
 ah_dis = [];
-if all(cellfun(@(x) isfield(x,'ah'),xml.table))
+
+%if some tables contain ah counter but not all tables
+if any(cellfun(@(x) isfield(x,'ah'),xml.table))
+    %find table with no ah counter and fill with zeros
+    ind_t = find(~cellfun(@(x) isfield(x,'ah'),xml.table));
+    for ind = 1:length(ind_t)
+        vector_size = size(xml.table{ind_t(ind)}.tabs.vector);
+        xml_ah = makeXMLVariable('ah', 'Ah', '%f', 'ah', zeros(vector_size));
+        xml.table{ind_t(ind)}.ah = xml_ah;
+    end
+    % if all(cellfun(@(x) isfield(x,'ah'),xml.table))
     ah = cellfun(@(x) x.ah.vector,xml.table,'uniformoutput',false);
     ah = vertcat(ah{:});
     ah = ah(Iu);%amp hours calculated by cycler, not by current integration
+    % end
 end
-if all(cellfun(@(x) isfield(x,'ah_dis'),xml.table))
+
+%if some tables contain ah_dis counter but not all tables
+if any(cellfun(@(x) isfield(x,'ah_dis'),xml.table))
+    %find table with no ah_dis counter and fill with zeros
+    ind_t = find(~cellfun(@(x) isfield(x,'ah_dis'),xml.table));
+    for ind = 1:length(ind_t)
+        vector_size = size(xml.table{ind_t(ind)}.tabs.vector);
+        xml_ah_dis = makeXMLVariable('ah_dis', 'Ah', '%f', 'ah_dis', zeros(vector_size));
+        xml.table{ind_t(ind)}.ah_dis = xml_ah_dis;
+    end
+    % if all(cellfun(@(x) isfield(x,'ah_dis'),xml.table))
     ah_dis = cellfun(@(x) x.ah_dis.vector,xml.table,'uniformoutput',false);
     ah_dis = vertcat(ah_dis{:});
     ah_dis = ah_dis(Iu);%amp hours calculated by cycler, not by current integration
+    % end
 end
-if all(cellfun(@(x) isfield(x,'ah_cha'),xml.table))
+
+%if some tables contain ah_cha counter but not all tables
+if any(cellfun(@(x) isfield(x,'ah_cha'),xml.table))
+    %find table with no ah_cha counter and fill with zeros
+    ind_t = find(~cellfun(@(x) isfield(x,'ah_cha'),xml.table));
+    for ind = 1:length(ind_t)
+        vector_size = size(xml.table{ind_t(ind)}.tabs.vector);
+        xml_ah_cha = makeXMLVariable('ah_cha', 'Ah', '%f', 'ah_cha', zeros(vector_size));
+        xml.table{ind_t(ind)}.ah_cha = xml_ah_cha;
+    end
+    % if all(cellfun(@(x) isfield(x,'ah_cha'),xml.table))
     ah_cha = cellfun(@(x) x.ah_cha.vector,xml.table,'uniformoutput',false);
     ah_cha = vertcat(ah_cha{:});
     ah_cha = ah_cha(Iu);%amp hours calculated by cycler, not by current integration
+    % end
 end
 
 
