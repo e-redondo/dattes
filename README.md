@@ -62,30 +62,28 @@ You should have received a copy of the GNU General Public License along with thi
     <a href="https://cv.archives-ouvertes.fr/redondo">
     <img src="https://cv.archives-ouvertes.fr/photo/326135" height="120px;" alt=""/>
     <br /><sub><b>Eduardo Redondo-Iglesias</b></sub></a><br />
-    <a href="Created DATTES" title="Created DATTES"> &#x1F914; </a>
-    <a href="Write Code" title="Codes">&#x1F4BB;</a> 
-    <a href="" title="Make documentation">&#x1F4D6;</a> 
+    <a href="Original Idea" title="Original Idea"> &#x1F914; </a>
+    <a href="Code" title="Code">&#x1F4BB;</a> 
+    <a href="Documentation" title="Documentation">&#x1F4D6;</a> 
     </td>
     <td align="center">
     <a href="https://cv.hal.science/marwan-hassini">
     <img src="https://cv.archives-ouvertes.fr/photo/882114" height="120px;" alt=""/>
     <br /><sub><b>Marwan Hassini</b></sub></a><br />
-    <a href="Write Code" title="Codes">&#x1F4BB;</a> 
-    <a href="" title="Make documentation">&#x1F4D6;</a> 
+    <a href="Code" title="Code">&#x1F4BB;</a> 
+    <a href="Documentation" title="Documentation">&#x1F4D6;</a> 
     </td>
-    </tr>
-      <tr>
     <td align="center">
     <a href="https://scholar.google.com/citations?user=zd7ifWgAAAAJ">
     <img src="https://scholar.googleusercontent.com/citations?view_op=view_photo&user=zd7ifWgAAAAJ" height="120px;" alt=""/>
     <br /><sub><b>Pedro Von Hohendorff Seger</b></sub></a><br />
-    <a href="Write Code" title="Codes">&#x1F4BB;</a>
+    <a href="Code" title="Code">&#x1F4BB;</a> 
     </td>
         <td align="center">
+            <a href="https://www.linkedin.com/in/aabbas94">
             <img src="https://media.licdn.com/dms/image/D4D03AQFdQFXvrJengQ/profile-displayphoto-shrink_400_400/0/1708205608211?e=1724284800&v=beta&t=NsZ7wZQTKLzWC4iTi7VKucEPWVWRSV8z9murbeiNH8E" height="120px;" alt=""/>
-    <a href="https://www.linkedin.com/in/aabbas94">
     <br /><sub><b>Ali Abbas</b></sub></a><br />
-    <a href="Write Code" title="Codes">&#x1F4BB;</a>
+    <a href="Code" title="Code">&#x1F4BB;</a> 
     </td>
   </tr>
 </table>
