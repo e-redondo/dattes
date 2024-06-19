@@ -114,7 +114,7 @@ units = regexp(units_line,params.col_sep,'split');
 
 if length(units)<=1
     fprintf('csv2profiles, ERROR: a problem maybe with column separator "%s"\n',params.col_sep);
-    fprintf('nefore last line of header: "%s"\n',variables_line);
+    fprintf('before-last line of header: "%s"\n',variables_line);
     fprintf('last line of header: "%s"\n',units_line);
     return;
 end
@@ -246,7 +246,9 @@ profiles.ah_cha = ah_cha;
 
 %other_cols:
 ind_other_cols = find(~ismember(variables,col_names));
-if ~isempty(ind_other_cols)
+if isempty(ind_other_cols)
+    other_cols = struct;
+else
 %     other_cols.t = t;
     if ~isempty(Step)
         other_cols.Step = Step;
@@ -340,7 +342,13 @@ end
 %datetime
 %FIX: get datetime just at each ind_start, then convert to seconds
 % and finally calculate datetime from first value + t
-date_time = data_columns{ind_col_dt};
+if isempty(ind_col_dt)
+    % in this case date_time not found, put test time instead
+    % need to fix afterwards with initial time date of test.
+    date_time = t; 
+else
+    date_time = data_columns{ind_col_dt};
+
 if isempty(params.date_fmt)
     date_time = datenum_guess(date_time(1));
 else
@@ -353,7 +361,7 @@ else
     date_time = m2edate(date_time);
     profiles.datetime = date_time(1)+profiles.t-profiles.t(1);
 end
-
+end
 end
 
 function ind_col = find_col_index(header_line,col_name)
