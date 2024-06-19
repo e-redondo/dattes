@@ -40,38 +40,32 @@ if verbose
 end
     fid_in = fopen_safe(file_in);
 %0.1 check if file is a bitrode file
-[cycler, line1, line2] = which_cycler(fid_in);
-% bench ='oup';
+[cycler, line1, line2, header_lines] = which_cycler(fid_in);
+
 if ~strncmp(cycler,'bitrode_csv',11)
     fprintf('ERROR: file does not seem a bitrode *.csv file: %s\n',file_in);
     xml = [];
     return;
 end
     fid_out = fopen (file_out,'w+','n','ISO-8859-1');
-    %lecture de l'entete:
-%     variables = fgetl(fidIn);
 
-%     fprintf(fidOut,'%s\n',variables);
     chrono=tic;
-    %2.1)substituer dans le corps:
-    %chaines de texte a chercher
+    %2.1: mixed number/char csv: replace some char string by numbers
+    % char strings to replace
     strold={',LDCH,';',LCHR,';',DCHG,';',REST,';',CHRG,';',LRDCH,';',LRCHR,';...%Mode
         ',S,';', ,';',Q,';',H,';',Z,';',A,';',a,';...%DataAcqFlag
         ',L,';',R,';',C,';',D,';','};%Mode
-    %chaines de texte de substitution
+    % numbers to put instead
     strnew={',-1,';',1,';',-10,';',0,';',10,';',-2,';',2,';...%Mode
         ',99,';',0,';',100,';',101,';',102,';',103,';',103,';...%DataAcqFlag
         ',1,';',0,';',10,';',-10,';sprintf('\t')};%Mode
-    %operation de remplacement du fichier choisi d'origine au fichier choisi
-    %comme destination
-    %TODO: le faire sans fichier intermediaire, cf. lectureBiologicFile:
-    % isempty(strfind(ligne1,'XXX')...
-%     nb_lignes=find_replace(fidIn,fidOut,strold,strnew);
+    
+    %write intermediary file 'file_in.veh2':
     nb_lignes=find_replace(fid_in,fid_out,strold,strnew,0);
     fclose(fid_in);
     fclose(fid_out);
 
-    %read file.veh2
+    %read intermediary file 'file_in.veh2':
 
     fid_out = fopen_safe(file_out);
     %read header lines until 'Total Time'
@@ -289,6 +283,13 @@ variables = regexprep(variables,'TemperatureA' , 'T');
 
 %nettoyer '_unit' à la fin:
 variables = regexprep(variables,'_.*$' , '');
-%si besoin, 'plus hard'
-% variables = regexprep(variables,'_.*$' , '');
+
+
+%     'AmpHoursDischarge'
+variables = regexprep(variables,'AmpHoursDischarge' , 'ah_dis');
+%     'AmpHoursCharge'
+variables = regexprep(variables,'AmpHoursCharge' , 'ah_cha');
+%     'AmpHours'
+variables = regexprep(variables,'AmpHours' , 'ah');
+
 end
