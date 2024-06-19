@@ -37,8 +37,12 @@ This document describe data structure for current version of DATTES:
     - I [mx1 double]: current (A)
     - mode [mx1 double]: cycler mode (n.u.), 1=CC, 2=CV, 3=rest, 4=EIS, 5=profile
     - T [mx1 double]: cell temperature (empty if no probe found)
-    - dod_ah [mx1 double]:  Depth of Discharge in Ah (empty if no SoC calculation)
-    - soc [mx1 double]:  State of Charge in % (empty if no SoC calculation)
+    - dod_ah [mx1 double]: Depth of Discharge in Ah (empty if no SoC calculation)
+    - soc [mx1 double]: State of Charge in % (empty if no SoC calculation)
+    - ah [mx1 double]: amp hours from cycler
+    - ah_dis [mx1 double]: discharged amp hours from cycler
+    - ah_cha [mx1 double]: charged amp hours from cycler
+
 
 ### eis substructure
 - eis [1xp struct] with fields:
