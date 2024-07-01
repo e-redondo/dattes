@@ -210,7 +210,10 @@ elseif strcmp(type_test,'MB')
         control_vals1{ind} = control_val1_line{1}(start_cuts(ind):end_cuts(ind));
         control_units1{ind} = control_unit1_line{1}(start_cuts(ind):end_cuts(ind));
     end
-
+    
+    % prevent comma decimal separator error
+    control_vals1 = strrep(control_vals1,',','.');
+    
     %convert string to numbers, fill empty values with nans
     control_vals1 = cellfun(@str2num,control_vals1,'UniformOutput',false);
     Ie = cellfun(@isempty,control_vals1);
