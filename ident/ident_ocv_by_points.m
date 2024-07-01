@@ -80,7 +80,7 @@ for ind = 1:length(phases_ocv)
     
     datetime_ocv(ind) = dtp(end);
     t_ocv(ind) = tp(end);
-    ocv(ind) = Up(end-2);%TODO: extrapolation, calcul de la relaxation, etc.
+    ocv(ind) = spike_filter(Up(end-10:end),20);
     dod(ind) = DoDAhp(end);
     signe(ind) = sign(phases_avant(ind).Iavg);
 end
