@@ -29,8 +29,8 @@ body = '';
 empty_mpt = false;
 % Reading header
 [cycler, line1, line2] = which_cycler(fid);
-if ~strcmp(cycler,'bio')
-    return% Error if not an ECLAB file
+if ~strncmp(cycler,'bio',3)
+    return% Error if not an ECLAB or BTLAB file
 end
 
 line2_split = regexp(line2,'\s','split');

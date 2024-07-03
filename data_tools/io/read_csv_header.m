@@ -8,6 +8,10 @@ if ~isfield(params,'str_sep')
     %see parse_mixed_data_csv
     params.str_sep = '';
 end
+if ~isfield(params,'max_lines')
+    %maximum number of lines to read if no numeric is found
+    params.max_lines = 100;
+end
 
 %clean 'str_sep':
 if isempty(params.str_sep)
@@ -21,7 +25,7 @@ frewind(fid);
 this_line = my_fgetl(fid);
 header_lines = {this_line};
 
-while ~feof(fid) && isempty(regexp(this_line,'^\s*\-?\.?[0-9]','once')) && length(header_lines)<100
+while ~feof(fid) && isempty(regexp(this_line,'^\s*\-?\.?[0-9]','once')) && length(header_lines)<params.max_lines
     this_line = my_fgetl(fid);
     header_lines{end+1,1} = this_line;
 end

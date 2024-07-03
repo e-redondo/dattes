@@ -1,9 +1,9 @@
-function [cycler, line1, line2, header_lines] = which_cycler(fid)
+function [cycler, line1, line2, header_lines, first_data_line] = which_cycler(fid)
 % which_cycler detect from wich cycler the file is.
 %
 % Usage:
-% [cycler, ligne1, ligne2, header_lines] = which_cycler(fid)
-% [cycler, ligne1, ligne2, header_lines] = which_cycler(filename)
+% [cycler, line1, line2, header_lines] = which_cycler(fid)
+% [cycler, line1, line2, header_lines] = which_cycler(filename)
 %
 % Inputs:
 % - fid (file handler)
@@ -27,6 +27,7 @@ function [cycler, line1, line2, header_lines] = which_cycler(fid)
 % - line2 [string]: file's second line (if file is text type), if bitrode
 % file, last file's line is returned
 % - header_lines [nx1 cell]: header lines
+% - first_data_line [1xp char] = first line of data
 %
 % See also: dattes_import
 %
@@ -40,7 +41,7 @@ end
 cycler = '';
 line1 = '';
 line2 = '';
-
+first_data_line = '';
 header_lines = read_csv_header(fid);
 
 
@@ -48,7 +49,7 @@ header_lines = read_csv_header(fid);
 frewind(fid);
 line1 = header_lines{1};
 if length(header_lines)<2
-  return;%empty file or only line1
+    return;%empty file or only line1
 end
 line2 = header_lines{2};
 if length(line2)<2 && length(header_lines)>2
@@ -57,25 +58,58 @@ if length(line2)<2 && length(header_lines)>2
 end
 
 if ~isempty(regexp(line1,'EC-Lab ASCII FILE','match'))
-    cycler = 'bio';%Biologic File
+    cycler = 'bio_eclab';%Biologic File
+    %read more lines (take nb of lines from line2)
+    max_lines = str2num(regexp(line2,'[0-9]+','match','once'));
+    if isempty(max_lines)
+    params.max_lines = 200;
+    else
+    params.max_lines = max_lines+1;
+    end
+    header_lines = read_csv_header(fid,params);
+    frewind(fid);
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
     return
 end
 if ~isempty(regexp(line1,'BT-Lab ASCII FILE','match'))
-    cycler = 'bio';%Biologic File
+    cycler = 'bio_btlab';%Biologic File
+    %read more lines (take nb of lines from line2)
+    max_lines = str2num(regexp(line2,'[0-9]+','match','once'));
+    if isempty(max_lines)
+    params.max_lines = 200;
+    else
+    params.max_lines = max_lines+1;
+    end
+    header_lines = read_csv_header(fid,params);
+    frewind(fid);
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
     return
 end
 
 if strncmp(line1,'TimeStamp,Segment',17)
     cycler = 'pricsv';%Princeton File
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
     return
 end
 if strncmp(line1,'TimeStamp,mode,ox_red',21)
     cycler = 'biocsv';
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
     return
 end
 if strcmp(line1,'<Application>')
     if strcmp(line2,'Name=VersaStudio')
         cycler = 'pribrut';
+        % last header line is first data line:
+        first_data_line = header_lines{end};
+        header_lines = header_lines(1:end-1);
         return
     end
 end
@@ -89,6 +123,9 @@ if strncmp(line1,'Total Time,Cycle,Loop Counter #1',32)
     line2 = s{end};
     %rewind the file
     fseek(fid,0,-1);
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
     return
 elseif ~isempty(regexp(line1,'^"Total Time, S"','match'))
     cycler = 'bitrode_csv_v2';
@@ -100,6 +137,9 @@ elseif ~isempty(regexp(line1,'^"Total Time, S"','match'))
     line2 = s{end};
     %rewind the file
     fseek(fid,0,-1);
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
     return
 elseif ~isempty(regexp(line1,'^Test Name','match'))
     cycler = 'bitrode_csv_with_header';
@@ -111,42 +151,67 @@ elseif ~isempty(regexp(line1,'^Test Name','match'))
     line2 = s{end};
     %rewind the file
     fseek(fid,0,-1);
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
     return
 end
 if ~isempty(regexp(line1,'Data_Point,Test_Time\(s\),Date_Time','match'))
     cycler = 'arbin_csv_v1';
     frewind(fid);
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
     return
 end
 if ~isempty(regexp(line1,'Data_Point,Date_Time,Test_Time\(s\)','match'))
     cycler = 'arbin_csv_v1';
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
     frewind(fid);
     return
 end
 if ~isempty(regexp(line1,'Date_Time,Test_Time\(s\)','match'))
     cycler = 'arbin_csv_v3';%(no data_point column)
     frewind(fid);
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
     return
 end
 if ~isempty(regexp(line1,'Data Point,Date Time,Test Time','match'))
     cycler = 'arbin_csv_v2';
     frewind(fid);
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
     return
 end
 if ~isempty(regexp(line1,'^Cycle ID','match')) && ~isempty(regexp(line2,'^,\s*Step ID','match'))
     cycler = 'neware_csv';
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
     return
 end
 if length(header_lines)>2
     if ~isempty(regexp(header_lines{end-2},'^Time Stamp,Step,Status'))
         cycler = 'digatron_csv';
+        % last header line is first data line:
+        first_data_line = header_lines{end};
+        header_lines = header_lines(1:end-1);
         return
     end
 end
 if ~isempty(regexp(line1,'^,ChargeKey,LogDateStamp,version,productnum'))
     cycler = 'hyperion_csv';
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
     return
 end
+
 %unknown type: return first line
 cycler = line1;
 frewind(fid);
