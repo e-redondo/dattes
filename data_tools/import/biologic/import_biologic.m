@@ -164,7 +164,7 @@ for indF = 1:length(corps)
     if ~isempty(donnees)
         % 2.- make Table
 
-        [variableNames, unitNames, tableDate, typeEssai, sourcefile,test_params] = analyze_head(fileList{indF});
+        [variableNames, unitNames, tableDate, typeEssai, sourcefile,test_params] = analyse_biologic_head(fileList{indF});
         % 2.1.- make metaTable
         tableName = sprintf('%s_%02i',typeEssai,indF);
         tableComments = '';
