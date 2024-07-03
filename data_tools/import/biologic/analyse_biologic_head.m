@@ -1,35 +1,44 @@
-function [variable_names, unit_names, date_test, type_test, source_file,test_params] = analyse_biologic_head(file_name)
+function [variable_names, unit_names, date_test, source_file,test_params] = analyse_biologic_head(file_name,header)
 % analyse_biologic_head Analyse header and variables of biologic files
 %
-% [variable_names, unit_names, date_test, type_test, source_file] = analyse_biologic_head(file_name)
+% [variable_names, unit_names, date_test, source_file, test_params] = analyse_biologic_head(file_name)
 % Read the Biologic result file and analyse header and variables
 %
-% Usage:
+% Usage(1):
 % [variable_names, unit_names, date_test, type_test, source_file] = analyse_biologic_head(file_name)
+% Usage(2):
+% [variable_names, unit_names, date_test, type_test, source_file] = analyse_biologic_head(file_name,header)
 % Inputs : 
-% - file_name: Result file_name from the Biologic cycler
+% - file_name [1xp char]:  pathname to the biologic results file (*.mpt)
+% - header [nx1 cell]: header lines of the biologic results file (*.mpt)
 % Outputs : 
 % - variable_names: [1xn cell] Names of the variables
 % - unit_names: [1xn cell] Names of the variables units
 % - date_test: [1xn cell] Date of the test
-% - type_test: [1xn cell] Type of the test
 % - source_file: [1xn cell] Source file
-%
+% - test_params: [struct]  with fields
+%       - type_test : [string]  Test type (GCPL, MB, GPI, GEIS, etc.)
+%       - empty_file : [Boolean]  True if just header in file (no data)
 %   See also import_biologic, read_biologic_file
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab: 
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
-[head, date_test, type_test, source_file, empty_file,test_params] = biologic_head(file_name);
-
-[variable_names, unit_names] = biologic_variables(head{end}, type_test);
+if ~exist('head','var')
+    [header, date_test, source_file, test_params] = biologic_head(file_name);
+else
+    [header, date_test, source_file, test_params] = biologic_head(file_name,header);
+end
+[variable_names, unit_names] = biologic_variables(header{end}, test_params);
 
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%function [variable_names unit_names] = biologic_variables(line, type_test)
-function [variable_names, unit_names] = biologic_variables(line, type_test)
+%function [variable_names unit_names] = biologic_variables(line, test_params)
+function [variable_names, unit_names] = biologic_variables(line, test_params)
+
+type_test = test_params.type_test;
 %variables
 variable_names = cell(0);
 unit_names = cell(0);
@@ -308,19 +317,23 @@ variable_names = regexprep(variables,expr,'');
 end
 
 
-function [head, date_test, type_test, source_file, empty_file,test_params] = biologic_head(file_name)
+function [head, date_test, source_file, test_params] = biologic_head(file_name,head)
 % biologic_head Read and analyse .mpt Biologic files header
 %
-% Usage :
-% [head, date_test, type_test, source_file, empty_file] = biologic_head(file_name)
+% Usage(1) :
+% [head, date_test, type_test, source_file, test_params] = biologic_head(file_name)
+% Usage(2) :
+% [head, date_test, type_test, source_file, test_params] = biologic_head(file_name,head)
 % Inputs :
 %   - file_name: [string] Path to the Biologic file
+%   - head: [(mx1) cell string] Header information
 % Outputs :
 %   - head: [(mx1) cell string] Header information
 %   - date_test: [string]  Test date with format yyyymmdd_HHMMSS
-%   - type_test : [string]  Test type
 %   - source_file: [string]  Source file
-%   - empty_file : [Boolean]  True if just header in file (no data)
+%   - test_params: [struct]  with fields
+%       - type_test : [string]  Test type (GCPL, MB, GPI, GEIS, etc.)
+%       - empty_file : [Boolean]  True if just header in file (no data)
 %
 % See also read_biologic_file, analyze_head
 %
@@ -332,31 +345,34 @@ function [head, date_test, type_test, source_file, empty_file,test_params] = bio
 if nargin==0
     print_usage
 end
-head = '';
+
 date_test = '';
 
 %1.-Reading file
-[D, F, E] = fileparts(file_name);
-F = [F,E];
-fid = fopen_safe(file_name);
-if fid<0
-    fprintf('biologic_head: Error in the file %s\n',F);
-    return;
+if ~exist('head','var')
+
+    [D, F, E] = fileparts(file_name);
+    F = [F,E];
+    fid = fopen_safe(file_name);
+    if fid<0
+        fprintf('biologic_head: Error in the file %s\n',F);
+        return;
+    end
+    % [head] = read_biologic_file(fid);
+    [head] = read_biologic_file(fid,true);
+    if isempty(head)
+        fprintf('biologic_head: Error in the file %s\n',F);
+        return%on force l'erreur si pas ECLAB file
+    end
+%     %check if it was last line in file
+%     ligne = fgetl(fid);
+%     if ligne == -1
+%         empty_file = true;
+%     else
+%         empty_file = false;
+%     end
+    fclose(fid);
 end
-% [head] = lectureBiologicTete(fid);
-[head] = read_biologic_file(fid,true);
-if isempty(head)
-    fprintf('biologic_head: Error in the file %s\n',F);
-    return%on force l'erreur si pas ECLAB file
-end
-%check if it was last line in file
-ligne = fgetl(fid);
-if ligne == -1
-    empty_file = true;
-else
-    empty_file = false;
-end
-fclose(fid);
 
 %2.- date essai
 date_test = '';
@@ -546,6 +562,9 @@ elseif strcmp(type_test,'MB')
     test_params.Ua(~peis_sequences) = nan;
 
 end
+
+test_params.type_test = type_test;
+% test_params.empty_file = empty_file;
 
 end
 

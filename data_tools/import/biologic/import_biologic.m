@@ -164,9 +164,9 @@ for indF = 1:length(corps)
     if ~isempty(donnees)
         % 2.- make Table
 
-        [variableNames, unitNames, tableDate, typeEssai, sourcefile,test_params] = analyse_biologic_head(fileList{indF});
+        [variableNames, unitNames, tableDate, sourcefile,test_params] = analyse_biologic_head(fileList{indF});
         % 2.1.- make metaTable
-        tableName = sprintf('%s_%02i',typeEssai,indF);
+        tableName = sprintf('%s_%02i',test_params.type_test,indF);
         tableComments = '';
         [XMLMetatable, err] = makeXMLMetatable(tableName,tableDate,sourcefile,tableComments);
         if err
@@ -193,7 +193,7 @@ for indF = 1:length(corps)
             tabs = XMLVars.tc.vector+tBio*86400;
             XMLVars.tabs = makeXMLVariable('tabs', 's', '%f', 'temps absolu', tabs);
         end
-        if  strcmp(typeEssai, 'GEIS') || strcmp(typeEssai, 'PEIS')
+        if  strcmp(test_params.type_test, 'GEIS') || strcmp(test_params.type_test, 'PEIS')
 
             %mode 4
             mode =  4*ones(size(XMLVars.tc.vector));
@@ -231,7 +231,7 @@ for indF = 1:length(corps)
                XMLVars.Uamp = makeXMLVariable('Uamp', 'A', '%f', 'Uamp', nan(size(XMLVars.tc.vector)));
             end
 
-        elseif  strcmp(typeEssai, 'MB')
+        elseif  strcmp(test_params.type_test, 'MB')
 
             %Found GEIS in MB:
             %Iavg (Is in mpt files: constant average current):
@@ -291,11 +291,11 @@ for indF = 1:length(corps)
             %TODO: put always Iamp / Iavg to NaN to avoid errors in
             %extract_eis (field not found in xml.table)
             %TODO: add support for PEIS (Uamp / Uavg?)
-        elseif  strcmp(typeEssai, 'GPI')
+        elseif  strcmp(test_params.type_test, 'GPI')
             %mode 5
             mode =  5*ones(size(XMLVars.tc.vector));
             XMLVars.mode = makeXMLVariable('mode', '', '%i', 'mode', mode);
-        elseif  strcmp(typeEssai, 'OCV')
+        elseif  strcmp(test_params.type_test, 'OCV')
             %I
             I =  zeros(size(XMLVars.tc.vector));
             XMLVars.I = makeXMLVariable('I', 'mA', '%f', 'I', I);
