@@ -15,7 +15,7 @@ function [DoDAh, SOC] = calcul_soc(datetime,I,config,options)
 % - DoDAh (nx1 double): discharge in Amp-hour
 % - SOC (nx1 double): SOC [%]
 %
-% See also calcul_amphour
+% See also dattes_structure, calcul_soc_patch, calcul_amphour
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab: 
@@ -40,15 +40,15 @@ if ~isstruct(config) || ~isnumeric(datetime) || ~isnumeric(I) || ~ischar(options
     return;
 end
 if ~isfield(config,'soc') || ~isfield(config,'test')
-    fprintf('calcul_soc: incomplete structure config, redo configurator: dattes(''cs'')\n');
+    fprintf('calcul_soc: failed configuration for soc\n');
     return;
 end
 if ~isfield(config.soc,'soc100_datetime')
-    fprintf('calcul_soc: incomplete structure config, redo configurator: dattes(''cs'')\n');
+    fprintf('calcul_soc: no soc100 detected, probably need to use calcul_soc_patch\n');
     return;
 end
 if ~isfield(config.test,'capacity')
-    fprintf('calcul_soc: incomplete structure config, redo configurator: dattes(''cs'')\n');
+    fprintf('calcul_soc: incomplete structure config, redo dattes_structure\n');
     return;
 end
 Q = calcul_amphour(datetime,I); %calcul capacity

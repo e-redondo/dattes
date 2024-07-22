@@ -125,7 +125,7 @@ profiles_units = {'s','s','V','A','','degC','Ah','','','Ah','Ah','Ah'};
 %3.3.- profiles variables
 variables = fieldnames(profiles);
 %change some variable names: (see doc/structure specification)
-variables_names = variables;variables_names = variables;
+variables_names = variables;
 variables_names(ismember(variables,{'datetime'})) = {'tabs'};
 variables_names(ismember(variables,{'t'})) = {'tc'};
 variables_names(ismember(variables,{'m'})) = {'mode'};

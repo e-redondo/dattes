@@ -55,11 +55,11 @@ if ~isstruct(config) || ~ischar(options) || ~isnumeric(datetime) || ~isstruct(ph
     return;
 end
 if ~isfield(config,'impedance')
-    fprintf('ident_rrc: incomplete structure config, redo configurator: dattes(''cs'')\n');
+    fprintf('ident_rrc: incomplete structure config, redo dattes_configure\n');
     return;
 end    
 if ~isfield(config.impedance,'initial_params') || ~isfield(config.impedance,'pulse_max_duration')
-    fprintf('ident_rrc: incomplete structure config, redo configurator: dattes(''cs'')\n');
+    fprintf('ident_rrc: incomplete structure config, redo dattes_configure\n');
     return;
 end
 

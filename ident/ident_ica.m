@@ -49,12 +49,12 @@ if ~isstruct(profiles) || ~isstruct(config) || ~isstruct(phases) || ~ischar(opti
 end
 
 if ~isfield(config,'ica')
-    fprintf('ident_ica: incomplete structure config, redo configurator: dattes(''cs'')\n');
+    fprintf('ident_ica: incomplete structure config, redo dattes_configure\n');
     return;
 end
 
 if ~isfield(config.ica,'pICA') || ~isfield(config.ica,'filter_order') || ~isfield(config.ica,'filter_cut') || ~isfield(config.ica,'filter_type')
-    fprintf('ident_ica: incomplete structure config, redo configurator: dattes(''cs'')\n');
+    fprintf('ident_ica: incomplete structure config, redo dattes_configure\n');
     return;
 end
 

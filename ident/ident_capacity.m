@@ -57,15 +57,17 @@ if ~isstruct(phases) || ~isstruct(config) || ~ischar(options)
     return;
 end
 if ~isfield(config,'capacity')
-    fprintf('ident_capacity: incomplete structure config, redo configurator: dattes(''cs'')\n');
+    fprintf('ident_capacity: incomplete structure config, redo dattes_configure\n');
     return;
 end
 if ~isfield(config.capacity,'pCapaD') || ~isfield(config.capacity,'pCapaC') || ~isfield(config.capacity,'pCapaDV') || ~isfield(config.capacity,'pCapaCV')
-    fprintf('ident_capacity: incomplete structure config, redo configurator: dattes(''cs'')\n');
+    fprintf('ident_capacity: incomplete structure config, redo dattes_configure\n');
     return;
 end
 if ~isfield(phases,'capacity') || ~isfield(phases,'duration') || ~isfield(phases,'Iavg') || ~isfield(phases,'Uavg')
-    fprintf('ident_capacity: incomplete structure phases, redo decompose: dattes(''ps'')\n');
+    %TODO entering here seems to be impossible since dattes general
+    %restructuration (DATTES 23.05).
+    fprintf('ident_capacity: incomplete structure phases, redo dattes_structure\n');
     return;
 end
 

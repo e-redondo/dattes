@@ -47,11 +47,11 @@ if ~isstruct(profiles) || ~isstruct(config) || ~ischar(options)
     return;
 end
 if ~isfield(config,'resistance')
-    fprintf('ident_r: incomplete structure config, redo configurator: dattes(''cs'')\n');
+    fprintf('ident_r: incomplete structure config, redo dattes_configure\n');
     return;
 end
 if ~isfield(config.resistance,'pR') || ~isfield(config.resistance,'rest_min_duration') || ~isfield(config.resistance,'pulse_min_duration') || ~isfield(config.resistance,'delta_time') || ~isfield(config.resistance,'instant_end_rest')
-    fprintf('ident_r: incomplete structure config, redo configurator: dattes(''cs'')\n');
+    fprintf('ident_r: incomplete structure config, redo dattes_configure\n');
     return;
 end
 

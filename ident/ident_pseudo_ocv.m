@@ -42,11 +42,11 @@ if ~isstruct(phases) || ~isstruct(config) || ~ischar(options)
     return;
 end
 if ~isfield(config,'pseudo_ocv')
-    fprintf('ident_pseudo_ocv: incomplete structure config, redo configurator: dattes(''cs'')\n');
+    fprintf('ident_pseudo_ocv: incomplete structure config, redo dattes_configure\n');
     return;
 end
 if ~isfield(config.pseudo_ocv,'pOCVpC') || ~isfield(config.pseudo_ocv,'pOCVpD') || ~isfield(config.pseudo_ocv,'capacity_resolution') 
-    fprintf('ident_pseudo_ocv: incomplete structure config, redo configurator: dattes(''cs'')\n');
+    fprintf('ident_pseudo_ocv: incomplete structure config, redo dattes_configure\n');
     return;
 end
 

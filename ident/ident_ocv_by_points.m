@@ -51,11 +51,11 @@ if ~isstruct(profiles) || ~isstruct(phases) || ~isstruct(config) || ~ischar(opti
     return;
 end
 if ~isfield(config,'ocv_points')
-    fprintf('ident_ocv_by_points: incomplete structure config, redo configurator: dattes(''cs'')\n');
+    fprintf('ident_ocv_by_points: incomplete structure config, redo dattes_configure\n');
     return;
 end
 if ~isfield(config.ocv_points,'pOCVr')
-    fprintf('ident_ocv_by_points: incomplete structure config, redo configurator: dattes(''cs'')\n');
+    fprintf('ident_ocv_by_points: incomplete structure config, redo dattes_configure\n');
     return;
 end
 

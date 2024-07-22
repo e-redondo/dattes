@@ -19,7 +19,7 @@ function m = which_mode(t,I,U,Step,I_threshold,U_threshold,options)
 %    - 4 = EIS (impedance spectroscopy)
 %    - 5 = profile (random profile)
 %
-%   See also import_arbin_res, import_arbin_xls, import_bitrode, split_phases
+%   See also dattes_structure, split_phases
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab: 

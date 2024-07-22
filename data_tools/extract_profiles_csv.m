@@ -43,7 +43,7 @@ function [profiles, eis, metadata, config, err] = extract_profiles_csv(csv_file,
 %   - err = -2: not valid csv file
 %
 %
-% See also dattes_structure, metadata_collector, read_csv_struct
+% See also dattes_structure,  extract_profiles, metadata_collector, read_csv_struct
 %
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
