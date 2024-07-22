@@ -17,6 +17,7 @@ function [xml_files, failed_filelist,ignored_list] = dattes_import(srcdir,cycler
 % - options [char]:
 %   - 'v': verbose, tell what you do
 %   - 'f': force, export files even if xml files already exist
+%   - 'u': update, export newer or non existent files
 %   - 'm': merge, merge files in each folder into one single xml (only
 %   arbin_csv and biologic)
 %   - defaults: no verbose, no force
@@ -46,9 +47,6 @@ function [xml_files, failed_filelist,ignored_list] = dattes_import(srcdir,cycler
 % verbose = ismember('v', options); true if 'v' in options
 % options = options(1:end~=(find(options=='v',1))); error in no 'v' in options
 
-%TODO: update option
-% Update ('u') option is like force ('f') but only if cycler file more
-% recent than xml file
 
 % 0. check inputs
 if nargin<2
@@ -201,7 +199,7 @@ end
 if isequal(srcroot,dstroot)
 % a) srcdir and dstdir are siblings (folders at same path and same level)
 
-%Simply reaplce srcdir by dstdir:
+%Simply replace srcdir by dstdir:
 xml_list = regexprep(file_list,regexptranslate('escape',srcdir),regexptranslate('escape',dstdir));
 [D,F,~] = cellfun(@fileparts,xml_list,'UniformOutput',false);
 xml_list = cellfun(@(x,y) fullfile(x,sprintf('%s.xml',y)),D,F,'UniformOutput',false);
@@ -237,13 +235,25 @@ function [xml_files, failed_filelist,ignored_list] = main_loop(file_list, xml_li
 
 verbose = ismember('v',options);
 force = ismember('f',options);
+update = ismember('u',options);
 
 xml_files = cell(0);
 failed_filelist = cell(0);
 ignored_list = cell(0);
 
 for ind = 1:length(file_list)
-    if ~force
+    force_this = force;
+    %update option
+    if isfile(xml_list{ind}) && update
+        %check dates, if file_in newer, set force to true
+        dir_in = dir(file_list{ind});
+        dir_out = dir(xml_list{ind});
+        if any([dir_in.datenum]>dir_out.datenum)
+            fprintf('dattes_import: Destination file exists, but input file is more recent, updating: %s\n',file_list{ind});
+            force_this = true;
+        end
+    end
+    if ~force_this
         if isfile(xml_list{ind})
             if verbose
                 fprintf('dattes_import: %s ignored (already exists)\n',xml_list{ind});
