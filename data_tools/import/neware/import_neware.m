@@ -225,19 +225,19 @@ xml.table{end}.tabs =  xml_tabs;
 dtp = diff(tp);
 dtp(dtp>0)=0;
 dtp(dtp<0)=1;
-Step = [0;cumsum(dtp)];
-[xml_step, errorcode] = makeXMLVariable('Step', '', '%d', 'Step', Step);
-xml.table{end}.Step =  xml_step;
+step = [0;cumsum(dtp)];
+[xml_step, errorcode] = makeXMLVariable('step', '', '%d', 'step', step);
+xml.table{end}.step =  xml_step;
    
     %get cycler mode
     t = xml.table{end}.tc.vector;
     U = xml.table{end}.U.vector;
     I = xml.table{end}.I.vector;
-    Step = xml.table{end}.Step.vector;
+    step = xml.table{end}.step.vector;
     
     seuilI = 5*min(abs(diff(unique(I))));
     seuilU = 5*min(abs(diff(unique(U))));
-    m = which_mode(t,I,U,Step,seuilI,seuilU);
+    m = which_mode(t,I,U,step,seuilI,seuilU);
     %ajouter aux variables de xml
     mode = makeXMLVariable('mode','', '%f','mode', m);
     xml.table{end}.mode = mode;
