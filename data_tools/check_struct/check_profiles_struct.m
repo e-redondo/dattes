@@ -18,9 +18,9 @@ if ~isstruct(profiles)
     return;
 end
 % checkstruct:
-allowed_fields = {'datetime','t','U','I','mode','soc','dod_ah','T','ah','ah_dis','ah_cha'};
+allowed_fields = {'datetime','t','U','I','mode','step','soc','dod_ah','T','ah','ah_dis','ah_cha'};
 mandatory_fields = {'datetime','t','U','I','mode'};
-field_types = {'double','double','double','double','double','double','double','double','double','double','double'};
+field_types = {'double','double','double','double','double','double','double','double','double','double','double','double'};
 
 [info, err] = check_struct(profiles, allowed_fields, field_types, mandatory_fields);
 
