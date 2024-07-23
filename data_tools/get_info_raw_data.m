@@ -35,11 +35,18 @@ if ischar(file_in)
             ext_list = {'.csv', '.res', '.xls', '.xlsx', '.mpt'};
         end
 
+        %filter filelist extensions
+        [D,F,E] = cellfun(@fileparts,filelist,'UniformOutput',false);
+        ind_filter = ismember(E,ext_list) | ismember(E,upper(ext_list));
+        filelist = filelist(ind_filter);
+        D = D(ind_filter);
+        F = F(ind_filter);
+        E = E(ind_filter);
     elseif isfile(file_in)
         filelist = {file_in};
     else
-    info_raw_data = [];
-    fprintf('dattes_info_raw_data: input must be a pathname (folder or file) or a filelist.\n');
+        info_raw_data = [];
+        fprintf('dattes_info_raw_data: input must be a pathname (folder or file) or a filelist.\n');
     fprintf('Given input: %s\n',file_in);
     return
     end
@@ -54,20 +61,13 @@ elseif iscell(file_in)
     end
 end
 
-%filter filelist extensions
-[D,F,E] = cellfun(@fileparts,filelist,'UniformOutput',false);
-ind_filter = ismember(E,ext_list) | ismember(E,upper(ext_list));
-filelist = filelist(ind_filter);
-D = D(ind_filter);
-F = F(ind_filter);
-E = E(ind_filter);
 
 
 %info raw data
 %1. get file list
 info_raw_data.filelist = filelist;
 %2. get file extension
-info_raw_data.extension = E;
+% info_raw_data.extension = E;
 
 %2. get file size
 Dirinfo = cellfun(@dir,filelist);
@@ -97,12 +97,12 @@ info_raw_data.first_data_line = first_data_line;
 % - decimal separator
 % - datetime format?
 
- [variable_names, unit_names, date_test, source_file,test_params] = cellfun(@(x,y,z,w) analyse_head(x,y,z,w),header_lines,first_data_line,cycler,filelist,'UniformOutput',false);
+ [variable_names, unit_names, date_test, source_file,params] = cellfun(@(x,y,z,w) analyse_head(x,y,z,w),header_lines,first_data_line,cycler,filelist,'UniformOutput',false);
  info_raw_data.variable_names = variable_names;
  info_raw_data.unit_names = unit_names;
  info_raw_data.date_test = date_test;
  info_raw_data.source_file = source_file;
- info_raw_data.test_params = test_params;
+ info_raw_data.params = params;
  
 
  % reformat data: 1x1 struct of nx1 cells, to nx1 struct
@@ -144,12 +144,15 @@ if strncmp(cycler,'neware',6)
     return
 end
 
+first_data_line = header{end};
+header = header(1:end-1);
+[variable_names, unit_names, date_test, source_file,test_params] = analyse_generic_head(filename, header, first_data_line);
 %unknown cycler (or binary file):
-variable_names = [];
-unit_names = [];
-date_test = [];
-source_file = [];
-test_params = [];
+% variable_names = [];
+% unit_names = [];
+% date_test = [];
+% source_file = [];
+% test_params = [];
 end
 
 
