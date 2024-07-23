@@ -134,10 +134,13 @@ end
     t = xml.table{end}.tc.vector;
     U = xml.table{end}.U.vector;
     I = xml.table{end}.I.vector;
-    if isfield(xml.table{end},'Step')
-        Step = xml.table{end}.Step.vector;
+    if isfield(xml.table{end},'step')
+        step = xml.table{end}.step.vector;
     else
-        Step = find_steps(t,I,U, 0.001,'v');
+        step = find_steps(t,I,U, 0.001,'v');
+        %ajouter aux variables de xml
+        step = makeXMLVariable('mode','', '%f','mode', step);
+        xml.table{end}.step = step;
     end
 
     seuilI = 5*min(abs(diff(unique(I))));
@@ -152,7 +155,7 @@ end
         % random value to avoid error in which_mode: 1mV
         seuilU = 0.001;
     end
-    m = which_mode(t,I,U,Step,seuilI,seuilU);
+    m = which_mode(t,I,U,step,seuilI,seuilU);
     %ajouter aux variables de xml
     mode = makeXMLVariable('mode','', '%f','mode', m);
     xml.table{end}.mode = mode;
@@ -243,6 +246,9 @@ function variables=variablesBitrode(variables)
 %     'TotalTime', 'tc'
 variables = regexprep(variables,'TotalTime', 'tc');
 %     'Date_Time', 'tabs':
+
+%     'Step', 'step'
+variables = regexprep(variables,'^Step$', 'step');
 
 %     'Steptime', 'tp'
 variables = regexprep(variables,'Steptime', 'tp');
