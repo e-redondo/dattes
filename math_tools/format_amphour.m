@@ -1,5 +1,5 @@
 function [ah, ah_dis, ah_cha] = format_amphour(Ah_dis, Ah_cha)
-%format_amphour - set amphour counter follonwing DATTES conventions
+%format_amphour - set amphour counter following DATTES conventions
 %
 % Charged and discharged amp-hours are cumulative, some cyclers set them to
 % zero at each step. Discharged amp-hours are negavtive by convention in
@@ -39,11 +39,11 @@ end
 % in DATTES we need allways incresing vectors
 I_dis = diff(Ah_dis);
 I_dis(I_dis<0)=0;
-ah_dis = -[0;cumsum(I_dis)]; %negative by convention in DATTES
+ah_dis = -cumsum(I_dis); %negative by convention in DATTES
 
 I_cha = diff(Ah_cha);
 I_cha(I_cha<0)=0;
-ah_cha = [0;cumsum(I_cha)];
+ah_cha = cumsum(I_cha);
 
 ah = ah_cha + ah_dis;
 end
