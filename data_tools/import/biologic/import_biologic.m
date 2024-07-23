@@ -187,6 +187,14 @@ for indF = 1:length(corps)
             I =  zeros(size(XMLVars.tc.vector));
             XMLVars.I = makeXMLVariable('I', 'mA', '%f', 'I', I);
         end
+
+        %sometimes 'step' missing (no Ns variable)
+        % build it from 'Ns_changes'
+        if ~isfield(XMLVars,'step') && isfield(XMLVars,'Ns_changes')
+            step = cumsum(XMLVars.Ns_changes.vector);
+            XMLVars.step = makeXMLVariable('step', '', '%f', 'step', step);
+        end
+
         if ~isempty(tableDate)
             %tabs (temps absolu) depuis le premier janvier 2000
             tBio = datenum(tableDate,'yymmdd_HHMMSS.FFF')-datenum('000101','yymmdd');

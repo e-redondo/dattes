@@ -32,6 +32,9 @@ else
 end
 [variable_names, unit_names] = biologic_variables(header{end}, test_params);
 
+%replace 'Ns' variable by 'step' to standardise with other cyclers:
+variable_names = regexprep(variable_names,'^Ns$','step');
+
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,6 +79,8 @@ line = strrep(line,'Analog_IN_2/C','Analog_IN_2{C}');%%%%%%%%%%%%%%%%%%%%%%%%%
 line = strrep(line,'Analog OUT','Analog_OUT');%%%%%%%%%%%%%%%%%%%%%%%%%
 line = strrep(line,'Analog_OUT/V','Analog_OUT{V}');
 line = strrep(line,'dq/mAh','dq{mAh}');
+
+% step counter
 
 %Amp hours counters:
 line = strrep(line,'dq/mA.h','dq{mAh}');
