@@ -36,6 +36,7 @@ This document describe data structure for current version of DATTES:
     - U [mx1 double]: cell voltage (V)
     - I [mx1 double]: current (A)
     - mode [mx1 double]: cycler mode (n.u.), 1=CC, 2=CV, 3=rest, 4=EIS, 5=profile
+    - step [mx1 double]: step number from cycler
     - T [mx1 double]: cell temperature (empty if no probe found)
     - dod_ah [mx1 double]: Depth of Discharge in Ah (empty if no SoC calculation)
     - soc [mx1 double]: State of Charge in % (empty if no SoC calculation)
@@ -267,6 +268,10 @@ This document describe data structure for current version of DATTES:
     - dod [1xw double]: DoD (Ah)
     - crate [1xw double]: pulse C-Rate (p.u.)
     - datetime [1xw double]: datetime of measuremament (pulse initial time in seconds from 1/1/2000 00:00)
+    - rsquare [1xw double]: coefficient of determination of simulation (r square)
+    - mverr [1xw double]: maximum absolute voltage error of simulation (r square)
+    - U_sim [1xz double]: voltage simulation during pulses
+    - t_sim [1xz double]: time simulation during pulsed (fixed time step)
 ##### iden_rrc (R+RC+RC)
 - impedance [1x1 struct]:
     - topology [1xg char]:  'R0 + R1C1 + R2C2'
@@ -278,7 +283,10 @@ This document describe data structure for current version of DATTES:
     - dod [1xw double]: DoD (Ah)
     - crate [1xw double]: pulse C-Rate (p.u.)
     - datetime [1xw double]: datetime of measuremament (pulse initial time in seconds from 1/1/2000 00:00)
-
+    - rsquare [1xw double]: coefficient of determination of simulation (r square)
+    - mverr [1xw double]: maximum absolute voltage error of simulation (r square)
+    - U_sim [1xz double]: voltage simulation during pulses
+    - t_sim [1xz double]: time simulation during pulsed (fixed time step)
 #### analyse.ica substructure
 - ica [1xy struct]:
     - dqdu [zx1 double]: derivative of capacity over voltage (Ah/V)
