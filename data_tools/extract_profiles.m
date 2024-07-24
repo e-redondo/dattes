@@ -11,7 +11,7 @@ function [profiles, eis, metadata, config, err] = extract_profiles(xml_file,opti
 %[t,U,I,m,dod_ah,soc,T, eis, err] = extract_profiles(xml_file,options,config)
 % Inputs : 
 % - xml_file:
-%     -   [1xn string]: pathame to the xml file
+%     -   [1xn string]: pathname to the xml file
 %     -   [nx1 cell string]: xml filelist
 % - options:  [1xn string] string containing execution options:
 %     -   'v' :  'verbose', tell what you do
@@ -47,7 +47,8 @@ function [profiles, eis, metadata, config, err] = extract_profiles(xml_file,opti
 % extract_profiles(xml_file, 'v') 'verbose', tell what you do
 %
 % extract_profiles(this_result_file) works also
-% See also dattes, metadata_collector
+%
+% See also dattes_structure, extract_profiles_csv, metadata_collector
 %
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
@@ -167,6 +168,21 @@ U = U(Iu);
 I = I(Iu);
 m = m(Iu);
 
+%get step vector if in xml
+step = [];
+
+%if some tables contain step counter but not all tables
+if any(cellfun(@(x) isfield(x,'step'),xml.table))
+    for ind = 1:length(xml.table)
+        if isfield(xml.table{ind},'step')
+            step = [step; xml.table{ind}.step.vector];
+        else
+            step = [step; zeros(size(xml.table{ind}.tabs.vector))];
+        end
+    end
+end
+
+
 T = [];
 ah = [];
 ah_cha = [];
@@ -256,6 +272,7 @@ profiles.t = t;
 profiles.U = U;
 profiles.I = I;
 profiles.mode = m;
+profiles.step = step;
 profiles.T = T;
 profiles.dod_ah = [];
 profiles.soc = [];
