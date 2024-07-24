@@ -183,7 +183,7 @@ if isfield(result,'analyse')
     if ismember('Z',options)
         %show result of 'Z', i.e. impedance
         if isfield(result.analyse,'impedance')
-            plot_impedance(result.analyse.impedance,title_str);
+            plot_impedance(result,title_str);
         else
             fprintf('dattes_plot: no impedance result found in %s\n',result.test.file_in);
         end

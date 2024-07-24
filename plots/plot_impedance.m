@@ -1,4 +1,4 @@
-function hf = plot_impedance(impedance,title_str)
+function hf = plot_impedance(result,title_str)
 % plot_impedance plot impedance graphs
 %
 % plot_impedance(impedance,title_str)
@@ -41,11 +41,17 @@ if ~exist('title_str','var')
     title_str = '';
 end
 
+impedance = result.analyse.impedance;
+
 fieldlist = fieldnames(impedance);
 [~, parameters] = regexpFiltre(fieldlist,'dod');
 [~, parameters] = regexpFiltre(parameters,'time');
 [~, parameters] = regexpFiltre(parameters,'crate');
 [~, parameters] = regexpFiltre(parameters,'topology');
+[~, parameters] = regexpFiltre(parameters,'t_sim');
+[~, parameters] = regexpFiltre(parameters,'U_sim');
+[~, parameters] = regexpFiltre(parameters,'mverr');
+[~, parameters] = regexpFiltre(parameters,'rsquare');
 
 
 Idis = impedance.crate<0;
@@ -97,5 +103,32 @@ ha = findobj(hf,'type','axes','tag','');
 prettyAxes(ha);
 changeLine(ha,1,5);
 end
+
+figure;
+if isempty(title_str)
+    fig_title = sprintf('DATTES impedance. Quality of identification');
+else
+    fig_title = sprintf('DATTES impedance (%s). Quality of identification',...
+        title_str);
+end
+
+subplot(311), plot(result.profiles.datetime,result.profiles.U,'k-'), hold on
+plot(impedance.t_sim,impedance.U_sim,'r.');
+xlabel('datetime [s]','interpreter','tex')
+ylabel('cell voltage [V]','interpreter','tex')
+legend('measured cell voltage','simulation')
+
+subplot(312), plot(impedance.datetime,impedance.rsquare,'bo')
+xlabel('datetime [s]','interpreter','tex')
+ylabel('r square','interpreter','tex')
+subplot(313), plot(impedance.datetime,impedance.mverr,'bo')
+xlabel('datetime [s]','interpreter','tex')
+ylabel('maximum absolute error [V]','interpreter','tex')
+
+ha = findobj(gcf,'type','axes','tag','');
+linkaxes(ha,'x');
+prettyAxes(ha);
+changeLine(ha,1,5);
+
 
 end
