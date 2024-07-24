@@ -104,9 +104,9 @@ ts = tm;
 % get rsquare from fitresult
 rsquare = gof.rsquare;
 
-if ~isempty(strfind(options, 'g'))
-        showResult(tm,Im,Um,ts,Is,Us,rsquare);
-end
+% if ~isempty(strfind(options, 'g'))
+%         showResult(tm,Im,Um,ts,Is,Us,rsquare);
+% end
 
 end
 

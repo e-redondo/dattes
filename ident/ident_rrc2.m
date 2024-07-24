@@ -69,12 +69,14 @@ r1=[];
 c1=[];
 r2=[];
 c2=[];
-rsquare=[];
-mverr=[];
 rrc_datetime = [];
 rrc_dod = [];
 rrc_crate = [];
+U_sim = [];
+t_sim = [];
 
+rsquare=[];
+mverr=[];
 
 %% 2- Determine the phases for which a RC identification is relevant
 
@@ -163,14 +165,17 @@ c2=[c2 C2id];
 rsquare=[rsquare rsquareid];
 mverr=[mverr mverrid];
 
-%Us_rsr1c1 
-Usimu= rrc2_output(datetime_phase,current_phase,Rsid,R1id,C1id,R2id,C2id);
+%Us_rsr1c1
+this_U_sim= rrc2_output(datetime_phase,current_phase,Rsid,R1id,C1id,R2id,C2id);
 
-    err_qua=1000*abs(Usimu-voltage_phase).^2;
-    err_abs=1000*abs(Usimu-voltage_phase);
-   
-    
+% err_qua=1000*abs(this_U_sim-voltage_phase).^2;
+% err_abs=1000*abs(this_U_sim-voltage_phase);
 
+% add open_circuit_voltage and ocv_phase
+this_U_sim = this_U_sim+open_circuit_voltage+ocv_phase;
+%compile U_sim, t_sim
+U_sim = [U_sim this_U_sim];
+t_sim = [t_sim datetime_phase+rrc_datetime(phase_k)];
 end
    if ismember('v',options)
         fprintf('OK\n');
@@ -187,53 +192,55 @@ end
   impedance.datetime = rrc_datetime;
   impedance.rsquare = rsquare;
   impedance.mverr = mverr;
+  impedance.U_sim = U_sim;
+  impedance.t_sim = t_sim;
   
 end
 
 
-function erreur = errorRC(R,C,time_phase,voltage_phase,current_phase)
-%erreur = errorRC(Q,alpha,time_phase,voltage_phase,current_phase)
-%erreurCPE simulate a RC circuit and compare the result to measurement  
-% -R,C [1x1 double]: RC circuit parameters 
-% -time_phase,voltage_phase,current_phase [nx1 double]:  time, voltages, current (measured) arrays
-%
+% function erreur = errorRC(R,C,time_phase,voltage_phase,current_phase)
+% %erreur = errorRC(Q,alpha,time_phase,voltage_phase,current_phase)
+% %erreurCPE simulate a RC circuit and compare the result to measurement  
+% % -R,C [1x1 double]: RC circuit parameters 
+% % -time_phase,voltage_phase,current_phase [nx1 double]:  time, voltages, current (measured) arrays
+% %
+% 
+% if ~isnumeric(R) ||  ~isnumeric(C) ||  ~isnumeric(time_phase) ||  ~isnumeric(voltage_phase) ||  ~isnumeric(current_phase)
+%     erreur = [];
+%     fprintf('errorRC:ERROR, inputs must be numerical\n');
+%     return
+% end
+% if numel(R) ~= 1 || numel(C) ~= 1
+%     erreur = [];
+%     fprintf('errorRC:ERROR, R et C must be scalars (1x1)\n');
+%     return
+% end
+% if ~isequal(size(time_phase),size(voltage_phase)) || ~isequal(size(time_phase),size(current_phase)) || size(time_phase,1)~=length(time_phase)
+%     erreur = [];
+%     fprintf('errorRC:ERROR, time_phase,voltage_phase and current_phase must have same sizes (nx1)\n');
+%     return
+% end
+% 
+% 
+% U = reponseRC(time_phase,current_phase,R,C);
+% U = U(:);
+% voltage_phase = voltage_phase(:);
+% 
+% erreur = mean(Quadraticerror(voltage_phase,U));
+% 
+% 
+% end
 
-if ~isnumeric(R) ||  ~isnumeric(C) ||  ~isnumeric(time_phase) ||  ~isnumeric(voltage_phase) ||  ~isnumeric(current_phase)
-    erreur = [];
-    fprintf('errorRC:ERROR, inputs must be numerical\n');
-    return
-end
-if numel(R) ~= 1 || numel(C) ~= 1
-    erreur = [];
-    fprintf('errorRC:ERROR, R et C must be scalars (1x1)\n');
-    return
-end
-if ~isequal(size(time_phase),size(voltage_phase)) || ~isequal(size(time_phase),size(current_phase)) || size(time_phase,1)~=length(time_phase)
-    erreur = [];
-    fprintf('errorRC:ERROR, time_phase,voltage_phase and current_phase must have same sizes (nx1)\n');
-    return
-end
+% function err_qua = Quadraticerror(voltage_phase,Us)
+% err_qua = abs(Us-voltage_phase).^2;
+% end
 
-
-U = reponseRC(time_phase,current_phase,R,C);
-U = U(:);
-voltage_phase = voltage_phase(:);
-
-erreur = mean(Quadraticerror(voltage_phase,U));
-
-
-end
-
-function err_qua = Quadraticerror(voltage_phase,Us)
-err_qua = abs(Us-voltage_phase).^2;
-end
-
-function showResult(time_phase,current_phase,voltage_phase,ts,Is,Us,err)
-figure,
-subplot(211),plot(time_phase,current_phase,'.-',ts,Is,'r.-'),ylabel('courant (A)')
-subplot(212),plot(time_phase,voltage_phase,'.-',ts,Us,'r.-',time_phase,Us-voltage_phase,'g.'),ylabel('tension (V)')
-legend('mesure','simu',sprintf('erreur quadratique: %f',err),'location','best')
-end
+% function showResult(time_phase,current_phase,voltage_phase,ts,Is,Us,err)
+% figure,
+% subplot(211),plot(time_phase,current_phase,'.-',ts,Is,'r.-'),ylabel('courant (A)')
+% subplot(212),plot(time_phase,voltage_phase,'.-',ts,Us,'r.-',time_phase,Us-voltage_phase,'g.'),ylabel('tension (V)')
+% legend('mesure','simu',sprintf('erreur quadratique: %f',err),'location','best')
+% end
 
 function [R1ini,C1ini,R2ini,C2ini,tau2ini]=define_RCini(time_phase,config)
 %%[R1ini,C1ini,R2ini,C2ini]=define_RCini(time_phase)

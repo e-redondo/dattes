@@ -73,6 +73,10 @@ resistance = [];
 dod = [];
 crate = [];
 datetime_cpe = [];
+U_sim = [];
+t_sim = [];
+rsquare=[];
+mverr=[];
 
 %% 2- Determine the phases for which a CPE identification is relevant
 indices_cpe = find(config.impedance.pZ);
@@ -130,6 +134,20 @@ for phase_k = 1:length(indices_cpe)
     datetime_cpe = [datetime_cpe datetime_phase(1)];
     dod = [dod dod_phase(1)];
     resistance=[resistance resistance_phase];
+
+    this_U_sim = rcpe_output(datetime_phase,current_phase,resistance_phase,q_phase,alpha_phase);
+    corr_matrix = corrcoef(this_U_sim,voltage_phase);
+    this_rsquare = corr_matrix(2)^2;
+    rsquare = [rsquare this_rsquare];
+
+    this_mverr = max(abs(this_U_sim-voltage_phase));
+    mverr = [mverr this_mverr];
+
+    % add open_circuit_voltage and ocv_phase
+    this_U_sim = this_U_sim+open_circuit_voltage+ocv_phase;
+    %compile U_sim, t_sim
+    U_sim = [U_sim this_U_sim];
+    t_sim = [t_sim datetime_phase];
 end
 crate = crate/config.test.capacity;
 
@@ -144,5 +162,9 @@ impedance.r0 = resistance;
 impedance.dod = dod;
 impedance.crate = crate;
 impedance.datetime = datetime_cpe;
+impedance.rsquare = rsquare;
+impedance.mverr = mverr;
+impedance.U_sim = U_sim;
+impedance.t_sim = t_sim;
 
 end
