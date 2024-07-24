@@ -71,6 +71,11 @@
 % DATTES website: https://dattes.gitlab.io/
 % License : GNU GPL V3
 % Software paper :
+% Eduardo Redondo-Iglesias, Marwan Hassini, Pascal Venet and Serge Pelissier,
+% DATTES: Data analysis tools for tests on energy storage, SoftwareX,
+% Volume 24, 2023, 101584, ISSN 2352-7110,
+% https://doi.org/10.1016/j.softx.2023.101584.
+% (https://www.sciencedirect.com/science/article/pii/S2352711023002807)
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
 % For more information, see the <a href="matlab:
