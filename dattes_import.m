@@ -247,6 +247,7 @@ for ind = 1:length(file_list)
     if isfile(xml_list{ind}) && update
         %check dates, if file_in newer, set force to true
         dir_in = dir(file_list{ind});
+        dir_in = dir_in(~[dir_in.isdir]); % exclude folders, just check mod dates in files
         dir_out = dir(xml_list{ind});
         if any([dir_in.datenum]>dir_out.datenum)
             fprintf('dattes_import: Destination file exists, but input file is more recent, updating: %s\n',file_list{ind});
