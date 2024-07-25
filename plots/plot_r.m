@@ -98,12 +98,20 @@ for ind = 1:length(dt)
     plot(t_r_c*t_factor,resistance.R(Icha & Is),'^','color',c(ind,:),'DisplayName',tagC)
 
     
-    subplot(2,2,4)
-    plot(profiles.t,profiles.U,'k'),hold on
-    plot(resistance.t+resistance.delta_time,resistance.U_sim,'ro')
     
 end
 subplot(2,2,3),legend('location','best')
+
+% plot simulation results
+tm = profiles.(t_name)*t_factor;
+t_sim = (resistance.(t_name)+resistance.delta_time)*t_factor;
+subplot(2,2,4)
+plot(tm,profiles.U,'k', 'DisplayName','Voltage measurement'),hold on
+plot(t_sim,resistance.U_sim,'ro','DisplayName','Voltage simulation')
+legend('location','best')
+xlabel(t_label)
+ylabel('Voltage [V]','interpreter','tex')
+
 %Look for all axis handles and ignore legends
 ha = findobj(hf,'type','axes','tag','');
 prettyAxes(ha);
