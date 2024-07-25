@@ -18,6 +18,7 @@ function [xml_files, failed_filelist,ignored_list] = dattes_import(srcdir,cycler
 %   - 'v': verbose, tell what you do
 %   - 'f': force, export files even if xml files already exist
 %   - 'u': update, export newer or non existent files
+%   - 'n': dry run, perform a trial run with no import made
 %   - 'm': merge, merge files in each folder into one single xml (only
 %   arbin_csv and biologic)
 %   - defaults: no verbose, no force
@@ -236,6 +237,7 @@ function [xml_files, failed_filelist,ignored_list] = main_loop(file_list, xml_li
 verbose = ismember('v',options);
 force = ismember('f',options);
 update = ismember('u',options);
+dryrun = ismember('n',options);
 
 xml_files = cell(0);
 failed_filelist = cell(0);
@@ -264,22 +266,33 @@ for ind = 1:length(file_list)
             continue;
         end
     end
-   try
+    try
         if verbose
             fprintf('dattes_import: %s ...',file_list{ind});
         end
-        xml = import_fun(file_list{ind}, options);
-        if isempty(xml)
-            if verbose
-                fprintf('not a valid file\n');
-            end
-        else
-            D = fileparts(xml_list{ind});
-            [~,~,~] = mkdir(D);
-            ecritureXMLFile4Vehlib(xml,xml_list{ind});
-            xml_files{end+1} = xml_list{ind};
+        if dryrun
+            %dry run (simulation), just print messages and imagine
+            %xml_files are created
             if verbose
                 fprintf('OK\n');
+            end
+            xml_files{end+1} = xml_list{ind};
+        else
+            xml = import_fun(file_list{ind}, options);
+
+            if isempty(xml)
+                failed_filelist{end+1} = file_list{ind};
+                if verbose
+                    fprintf('not a valid file\n');
+                end
+            else
+                D = fileparts(xml_list{ind});
+                [~,~,~] = mkdir(D);
+                ecritureXMLFile4Vehlib(xml,xml_list{ind});
+                xml_files{end+1} = xml_list{ind};
+                if verbose
+                    fprintf('OK\n');
+                end
             end
         end
    catch
