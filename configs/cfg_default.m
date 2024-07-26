@@ -52,6 +52,9 @@ end
 % soc ('S' action):
 config.soc.crate_cv_end = 1/20;
 
+%icent_capacity
+config.capacity.filter_phase_nr = [];
+
 %ident_R
 % config.resistance.delta_time = [0 5 10 30 60]; % config.instant_calcul_R %Instant du pulse auquel on mesure R (par défaut 0 secondes)
 config.resistance.delta_time = [2 10]; % config.instant_calcul_R %Instant du pulse auquel on mesure R (par défaut 0 secondes)
@@ -82,10 +85,10 @@ config.impedance.filter_phase_nr = [];
 % config.Cmax=800;
 
 %ident_OCVr
-config.ocv_points.rest_min_duration = 35;% (tminOCVr) minimal duration for a constant current phase to be used for OCV measurement
+config.ocv_points.rest_min_duration = 600;% (tminOCVr) minimal duration for a constant current phase to be used for OCV measurement
 config.ocv_points.max_delta_dod_ah = 0.3;% (dodmaxOCVr) maximal dod variation to be taken into account for OCV measurement (p.u., 0.5 = 50% soc)
 config.ocv_points.min_delta_dod_ah = 0.01;% (dodminOCVr) minimal dod variation to be taken into account for OCV measurement (p.u., 0.5 = 50% soc)
-
+config.ocv_points.filter_phase_nr = [];
 %ICA
 if isfield(config,'test')
     if isfield(config.test,'capacity')
@@ -101,6 +104,7 @@ config.ica.max_crate = 0.2;% (regimeICAmax) maximal current rate for ICA
 config.ica.filter_type = 'A';%filter type (N: no filter,G: gaussian filter,A: mean filter,B: butter filter)
 config.ica.filter_order = 100;%for gaussian (see essaiICA2); change ident_ICA
 config.ica.filter_cut = 1;%for gaussian (see essaiICA2); change ident_ICA
+config.ica.filter_phase_nr = [];
 
 % These parameters work well sometimes:
 % config.ica.filter_type = 'G';%filter type (N: no filter,G: gaussian filter,A: mean filter,B: butter filter)
@@ -118,6 +122,7 @@ if isfield(config,'test')
         config.pseudo_ocv.capacity_resolution = config.test.capacity/100;
     end
 end
+config.pseudo_ocv.filter_phase_nr = [];
 
 %bancs monovoies:
 config.test.Uname = 'U';% default

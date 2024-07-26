@@ -38,7 +38,7 @@ if ~exist('options','var')
     options = '';
 elseif ~ischar(options)
     fprintf('ERROR dattes_configure: options must be string\n');
-    result = [];
+%     result = [];
     return
 end
 %0.3 if 3rd not given, set defaults:

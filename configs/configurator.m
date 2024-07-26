@@ -193,6 +193,8 @@ pZr = [pZ(2:end) false];
 % pRCr = [pRC(2:end) false];
 % pCPEr = [pCPE(2:end) false];
 
+
+
 %ident_capacity
 config.capacity.pCapaD = pCapaD;
 config.capacity.pCapaC = pCapaC;
@@ -200,6 +202,17 @@ config.capacity.pCapaC = pCapaC;
 %ident_capacity
 config.capacity.pCapaDV = pCapaDV;
 config.capacity.pCapaCV = pCapaCV;
+
+%filter by phase number:
+if isfield(config.capacity, 'filter_phase_nr')
+    if ~isempty(config.capacity.filter_phase_nr)
+        ind_filter_phase_nr = ismember(1:length(phases),config.capacity.filter_phase_nr);
+        config.capacity.pCapaD = config.capacity.pCapaD & ind_filter_phase_nr;
+        config.capacity.pCapaC = config.capacity.pCapaC & ind_filter_phase_nr;
+        config.capacity.pCapaDV = config.capacity.pCapaDV & ind_filter_phase_nr;
+        config.capacity.pCapaCV = config.capacity.pCapaCV & ind_filter_phase_nr;
+    end
+end
 
 %ident_r
 %filter by phase number:
@@ -233,16 +246,41 @@ config.impedance.instant_end_rest = tFins(pZr);%temps de fins de repos immediate
 %ident_ocv_by_points (par points)
 config.ocv_points.pOCVr = durees>=config.ocv_points.rest_min_duration & ismember(tInis,datetime(IiniRepos));
 config.ocv_points.pOCVr(1) = false; % repos initial jamais retenu pour OCV
+%filter by phase number:
+if isfield(config.ocv_points, 'filter_phase_nr')
+    if ~isempty(config.ocv_points.filter_phase_nr)
+        ind_filter_phase_nr = ismember(1:length(phases),config.ocv_points.filter_phase_nr);
+        config.ocv_points.pOCVr = config.ocv_points.pOCVr & ind_filter_phase_nr;
+    end
+end
+
 
 %ident_pseudo_ocv (pseudoOCV)
 Regime = [phases.Iavg]./config.test.capacity;
 config.pseudo_ocv.pOCVpC = config.capacity.pCapaC & abs(Regime)<config.pseudo_ocv.max_crate & abs(Regime)>config.pseudo_ocv.min_crate;
 config.pseudo_ocv.pOCVpD = config.capacity.pCapaD & abs(Regime)<config.pseudo_ocv.max_crate & abs(Regime)>config.pseudo_ocv.min_crate;
+%filter by phase number:
+if isfield(config.pseudo_ocv, 'filter_phase_nr')
+    if ~isempty(config.pseudo_ocv.filter_phase_nr)
+        ind_filter_phase_nr = ismember(1:length(phases),config.pseudo_ocv.filter_phase_nr);
+        config.pseudo_ocv.pOCVpC = config.pseudo_ocv.pOCVpC & ind_filter_phase_nr;
+        config.pseudo_ocv.pOCVpD = config.pseudo_ocv.pOCVpD & ind_filter_phase_nr;
+    end
+end
+
 
 %calcul_ica
 config.ica.pICA = (config.capacity.pCapaC | config.capacity.pCapaD) & abs(Regime)<config.ica.max_crate;
 % config.pICAC = config.pCapaC & abs(Regime)<config.regimeICAmax;
 % config.pICAD = config.pCapaD & abs(Regime)<config.regimeICAmax;
+%filter by phase number:
+if isfield(config.ica, 'filter_phase_nr')
+    if ~isempty(config.ica.filter_phase_nr)
+        ind_filter_phase_nr = ismember(1:length(phases),config.ica.filter_phase_nr);
+        config.ica.pICA = config.ica.pICA & ind_filter_phase_nr;
+    end
+end
+
 
 if ismember('v',options)
     fprintf('OK\n');
