@@ -149,6 +149,7 @@ This document describe data structure for current version of DATTES:
         - pCapaC (1xq logical): true for charging capacity CC phases
         - pCapaDV (1xq logical): true for discharging capacity CV phases
         - pCapaCV (1xq logical): true for charging capacity CV phases
+        - filter_phase_nr (1xr integer): index of phases allowed to be capacity measurements
     - resistance [1×1 struct]: configuration for resistance calculation
         - delta_time (1xb double): delta time  in seconds for resistance calculation
         - pulse_min_duration (1x1 double): minimum pulse duration in seconds (default = 9)
@@ -170,10 +171,11 @@ This document describe data structure for current version of DATTES:
         - instant_end_rest (nx1 double): start times for resistance pulses (to be removed in future)
         - filter_phase_nr (1xr integer): index of phases allowed to be impedance measurements
     - ocv_points [1×1 struct]: configuration for ocv_points calculation
-        - rest_min_duration (1x1 double): minimum rest duration (s) after ocv pulse (default = 35)
+        - rest_min_duration (1x1 double): minimum rest duration (s) after ocv pulse (default = 599)
         - max_delta_dod_ah (1x1 double): maximum delta DoD (Ah) for ocv pulse (default = 0.3), unused
         - min_delta_dod_ah (1x1 double): minimum delta DoD (Ah) for ocv pulse (default = 0.01), unused
         - pOCVr (1xq logical): true for ocv_points phases
+        - filter_phase_nr (1xr integer): index of phases allowed to be ocv_points measurements
     - ica [1×1 struct]: configuration for ica calculation
         - capacity_resolution (1x1 double): delta dod in ica calculation (Ah) (default = capacity/100)
         - voltage_resolution (1x1 double): delta dod in ica calculation (Ah) (default = (voltage cell range)/100)
@@ -182,13 +184,15 @@ This document describe data structure for current version of DATTES:
         - filter_order (1x1 double): filter order (default 100)
         - filter_cut (1x1 double): filter cut frequency (default 1)
         - pICA (1xq logical): true for ica phases
+        - filter_phase_nr (1xr integer): index of phases allowed to be ica measurements
     - pseudo_ocv [1×1 struct]: configuration for pseudo_ocv calculation
         - max_crate (1x1 double): maximum allowed C-rate to consider a phase for pseudo_ocv (default = 1.05)
         - min_crate (1x1 double): minimum allowed C-rate to consider a phase for pseudo_ocv (default = 0)
         - capacity_resolution (1x1 double): delta dod in pseud_ocv calculation (Ah) (default = capacity/100)
         - pOCVpC (1xq logical): true for pseudo_ocv charging half cycles
         - pOCVpD (1xq logical): true for pseudo_ocv discharging half cycles
-
+        - filter_phase_nr (1xr integer): index of phases allowed to be pseudo_ocv measurements
+    
 ### analyse substructure
 - analyse [1x1 struct] with fields:
     - capacity [1x1 struct]:

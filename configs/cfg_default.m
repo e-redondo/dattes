@@ -85,7 +85,7 @@ config.impedance.filter_phase_nr = [];
 % config.Cmax=800;
 
 %ident_OCVr
-config.ocv_points.rest_min_duration = 600;% (tminOCVr) minimal duration for a constant current phase to be used for OCV measurement
+config.ocv_points.rest_min_duration = 599;% (tminOCVr) minimal duration for a constant current phase to be used for OCV measurement
 config.ocv_points.max_delta_dod_ah = 0.3;% (dodmaxOCVr) maximal dod variation to be taken into account for OCV measurement (p.u., 0.5 = 50% soc)
 config.ocv_points.min_delta_dod_ah = 0.01;% (dodminOCVr) minimal dod variation to be taken into account for OCV measurement (p.u., 0.5 = 50% soc)
 config.ocv_points.filter_phase_nr = [];
