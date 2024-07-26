@@ -268,15 +268,15 @@ for ind = 1:length(file_list)
     end
     try
         if verbose
-            fprintf('dattes_import: %s ...',file_list{ind});
+            fprintf('dattes_import: %s ...\n',file_list{ind});
         end
         if dryrun
             %dry run (simulation), just print messages and imagine
             %xml_files are created
-            if verbose
-                fprintf('OK\n');
-            end
             xml_files{end+1} = xml_list{ind};
+            if verbose
+                fprintf('OK: %s\n',xml_list{ind});
+            end
         else
             xml = import_fun(file_list{ind}, options);
 
@@ -291,7 +291,7 @@ for ind = 1:length(file_list)
                 ecritureXMLFile4Vehlib(xml,xml_list{ind});
                 xml_files{end+1} = xml_list{ind};
                 if verbose
-                    fprintf('OK\n');
+                    fprintf('OK: %s\n',xml_list{ind});
                 end
             end
         end
