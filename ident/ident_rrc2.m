@@ -174,8 +174,8 @@ this_U_sim= rrc2_output(datetime_phase,current_phase,Rsid,R1id,C1id,R2id,C2id);
 % add open_circuit_voltage and ocv_phase
 this_U_sim = this_U_sim+open_circuit_voltage+ocv_phase;
 %compile U_sim, t_sim
-U_sim = [U_sim this_U_sim];
-t_sim = [t_sim datetime_phase+rrc_datetime(phase_k)];
+U_sim = [U_sim(:); this_U_sim(:)];
+t_sim = [t_sim(:); datetime_phase(:)+rrc_datetime(phase_k)];
 end
    if ismember('v',options)
         fprintf('OK\n');

@@ -151,8 +151,8 @@ for phase_k = 1:length(indices_cpe)
     % add open_circuit_voltage and ocv_phase
     this_U_sim = this_U_sim+open_circuit_voltage+ocv_phase;
     %compile U_sim, t_sim
-    U_sim = [U_sim this_U_sim];
-    t_sim = [t_sim datetime_phase];
+    U_sim = [U_sim(:); this_U_sim(:)];
+    t_sim = [t_sim(:); datetime_phase(:)];
 
 end
 

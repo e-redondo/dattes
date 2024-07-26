@@ -274,8 +274,8 @@ This document describe data structure for current version of DATTES:
     - datetime [1xw double]: datetime of measuremament (pulse initial time in seconds from 1/1/2000 00:00)
     - rsquare [1xw double]: coefficient of determination of simulation (r square)
     - mverr [1xw double]: maximum absolute voltage error of simulation (r square)
-    - U_sim [1xz double]: voltage simulation during pulses
-    - t_sim [1xz double]: time simulation during pulsed (fixed time step)
+    - U_sim [zx1 double]: voltage simulation during pulses
+    - t_sim [zx1 double]: time simulation during pulsed (fixed time step)
 ##### iden_rrc (R+RC+RC)
 - impedance [1x1 struct]:
     - topology [1xg char]:  'R0 + R1C1 + R2C2'
@@ -289,8 +289,8 @@ This document describe data structure for current version of DATTES:
     - datetime [1xw double]: datetime of measuremament (pulse initial time in seconds from 1/1/2000 00:00)
     - rsquare [1xw double]: coefficient of determination of simulation (r square)
     - mverr [1xw double]: maximum absolute voltage error of simulation (r square)
-    - U_sim [1xz double]: voltage simulation during pulses
-    - t_sim [1xz double]: time simulation during pulsed (fixed time step)
+    - U_sim [zx1 double]: voltage simulation during pulses
+    - t_sim [zx1 double]: time simulation during pulsed (fixed time step)
 #### analyse.ica substructure
 - ica [1xy struct]:
     - dqdu [zx1 double]: derivative of capacity over voltage (Ah/V)
