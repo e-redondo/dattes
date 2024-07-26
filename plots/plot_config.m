@@ -61,21 +61,21 @@ else
 hf = figure('name',sprintf('DATTES configuration: %s',title_str));
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%figure1: SoC configuration
-I100 = ismember(datetime,config.soc.soc100_datetime);
-I0 = ismember(datetime,config.soc.soc0_datetime);
-
-subplot(321),title('SoC configuration'),xlabel(x_lab),hold on
-plot(tc*t_factor,U,'k','displayname','test')
-
-
-plot(tc(I100)*t_factor,U(I100),'ro','displayname','SoC100 point')
-plot(tc(I0)*t_factor,U(I0),'rd','displayname','SoC0 point')
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %figure1: SoC configuration
+% I100 = ismember(datetime,config.soc.soc100_datetime);
+% I0 = ismember(datetime,config.soc.soc0_datetime);
+% 
+% subplot(321),title('SoC configuration'),xlabel(x_lab),hold on
+% plot(tc*t_factor,U,'k','displayname','test')
+% 
+% 
+% plot(tc(I100)*t_factor,U(I100),'ro','displayname','SoC100 point')
+% plot(tc(I0)*t_factor,U(I0),'rd','displayname','SoC0 point')
 
 % plot(t(Iinicv),U(Iinicv),'r+','tag','debutCV')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%figure2: Capacity
+%figure1: Capacity
 % Phases of capacity analysis
 if isfield(config,'capacity')
     if isfield(config.capacity,'pCapaC') && isfield(config.capacity,'pCapaD') && ...
@@ -100,7 +100,7 @@ if isfield(config,'capacity')
                 UCV = [UCV;U(Ip)];
             end
         end
-        subplot(322),title('Capacity configuration'),xlabel(x_lab),hold on
+        subplot(321),title('Capacity configuration'),xlabel(x_lab),hold on
         plot(tc*t_factor,U,'k','displayname','test')
         plot(tD*t_factor,UD,'r.','displayname','discharge')
         plot(tC*t_factor,UC,'b.','displayname','charge')
@@ -108,6 +108,25 @@ if isfield(config,'capacity')
         plot(tCV*t_factor,UCV,'g.','displayname','charge (CV phase)')
     end
 end
+
+%OCV by points configuration
+if isfield(config,'ocv_points')
+    if isfield(config.ocv_points,'pOCVr')
+        phases_ocvp = phases(config.ocv_points.pOCVr);
+        t_ocvp = [];
+        U_ocvp = [];
+        for ind = 1:length(phases_ocvp)
+            pro_ocvp = extract_phase2(phases_ocvp(ind), [0 0], profiles);
+            t_ocvp = [t_ocvp; pro_ocvp.(t_name)];
+            U_ocvp = [U_ocvp; pro_ocvp.U];
+        end
+
+        subplot(322),title('OCV points configuration'),xlabel(x_lab),hold on
+        plot(tc*t_factor,U,'k','displayname','test')
+        plot(t_ocvp*t_factor,U_ocvp,'r.','displayname','OCV points')
+    end
+end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %figure3: Impedances
 if isfield(config,'resistance') && isfield(config,'impedance')
