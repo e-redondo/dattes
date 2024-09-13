@@ -115,6 +115,10 @@ switch cycler
         import_fun = @import_digatron;
         file_ext_default = '.csv';
         merge_possible = false;
+    case 'landt_xls'
+        import_fun = @import_landt_xls;
+        file_ext_default = {'.xls','.xlsx'};
+        merge_possible = false;
     case 'neware'
         import_fun = @import_neware;
         file_ext_default = '.csv';
