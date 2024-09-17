@@ -39,11 +39,11 @@ end
 % in DATTES we need allways incresing vectors
 I_dis = diff(Ah_dis);
 I_dis(I_dis<0)=0;
-ah_dis = -cumsum(I_dis); %negative by convention in DATTES
+ah_dis = -Ah_dis(1) -[0; cumsum(I_dis)]; %negative by convention in DATTES
 
 I_cha = diff(Ah_cha);
 I_cha(I_cha<0)=0;
-ah_cha = cumsum(I_cha);
+ah_cha = Ah_cha(1)+ [0; cumsum(I_cha)];
 
 ah = ah_cha + ah_dis;
 end
