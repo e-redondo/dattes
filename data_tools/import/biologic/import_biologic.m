@@ -330,6 +330,24 @@ for indF = 1:length(corps)
                 XMLVars.Qp.unit = 'Ah';
             end
         end
+        if isfield(XMLVars,'ah')
+            if strcmp(XMLVars.ah.unit,'mAh')
+                XMLVars.ah.vector = XMLVars.ah.vector/1000;
+                XMLVars.ah.unit = 'Ah';
+            end
+        end
+        if isfield(XMLVars,'ah_dis')
+            if strcmp(XMLVars.ah_dis.unit,'mAh')
+                XMLVars.ah_dis.vector = XMLVars.ah_dis.vector/1000;
+                XMLVars.ah_dis.unit = 'Ah';
+            end
+        end
+        if isfield(XMLVars,'ah_cha')
+            if strcmp(XMLVars.ah_cha.unit,'mAh')
+                XMLVars.ah_cha.vector = XMLVars.ah_cha.vector/1000;
+                XMLVars.ah_cha.unit = 'Ah';
+            end
+        end
         %TENTATIVE: modifier le mode dans des EIS insérées dans des
         %techniques MB
         if isfield(XMLVars,'freq')
