@@ -38,6 +38,8 @@ t = profiles.t;
 U = profiles.U;
 I = profiles.I;
 m = profiles.mode;
+T = profiles.T;
+ah = profiles.ah;
 
 if ismember('D',options)%plot time in dates
     t1 = datetime(datestr(e2mdate(date_time),'yyyy-mm-dd HH:MM'));
@@ -62,16 +64,28 @@ else
 hf = figure('name',sprintf('DATTES profiles and mode: %s',title_str));
 end
 
-subplot(211),plot(t1,U,'k','displayname','test'),hold on,xlabel(x_lab),ylabel('Voltage [V]')
-subplot(212),plot(t1,I,'k','displayname','test'),hold on,xlabel(x_lab),ylabel('Current [A]')
+subplot(221),plot(t1,U,'k','displayname','test'),hold on,xlabel(x_lab),ylabel('Voltage [V]')
+subplot(223),plot(t1,I,'k','displayname','test'),hold on,xlabel(x_lab),ylabel('Current [A]')
 
+if ~isempty(T)
+    subplot(222),plot(t1,T,'k','displayname','test'),hold on,xlabel(x_lab),ylabel('Temperature [C]')
+end
+if ~isempty(ah)
+    subplot(224),plot(t1,ah,'k','displayname','test'),hold on,xlabel(x_lab),ylabel('Amp-Hours [Ah]')
+end
 c = lines(5);
 tags = {'CC','CV','rest','EIS','profile'};
 for ind = 1:5
     indices = m==ind;
 
-    subplot(211),plot(t1(indices),U(indices),'.','color',c(ind,:),'displayname',tags{ind})
-    subplot(212),plot(t1(indices),I(indices),'.','color',c(ind,:),'displayname',tags{ind})
+    subplot(221),plot(t1(indices),U(indices),'.','color',c(ind,:),'displayname',tags{ind})
+    subplot(223),plot(t1(indices),I(indices),'.','color',c(ind,:),'displayname',tags{ind})
+    if ~isempty(T)
+        subplot(222),plot(t1(indices),T(indices),'.','color',c(ind,:),'displayname',tags{ind})
+    end
+    if ~isempty(ah)
+        subplot(224),plot(t1(indices),ah(indices),'.','color',c(ind,:),'displayname',tags{ind})
+    end
 end
 
 %Look for all axis handles and ignore legends
