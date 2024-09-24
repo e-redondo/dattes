@@ -111,12 +111,6 @@ phases_ocv_charge = phases_ocv_charge(index_sorting_charge);
 timeC = timeC(index_sorting_charge);
 crate = current_rate_discharge;
 
-if length(unique(index_sorting_charge))<index_sorting_charge
-
-    fprintf('ident_pseudo_ocv: ERREUR à gerer\n');
-    return
-end
-
 
 voltage_charge = cell(size(phases_ocv_charge));
 dod_ah_charge = cell(size(phases_ocv_charge));
