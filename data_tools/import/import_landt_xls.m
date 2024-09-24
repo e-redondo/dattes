@@ -1,4 +1,4 @@
-function xml = import_landt_xls(file_in, dst_dir)
+function xml = import_landt_xls(file_in, options)
 
 xml = [];
 % check inputs
@@ -14,17 +14,17 @@ end
 %
 [ori_dir,F,E] = fileparts(file_in);
 % if not dst_dir; dst_dir = ori_dir
-if ~exist('dst_dir','var')
-    dst_dir = ori_dir;
-end
-
-if ~exist(dst_dir,'dir')
-    [s,w] = mkdir(dst_dir);
-    if ~s
-        fprintf('import_landt_xls:error, unable to create dst_dir: %s\n',dst_dir);
-        return
-    end
-end
+% if ~exist('dst_dir','var')
+%     dst_dir = ori_dir;
+% end
+% 
+% if ~exist(dst_dir,'dir')
+%     [s,w] = mkdir(dst_dir);
+%     if ~s
+%         fprintf('import_landt_xls:error, unable to create dst_dir: %s\n',dst_dir);
+%         return
+%     end
+% end
 
 %convert to csv
 [csv_folder, err] = xls2csv(file_in);
@@ -76,8 +76,8 @@ delete(temp_file);
 xml = profiles2xml(profiles,other_cols,[F E]);
 
 %write xml file
-xml_file = fullfile(dst_dir,sprintf('%s.xml',F));
-ecritureXMLFile4Vehlib(xml,xml_file);
+% xml_file = fullfile(dst_dir,sprintf('%s.xml',F));
+% ecritureXMLFile4Vehlib(xml,xml_file);
 
 end
 
