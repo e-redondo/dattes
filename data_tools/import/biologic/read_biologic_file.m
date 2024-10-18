@@ -76,6 +76,15 @@ if ~just_head
 %         A = fscanf(fid,'%f\t');
 %         A = [A1(:); A(:)];
 %     end
+    if rem(length(A),length(A1))
+        %remainder of division not zero
+        %number of elements of A is not multiple of A1
+        %error in one or more lines
+        filename = fopen(fid);
+%         [D,F,E] = fileparts(filename);
+        fprintf('read_biologic_file: error reading mpt file, %s\n',filename);
+        return
+    end
     body = reshape(A,length(A1),[])';
 end
 end

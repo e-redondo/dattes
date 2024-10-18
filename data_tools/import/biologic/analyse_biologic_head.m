@@ -8,10 +8,10 @@ function [variable_names, unit_names, date_test, source_file,test_params] = anal
 % [variable_names, unit_names, date_test, type_test, source_file] = analyse_biologic_head(file_name)
 % Usage(2):
 % [variable_names, unit_names, date_test, type_test, source_file] = analyse_biologic_head(file_name,header)
-% Inputs : 
+% Inputs :
 % - file_name [1xp char]:  pathname to the biologic results file (*.mpt)
 % - header [nx1 cell]: header lines of the biologic results file (*.mpt)
-% Outputs : 
+% Outputs :
 % - variable_names: [1xn cell] Names of the variables
 % - unit_names: [1xn cell] Names of the variables units
 % - date_test: [1xn cell] Date of the test
@@ -22,7 +22,7 @@ function [variable_names, unit_names, date_test, source_file,test_params] = anal
 %   See also import_biologic, read_biologic_file
 %
 % Copyright 2015 DATTES_Contributors <dattes@univ-eiffel.fr> .
-% For more information, see the <a href="matlab: 
+% For more information, see the <a href="matlab:
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
 if ~exist('head','var')
@@ -49,10 +49,11 @@ unit_names = cell(0);
 line = strrep(line,' ','_');%replace every space in varname by underscore
 line = strrep(line,'.','');%replace every dot in varname by nothing
 line = strrep(line,'time/s','tc{s}');
-line = strrep(line,'Ewe/V','U{V}');%OVC SCGPL
 line = strrep(line,'I/mA','I{mA}');%MB et autres?
-line = strrep(line,'Energy/Wh','Energy{Wh}');%MB et autres?
-line = strrep(line,'|Energy|/Wh','Energy{Wh}');%MB et autres?
+line = strrep(line,'Rwe/Ohm','Rwe{Ohm}');%EC-Lab 11.61
+line = strrep(line,'Rce/Ohm','Rce{Ohm}');%EC-Lab 11.61
+line = strrep(line,'Rwe-ce/Ohm','Rwece{Ohm}');%EC-Lab 11.61
+line = strrep(line,'Ewe/V','U{V}');%OVC SCGPL
 line = strrep(line,'<Ewe>/V','U{V}');%GEIS
 line = regexprep(line,'Ewe-Ece/V','EweEceDiff{V}');%IFPen dans SIMCAL
 line = regexprep(line,'Ece/V','Ece{V}');%IFPen dans SIMCAL
@@ -78,16 +79,17 @@ line = strrep(line,'Analog_IN_2/V','Analog_IN_2{V}');%%%%%%%%%%%%%%%%%%%%%%%%%
 line = strrep(line,'Analog_IN_2/C','Analog_IN_2{C}');%%%%%%%%%%%%%%%%%%%%%%%%%
 line = strrep(line,'Analog OUT','Analog_OUT');%%%%%%%%%%%%%%%%%%%%%%%%%
 line = strrep(line,'Analog_OUT/V','Analog_OUT{V}');
-line = strrep(line,'dq/mAh','dq{mAh}');
 
 % step counter
+line = strrep(line,'Ns changes','Ns_changes');
 
 %Amp hours counters:
+line = strrep(line,'dq/mAh','dq{mAh}');
 line = strrep(line,'dq/mA.h','dq{mAh}');
 
 line = strrep(line,'(Q-Qo)/mA.h','ah{mAh}');
 line = strrep(line,'(Q-Qo)/mAh','ah{mAh}');
-    
+
 line = strrep(line,'Q_charge/discharge/mAh','Qp{mAh}');%10.40 bis
 line = strrep(line,'Q charge/discharge/mA.h','Qp{mAh}');%v11.20
 
@@ -96,19 +98,36 @@ line = strrep(line,'Q charge/mA.h','ah_cha{mAh}');%v11.20line = strrep(line,'Ene
 line = strrep(line,'Q discharge/mA.h','ah_dis{mAh}');%v11.20
 line = strrep(line,'Q_discharge/mAh','ah_dis{mAh}');%10.40 bis
 line = strrep(line,'Capacity/mAh','Capacity{mAh}');%v10.23
+
+%energy
+line = strrep(line,'Energy/Wh','Energy{Wh}');%MB et autres?
+line = strrep(line,'|Energy|/Wh','Energy{Wh}');%MB et autres?
 line = strrep(line,'Energy_charge/Wh','Energy_charge{Wh}');
 line = strrep(line,'Energy_discharge/Wh','Energy_discharge{Wh}');
+line = strrep(line,'Energy_we/Wh','Energy_we{Wh}');%EC-Lab 11.61
+line = strrep(line,'Energy_we_charge/Wh','Energy_we_charge{Wh}');%EC-Lab 11.61
+line = strrep(line,'Energy_we_discharge/Wh','Energy_we_discharge{Wh}');%EC-Lab 11.61
+line = strrep(line,'Energy_ce/Wh','Energy_ce{Wh}');%EC-Lab 11.61
+line = strrep(line,'Energy_we-ce/Wh','Energy_wece{Wh}');%EC-Lab 11.61
+
+%power
+line = strrep(line,'P/W','Pp{W}');%v10.23
+line = strrep(line,'Pwe/W','Pwe{W}');%EC-Lab 11.61
+line = strrep(line,'Pce/W','Pce{W}');%EC-Lab 11.61
+line = strrep(line,'Pwe-ce/W','Pwece{W}');%EC-Lab 11.61
+
+
+%Other
 % line = strrep(line,'Capacitance ','Capacitance_');%v10.40 (Capacitance_charge o Capacitance_discharge)
 line = strrep(line,'/uF','{uF}');%v10.40 (microFarads)
 line = regexprep(line,'/.F','{uF}');%v10.40bis (microFarads avec letrte grecque)
-    
+
 if strcmp(type_test,'SGCPL') || strcmp(type_test,'GCPL')
     %variables du SGCPL: 'mode','ox_red','error','control_changes','Ns_changes','counter','time','control','Ewe','dq','Analog_IN_1','I','Qp','x'
     %version: 10.23
     %variables du GCPL: 'mode','ox/red','error','control changes','Ns changes','counter inc.','Ns','time/s','control/V/mA','Ewe/V','dq/mA.h','Analog IN 1/V','P/W','<I>/mA','(Q-Qo)/mA.h','x','Capacity/mA.h'
     line = strrep(line,'ox/red','ox_red');
     line = strrep(line,'control changes','control_changes');
-    line = strrep(line,'Ns changes','Ns_changes');
     line = strrep(line,'counter inc.','counter');
     line = strrep(line,'control/V/mA','control{V_or_mA}');
     line = strrep(line,'control/V','control{V}');%v10.40
@@ -117,7 +136,6 @@ if strcmp(type_test,'SGCPL') || strcmp(type_test,'GCPL')
     line = strrep(line,'Energy charge/W.h','Echarge{Wh}');%10.40 bis
     line = strrep(line,'half cycle','half_cycle');%10.40 bis
     line = strrep(line,'<I>/mA','I{mA}');
-    line = strrep(line,'P/W','Pp{W}');%v10.23
     line = strrep(line,'Efficiency/%','Efficiency{pc}');%10.40 bis
     line = strrep(line,'cycle number','cycle_number');%v10.40bis
 elseif strcmp(type_test,'GPI')%v10.23
@@ -134,7 +152,6 @@ elseif strcmp(type_test,'GPI')%v10.23
     line = strrep(line,'Analog_IN_2/C','Analog_IN_2{C}');%%%%%%%%%%%%%%%%%%%%%%%%%
     line = strrep(line,'Analog OUT','Analog_OUT');%%%%%%%%%%%%%%%%%%%%%%%%%
     line = strrep(line,'Analog_OUT/V','Analog_OUT{V}');
-    line = strrep(line,'P/W','Pp{W}');
     line = strrep(line,'<I>/mA','I{mA}');
 elseif strcmp(type_test,'GEIS') || strcmp(type_test,'PEIS')
     %variables du GEIS: 'freq','Re_Z','Im_Z','Z_mod','Z_angle','time','Ewe','I','cycle_number','Ewe_mod','I_mod','Re_Y','Im_Y','Y_mod','Y_angle'
@@ -164,7 +181,7 @@ elseif strcmp(type_test,'GEIS') || strcmp(type_test,'PEIS')
     line = strrep(line,'|Zwe-ce|/Ohm','ZWeCe{Ohm}');%IFPen dans SIMCAL
     line = strrep(line,'Re(Zwe-ce)/Ohm','ReZWeCe{Ohm}');%IFPen dans SIMCAL
     line = strrep(line,'-Im(Zwe-ce)/Ohm','ImZWeCe{Ohm}');%IFPen dans SIMCAL
-    line = strrep(line,'P/W','Pp{W}');%v11.20
+
 elseif strcmp(type_test,'OCV')
     %variables du OCV: 'mode','error','time','Ewe','Analog_IN_1'
     line = strrep(line,'Analog IN ','Analog_IN_');
@@ -184,7 +201,7 @@ elseif strcmp(type_test,'Wait')
     line = strrep(line,'Analog_IN_2/C','Analog_IN_2{C}');
     line = strrep(line,'Analog OUT','Analog_OUT');
     line = strrep(line,'Analog_OUT/V','Analog_OUT{V}');
-    line = strrep(line,'P/W','Pp{W}');
+
     line = strrep(line,'I/mA','I{mA}');
 elseif strcmp(type_test,'MB') %modulo bat
     line = strrep(line,'ox/red','ox_red');
@@ -204,20 +221,19 @@ elseif strcmp(type_test,'MB') %modulo bat
     line = strrep(line,'Energy discharge/W.h','Edischarge{Wh}');%v11.20
     line = strrep(line,'Energy charge/W.h','Echarge{Wh}');%v11.20
     line = strrep(line,'<I>/mA','I{mA}');
-    line = strrep(line,'P/W','Pp{W}');%v10.23
+
     line = strrep(line,'Capacity/mA.h','Capacity{mAh}');%v10.23
     line = strrep(line,'I Range','I_Range');%v11.20
     line = strrep(line,'half cycle','half_cycle');%v11.20
-%     line = strrep(line,'Capacitance charge/uF','Capacitance_charge{uF}');%v11.20
-%     line = strrep(line,'Capacitance discharge/uF','Capacitance_discharge{uF}');%v11.20
+    %     line = strrep(line,'Capacitance charge/uF','Capacitance_charge{uF}');%v11.20
+    %     line = strrep(line,'Capacitance discharge/uF','Capacitance_discharge{uF}');%v11.20
     line = strrep(line,'Capacitance ','Capacitance_');%v10.40 (Capacitance_charge o Capacitance_discharge)
-    line = strrep(line,'/uF','{uF}');%v10.40 (microFarads)
-    line = regexprep(line,'/.F','{uF}');%v10.40bis (microFarads avec letrte grecque)
+
     line = strrep(line,'Capacity/mA.h','Capacity{mAh}');%v11.20
     line = strrep(line,'Efficiency/%','Efficiency{pc}');%v11.20
     line = strrep(line,'cycle number','cycle_number');%v11.20
     line = strrep(line,'R/Ohm','R{Ohm}');%v11.20
-    
+
     %EIS in MB techniques:
     line = strrep(line,'freq/Hz','freq{Hz}');
     line = strrep(line,'<I>/mA','I{mA}');
@@ -228,7 +244,7 @@ elseif strcmp(type_test,'MB') %modulo bat
     line = strrep(line,'cycle number','cycle_number');
     line = strrep(line,'I Range','I_Range{A}');
     line = strrep(line,'|Ewe|/V','Umod{V}');
-    
+
     line = strrep(line,'|I|/A','Imod{A}');
     line = strrep(line,'Re(Y)/Ohm-1','ReY{1_Ohm}');
     line = strrep(line,'Im(Y)/Ohm-1','ImY{1_Ohm}');
@@ -245,7 +261,7 @@ elseif strcmp(type_test,'MB') %modulo bat
     line = strrep(line,'|Zwe-ce|/Ohm','ZWeCe{Ohm}');%IFPen dans SIMCAL
     line = strrep(line,'Re(Zwe-ce)/Ohm','ReZWeCe{Ohm}');%IFPen dans SIMCAL
     line = strrep(line,'-Im(Zwe-ce)/Ohm','ImZWeCe{Ohm}');%IFPen dans SIMCAL
-    
+
     line = strrep(line,'P/W','Pp{W}');%v11.20
 else %essai inconnu comme MB (2021/08 v11.36)
     line = strrep(line,'ox/red','ox_red');
@@ -275,7 +291,7 @@ else %essai inconnu comme MB (2021/08 v11.36)
     line = strrep(line,'Efficiency/%','Efficiency{pc}');%v11.20
     line = strrep(line,'cycle number','cycle_number');%v11.20
     line = strrep(line,'R/Ohm','R{Ohm}');%v11.20
-    
+
     %EIS in MB techniques:
     line = strrep(line,'freq/Hz','freq{Hz}');
     line = strrep(line,'<I>/mA','I{mA}');
@@ -286,7 +302,7 @@ else %essai inconnu comme MB (2021/08 v11.36)
     line = strrep(line,'cycle number','cycle_number');
     line = strrep(line,'I Range','I_Range{A}');
     line = strrep(line,'|Ewe|/V','Umod{V}');
-    
+
     line = strrep(line,'|I|/A','Imod{A}');
     line = strrep(line,'Re(Y)/Ohm-1','ReY{1_Ohm}');
     line = strrep(line,'Im(Y)/Ohm-1','ImY{1_Ohm}');
@@ -303,7 +319,7 @@ else %essai inconnu comme MB (2021/08 v11.36)
     line = strrep(line,'|Zwe-ce|/Ohm','ZWeCe{Ohm}');%IFPen dans SIMCAL
     line = strrep(line,'Re(Zwe-ce)/Ohm','ReZWeCe{Ohm}');%IFPen dans SIMCAL
     line = strrep(line,'-Im(Zwe-ce)/Ohm','ImZWeCe{Ohm}');%IFPen dans SIMCAL
-    
+
     line = strrep(line,'P/W','Pp{W}');%v11.20
 end
 line = strtrim(line);%bug v11.20: trailing espaces make extra-empty variable
@@ -311,7 +327,7 @@ variables = regexp(line,'\s','split');
 
 expr = '{\w+}';
 % [s e] = regexp(variables,expr, 'start', 'end','once');
-% 
+%
 % for ind = 1 : length(variables)
 %     unit_names{ind} = variables{ind}(s{ind}+1:e{ind}-1);
 % end
@@ -369,13 +385,13 @@ if ~exist('head','var')
         fprintf('biologic_head: Error in the file %s\n',F);
         return%on force l'erreur si pas ECLAB file
     end
-%     %check if it was last line in file
-%     ligne = fgetl(fid);
-%     if ligne == -1
-%         empty_file = true;
-%     else
-%         empty_file = false;
-%     end
+    %     %check if it was last line in file
+    %     ligne = fgetl(fid);
+    %     if ligne == -1
+    %         empty_file = true;
+    %     else
+    %         empty_file = false;
+    %     end
     fclose(fid);
 end
 
@@ -487,7 +503,7 @@ elseif strcmp(type_test,'PEIS')
         Vs_units = regexp(Vs_line{1},'\(.+\)','match','once');
         Vs_units = regexprep(Vs_units,'\(','');
         Vs_units = regexprep(Vs_units,'\)','');
-        
+
         Vs_words = regexp(Vs_line{1},'\s+','split');
         Vs = cellfun(@(x) sscanf(x,'%f'),Vs_words,'UniformOutput',false);
         Ie = cellfun(@isempty,Vs);
@@ -505,7 +521,7 @@ elseif strcmp(type_test,'PEIS')
         Va_units = regexp(Va_line{1},'\(.+\)','match','once');
         Va_units = regexprep(Va_units,'\(','');
         Va_units = regexprep(Va_units,'\)','');
-        
+
         Va_words = regexp(Va_line{1},'\s+','split');
         Va = cellfun(@(x) sscanf(x,'%f'),Va_words,'UniformOutput',false);
         Ie = cellfun(@isempty,Va);
@@ -526,7 +542,7 @@ elseif strcmp(type_test,'MB')
     control_types = control_types(2:end-1);%remove first and last column as in Ns
     [~,~,geis_sequences] = regexpFiltre(control_types,'GEIS');
     [~,~,peis_sequences] = regexpFiltre(control_types,'PEIS');
-    
+
     Ns = 0:length(control_types)-1;
     %get control val in line
     control_val1_line = regexpFiltre(head,'^ctrl1_val\s+');
@@ -541,10 +557,10 @@ elseif strcmp(type_test,'MB')
         control_vals1{ind} = control_val1_line{1}(start_cuts(ind):end_cuts(ind));
         control_units1{ind} = control_unit1_line{1}(start_cuts(ind):end_cuts(ind));
     end
-    
+
     % prevent comma decimal separator error
     control_vals1 = strrep(control_vals1,',','.');
-    
+
     %convert string to numbers, fill empty values with nans
     control_vals1 = cellfun(@str2num,control_vals1,'UniformOutput',false);
     Ie = cellfun(@isempty,control_vals1);

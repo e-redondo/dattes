@@ -246,10 +246,10 @@ for indF = 1:length(corps)
             if isfield(test_params,'Is')
                 Iavg =  nan(size(XMLVars.tc.vector));
                 if ~all(isnan(test_params.Is))
-                    Ns = XMLVars.Ns.vector;
+                    step = XMLVars.step.vector;
                     for ind = 1:length(test_params.Is)
                         if ~isnan(test_params.Is(ind))
-                            Iavg(Ns+1==ind) = test_params.Is(ind);
+                            Iavg(step+1==ind) = test_params.Is(ind);
                         end
                     end
                 end
@@ -259,10 +259,10 @@ for indF = 1:length(corps)
             if isfield(test_params,'Ia')
                 Iamp =  nan(size(XMLVars.tc.vector));
                 if ~all(isnan(test_params.Ia))
-                    Ns = XMLVars.Ns.vector;
+                    step = XMLVars.step.vector;
                     for ind = 1:length(test_params.Ia)
                         if ~isnan(test_params.Ia(ind))
-                            Iamp(Ns+1==ind) = test_params.Ia(ind);
+                            Iamp(step+1==ind) = test_params.Ia(ind);
                         end
                     end
                 end
@@ -274,10 +274,10 @@ for indF = 1:length(corps)
             if isfield(test_params,'Us')
                 Uavg =  nan(size(XMLVars.tc.vector));
                 if ~all(isnan(test_params.Us))
-                    Ns = XMLVars.Ns.vector;
+                    step = XMLVars.step.vector;
                     for ind = 1:length(test_params.Us)
                         if ~isnan(test_params.Us(ind))
-                            Uavg(Ns+1==ind) = test_params.Us(ind);
+                            Uavg(step+1==ind) = test_params.Us(ind);
                         end
                     end
                 end
@@ -287,10 +287,10 @@ for indF = 1:length(corps)
             if isfield(test_params,'Ua')
                 Uamp =  nan(size(XMLVars.tc.vector));
                 if ~all(isnan(test_params.Ua))
-                    Ns = XMLVars.Ns.vector;
+                    step = XMLVars.step.vector;
                     for ind = 1:length(test_params.Ua)
                         if ~isnan(test_params.Ua(ind))
-                            Uamp(Ns+1==ind) = test_params.Ua(ind);
+                            Uamp(step+1==ind) = test_params.Ua(ind);
                         end
                     end
                 end
@@ -312,13 +312,13 @@ for indF = 1:length(corps)
             XMLVars.Qp = makeXMLVariable('Qp', 'mAh', '%f', 'Qp', Qp);
 
         end
-        %Ns
-        if isfield(XMLVars,'Ns_changes')
-            Ns =  cumsum(XMLVars.Ns_changes.vector);
-        else
-            Ns =  zeros(size(XMLVars.tc.vector));
-        end
-        XMLVars.Ns = makeXMLVariable('Ns', '', '%i', 'Ns', Ns);
+        %Ns (commented, already done above
+%         if isfield(XMLVars,'Ns_changes')
+%             Ns =  cumsum(XMLVars.Ns_changes.vector);
+%         else
+%             Ns =  zeros(size(XMLVars.tc.vector));
+%         end
+%         XMLVars.Ns = makeXMLVariable('Ns', '', '%i', 'Ns', Ns);
         %unites du SI
         if strcmp(XMLVars.I.unit,'mA')
             XMLVars.I.vector = XMLVars.I.vector/1000;
