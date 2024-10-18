@@ -250,12 +250,12 @@ if isempty(ind_other_cols)
     other_cols = struct;
 else
 %     other_cols.t = t;
-    if ~isempty(Step)
-        other_cols.Step = Step;
-        other_cols.Step_units = '';
-    end
-    other_cols.Ah = Ah;
-    other_cols.Ah_units = 'Ah';
+%     if ~isempty(Step)
+%         other_cols.Step = Step;
+%         other_cols.Step_units = '';
+%     end
+%     other_cols.Ah = Ah;
+%     other_cols.Ah_units = 'Ah';
     
     for ind_col = 1:length(ind_other_cols)
         data_this_col = data_columns(ind_other_cols(ind_col));

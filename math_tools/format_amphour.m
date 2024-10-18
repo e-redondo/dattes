@@ -23,7 +23,13 @@ function [ah, ah_dis, ah_cha] = format_amphour(Ah_dis, Ah_cha)
 % For more information, see the <a href="matlab: 
 % web('https://gitlab.com/dattes/dattes/-/blob/main/LICENSE')">DATTES License</a>.
 
-
+if isempty(Ah_dis) || isempty(Ah_cha)
+%     return empty vectors if inputs are empty
+    ah = [];
+    ah_dis = [];
+    ah_cha = [];
+    return;
+end
 %detect Ah_dis and Ah_cha sign, change everyone to positive
 [~,ind_max] = max(abs(Ah_dis));
 if Ah_dis(ind_max)<0
