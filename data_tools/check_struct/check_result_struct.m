@@ -48,7 +48,7 @@ end
 % checkstruct:
 allowed_fields = {'profiles','eis','phases','metadata','test','configuration',...
      'analyse'};
-mandatory_fields = {'profiles','phases','test'};
+mandatory_fields = {'profiles','test'};
 field_types = {'struct','struct','struct','struct','struct','struct','struct'};
 
 [info, err] = check_struct(result, allowed_fields, field_types, mandatory_fields);
@@ -82,18 +82,19 @@ if isfield(result,'eis')
 end
 
 %phases (mandatory)
-if ~isfield(result,'phases')
-    %profiles is mandatory
-    err=-300;
-    return
+% if ~isfield(result,'phases')
+%     %profiles is mandatory
+%     err=-300;
+%     return
+% end
+if isfield(result,'phases')
+    [info_ph, err_ph] = check_phases_struct(result.phases);
+    if err_ph
+        err = err_ph-300;
+        return
+    end
+    info.info_phases = info_ph;
 end
-[info_ph, err_ph] = check_phases_struct(result.phases);
-if err_ph
-    err = err_ph-300;
-    return
-end
-info.info_phases = info_ph;
-
 %metadata (not mandatory)
 if isfield(result,'metadata')
     %eis is not mandatory
