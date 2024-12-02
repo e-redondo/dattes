@@ -15,7 +15,7 @@ function [profiles, other_cols] = csv2profiles(file_in,col_names,params)
 %    - I_thres [1x1 double]: Current (A) threshold for which_mode
 %    - U_thres [1x1 double]: Voltage (V) threshold for which_mode
 %    - date_fmt: 'dd/mm/yyyy HH:MM:SS.SSS', 'mm/dd/yyyy HH:MM:SS.SSS', 'yyyy/mm/dd HH:MM:SS.SSS'
-%    - col_sep: ','
+%    - colsep: ','
 %
 % Outputs:
 % - profiles [1x1 struct] with fields:
@@ -61,12 +61,14 @@ function [profiles, other_cols] = csv2profiles(file_in,col_names,params)
 default_params.I_thres = 0;% 0 = calculate before which_mode
 default_params.U_thres = 0;% 0 = calculate before which_mode
 default_params.date_fmt = '';%empty = let MATLAB detect date format
-default_params.col_sep = ',';
+default_params.colsep = ',';
 default_params.buf_size = 1000;% buffer size (number of lines)
 default_params.date_fmt = 'mm/dd/yyyy HH:MM:SS.FFF'; % e.g. mm/dd/yyyy HH:MM:SS.FFF
 default_params.date_fmt = 'mm/dd/yyyy HH:MM:SS AM'; % e.g. mm/dd/yyyy HH:MM:SS.FFF
 % default_params.testtime_fmt = ''; %default test time format seconds
 % default_params.testtime_fmt = 'HH:MM:SS.FFF';% alternative format (seen in digatron)
+default_params.variable_list = '';% empty list = keep names as found
+default_params.units_list = '';% empty list = try to find units
 
 if ~exist('params','var')
     params = struct;
@@ -80,11 +82,17 @@ end
 if ~isfield(params,'U_thres')
     params.U_thres = default_params.U_thres;
 end
-if ~isfield(params,'col_sep')
-    params.col_sep = default_params.col_sep;
+if ~isfield(params,'colsep')
+    params.colsep = default_params.colsep;
 end
 if ~isfield(params,'date_fmt')
     params.date_fmt = default_params.date_fmt;
+end
+if ~isfield(params,'variable_list')
+    params.variable_list = default_params.variable_list;
+end
+if ~isfield(params,'units_list')
+    params.units_list = default_params.units_list;
 end
 % if ~isfield(params,'testtime_fmt')
 %     params.testtime_fmt = default_params.testtime_fmt;
@@ -109,11 +117,11 @@ else
     units_line = header_lines{end};
 end
 
-variables = regexp(variables_line,params.col_sep,'split');
-units = regexp(units_line,params.col_sep,'split');
+variables = regexp(variables_line,params.colsep,'split');
+units = regexp(units_line,params.colsep,'split');
 
 if length(units)<=1
-    fprintf('csv2profiles, ERROR: a problem maybe with column separator "%s"\n',params.col_sep);
+    fprintf('csv2profiles, ERROR: a problem maybe with column separator "%s"\n',params.colsep);
     fprintf('before-last line of header: "%s"\n',variables_line);
     fprintf('last line of header: "%s"\n',units_line);
     return;
@@ -122,18 +130,33 @@ if length(variables)<length(units)
     %probably the same last line of header is for variable names and units
     variables = units;
 end
-%find units from header_line
-units = find_units(units);
+
+if isempty(params.variable_list)
+    %keep variables as found in file
+    new_variables = variables;
+else
+    %rename variables as in params
+    new_variables = params.variable_list;
+end
+
+if isempty(params.units_list)
+    %find units from header_line
+    units = find_units(units);
+else
+    %convert to char each element of the cell to avoid 0x0 doubles in empties
+    units = cellfun(@char,params.units_list,'UniformOutput',false);
+end
 
 
-%remove empty columns (mepty variable name)
+%remove empty columns (empty variable name)
 ind_empty_col = cellfun(@isempty,variables);
 variables = variables(~ind_empty_col);
+new_variables = new_variables(~ind_empty_col);
 units = units(~ind_empty_col);
 data_columns = data_columns(~ind_empty_col);
 
 %PUT in temporal order (sometimes csv files are not in order):
-ind_col_t = find_col_index(variables,col_names{2});
+ind_col_t = find_col_index(new_variables,col_names{2});
 t = data_columns{ind_col_t};
 if ~isempty(t)
     if iscell(t)
@@ -160,27 +183,27 @@ end
 
 %% find column index of interesting variables:
 %datetime: 'datetime'
-ind_col_dt = find_col_index(variables,col_names{1});
+ind_col_dt = find_col_index(new_variables,col_names{1});
 %U: 'cell_voltage'
-ind_col_U = find_col_index(variables,col_names{3});
+ind_col_U = find_col_index(new_variables,col_names{3});
 %I: 'current'
-ind_col_I = find_col_index(variables,col_names{4});
+ind_col_I = find_col_index(new_variables,col_names{4});
 %'mode'
-ind_col_mode = find_col_index(variables,col_names{5});
+ind_col_mode = find_col_index(new_variables,col_names{5});
 %'T'
-ind_col_T = find_col_index(variables,col_names{6});
+ind_col_T = find_col_index(new_variables,col_names{6});
 %'dod_ah'
-ind_col_dod_ah = find_col_index(variables,col_names{7});
+ind_col_dod_ah = find_col_index(new_variables,col_names{7});
 %'soc'
-ind_col_soc = find_col_index(variables,col_names{8});
+ind_col_soc = find_col_index(new_variables,col_names{8});
 %Step: 'Step index'
-ind_col_step = find_col_index(variables,col_names{9});
+ind_col_step = find_col_index(new_variables,col_names{9});
 %'Ah'
-ind_col_ah = find_col_index(variables,col_names{10});
+ind_col_ah = find_col_index(new_variables,col_names{10});
 %'Ah_dis'
-ind_col_ahdis = find_col_index(variables,col_names{11});
+ind_col_ahdis = find_col_index(new_variables,col_names{11});
 %'Ah_cha'
-ind_col_ahcha = find_col_index(variables,col_names{12});
+ind_col_ahcha = find_col_index(new_variables,col_names{12});
 
 
 %fill emptys with nans:
@@ -245,7 +268,7 @@ profiles.ah_cha = ah_cha;
 
 
 %other_cols:
-ind_other_cols = find(~ismember(variables,col_names));
+ind_other_cols = find(~ismember(new_variables,col_names));
 if isempty(ind_other_cols)
     other_cols = struct;
 else
@@ -263,11 +286,11 @@ else
             %convert to numeric array
             this_col = vertcat(data_this_col{:});
         else
-            %keep as cell
-            this_col = data_this_col;
+            %keep as cell, but resize
+            this_col = data_this_col{:};
         end
         %TODO:put this part in function (clean_col_name).
-        this_col_name = regexprep(variables{ind_other_cols(ind_col)},'^[^a-zA-Z]','');
+        this_col_name = regexprep(new_variables{ind_other_cols(ind_col)},'^[^a-zA-Z]','');
         % remove units from variable names:
         this_col_name = regexprep(this_col_name,'\(.+\)','');
         this_col_name = regexprep(this_col_name,'\s','_');
@@ -326,7 +349,7 @@ if isempty(mode)
         end
     end
 
-
+    %TODO: Step should go in profiles variables, not in other_cols
     if ~isempty(t) && isfield(other_cols,'Step')
         %m: 'mode'(CC,CV,rest,EIS,profile)
         mode = which_mode(profiles.t,profiles.I,profiles.U,other_cols.Step,params.I_thres,params.U_thres);
