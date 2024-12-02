@@ -7,9 +7,9 @@ function [header_lines,data_columns,tail_lines] = parse_mixed_data_csv(file_in,p
 % Inputs:
 % - file_in [char]: pathname to the csv file
 % - paramas [struct] with fields:
-%   - 'col_sep' [char]: column separator (default ',')
-%   - 'dec_sep' [char]: decimal separator (default '.'), (not yet used)
-%   - 'str_sep' [char]: decimal separator (default ''), (not yet used)
+%   - 'colsep' [char]: column separator (default ',')
+%   - 'decsep' [char]: decimal separator (default '.'), (not yet used)
+%   - 'strsep' [char]: decimal separator (default ''), (not yet used)
 
 %TODO: treat emptys as text instead as numbers
 % Currently if empty value is found in text_line, '%f'.
@@ -23,16 +23,16 @@ if ~exist('params','var')
     params = struct;
 end
 
-if ~isfield(params,'col_sep')
-    params.col_sep = ',';
+if ~isfield(params,'colsep')
+    params.colsep = ',';
 end
-if ~isfield(params,'dec_sep')
-    params.dec_sep = '.';
+if ~isfield(params,'decsep')
+    params.decsep = '.';
 end
-if ~isfield(params,'str_sep')
-    params.str_sep = '';
-    %params.str_sep = '"'; % to ignore "
-    %params.str_sep = "'"; % to ignore '
+if ~isfield(params,'strsep')
+    params.strsep = '';
+    %params.strsep = '"'; % to ignore "
+    %params.strsep = "'"; % to ignore '
 
 end
 if ~isfield(params,'all_str')
@@ -52,13 +52,13 @@ if params.all_str
     text_fmt = strrep(text_fmt,'f','s');
 end
 %3. textscan
-if isempty(params.str_sep)
-    data_columns1 = textscan(first_data_line,text_fmt,'Delimiter',params.col_sep);
-    data_columns = textscan(fid,text_fmt,'Delimiter',params.col_sep);
+if isempty(params.strsep)
+    data_columns1 = textscan(first_data_line,text_fmt,'Delimiter',params.colsep);
+    data_columns = textscan(fid,text_fmt,'Delimiter',params.colsep);
 else
    %TODO: seems not to work in octave (neware files)
-   data_columns1 = textscan(first_data_line,text_fmt,'Delimiter',params.col_sep,'Whitespace',[' \b\r\n\t' params.str_sep]);
-   data_columns = textscan(fid,text_fmt,'Delimiter',params.col_sep,'Whitespace',[' \b\r\n\t' params.str_sep]);
+   data_columns1 = textscan(first_data_line,text_fmt,'Delimiter',params.colsep,'Whitespace',[' \b\r\n\t' params.strsep]);
+   data_columns = textscan(fid,text_fmt,'Delimiter',params.colsep,'Whitespace',[' \b\r\n\t' params.strsep]);
 end
 
 
@@ -66,11 +66,11 @@ data_columns = cellfun(@(x,y) vertcat(x,y),data_columns1,data_columns,'UniformOu
 
 data_columns = data_columns';
 
-%3.1 replace each char in str_sep by nothing in string columns:
+%3.1 replace each char in strsep by nothing in string columns:
 for ind = 1:length(data_columns)
     if iscell(data_columns{ind})
-        for ind2 = 1:length(params.str_sep)
-            data_columns{ind} = strrep(data_columns{ind},params.str_sep(ind2),'');
+        for ind2 = 1:length(params.strsep)
+            data_columns{ind} = strrep(data_columns{ind},params.strsep(ind2),'');
         end
     end
 end
@@ -91,24 +91,24 @@ if ~exist('params','var')
     params = struct;
 end
 
-if ~isfield(params,'col_sep')
-    params.col_sep = ',';
+if ~isfield(params,'colsep')
+    params.colsep = ',';
 end
 
-if ~isfield(params,'str_sep')
-    params.str_sep = '';
-    %params.str_sep = '"'; % to ignore "
-    %params.str_sep = "'"; % to ignore '
+if ~isfield(params,'strsep')
+    params.strsep = '';
+    %params.strsep = '"'; % to ignore "
+    %params.strsep = "'"; % to ignore '
 
 end
 
 %cut line into 'words'
-words = regexp(text_line,params.col_sep,'split');
+words = regexp(text_line,params.colsep,'split');
 %trim leading and trialing spaces
 words = strtrim(words);
 %ignore some characters:
-for ind =1:length(params.str_sep)
-words = strrep(words,params.str_sep(ind),'');
+for ind =1:length(params.strsep)
+words = strrep(words,params.strsep(ind),'');
 end
 %build regex expression to detect numbers
 expression = '^\-{0,1}[0-9]*\.{0,1}[0-9]+([eE][+-]{0,1}[0-9]+){0,1}$';
