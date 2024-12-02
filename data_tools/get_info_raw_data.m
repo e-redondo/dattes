@@ -47,8 +47,8 @@ if ischar(file_in)
     else
         info_raw_data = [];
         fprintf('dattes_info_raw_data: input must be a pathname (folder or file) or a filelist.\n');
-    fprintf('Given input: %s\n',file_in);
-    return
+        fprintf('Given input: %s\n',file_in);
+        return
     end
 elseif iscell(file_in)
     if any(~cellfun(@ischar,ext_list))
@@ -89,7 +89,7 @@ info_raw_data.first_data_line = first_data_line;
 % - Neware: not well formed csv files, different column number for normal
 % lines, step statistics, cycle statistics
 % - Biologic: not csv files but mpt (fixes column with padding spaces)
-% 
+%
 % For each cycler, create a function 'analyse_cycler_header' with outputs:
 % - variable names and units
 % - test date
@@ -97,56 +97,77 @@ info_raw_data.first_data_line = first_data_line;
 % - decimal separator
 % - datetime format?
 
- [variable_names, unit_names, date_test, source_file,params] = cellfun(@(x,y,z,w) analyse_head(x,y,z,w),header_lines,first_data_line,cycler,filelist,'UniformOutput',false);
- info_raw_data.variable_names = variable_names;
- info_raw_data.unit_names = unit_names;
- info_raw_data.date_test = date_test;
- info_raw_data.source_file = source_file;
- info_raw_data.params = params;
- 
+[variable_names, unit_names, date_test, source_file,params] = cellfun(@(x,y,z,w) analyse_head(x,y,z,w),header_lines,first_data_line,cycler,filelist,'UniformOutput',false);
+info_raw_data.variable_names = variable_names;
+info_raw_data.unit_names = unit_names;
+info_raw_data.date_test = date_test;
+info_raw_data.source_file = source_file;
+info_raw_data.params = params;
 
- % reformat data: 1x1 struct of nx1 cells, to nx1 struct
- fields = fieldnames(info_raw_data);
 
- for ind = 1:length(filelist)
-     for ind2 = 1:length(fields)
-         info_raw_data1(ind).(fields{ind2})= info_raw_data.(fields{ind2}){ind};
-     end
- end
- info_raw_data = info_raw_data1;
+% reformat data: 1x1 struct of nx1 cells, to nx1 struct
+fields = fieldnames(info_raw_data);
+
+for ind = 1:length(filelist)
+    for ind2 = 1:length(fields)
+        info_raw_data1(ind).(fields{ind2})= info_raw_data.(fields{ind2}){ind};
+    end
+end
+info_raw_data = info_raw_data1;
 end
 
 function [variable_names, unit_names, date_test, source_file,test_params] = analyse_head(header,first_data_line,cycler,filename)
 
-%biologic
-if strncmp(cycler,'bio',3)
+%biologic eclab/btlab
+if strncmp(cycler,'bio_eclab',9) || strncmp(cycler,'bio_btlab',9)
     [variable_names, unit_names, date_test, source_file,test_params] = analyse_biologic_head(filename,header);
+    %convert to char each element of the cell to avoid 0x0 doubles in empties
+    unit_names = cellfun(@char,unit_names,'UniformOutput',false);
     return
 end
+%biologic btsuite
+if strcmp(cycler,'bio_btsuite')
+    [variable_names, unit_names, date_test, source_file,test_params] = analyse_btsuite_head(filename,header, first_data_line);
+    %convert to char each element of the cell to avoid 0x0 doubles in empties
+    unit_names = cellfun(@char,unit_names,'UniformOutput',false);
+    return
+end
+
 %arbin_csv
 if strncmp(cycler,'arbin_csv',9)
-[variable_names, unit_names, date_test, source_file,test_params] = analyse_arbin_head(filename, header, first_data_line);
+    [variable_names, unit_names, date_test, source_file,test_params] = analyse_arbin_head(filename, header, first_data_line);
+    %convert to char each element of the cell to avoid 0x0 doubles in empties
+    unit_names = cellfun(@char,unit_names,'UniformOutput',false);
     return
 end
 %bitrode
 if strncmp(cycler,'bitrode',7)
-[variable_names, unit_names, date_test, source_file,test_params] = analyse_bitrode_head(filename,header);
+    [variable_names, unit_names, date_test, source_file,test_params] = analyse_bitrode_head(filename,header);
+    %convert to char each element of the cell to avoid 0x0 doubles in empties
+    unit_names = cellfun(@char,unit_names,'UniformOutput',false);
     return
 end
 %digatron
 if strncmp(cycler,'digatron',8)
-[variable_names, unit_names, date_test, source_file,test_params] = analyse_digatron_head(filename, header, first_data_line);
+    [variable_names, unit_names, date_test, source_file,test_params] = analyse_digatron_head(filename, header, first_data_line);
+    %convert to char each element of the cell to avoid 0x0 doubles in empties
+    unit_names = cellfun(@char,unit_names,'UniformOutput',false);
     return
 end
 %neware
 if strncmp(cycler,'neware',6)
     [variable_names, unit_names, date_test, source_file,test_params] = analyse_neware_head(filename, header, first_data_line);
+    %convert to char each element of the cell to avoid 0x0 doubles in empties
+    unit_names = cellfun(@char,unit_names,'UniformOutput',false);
     return
 end
 
 first_data_line = header{end};
 header = header(1:end-1);
 [variable_names, unit_names, date_test, source_file,test_params] = analyse_generic_head(filename, header, first_data_line);
+%convert to char each element of the cell to avoid 0x0 doubles in empties
+unit_names = cellfun(@char,unit_names,'UniformOutput',false);
+
 %unknown cycler (or binary file):
 % variable_names = [];
 % unit_names = [];

@@ -11,7 +11,9 @@ function [cycler, line1, line2, header_lines, first_data_line] = which_cycler(fi
 %
 % Outputs:
 % - cycler [(1xp) string]: string defining the cycler type
-%   - 'bio': Biologic EC-Lab or BT-Lab file
+%   - 'bio_eclab': Biologic EC-Lab file
+%   - 'bio_btlab': Biologic BT-Lab file
+%   - 'bio_btsuite': Biologic BT-Suite file
 %   - 'pricsv': Princeton Zmeter file in csv format
 %   - 'biocsv': Biologic file in csv format
 %   - 'pribrut': Princeton Zmeter file in original format (xml?)
@@ -84,6 +86,13 @@ if ~isempty(regexp(line1,'BT-Lab ASCII FILE','match'))
     end
     header_lines = read_csv_header(fid,params);
     frewind(fid);
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
+    return
+end
+if ~isempty(regexp(line1,'^Sample Index[\s,;]*Time','once'))
+    cycler = 'bio_btsuite';%Biologic CSV file from BT Suite
     % last header line is first data line:
     first_data_line = header_lines{end};
     header_lines = header_lines(1:end-1);
