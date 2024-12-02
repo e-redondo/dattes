@@ -63,7 +63,7 @@ max_voltage = [];
 min_voltage = [];
 capacity = [];
 Uname = 'U';
-Tname = '';
+Tname = 'T';
  
 % Get values from metadata:
 if isfield(metadata,'cell')
