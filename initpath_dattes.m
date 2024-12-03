@@ -32,6 +32,7 @@ if ismember('e',options)%enable = addpath
     addpath(fullfile(srcdir,'data_tools','import','arbin'));
     addpath(fullfile(srcdir,'data_tools','import','bitrode'));
     addpath(fullfile(srcdir,'data_tools','import','biologic'));
+    addpath(fullfile(srcdir,'data_tools','import','btsuite'));
     addpath(fullfile(srcdir,'data_tools','import','neware'));
     addpath(fullfile(srcdir,'data_tools','import','digatron'));
     addpath(fullfile(srcdir,'data_tools','export'));
@@ -71,6 +72,7 @@ if ismember('d',options)%disable = rmpath
     rmpath(fullfile(srcdir,'data_tools','import','arbin'));
     rmpath(fullfile(srcdir,'data_tools','import','bitrode'));
     rmpath(fullfile(srcdir,'data_tools','import','biologic'));
+    rmpath(fullfile(srcdir,'data_tools','import','btsuite'));
     rmpath(fullfile(srcdir,'data_tools','import','neware'));
     rmpath(fullfile(srcdir,'data_tools','import','digatron'));
     rmpath(fullfile(srcdir,'data_tools','export'));
