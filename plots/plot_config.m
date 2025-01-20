@@ -146,21 +146,36 @@ if isfield(config,'resistance') && isfield(config,'impedance')
             URr = [URr;UpR(Ir)];
 
         end
-        %impedance (iden_z): TODO new method like ident_r
+        %impedance (iden_z): new method like ident_r
+        phases_z = phases(config.impedance.pZ);
+        time_before_after_phase = [config.impedance.rest_min_duration 0];
+        for ind = 1:length(phases_z)
 
-        %resistance and impedance (old method):
-        for ind = 1:length(phases)
+                %pulses
+                [tpRabs,tpW,UpW] = extract_phase2(phases_z(ind),time_before_after_phase,datetime,tc,U);
+                Ip = tpRabs>=phases_z(ind).datetime_ini & tpRabs<=phases_z(ind).datetime_ini+config.impedance.pulse_max_duration;
+                tW = [tW;tpW(Ip)];
+                UW = [UW;UpW(Ip)];
+                
+                %rests
+                Ir = tpRabs<phases_z(ind).datetime_ini;
+                tWr = [tWr;tpW(Ir)];
+                UWr = [UWr;UpW(Ir)];
 
-            if config.impedance.pZ(ind)
-                Ip = datetime>=phases(ind).datetime_ini & datetime<=phases(ind).datetime_ini+config.impedance.pulse_min_duration;
-                Ir = datetime>=phases(ind-1).datetime_fin-config.impedance.rest_min_duration & datetime<=phases(ind-1).datetime_fin;
-                tW = [tW;tc(Ip)];
-                UW = [UW;U(Ip)];
-                tWr = [tWr;tc(Ir)];
-                UWr = [UWr;U(Ir)];
-
-            end
         end
+        % impedance (old method):
+%         for ind = 1:length(phases)
+% 
+%             if config.impedance.pZ(ind)
+%                 Ip = datetime>=phases(ind).datetime_ini & datetime<=phases(ind).datetime_ini+config.impedance.pulse_min_duration;
+%                 Ir = datetime>=phases(ind-1).datetime_fin-config.impedance.rest_min_duration & datetime<=phases(ind-1).datetime_fin;
+%                 tW = [tW;tc(Ip)];
+%                 UW = [UW;U(Ip)];
+%                 tWr = [tWr;tc(Ir)];
+%                 UWr = [UWr;U(Ir)];
+% 
+%             end
+%         end
 
 
 
