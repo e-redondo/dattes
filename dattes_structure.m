@@ -229,6 +229,8 @@ end
 if ismember('m',options)
     I_threshold = 5*min(diff(unique(result.profiles.I)));
     U_threshold = 5*min(diff(unique(result.profiles.U)));
+    I_threshold = result.metadata.cell.nom_capacity/100;
+    U_threshold = (result.metadata.cell.max_voltage-result.metadata.cell.min_voltage)/1000;
     Step = result.profiles.mode;
     m = which_mode(result.profiles.t,result.profiles.I,result.profiles.U,...
                    Step,I_threshold,U_threshold,inher_options);

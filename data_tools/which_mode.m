@@ -88,8 +88,8 @@ for ind = 1:length(phases)
        m(indices) = 5;
    else
        %testing something: threshold = 1% of avg value
-       U_threshold2 = 0.01*mean(abs(Ucell{ind}));
-       I_threshold2 = 0.01*mean(abs(Icell{ind}));
+%        U_threshold2 = 0.01*mean(abs(Ucell{ind}));
+%        I_threshold2 = 0.01*mean(abs(Icell{ind}));
        m(indices)  = quelMode(tcell{ind},Ucell{ind},Icell{ind},U_threshold2,I_threshold2);
    end
 end
