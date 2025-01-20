@@ -181,6 +181,30 @@ elseif strcmp(type_test,'GEIS') || strcmp(type_test,'PEIS')
     line = strrep(line,'|Zwe-ce|/Ohm','ZWeCe{Ohm}');%IFPen dans SIMCAL
     line = strrep(line,'Re(Zwe-ce)/Ohm','ReZWeCe{Ohm}');%IFPen dans SIMCAL
     line = strrep(line,'-Im(Zwe-ce)/Ohm','ImZWeCe{Ohm}');%IFPen dans SIMCAL
+    %BTLab update 2024/10, a lot of new variables
+    line = strrep(line,'Re(C)','ReC');
+    line = strrep(line,'Im(C)','ImC');
+    line = strrep(line,'|C|','Cmod');
+    line = strrep(line,'Phase(C)/deg','Cangle{deg}');
+    line = strrep(line,'Re(M)','ReM');
+    line = strrep(line,'Im(M)','ImM');
+    line = strrep(line,'|M|','Mmod');
+    line = strrep(line,'Phase(M)/deg','Mangle{deg}');
+    line = strrep(line,'Re(Permittivity)','RePermittivity');
+    line = strrep(line,'Im(Permittivity)','ImPermittivity');
+    line = strrep(line,'|Permittivity|','Permittivity_mod');
+    line = strrep(line,'Phase(Permittivity)/deg','Permittivity_angle{deg}');
+    line = strrep(line,'Re(Resistivity)/Ohmcm','ReResistivity{Ohmcm}');
+    line = strrep(line,'Im(Resistivity)/Ohmcm','ImResistivity{Ohmcm}');
+    line = strrep(line,'|Resistivity|/Ohmcm','Resistivity_mod{Ohmcm}');
+    line = strrep(line,'Phase(Resistivity)/deg','Resistivity_angle{deg}');
+    line = strrep(line,'Re(Conductivity)/mS/cm','ReConductivity{mS_cm}');
+    line = strrep(line,'Im(Conductivity)/mS/cm','ImConductivity{mS_cm}');
+    line = strrep(line,'|Conductivity|/mS/cm','Conductivity_mod{mS_cm}');
+    line = strrep(line,'Phase(Conductivity)/deg','Conductivity_angle{deg}');
+    line = strrep(line,'Tan(Delta)','Tan_Delta');
+    line = strrep(line,'Loss_Angle(Delta)/deg','Loss_Angle_Delta{deg}');
+    line = regexprep(line,'<Ewe-Ece>/V','EweEceDiff{V}');
 
 elseif strcmp(type_test,'OCV')
     %variables du OCV: 'mode','error','time','Ewe','Analog_IN_1'
@@ -324,7 +348,9 @@ else %essai inconnu comme MB (2021/08 v11.36)
 end
 line = strtrim(line);%bug v11.20: trailing espaces make extra-empty variable
 variables = regexp(line,'\s','split');
-
+%remove 'empty' variables (two consecutive column separators, from 2024/10 BT-Lab update)
+ind_empty = cellfun(@isempty,variables);
+variables = variables(~ind_empty);
 expr = '{\w+}';
 % [s e] = regexp(variables,expr, 'start', 'end','once');
 %

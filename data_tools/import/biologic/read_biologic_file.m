@@ -76,15 +76,23 @@ if ~just_head
 %         A = fscanf(fid,'%f\t');
 %         A = [A1(:); A(:)];
 %     end
-    if rem(length(A),length(A1))
-        %remainder of division not zero
-        %number of elements of A is not multiple of A1
-        %error in one or more lines
-        filename = fopen(fid);
-%         [D,F,E] = fileparts(filename);
+if rem(length(A),length(A1))
+    %remainder of division not zero
+    %number of elements of A is not multiple of A1
+    %error in one or more lines
+
+    filename = fopen(fid);
+    if isempty(which('readmatrix'))
+        %readmatrix not available (Octave), no solution
+
         fprintf('read_biologic_file: error reading mpt file, %s\n',filename);
         return
+    else
+        %try doing it with readmatrix (only MATLAB)
+        body = readmatrix(filename,"Delimiter",'\t',"NumHeaderLines",nb_lignes,"FileType",'text');
     end
+else
     body = reshape(A,length(A1),[])';
+end
 end
 end
