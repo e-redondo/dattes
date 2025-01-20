@@ -101,17 +101,11 @@ end
 %1.3 merge config0 with result.configuration
 % configs must be two level structs (config/sections/fields)
 config = result.configuration;
-section_names = fieldnames(config0);
-for ind_s = 1:length(section_names)
-    this_section = config0.(section_names{ind_s});
-    if isstruct(this_section)
-        field_names = fieldnames(this_section);
-        for ind_f = 1:length(field_names)
-            this_field = config0.(section_names{ind_s}).(field_names{ind_f});
-            config.(section_names{ind_s}).(field_names{ind_f}) = this_field;
-        end
-    end
-end
+
+%field in config0 will overwrite those in config
+config = merge_struct(config,config0);
+
+
 %1.4 check config struct
 %TODO: check_configuration_struct: mandatory/allowed/types
 [info,err] = check_configuration_struct(config);
