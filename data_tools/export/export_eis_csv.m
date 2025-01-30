@@ -63,16 +63,19 @@ end
 
 %3. export eis
 var_names = fieldnames(dattes_struct.eis);
-data_array = [];
-for ind=1:length(var_names)
-    column = dattes_struct.eis.(var_names{ind});%get column
+data_array = cell(0);
+for ind_eis=1:length(dattes_struct.eis)
+    data_array{ind_eis} = [];
+    for ind_var=1:length(var_names)
+    column = dattes_struct.eis.(var_names{ind_var});%get column
     if isempty(column)
         column = nan(size(data_array,1),1);
     end
-    data_array = [data_array,column]; 
+    data_array{ind_eis} = [data_array{ind_eis},column];
+    end
 end
 % convert cell 2 array (all eis concatenated for csv)
-data_array = cell2mat(data_array);
+data_array = cell2mat(data_array');
 %header line:
 header_line = strjoin(var_names,',');
 fprintf(fid_out,'%s\n',header_line);
@@ -81,8 +84,8 @@ fclose(fid_out);
 
 %data:
 % dlmwrite(fileout,A,'-append');%not recommended: limited precision
-folder_out = fileparts(file_out);
-[status, msg, msgID] = mkdir(folder_out);
+% folder_out = fileparts(file_out);
+% [status, msg, msgID] = mkdir(folder_out);
 
 writematrix(data_array,file_out,'Writemode','append');
 end
