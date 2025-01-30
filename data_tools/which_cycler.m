@@ -113,6 +113,14 @@ if strncmp(line1,'TimeStamp,mode,ox_red',21)
     header_lines = header_lines(1:end-1);
     return
 end
+if ~isempty(regexp(line1,'Ns changes')) && ~isempty(regexp(line1,'\t'))
+    % bt/ec lab file with no header, with tab separators
+    cycler = 'biotab';
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
+    return
+end
 if strcmp(line1,'<Application>')
     if strcmp(line2,'Name=VersaStudio')
         cycler = 'pribrut';
@@ -220,6 +228,14 @@ if ~isempty(regexp(line1,'^,ChargeKey,LogDateStamp,version,productnum'))
     header_lines = header_lines(1:end-1);
     return
 end
+if ~isempty(regexp(line1,'# file_type : COMUTES2'))
+    cycler = 'comutes2';
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
+    return
+end
+
 
 %unknown type: return first line
 cycler = line1;

@@ -35,6 +35,7 @@ if ismember('e',options)%enable = addpath
     addpath(fullfile(srcdir,'data_tools','import','btsuite'));
     addpath(fullfile(srcdir,'data_tools','import','neware'));
     addpath(fullfile(srcdir,'data_tools','import','digatron'));
+    addpath(fullfile(srcdir,'data_tools','import','comutes2'));
     addpath(fullfile(srcdir,'data_tools','export'));
     addpath(fullfile(srcdir,'data_tools','metadata'));
     addpath(fullfile(srcdir,'external_tools'));

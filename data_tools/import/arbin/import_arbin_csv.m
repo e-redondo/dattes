@@ -2,7 +2,7 @@ function xml = import_arbin_csv(file_in, options)
 % import_arbin_xls Arbin *.CSV to VEHLIB XMLstruct converter
 %
 % Usage
-%   xml = import_arbin_xls(file_in)
+%   xml = import_arbin_csv(file_in)
 % Read filename (*.csv file) and converts to xml (VEHLIB XMLstruct)
 % Inputs:
 % - file_in (string): pathname of a csv file

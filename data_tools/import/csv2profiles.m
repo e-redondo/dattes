@@ -350,9 +350,9 @@ if isempty(mode)
     end
 
     %TODO: Step should go in profiles variables, not in other_cols
-    if ~isempty(t) && isfield(other_cols,'Step')
+    if ~isempty(t) && isfield(profiles,'step')
         %m: 'mode'(CC,CV,rest,EIS,profile)
-        mode = which_mode(profiles.t,profiles.I,profiles.U,other_cols.Step,params.I_thres,params.U_thres);
+        mode = which_mode(profiles.t,profiles.I,profiles.U,profiles.step,params.I_thres,params.U_thres);
     else
         mode = [];
     end

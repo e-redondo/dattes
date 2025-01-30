@@ -13,6 +13,7 @@ function [xml_files, failed_filelist,ignored_list] = dattes_import(srcdir,cycler
 %   - 'biologic': search for biologic mpt files
 %   - 'btsuite': search for biologic csv files (BT Suite)
 %   - 'bitrode': search for bitrode csv files
+%   - 'comutes2': search for comutes2 txt files
 %   - 'digatron': search for digatron csv files
 %   - 'neware': search for neware csv files
 % - options [char]:
@@ -119,6 +120,10 @@ switch cycler
     case 'digatron'
         import_fun = @import_digatron;
         file_ext_default = '.csv';
+        merge_possible = false;
+    case 'comutes2'
+        import_fun = @import_comutes2;
+        file_ext_default = '.txt';
         merge_possible = false;
     case 'landt_xls'
         import_fun = @import_landt_xls;

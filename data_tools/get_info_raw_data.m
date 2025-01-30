@@ -32,7 +32,7 @@ if ischar(file_in)
         filelist = lsFiles(file_in,'*');
         if isempty(ext_list)
             %filter typical extensions from cyclers
-            ext_list = {'.csv', '.res', '.xls', '.xlsx', '.mpt'};
+            ext_list = {'.csv', '.res', '.xls', '.xlsx', '.mpt', '.txt'};
         end
 
         %filter filelist extensions
@@ -119,7 +119,7 @@ end
 function [variable_names, unit_names, date_test, source_file,test_params] = analyse_head(header,first_data_line,cycler,filename)
 
 %biologic eclab/btlab
-if strncmp(cycler,'bio_eclab',9) || strncmp(cycler,'bio_btlab',9)
+if strncmp(cycler,'bio_eclab',9) || strncmp(cycler,'bio_btlab',9) || strncmp(cycler,'biotab',6)
     [variable_names, unit_names, date_test, source_file,test_params] = analyse_biologic_head(filename,header);
     %convert to char each element of the cell to avoid 0x0 doubles in empties
     unit_names = cellfun(@char,unit_names,'UniformOutput',false);
@@ -143,6 +143,13 @@ end
 %bitrode
 if strncmp(cycler,'bitrode',7)
     [variable_names, unit_names, date_test, source_file,test_params] = analyse_bitrode_head(filename,header);
+    %convert to char each element of the cell to avoid 0x0 doubles in empties
+    unit_names = cellfun(@char,unit_names,'UniformOutput',false);
+    return
+end
+%comutes2
+if strncmp(cycler,'comutes2',8)
+    [variable_names, unit_names, date_test, source_file,test_params] = analyse_comutes2_head(filename,header);
     %convert to char each element of the cell to avoid 0x0 doubles in empties
     unit_names = cellfun(@char,unit_names,'UniformOutput',false);
     return
