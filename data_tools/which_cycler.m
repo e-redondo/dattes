@@ -233,6 +233,10 @@ if ~isempty(regexp(line1,'# file_type : COMUTES2'))
     % last header line is first data line:
     first_data_line = header_lines{end};
     header_lines = header_lines(1:end-1);
+    var_names = header_lines{end};
+    if strncmp(var_names,'ProgTime',8)
+        cycler = 'comutes2_dig';%from digatron
+    end
     return
 end
 

@@ -66,14 +66,15 @@ fid = fopen_safe(file_in);
 [cycler, line1, line2, header_lines, first_data_line] = which_cycler(fid);
 fclose(fid);
 
-[variable_names, unit_names, date_test, source_file,params] = analyse_comutes2_head(file_in,header_lines);
-
-if ~strncmp(cycler,'comutes2',9)
+if ~strncmp(cycler,'comutes2',8)
     %Probably an error reading xls file:
     fprintf('WARNING: not an COMUTES2 csv file: %s\n',file_in);
     xml = [];
     return;
 end
+
+[variable_names, unit_names, date_test, source_file,params] = analyse_comutes2_head(file_in,header_lines);
+
 
 %1.- reading file
 % params = struct;  % see csv2profiles if some params are needed
@@ -85,6 +86,11 @@ params.date_fmt = '';
 if strcmp(cycler,'comutes2')
     %dt, tt, u, i, m, T, dod_ah, soc, step, ah, ah_dis, ah_cha
     col_names = {'','Time','U','I',...
+        'Mode','Temp','','','','Q',...
+        '',''};
+elseif strcmp(cycler,'comutes2_dig')
+    %dt, tt, u, i, m, T, dod_ah, soc, step, ah, ah_dis, ah_cha
+    col_names = {'','ProgTime','U','I',...
         'Mode','Temp','','','','Q',...
         '',''};
 end
