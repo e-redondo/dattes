@@ -118,7 +118,12 @@ else
 end
 
 variables = regexp(variables_line,params.colsep,'split');
+%ignore empty matchs
+ind_empty = cellfun(@isempty,variables);
+variables = variables(~ind_empty);
 units = regexp(units_line,params.colsep,'split');
+ind_empty = cellfun(@isempty,units);
+units = units(~ind_empty);
 
 if length(units)<=1
     fprintf('csv2profiles, ERROR: a problem maybe with column separator "%s"\n',params.colsep);
@@ -351,6 +356,11 @@ if isempty(mode)
 
     %TODO: Step should go in profiles variables, not in other_cols
     if ~isempty(t) && isfield(profiles,'step')
+        if isempty(profiles.step)
+            %TODO: 0.01 = top 1% changes in current mean new step.
+            % maybe not robust
+            profiles.step = find_steps(profiles.t,profiles.I,profiles.U,0.01);
+        end
         %m: 'mode'(CC,CV,rest,EIS,profile)
         mode = which_mode(profiles.t,profiles.I,profiles.U,profiles.step,params.I_thres,params.U_thres);
     else
