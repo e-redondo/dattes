@@ -83,12 +83,12 @@ end
 
 params.date_fmt = '';
 % params.date_fmt = 'yyyy-mm-dd HH:MM:SS';
-if strcmp(cycler,'comutes2')
+if strcmp(cycler,'comutes2_v1') || strcmp(cycler,'comutes2_v2')
     %dt, tt, u, i, m, T, dod_ah, soc, step, ah, ah_dis, ah_cha
     col_names = {'','Time','U','I',...
         'Mode','Temp','','','','Q',...
         '',''};
-elseif strcmp(cycler,'comutes2_dig')
+elseif strcmp(cycler,'comutes2_v2_dig')
     %dt, tt, u, i, m, T, dod_ah, soc, step, ah, ah_dis, ah_cha
     col_names = {'','ProgTime','U','I',...
         'Mode','Temp','','','','Q',...
@@ -155,7 +155,7 @@ for ind = 1:length(variables)
     if isnumeric(other_cols.(variables{ind}))
         %TODO convert cells to double, see csv2profile (try-catch)
         [XMLVars_other{ind}, errorcode] = ...
-        makeXMLVariable((new_variables{ind}), other_cols.(units{ind}), '%f', (new_variables{ind}), other_cols.(variables{ind}));
+        makeXMLVariable((variables{ind}), other_cols.(units{ind}), '%f', (variables{ind}), other_cols.(variables{ind}));
     end
 end
 % remove 'empty' vars:
