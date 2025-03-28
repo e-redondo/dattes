@@ -35,25 +35,40 @@ function [ica] = ident_ica(profiles,config,phases,options)
 if ~exist('options','var')
     options = '';
 end
+if ismember('v',options)
+    fprintf('ident_ica:...');
+end
 ica = struct([]);
 
 %% check inputs:
 if nargin<3 || nargin>4
+    if ismember('v',options)
+        fprintf('NOK\n');
+    end
     fprintf('ident_ica : wrong number of parameters, found %d\n',nargin);
     return;
 end
 
 if ~isstruct(profiles) || ~isstruct(config) || ~isstruct(phases) || ~ischar(options)
+    if ismember('v',options)
+        fprintf('NOK\n');
+    end
     fprintf('ident_ica: wrong type of parameters\n');
     return;
 end
 
 if ~isfield(config,'ica')
+    if ismember('v',options)
+        fprintf('NOK\n');
+    end
     fprintf('ident_ica: incomplete structure config, redo dattes_configure\n');
     return;
 end
 
 if ~isfield(config.ica,'pICA') || ~isfield(config.ica,'filter_order') || ~isfield(config.ica,'filter_cut') || ~isfield(config.ica,'filter_type')
+    if ismember('v',options)
+        fprintf('NOK\n');
+    end
     fprintf('ident_ica: incomplete structure config, redo dattes_configure\n');
     return;
 end
@@ -77,5 +92,8 @@ for ind = 1:length(phases_ica)
     ica(ind).crate = phases_ica(ind).Iavg/config.test.capacity;
     ica(ind).datetime = phases_ica(ind).datetime_fin;
 end
-
+if ismember('v',options)
+    fprintf('%d phases with ICA, ',length(phases_ica));
+    fprintf('OK\n');
+end
 end
