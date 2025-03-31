@@ -388,10 +388,41 @@ m = cellfun(@(x) x.mode.vector,xml.table(Is),'uniformoutput',false);
 ReZ = cellfun(@(x) x.ReZ.vector,xml.table(Is),'uniformoutput',false);
 ImZ = cellfun(@(x) x.ImZ.vector,xml.table(Is),'uniformoutput',false);
 f = cellfun(@(x) x.freq.vector,xml.table(Is),'uniformoutput',false);
-Iavg = cellfun(@(x) x.Iavg.vector,xml.table(Is),'uniformoutput',false);
-Iamp = cellfun(@(x) x.Iamp.vector,xml.table(Is),'uniformoutput',false);
-Uavg = cellfun(@(x) x.Uavg.vector,xml.table(Is),'uniformoutput',false);
-Uamp = cellfun(@(x) x.Uamp.vector,xml.table(Is),'uniformoutput',false);
+% Iavg = cellfun(@(x) x.Iavg.vector,xml.table(Is),'uniformoutput',false);
+% Iamp = cellfun(@(x) x.Iamp.vector,xml.table(Is),'uniformoutput',false);
+% Uavg = cellfun(@(x) x.Uavg.vector,xml.table(Is),'uniformoutput',false);
+% Uamp = cellfun(@(x) x.Uamp.vector,xml.table(Is),'uniformoutput',false);
+
+Iavg = cell(size(f));
+Iamp = cell(size(f));
+Uavg = cell(size(f));
+Uamp = cell(size(f));
+
+for ind = 1:length(xml.table)
+    if isfield(xml.table{ind},'freq')
+        if isfield(xml.table{ind},'Iavg')
+            Iavg{ind} = xml.table{ind}.Iavg.vector;
+        else
+            Iavg{ind} = nan(size(f{ind}));
+        end
+        if isfield(xml.table{ind},'Iamp')
+            Iamp{ind} = xml.table{ind}.Iamp.vector;
+        else
+            Iamp{ind} = nan(size(f{ind}));
+        end
+        if isfield(xml.table{ind},'Uavg')
+            Uavg{ind} = xml.table{ind}.Uavg.vector;
+        else
+            Uavg{ind} = nan(size(f{ind}));
+        end
+        if isfield(xml.table{ind},'Uamp')
+            Uamp{ind} = xml.table{ind}.Uamp.vector;
+        else
+            Uamp{ind} = nan(size(f{ind}));
+        end
+        
+    end
+end
 %decapsuler les cellules
 t = vertcat(t{:});
 U = vertcat(U{:});

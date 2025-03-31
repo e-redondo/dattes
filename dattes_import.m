@@ -11,7 +11,8 @@ function [xml_files, failed_filelist,ignored_list] = dattes_import(srcdir,cycler
 %   - 'arbin_res': search for arbin res files
 %   - 'arbin_xls': search for arbin xls files
 %   - 'biologic': search for biologic mpt files
-%   - 'btsuite': search for biologic csv files (BT Suite)
+%   - 'btsuite_csv': search for biologic csv files (BT Suite)
+%   - 'btsuite_txt': search for biologic csv files (BT Suite)
 %   - 'bitrode': search for bitrode csv files
 %   - 'comutes2': search for comutes2 txt files
 %   - 'digatron': search for digatron csv files
@@ -109,9 +110,13 @@ switch cycler
         import_fun = @import_biologic;
         file_ext_default = '.mpt';
         merge_possible = true;
-    case 'btsuite'
+    case 'btsuite_csv'
         import_fun = @import_btsuite;
         file_ext_default = '.csv';
+        merge_possible = false;
+    case 'btsuite_txt'
+        import_fun = @import_btsuite;
+        file_ext_default = '.txt';
         merge_possible = false;
     case 'bitrode'
         import_fun = @import_bitrode;

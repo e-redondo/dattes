@@ -23,12 +23,12 @@ variables_line = header{end};
 %detect column separator:
 col_sep = detect_col_sep(variables_line, first_data_line);
 %detect decimal separator:
-dec_sep = detect_dec_sep(first_data_line);
+dec_sep = detect_dec_sep(first_data_line,col_sep);
 
 
 %initialise outputs:
-    variable_names=[];
-    unit_names=[];
+    variable_names={};
+    unit_names={};
     date_test=[];
     source_file=file_name;
     params.col_sep=col_sep;

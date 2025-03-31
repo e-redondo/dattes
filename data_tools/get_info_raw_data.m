@@ -125,8 +125,15 @@ if strncmp(cycler,'bio_eclab',9) || strncmp(cycler,'bio_btlab',9) || strncmp(cyc
     unit_names = cellfun(@char,unit_names,'UniformOutput',false);
     return
 end
-%biologic btsuite
-if strcmp(cycler,'bio_btsuite')
+%biologic btsuite csv
+if strcmp(cycler,'bio_btsuite_csv')
+    [variable_names, unit_names, date_test, source_file,test_params] = analyse_btsuite_head(filename,header, first_data_line);
+    %convert to char each element of the cell to avoid 0x0 doubles in empties
+    unit_names = cellfun(@char,unit_names,'UniformOutput',false);
+    return
+end
+%biologic btsuite txt
+if strcmp(cycler,'bio_btsuite_txt')
     [variable_names, unit_names, date_test, source_file,test_params] = analyse_btsuite_head(filename,header, first_data_line);
     %convert to char each element of the cell to avoid 0x0 doubles in empties
     unit_names = cellfun(@char,unit_names,'UniformOutput',false);
@@ -169,11 +176,21 @@ if strncmp(cycler,'neware',6)
     return
 end
 
-first_data_line = header{end};
-header = header(1:end-1);
-[variable_names, unit_names, date_test, source_file,test_params] = analyse_generic_head(filename, header, first_data_line);
-%convert to char each element of the cell to avoid 0x0 doubles in empties
-unit_names = cellfun(@char,unit_names,'UniformOutput',false);
+
+%unknown cycler
+if ~isempty(header)
+    first_data_line = header{end};
+    header = header(1:end-1);
+    [variable_names, unit_names, date_test, source_file,test_params] = analyse_generic_head(filename, header, first_data_line);
+    %convert to char each element of the cell to avoid 0x0 doubles in empties
+    unit_names = cellfun(@char,unit_names,'UniformOutput',false);
+else
+    variable_names = {};
+    unit_names = {};
+    date_test = '';
+    source_file = filename;
+    test_params = struct;
+end
 
 %unknown cycler (or binary file):
 % variable_names = [];

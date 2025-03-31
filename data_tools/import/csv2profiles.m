@@ -69,6 +69,7 @@ default_params.date_fmt = 'mm/dd/yyyy HH:MM:SS AM'; % e.g. mm/dd/yyyy HH:MM:SS.F
 % default_params.testtime_fmt = 'HH:MM:SS.FFF';% alternative format (seen in digatron)
 default_params.variable_list = '';% empty list = keep names as found
 default_params.units_list = '';% empty list = try to find units
+default_params.header_lines = 0;% unknown number of header lines >> try to find a number
 
 if ~exist('params','var')
     params = struct;
@@ -94,6 +95,9 @@ end
 if ~isfield(params,'units_list')
     params.units_list = default_params.units_list;
 end
+if ~isfield(params,'header_lines')
+    params.header_lines = default_params.header_lines;
+end
 % if ~isfield(params,'testtime_fmt')
 %     params.testtime_fmt = default_params.testtime_fmt;
 % end
@@ -102,9 +106,25 @@ profiles = [];
 other_cols = [];
 
 
-%TODO: n_header_lines
-
 [header_lines, data_columns,tail_lines] = parse_mixed_data_csv(file_in,params);
+if length(tail_lines)>length(data_columns{1})
+    if isempty(which('readtable'))
+        %Octave: no readtable function >>> Error
+        error('csv2profiles: Inconsistent file %s\n',file_in);
+    else
+        %probably a non consistent CSV (e.g. btsuite files)
+        %try readtable:
+        fprintf('csv2profiles: Inconsistent file. Trying with readtable\n');
+        A = readtable(file_in);
+        var_list = A.Properties.VariableNames;
+
+        data_columns = cell(size(A,2),1);
+        for ind = 1:length(data_columns)
+            data_columns{ind} = A.(var_list{ind});
+        end
+    end
+end
+
 if isempty(header_lines)
     error('csv2profiles: no header in csv file')
 end

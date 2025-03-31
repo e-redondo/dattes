@@ -42,7 +42,7 @@ filename = [F E];
 info_raw_data = get_info_raw_data(file_in);
 
 
-if ~strcmp(info_raw_data.cycler,'bio_btsuite')
+if ~strncmp(info_raw_data.cycler,'bio_btsuite',9)
     %Probably an error reading xls file:
     fprintf('WARNING: not a Biologic BT Suite csv file: %s\n',file_in);
     xml = [];
@@ -54,6 +54,7 @@ params = struct;  % see csv2profiles if some params are needed
 %params.U_thres = 0.01;
 %params.I_thres = 0.1;
 params.colsep = info_raw_data.params.colsep;
+params.header_lines = length(info_raw_data.header_lines)+1;
 
 params.date_fmt = '';
 
@@ -80,7 +81,7 @@ profiles.mode(ind_cv) = 2;
 [~,~,ind_rest] = regexpFiltre(other_cols.Task,'^REST$');
 profiles.mode(ind_rest) = 3;
 %EIS
-[~,~,ind_eis] = regexpFiltre(other_cols.Task,'^EIS$');
+[~,~,ind_eis] = regexpFiltre(other_cols.Task,'EIS$');
 profiles.mode(ind_eis) = 4;
 
 %PROFILE (other points to 5)
@@ -92,6 +93,11 @@ if isempty(profiles.datetime)
     profiles.datetime = profiles.t;
 end
 
+
+% Replace frequency 'NaN' by '0':
+if isfield(other_cols,'Frequency')
+    other_cols.Frequency(isnan(other_cols.Frequency))=0;
+end
 
 
 %DEBUG
@@ -129,27 +135,24 @@ XMLVars = XMLVars(~Ie);
 variables = fieldnames(other_cols);
 
 
-%separate unis
+%separate units
 [units,variables] = regexpFiltre(variables,'_units$');
 
 %TODO: standard variable names:
 new_variables = regexprep(variables,'__', '_');% remove duplicates in spaces + underscores
 
-new_variables = regexprep(new_variables,'Step_Time', 'tp');
-%     'Step_Index' , 'Step'
-new_variables = regexprep(new_variables,'Step_Index' , 'Step');
-%     'Cycle_Index' , 'Cycle'
-new_variables = regexprep(new_variables,'Cycle_Index' , 'Cycle');
-%     'Current' , 'I'
-% new_variables = regexprep(new_variables,'Current' , 'I');
-%     'Voltage' , 'U'
-% new_variables = regexprep(new_variables,'Voltage' , 'U');
-%
-new_variables = regexprep(new_variables,'Aux_Voltage_' , 'U');
-%
-new_variables = regexprep(new_variables,'Aux_Temperature_' , 'T');
+%     'Cycle_number' , 'Cycle'
+new_variables = regexprep(new_variables,'Cycle_number' , 'Cycle');
+% EIS variables: 
+new_variables = regexprep(new_variables,'Frequency' , 'freq');
+new_variables = regexprep(new_variables,'Real_impedance' , 'ReZ');
+new_variables = regexprep(new_variables,'Imaginary_impedance' , 'ImZ');
+new_variables = regexprep(new_variables,'Ia' , 'Imod');
+new_variables = regexprep(new_variables,'Ua' , 'Umod');
+new_variables = regexprep(new_variables,'Impedance_module' , 'Zmod');
+new_variables = regexprep(new_variables,'Impedance_phase' , 'Zangle');
 
-new_variables = regexprep(new_variables,'Temperature_' , 'T');
+%TODO: find real names for theses variables: Iamp, Iavg, Uamp, Uavg
 
 XMLVars_other = cell(size(variables));
 for ind = 1:length(variables)
@@ -160,6 +163,8 @@ for ind = 1:length(variables)
         makeXMLVariable((new_variables{ind}), other_cols.(units{ind}), '%f', (new_variables{ind}), other_cols.(variables{ind}));
     end
 end
+
+
 % remove 'empty' vars:
 Ie = cellfun(@isempty,XMLVars_other);
 XMLVars_other = XMLVars_other(~Ie);

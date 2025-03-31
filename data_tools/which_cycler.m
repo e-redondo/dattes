@@ -92,7 +92,29 @@ if ~isempty(regexp(line1,'BT-Lab ASCII FILE','match'))
     return
 end
 if ~isempty(regexp(line1,'^Sample Index[\s,;]*Time','once'))
-    cycler = 'bio_btsuite';%Biologic CSV file from BT Suite
+    cycler = 'bio_btsuite_csv';%Biologic CSV file from BT Suite
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
+    return
+end
+if ~isempty(regexp(line1,'^Header line count','once'))
+    cycler = 'bio_btsuite_txt';%Biologic CSV file from BT Suite
+    %read more lines (take nb of lines from line2)
+    max_lines = str2num(regexp(line1,'[0-9]+','match','once'));
+    if isempty(max_lines)
+        params.max_lines = 200;
+    else
+        %take two additionnal lines: variables line + first_data_line
+        params.max_lines = max_lines+2;
+    end
+    header_lines = cell(0);
+    frewind(fid);
+    while ~feof(fid) && length(header_lines)<params.max_lines
+        this_line = fgetl(fid);
+        header_lines{end+1,1} = this_line;
+    end
+    frewind(fid);
     % last header line is first data line:
     first_data_line = header_lines{end};
     header_lines = header_lines(1:end-1);
@@ -113,7 +135,7 @@ if strncmp(line1,'TimeStamp,mode,ox_red',21)
     header_lines = header_lines(1:end-1);
     return
 end
-if ~isempty(regexp(line1,'Ns changes')) && ~isempty(regexp(line1,'\t'))
+if ~isempty(regexp(line1,'Ns changes','once')) && ~isempty(regexp(line1,'\t','once'))
     % bt/ec lab file with no header, with tab separators
     cycler = 'biotab';
     % last header line is first data line:
@@ -205,6 +227,22 @@ if ~isempty(regexp(line1,'Data Point,Date Time,Test Time','match'))
     header_lines = header_lines(1:end-1);
     return
 end
+if ~isempty(regexp(line1,'TEST REPORT','match'))
+    cycler = 'arbin_global_csv';
+    frewind(fid);
+    % last header line is first data line:
+    first_data_line = header_lines{end};
+    header_lines = header_lines(1:end-1);
+    return
+end
+if ~isempty(regexp(line1,'Standard Jet DB','match'))
+    cycler = 'arbin_res';
+    frewind(fid);
+    % last header line is first data line:
+    first_data_line = '';% put nothing, it is a binary file
+    header_lines = {};% put nothing, it is a binary file
+    return
+end
 if ~isempty(regexp(line1,'^Cycle ID','match')) && ~isempty(regexp(line2,'^,\s*Step ID','match'))
     cycler = 'neware_csv';
     % last header line is first data line:
@@ -247,7 +285,15 @@ if ~isempty(regexp(line1,'# file_type : COMUTES2'))
 
 end
 
-
+if strncmp(line1,'PK',2)
+    %Excel 2007 file:
+    cycler = 'excel07_file';
+    frewind(fid);
+    % last header line is first data line:
+    first_data_line = '';% put nothing, it is a binary file
+    header_lines = {};% put nothing, it is a binary file
+    return
+end
 %unknown type: return first line
 cycler = line1;
 frewind(fid);

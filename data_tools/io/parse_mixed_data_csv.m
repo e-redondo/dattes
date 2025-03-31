@@ -29,6 +29,9 @@ end
 if ~isfield(params,'decsep')
     params.decsep = '.';
 end
+if ~isfield(params,'header_lines')
+    params.header_lines = 0;
+end
 if ~isfield(params,'strsep')
     params.strsep = '';
     %params.strsep = '"'; % to ignore "
